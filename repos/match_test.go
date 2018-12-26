@@ -1,4 +1,4 @@
-package utils
+package repos
 
 import (
 	"testing"

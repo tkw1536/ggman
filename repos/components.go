@@ -1,9 +1,11 @@
-package utils
+package repos
 
 import (
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/tkw1536/ggman/utils"
 )
 
 // Components takes a git-like url and splits it into a list of components
@@ -51,7 +53,7 @@ func componentsNormURL(s string) string {
 }
 
 func componentsNormPath(s string) (norm string) {
-	norm = TrimPrefixWhile(TrimSuffixWhile(strings.TrimSuffix(s, ".git"), "/"), "/")
+	norm = utils.TrimPrefixWhile(utils.TrimSuffixWhile(strings.TrimSuffix(s, ".git"), "/"), "/")
 	return reSlash.ReplaceAllString(norm, "/")
 }
 

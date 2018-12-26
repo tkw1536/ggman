@@ -1,4 +1,4 @@
-package utils
+package repos
 
 import (
 	"testing"
@@ -62,7 +62,7 @@ func TestComponents(t *testing.T) {
 			assert.Nil(res)
 			assert.Error(err)
 		} else {
-			assert.Equal(res, row.expected, "Components of "+row.s)
+			assert.Equal(row.expected, res, "Components of "+row.s)
 			assert.NoError(err)
 		}
 	}

@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman/utils"
+	"github.com/tkw1536/ggman/repos"
 )
 
 // LSCommand is the entry point for the ls command
@@ -24,7 +24,7 @@ func LSCommand(parsed *GGArgs) (retval int, err string) {
 	}
 
 	// find all the repos
-	repos := utils.Repos(root, parsed.Pattern)
+	repos := repos.Repos(root, parsed.Pattern)
 
 	// and print them
 	for _, repo := range repos {

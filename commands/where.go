@@ -3,7 +3,7 @@ package commands
 import (
 	"path"
 
-	"github.com/tkw1536/ggman/utils"
+	"github.com/tkw1536/ggman/repos"
 )
 
 // WhereCommand is the entry point for the where command
@@ -31,7 +31,7 @@ func WhereCommand(parsed *GGArgs) (retval int, err string) {
 	}
 
 	// get components of the argument
-	components, e := utils.Components(parsed.Args[0])
+	components, e := repos.Components(parsed.Args[0])
 	if e != nil {
 		err = stringUnparsedRepoName
 		retval = ErrorInvalidRepo
