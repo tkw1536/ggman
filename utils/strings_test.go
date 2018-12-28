@@ -2,46 +2,108 @@ package utils
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
-// TestTrimSuffixWhile tests the TrimWhile Function
-func TestTrimSuffixWhile(t *testing.T) {
-	assert := assert.New(t)
-
-	table := []struct {
-		s        string
-		suffix   string
-		expected string
-	}{
-		{"abcd", "d", "abc"},       // trim a single character
-		{"abc", "d", "abc"},        // trim a non-existing character
-		{"abcddd", "d", "abc"},     // trim a repeated character
-		{"abc def", "", "abc def"}, // trim off the empty string
+func TestSplitBefore(t *testing.T) {
+	type args struct {
+		s   string
+		sep string
 	}
-
-	for _, row := range table {
-		assert.Equal(row.expected, TrimSuffixWhile(row.s, row.suffix))
+	tests := []struct {
+		name       string
+		args       args
+		wantPrefix string
+		wantSuffix string
+	}{
+		{"splitFoundOnce", args{"a;b", ";"}, "a", "b"},
+		{"splitFoundMultiple", args{"a;b;c", ";"}, "a", "b;c"},
+		{"splitNotFound", args{"aaa", ";"}, "", "aaa"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotPrefix, gotSuffix := SplitBefore(tt.args.s, tt.args.sep)
+			if gotPrefix != tt.wantPrefix {
+				t.Errorf("SplitBefore() gotPrefix = %v, want %v", gotPrefix, tt.wantPrefix)
+			}
+			if gotSuffix != tt.wantSuffix {
+				t.Errorf("SplitBefore() gotSuffix = %v, want %v", gotSuffix, tt.wantSuffix)
+			}
+		})
 	}
 }
 
-// TestTrimPrefixWhile tests the TrimWhile Function
-func TestTrimPrefixWhile(t *testing.T) {
-	assert := assert.New(t)
-
-	table := []struct {
-		s        string
-		prefix   string
-		expected string
-	}{
-		{"abcd", "a", "bcd"},       // trim a single character
-		{"bcd", "a", "bcd"},        // trim a non-existing character
-		{"aaabcd", "a", "bcd"},     // trim a repeated character
-		{"abc def", "", "abc def"}, // trim off the empty string
+func TestSplitAfter(t *testing.T) {
+	type args struct {
+		s   string
+		sep string
 	}
+	tests := []struct {
+		name       string
+		args       args
+		wantPrefix string
+		wantSuffix string
+	}{
+		{"splitFoundOnce", args{"a;b", ";"}, "a", "b"},
+		{"splitFoundMultiple", args{"a;b;c", ";"}, "a", "b;c"},
+		{"splitNotFound", args{"aaa", ";"}, "aaa", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotPrefix, gotSuffix := SplitAfter(tt.args.s, tt.args.sep)
+			if gotPrefix != tt.wantPrefix {
+				t.Errorf("SplitAfterTwo() gotPrefix = %v, want %v", gotPrefix, tt.wantPrefix)
+			}
+			if gotSuffix != tt.wantSuffix {
+				t.Errorf("SplitAfterTwo() gotSuffix = %v, want %v", gotSuffix, tt.wantSuffix)
+			}
+		})
+	}
+}
 
-	for _, row := range table {
-		assert.Equal(row.expected, TrimPrefixWhile(row.s, row.prefix))
+func TestTrimSuffixWhile(t *testing.T) {
+	type args struct {
+		s      string
+		suffix string
+	}
+	tests := []struct {
+		name        string
+		args        args
+		wantTrimmed string
+	}{
+		{"trimSingleChar", args{"abcd", "d"}, "abc"},
+		{"trimNonExistingChar", args{"abc", "d"}, "abc"},
+		{"trimRepeatingChar", args{"abcddd", "d"}, "abc"},
+		{"trimEmpty", args{"abc def", ""}, "abc def"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotTrimmed := TrimSuffixWhile(tt.args.s, tt.args.suffix); gotTrimmed != tt.wantTrimmed {
+				t.Errorf("TrimSuffixWhile() = %v, want %v", gotTrimmed, tt.wantTrimmed)
+			}
+		})
+	}
+}
+
+func TestTrimPrefixWhile(t *testing.T) {
+	type args struct {
+		s      string
+		prefix string
+	}
+	tests := []struct {
+		name        string
+		args        args
+		wantTrimmed string
+	}{
+		{"trimSingleChar", args{"abcd", "a"}, "bcd"},
+		{"trimNonExistingChar", args{"bcd", "a"}, "bcd"},
+		{"trimRepeatingChar", args{"aaabcd", "a"}, "bcd"},
+		{"trimEmpty", args{"abc def", ""}, "abc def"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotTrimmed := TrimPrefixWhile(tt.args.s, tt.args.prefix); gotTrimmed != tt.wantTrimmed {
+				t.Errorf("TrimPrefixWhile() = %v, want %v", gotTrimmed, tt.wantTrimmed)
+			}
+		})
 	}
 }

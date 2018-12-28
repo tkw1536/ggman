@@ -14,27 +14,21 @@ func Matches(pattern string, s string) bool {
 	}
 
 	// get components of the input string that might match
-	components, es := Components(s)
+	curi, es := NewRepoURI(s)
 	if es != nil {
 		return false
 	}
+	components := curi.Components()
 	componentsLength := len(components)
 
 	// parse components of strings and ignore any casing
-	var patternComponents []string
-	if strings.Contains(pattern, ":") {
-		patternComponents, es = Components(pattern)
-		if es != nil {
-			return false
-		}
-	} else {
-		patternComponents, es = Components(":" + pattern)
-		if es != nil {
-			return false
-		}
-		patternComponents = patternComponents[1:]
+
+	puri, es := NewRepoURI(pattern)
+	if es != nil {
+		return false
 	}
 
+	patternComponents := puri.Components()
 	patternLength := len(patternComponents)
 	thePattern := strings.Join(patternComponents, "/")
 

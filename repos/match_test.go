@@ -2,39 +2,40 @@ package repos
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
-// TestMatches tests the Matches Function
 func TestMatches(t *testing.T) {
-	assert := assert.New(t)
-
-	table := []struct {
-		s       string
+	type args struct {
 		pattern string
-		matches bool
+		s       string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
 	}{
 		// matching the empty pattern
-		{"", "", true},
+		{"EmptyPattern", args{"", ""}, true},
 
 		// matching one-component parts of a/b/c
-		{"a/b/c", "a", true},
-		{"a/b/c", "b", true},
-		{"a/b/c", "c", true},
-		{"a/b/c", "d", false},
+		{"oneComponentStart", args{"a", "a/b/c"}, true},
+		{"oneComponentMiddle", args{"b", "a/b/c"}, true},
+		{"oneComponentEnd", args{"c", "a/b/c"}, true},
+		{"oneComponentNot", args{"d", "a/b/c"}, false},
 
 		// matching constant sub-paths
-		{"a/b/c/d/e/f", "b/c", true},
-		{"a/b/c/d/e/f", "f/g", false},
+		{"twoComponentsConst", args{"b/c", "a/b/c/d/e/f"}, true},
+		{"noTwoComponentsConst", args{"f/g", "a/b/c/d/e/f"}, false},
 
-		// matching sub-paths
-		{"a/b/c/d/e/f", "b/*/d", true},
-		{"a/b/c/d/e/f", "b/*/c", false},
+		// variable sub-paths
+		{"variableSubPathPositive", args{"b/*/d", "a/b/c/d/e/f"}, true},
+		{"variableSubPathNegative", args{"b/*/c", "a/b/c/d/e/f"}, false},
 	}
-
-	for _, row := range table {
-		got := Matches(row.pattern, row.s)
-		assert.Equal(row.matches, got, "Matching "+row.s+" against "+row.pattern)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Matches(tt.args.pattern, tt.args.s); got != tt.want {
+				t.Errorf("Matches() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
