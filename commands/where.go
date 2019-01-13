@@ -30,13 +30,16 @@ func WhereCommand(parsed *GGArgs) (retval int, err string) {
 		return
 	}
 
-	// get components of the argument
-	components, e := repos.Components(parsed.Args[0])
+	// parse the repository in questions
+	r, e := repos.NewRepoURI(parsed.Args[0])
 	if e != nil {
 		err = stringUnparsedRepoName
 		retval = ErrorInvalidRepo
 		return
 	}
+
+	// and get it's components
+	components := r.Components()
 
 	// and join it into a path
 	location := path.Join(append([]string{root}, components...)...)
