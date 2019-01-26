@@ -8,7 +8,7 @@ const ErrorCodeCustom int = 1
 
 // ErrorUnknownCommand is the return code when an unknown command is called
 const ErrorUnknownCommand int = 2
-const stringUnknownCommand string = "Unknown command. Must be one of 'root', 'ls', 'where', 'canon', 'comps'. "
+const stringUnknownCommand string = "Unknown command. Must be one of 'root', 'ls', 'lsr', 'where', 'canon', 'comps'. "
 
 // ErrorGeneralParsArgs is the return code when generic argument parsing fails
 const ErrorGeneralParsArgs int = 3
@@ -20,6 +20,7 @@ const ErrorSpecificParseArgs int = 4
 const stringRootNoFor string = "Wrong number of arguments: 'root' takes no 'for' argument. "
 const stringRootTakesNoArguments string = "Wrong number of arguments: 'root' takes no arguments. "
 const stringLSArguments string = "Unknown argument: 'ls' must be called with either '--exit-code' or no arguments. "
+const stringLSRArguments string = "Unknown argument: 'lsr' must be called with either '--canonical' or no arguments. "
 const stringWhereNoFor string = "Wrong number of arguments: 'where' takes no 'for' argument. "
 const stringWhereTakesOneArgument string = "Wrong number of arguments: 'where' takes exactly one arguments. "
 const stringCanonNoFor string = "Wrong number of arguments: 'canon' takes no 'for' argument. "

@@ -40,8 +40,13 @@ func CanonCommand(parsed *GGArgs) (retval int, err string) {
 
 	}
 
+	// print the canonical url or error
+	return printCanonOrError(lines, parsed.Args[0])
+}
+
+func printCanonOrError(lines []repos.CanLine, repo string) (retval int, err string) {
 	// parse the repo uri
-	uri, e := repos.NewRepoURI(parsed.Args[0])
+	uri, e := repos.NewRepoURI(repo)
 	if e != nil {
 		err = stringUnparsedRepoName
 		retval = ErrorInvalidRepo
@@ -52,6 +57,5 @@ func CanonCommand(parsed *GGArgs) (retval int, err string) {
 	canonical := uri.CanonicalWith(lines)
 	fmt.Println(canonical)
 
-	// and finish
 	return
 }

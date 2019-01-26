@@ -113,6 +113,11 @@ Empty lines and those starting with '#', '\\' are treated as comments.
 
 To resolve a canonical url with a CANFILE, simply omit the `CANSPEC` attribute of `ggman canon`. 
 
+## 'ggman lsr'
+
+To list the remotes of all installed repositories, use `ggman lsr`. 
+It takes an optional argument `--canonical` which, if provided, cause ggman to print canonical urls instead of the provided ones. 
+
 ## LICENSE
 
 `ggman` is licensed under the terms of the MIT LICENSE, see [LICENSE](LICENSE). 

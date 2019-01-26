@@ -17,6 +17,8 @@ func Main(args []string) (retval int, err string) {
 		retval, err = RootCommand(parsed)
 	case "ls":
 		retval, err = LSCommand(parsed)
+	case "lsr":
+		retval, err = LSRCommand(parsed)
 	case "where":
 		retval, err = WhereCommand(parsed)
 	case "canon":

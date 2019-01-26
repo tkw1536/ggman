@@ -22,6 +22,7 @@ build-linux: deps
 build-macos: deps
 	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOBUILD) -o $(OUT_DIR)/$(BINARY_MACOS) -v
 build-windows: deps
+	go get golang.org/x/sys/windows
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -o $(OUT_DIR)/$(BINARY_WINDOWS) -v
 
 test: testdeps
