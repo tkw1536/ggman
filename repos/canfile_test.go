@@ -14,7 +14,11 @@ func TestReadCanLine(t *testing.T) {
 		args   args
 		wantCl *CanLine
 	}{
-		// TODO: Add test cases.
+		{"reading pattern-only line", args{"git@^:$.git"}, &CanLine{"", "git@^:$.git"}},
+		{"reading normal line", args{"* git@^:$.git"}, &CanLine{"*", "git@^:$.git"}},
+		{"reading line with extra args", args{"* git@^:$.git extra stuff"}, &CanLine{"*", "git@^:$.git"}},
+		{"empty line is not read", args{""}, nil},
+		{"comment line is not read", args{"  //* git@^:$.git extra stuff"}, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
