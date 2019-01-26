@@ -113,3 +113,6 @@ Empty lines and those starting with '#', '\\' are treated as comments.
 
 To resolve a canonical url with a CANFILE, simply omit the `CANSPEC` attribute of `ggman canon`. 
 
+## LICENSE
+
+`ggman` is licensed under the terms of the MIT LICENSE, see [LICENSE](LICENSE). 
