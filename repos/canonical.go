@@ -49,6 +49,17 @@ func (rURI *RepoURI) Canonical(cspec string) (canonical string) {
 	return prefix + strings.Join(components, "/") + suffix
 }
 
+// CanonicalWith returns the canonical url given a set of lines
+func (rURI *RepoURI) CanonicalWith(lines []CanLine) (canonical string) {
+	for _, line := range lines {
+		if rURI.Matches(line.Pattern) {
+			return rURI.Canonical(line.Canonical)
+		}
+	}
+
+	return
+}
+
 // IsCanonicalURI checks if a given URI is in canonical form
 // using a specific canonical specification
 func IsCanonicalURI(s string, cspec string) bool {

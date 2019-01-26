@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestMatches(t *testing.T) {
+func TestMatchesString(t *testing.T) {
 	type args struct {
 		pattern string
 		s       string
@@ -33,8 +33,8 @@ func TestMatches(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Matches(tt.args.pattern, tt.args.s); got != tt.want {
-				t.Errorf("Matches() = %v, want %v", got, tt.want)
+			if got := MatchesString(tt.args.pattern, tt.args.s); got != tt.want {
+				t.Errorf("MatchesString() = %v, want %v", got, tt.want)
 			}
 		})
 	}

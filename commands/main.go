@@ -19,6 +19,10 @@ func Main(args []string) (retval int, err string) {
 		retval, err = LSCommand(parsed)
 	case "where":
 		retval, err = WhereCommand(parsed)
+	case "canon":
+		retval, err = CanonCommand(parsed)
+	case "comps":
+		retval, err = CompsCommand(parsed)
 	default:
 		err = stringUnknownCommand
 		retval = ErrorUnknownCommand

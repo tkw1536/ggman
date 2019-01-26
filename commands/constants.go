@@ -8,7 +8,7 @@ const ErrorCodeCustom int = 1
 
 // ErrorUnknownCommand is the return code when an unknown command is called
 const ErrorUnknownCommand int = 2
-const stringUnknownCommand string = "Unknown command. Must be one of 'root', 'ls', 'where'. "
+const stringUnknownCommand string = "Unknown command. Must be one of 'root', 'ls', 'where', 'canon', 'comps'. "
 
 // ErrorGeneralParsArgs is the return code when generic argument parsing fails
 const ErrorGeneralParsArgs int = 3
@@ -22,10 +22,15 @@ const stringRootTakesNoArguments string = "Wrong number of arguments: 'root' tak
 const stringLSArguments string = "Unknown argument: 'ls' must be called with either '--exit-code' or no arguments. "
 const stringWhereNoFor string = "Wrong number of arguments: 'where' takes no 'for' argument. "
 const stringWhereTakesOneArgument string = "Wrong number of arguments: 'where' takes exactly one arguments. "
+const stringCanonNoFor string = "Wrong number of arguments: 'canon' takes no 'for' argument. "
+const stringCanonTakesOneArgument string = "Wrong number of arguments: 'canon' takes exactly one argument. "
+const stringCompsNoFor string = "Wrong number of arguments: 'comps' takes no 'for' argument. "
+const stringCompsTakesOneArgument string = "Wrong number of arguments: 'comps' takes exactly one argument. "
 
-// ErrorNoRoot is the return code when the root directory can not be found
-const ErrorNoRoot int = 5
+// ErrorMissingConfig is the return code when the configuration is missing or invalid
+const ErrorMissingConfig int = 5
 const stringUnableParseRootDirectory string = "Unable to find GGROOT directory. "
+const stringInvalidCanfile string = "Invalid CANFILE found. "
 
 // ErrorInvalidRepo is the return code when an invalid repo name is passed
 const ErrorInvalidRepo int = 6

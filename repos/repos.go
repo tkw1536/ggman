@@ -24,7 +24,7 @@ func reposInternal(paths *[]string, rootpath string, rootpattern string, pattern
 	// and if so, return a list containing this repo
 	if isGitRepoRoot(rootpath) {
 		// fmt.Printf("matching %q against %q\n", pattern, rootpattern) // for debugging
-		if Matches(pattern, rootpattern) {
+		if MatchesString(pattern, rootpattern) {
 			*paths = append(*paths, rootpath)
 		}
 		return

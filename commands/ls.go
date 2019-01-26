@@ -24,7 +24,7 @@ func LSCommand(parsed *GGArgs) (retval int, err string) {
 	root, e := getRootOrPanic()
 	if e != nil {
 		err = stringUnableParseRootDirectory
-		retval = ErrorNoRoot
+		retval = ErrorMissingConfig
 		return
 	}
 

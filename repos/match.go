@@ -6,19 +6,14 @@ import (
 	"github.com/danwakefield/fnmatch"
 )
 
-// Matches checks if a string matches a given repository pattern
-func Matches(pattern string, s string) bool {
+// Matches checks if a repiository URI matches a given pattern
+func (rURI *RepoURI) Matches(pattern string) bool {
 	// if we have an 'everything' pattern, return true immediatly
 	if pattern == "" || pattern == "*" {
 		return true
 	}
 
-	// get components of the input string that might match
-	curi, es := NewRepoURI(s)
-	if es != nil {
-		return false
-	}
-	components := curi.Components()
+	components := rURI.Components()
 	componentsLength := len(components)
 
 	// parse components of strings and ignore any casing
@@ -41,4 +36,17 @@ func Matches(pattern string, s string) bool {
 	}
 
 	return false
+}
+
+// MatchesString checks if a string matches a given repository pattern
+func MatchesString(pattern string, s string) bool {
+
+	// turn the input string into a repo uri
+	curi, es := NewRepoURI(s)
+	if es != nil {
+		return false
+	}
+
+	// and check if that matches the pattern
+	return curi.Matches(pattern)
 }

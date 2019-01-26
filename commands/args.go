@@ -3,6 +3,8 @@ package commands
 import (
 	"os"
 
+	"github.com/tkw1536/ggman/repos"
+
 	homedir "github.com/mitchellh/go-homedir"
 )
 
@@ -45,4 +47,8 @@ func getRootOrPanic() (value string, err error) {
 	}
 
 	return
+}
+
+func getCanonOrPanic() (lines []repos.CanLine, err error) {
+	return repos.ReadDefaultCanFile()
 }

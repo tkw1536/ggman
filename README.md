@@ -20,7 +20,7 @@ The command is split into several sub-commands, which are described below.
 | 2                  | The user asked for an unknown subcommand                            |
 | 3                  | Command-independent argument parsing failed, e.g. an invalid 'for'  |
 | 4                  | Command-dependent argument parsing failed                           |
-| 5                  | The `GGROOT` directory does not exist                               |
+| 5                  | Invalid configuration                                               |
 | 6                  | Unable to parse a repository name                                   |
 
 
@@ -43,9 +43,10 @@ For easier integration into scripts, `ggman ls` supports an `--exit-code` argume
 If this is given, the command will return exit code 0 iff at least one repository is found, and exit code 1 otherwise. 
 
 ### the 'for' keyword
+
 When running multi-repository operations, it is possible to limit the operations to a specific subset of repositories. 
 This is achieved by using the 'for' keyword along with a pattern. 
-For example, `ggman for 'github.com/*/frontend' ls` will list all repositories from `github.com` that are named `frontend`. 
+For example, `ggman for 'github.com/*/example' ls` will list all repositories from `github.com` that are named `example`. 
 
 Examples for supported patterns can be found in this table:
 
@@ -58,3 +59,30 @@ Examples for supported patterns can be found in this table:
 | `github.com/hello` | `git@github.com:hello/world.git`, `git@github.com:hello/mars.git`   |
 
 Note that the `for` keyword also works for exact repository urls, e.g. `ggman for 'https://github.com/tkw1536/GitManager' ls`. 
+
+### 'ggman comps' and 'ggman canon'
+
+On `github.com` and multiple other providers, it is usually possible to clone repositories via multiple urls. 
+For example, the repository `https://github.com/hello/world` can actually be cloned via:
+- `https://github.com/hello/world.git` and
+- `git@github.com:hello/world.git`
+
+Usually the latter url is prefered over the former one in order to use SSH authentication instead of having to constantly having to type a password. 
+For this purpose, ggman implements the concept of `canonical urls`, that is it treats the latter url as the main one and uses it to clone the repository. 
+This behaviour can be customized by the user. 
+
+A canonical url is generated from an original url using a so-called `CANSPEC` (canonical specification).
+An example CANSPEC is `git@^:$.git`. 
+
+CANSPECs generate canonical urls by first taking the original urls, and splitting them into path-like components. 
+These components also perform some normalisation, such as removing common prefixes and suffixes. 
+A few examples examples can be found in this table. 
+
+| URL                            | Components                       |
+| ------------------------------ | -------------------------------- |
+| `git@github.com/user/repo`     | `github.com`, `user`, `repo`     |
+| `github.com/hello/world.git`   | `github.com`, `hello`, `world`   |
+| `user@server.com:repo.git`     | `server.com`, `user`, `repo`     |
+
+To see exactly which components a URL has, use `ggman comps <URL>`.
+
