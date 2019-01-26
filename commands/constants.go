@@ -23,7 +23,7 @@ const stringLSArguments string = "Unknown argument: 'ls' must be called with eit
 const stringWhereNoFor string = "Wrong number of arguments: 'where' takes no 'for' argument. "
 const stringWhereTakesOneArgument string = "Wrong number of arguments: 'where' takes exactly one arguments. "
 const stringCanonNoFor string = "Wrong number of arguments: 'canon' takes no 'for' argument. "
-const stringCanonTakesOneArgument string = "Wrong number of arguments: 'canon' takes exactly one argument. "
+const stringCanonTakesOneOrTwoArguments string = "Wrong number of arguments: 'canon' takes exactly one or exactly two arguments. "
 const stringCompsNoFor string = "Wrong number of arguments: 'comps' takes no 'for' argument. "
 const stringCompsTakesOneArgument string = "Wrong number of arguments: 'comps' takes exactly one argument. "
 

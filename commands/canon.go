@@ -16,18 +16,28 @@ func CanonCommand(parsed *GGArgs) (retval int, err string) {
 	}
 
 	// we accept one arguments
-	if len(parsed.Args) != 1 {
-		err = stringCanonTakesOneArgument
+	la := len(parsed.Args)
+	if la > 2 || la == 0 {
+		err = stringCanonTakesOneOrTwoArguments
 		retval = ErrorSpecificParseArgs
 		return
 	}
 
-	// read the canon file
-	lines, e := getCanonOrPanic()
-	if e != nil {
-		err = stringInvalidCanfile
-		retval = ErrorMissingConfig
-		return
+	var lines []repos.CanLine
+	var e error
+
+	if la == 2 {
+		// if we have two argument, use the specific specification given
+		lines = append(lines, repos.CanLine{Pattern: "", Canonical: parsed.Args[1]})
+	} else {
+		// else read the canon file
+		lines, e = getCanonOrPanic()
+		if e != nil {
+			err = stringInvalidCanfile
+			retval = ErrorMissingConfig
+			return
+		}
+
 	}
 
 	// parse the repo uri
