@@ -13,7 +13,9 @@ func main() {
 	// if we are not exiting with status code zero, print the error message
 	// and then exit
 	if retval != 0 {
-		os.Stderr.WriteString(err + "\n")
+		if err != "" {
+			os.Stderr.WriteString(err + "\n")
+		}
 		defer os.Exit(retval)
 	}
 }

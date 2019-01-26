@@ -13,6 +13,8 @@ func Main(args []string) (retval int, err string) {
 
 	// run the appropriate command
 	switch parsed.Command {
+	case "root":
+		retval, err = RootCommand(parsed)
 	case "ls":
 		retval, err = LSCommand(parsed)
 	case "where":
