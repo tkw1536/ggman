@@ -29,6 +29,8 @@ func Main(args []string) (retval int, err string) {
 		retval, err = FetchCommand(parsed)
 	case "pull":
 		retval, err = PullCommand(parsed)
+	case "fix":
+		retval, err = FixCommand(parsed)
 	default:
 		err = stringUnknownCommand
 		retval = ErrorUnknownCommand

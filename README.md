@@ -113,6 +113,13 @@ Empty lines and those starting with '#', '\\' are treated as comments.
 
 To resolve a canonical url with a CANFILE, simply omit the `CANSPEC` attribute of `ggman canon`. 
 
+## 'ggman fix'
+
+To fix an existing remote of a repository use `ggman fix`. 
+This updates remotes of all matching repositories to their canonical form using the `CANFILE`. 
+Optionally, you can pass a `--simulate` argument to `ggman fix`. 
+Instead of storing any urls, it will only print what is being done to STDOUT. 
+
 ## 'ggman lsr'
 
 To list the remotes of all installed repositories, use `ggman lsr`. 
