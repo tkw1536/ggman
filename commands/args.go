@@ -40,6 +40,25 @@ func ParseArgs(args []string) (parsed *GGArgs, err string) {
 	return
 }
 
+// ParseSingleFlag parses a single optional flag
+func (parsed *GGArgs) ParseSingleFlag(flag string) (value bool, err bool) {
+	la := len(parsed.Args)
+
+	// if we have too many arguments throw an error
+	if la > 1 {
+		err = true
+		return
+	} else if la == 1 && parsed.Args[0] != flag {
+		err = true
+		return
+	}
+
+	// and return the error
+	value = la == 1
+	err = false
+	return
+}
+
 func getRootOrPanic() (value string, err error) {
 	value = os.Getenv("GGROOT")
 	if len(value) == 0 {

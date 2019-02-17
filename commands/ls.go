@@ -8,13 +8,10 @@ import (
 
 // LSCommand is the entry point for the ls command
 func LSCommand(parsed *GGArgs) (retval int, err string) {
-	la := len(parsed.Args)
-	// we accept no arguments
-	if la > 1 {
-		err = stringLSArguments
-		retval = ErrorSpecificParseArgs
-		return
-	} else if la == 1 && parsed.Args[0] != "--exit-code" {
+
+	// read the --exit-code flag
+	exitCodeFlag, ie := parsed.ParseSingleFlag("--exit-code")
+	if ie {
 		err = stringLSArguments
 		retval = ErrorSpecificParseArgs
 		return
@@ -38,7 +35,7 @@ func LSCommand(parsed *GGArgs) (retval int, err string) {
 
 	// if we have --exit-code set and no results
 	// we need to exit with an error code
-	if la == 1 && len(repos) == 0 {
+	if exitCodeFlag && len(repos) == 0 {
 		retval = ErrorCodeCustom
 	}
 
