@@ -161,9 +161,23 @@ ggman link $HOME/go/src/github.com/hello/world
 would link the repository in `$HOME/go/src/github.com/hello/world` into the right location. 
 Here, this corresponds to `$GGROOT/github.com/hello/world`. 
 
+## getting `ggman`
 
+To get `ggman` you have two options:
 
+1. Build it yourself
+To build `ggman` yourself, you need [`go`](https://golang.org) 1.9 or newer along with `make` installed on your machine. 
+After cloning this repository, you can then simply type `make` and executables will be generated inside the `out/` directory. 
+
+2. Download a pre-built binary. 
+You can download a pre-built binary from the [releases page](https://github.com/tkw1536/ggman/releases/latest) on GitHub. 
+This page includes releases for Linux, Mac OS X and Windows. 
+Note that these binaries are compressed with [`upx`](https://upx.github.io) in order to decrease executable size. 
+
+After obtaining the binary (through either of the two means), simply place it in your `$PATH`. 
+`ggman` does not depend on any external software (no need for `git` even). 
 
 ## LICENSE
 
 `ggman` is licensed under the terms of the MIT LICENSE, see [LICENSE](LICENSE). 
+To view accompanying license information use `ggman license`. 

@@ -12,11 +12,11 @@ const stringLinkSamePath string = "Unable to link repository: Link source and ta
 
 // ErrorUnknownCommand is the return code when an unknown command is called
 const ErrorUnknownCommand int = 2
-const stringUnknownCommand string = "Unknown command. Must be one of 'root', 'ls', 'lsr', 'where', 'canon', 'comps', 'fetch', 'pull', 'fix', 'clone', 'link'. "
+const stringUnknownCommand string = "Unknown command. Must be one of 'root', 'ls', 'lsr', 'where', 'canon', 'comps', 'fetch', 'pull', 'fix', 'clone', 'link', 'license'. "
 
 // ErrorGeneralParsArgs is the return code when generic argument parsing fails
 const ErrorGeneralParsArgs int = 3
-const stringNeedOneArgument string = "Unable to parse arguments: Need at least one argument. "
+const stringNeedOneArgument string = "Unable to parse arguments: Need at least one argument. \nUse `ggman license` to view licensing information. "
 const stringNeedTwoAfterFor string = "Unable to parse arguments: At least two arguments needed after 'for' keyword. "
 
 // ErrorSpecificParseArgs is the return code when specific argument parsing fails

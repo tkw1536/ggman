@@ -35,6 +35,8 @@ func Main(args []string) (retval int, err string) {
 		retval, err = CloneCommand(parsed)
 	case "link":
 		retval, err = LinkCommand(parsed)
+	case "license":
+		retval, err = LicenseCommand(parsed)
 	default:
 		err = stringUnknownCommand
 		retval = ErrorUnknownCommand
