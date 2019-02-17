@@ -113,22 +113,39 @@ Empty lines and those starting with '#', '\\' are treated as comments.
 
 To resolve a canonical url with a CANFILE, simply omit the `CANSPEC` attribute of `ggman canon`. 
 
-## 'ggman fix'
+### 'ggman fix'
 
 To fix an existing remote of a repository use `ggman fix`. 
 This updates remotes of all matching repositories to their canonical form using the `CANFILE`. 
 Optionally, you can pass a `--simulate` argument to `ggman fix`. 
 Instead of storing any urls, it will only print what is being done to STDOUT. 
 
-## 'ggman lsr'
+### 'ggman lsr'
 
 To list the remotes of all installed repositories, use `ggman lsr`. 
 It takes an optional argument `--canonical` which, if provided, cause ggman to print canonical urls instead of the provided ones. 
 
-## 'ggman fetch' and 'ggman pull'
+### 'ggman fetch' and 'ggman pull'
 
 To fetch data for all repositories, or to run git pull, use `ggman fetch` and `ggman pull` respectively. 
 
+### 'ggman clone'
+
+To clone a new repoistory into the respective location, use `ggman clone` with the name of the repository as the argument, for example:
+
+```bash
+ggman clone git@github.com:hello/world.git
+```
+
+which will clone the the hello world repository into  `$GGROOT/github.com/hello/world`. 
+This clonening not only works for the canonical repository url, but for any other url as well. 
+For example:
+
+```bash
+ggman clone https://github.com/hello/world.git
+```
+
+will do the same as the above command. 
 
 
 ## LICENSE

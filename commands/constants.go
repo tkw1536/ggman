@@ -5,10 +5,11 @@ package commands
 
 // ErrorCodeCustom is a return code that can be used by custom commands
 const ErrorCodeCustom int = 1
+const stringRepoAlreadyExists string = "Unable to clone repository, another git repository already exists in target location. "
 
 // ErrorUnknownCommand is the return code when an unknown command is called
 const ErrorUnknownCommand int = 2
-const stringUnknownCommand string = "Unknown command. Must be one of 'root', 'ls', 'lsr', 'where', 'canon', 'comps', 'fetch', 'pull', 'fix'. "
+const stringUnknownCommand string = "Unknown command. Must be one of 'root', 'ls', 'lsr', 'where', 'canon', 'comps', 'fetch', 'pull', 'fix', 'clone'. "
 
 // ErrorGeneralParsArgs is the return code when generic argument parsing fails
 const ErrorGeneralParsArgs int = 3
@@ -30,6 +31,8 @@ const stringCompsTakesOneArgument string = "Wrong number of arguments: 'comps' t
 const stringFetchTakesNoArguments string = "Wrong number of arguments: 'fetch' takes no arguments. "
 const stringPullTakesNoArguments string = "Wrong number of arguments: 'pull' takes no arguments. "
 const stringFixArguments string = "Wrong number of arguments: Unknown argument: 'fix' must be called with either '--simulate' or no arguments."
+const stringCloneNoFor string = "Wrong number of arguments: 'clone' takes no 'for' argument. "
+const stringCloneTakesOneArgument string = "Wrong number of arguments: 'clone' takes exactly one argument. "
 
 // ErrorMissingConfig is the return code when the configuration is missing or invalid
 const ErrorMissingConfig int = 5

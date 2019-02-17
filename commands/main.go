@@ -31,6 +31,8 @@ func Main(args []string) (retval int, err string) {
 		retval, err = PullCommand(parsed)
 	case "fix":
 		retval, err = FixCommand(parsed)
+	case "clone":
+		retval, err = CloneCommand(parsed)
 	default:
 		err = stringUnknownCommand
 		retval = ErrorUnknownCommand

@@ -18,12 +18,17 @@ build: build-local build-linux build-macos build-windows
 build-local: deps
 	$(GOBUILD) -o $(OUT_DIR)/$(BINARY_NAME)
 build-linux: deps
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(OUT_DIR)/$(BINARY_UNIX)
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags="-s -w" -o $(OUT_DIR)/$(BINARY_UNIX)
 build-macos: deps
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOBUILD) -o $(OUT_DIR)/$(BINARY_MACOS)
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOBUILD) -ldflags="-s -w" -o $(OUT_DIR)/$(BINARY_MACOS)
 build-windows: deps
 	go get golang.org/x/sys/windows
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -o $(OUT_DIR)/$(BINARY_WINDOWS)
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags="-s -w" -o $(OUT_DIR)/$(BINARY_WINDOWS)
+build-upx: build-linux build-macos build-windows
+	upx --brute $(OUT_DIR)/$(BINARY_UNIX)
+	upx --brute $(OUT_DIR)/$(BINARY_MACOS)
+	upx --brute $(OUT_DIR)/$(BINARY_WINDOWS)
+
 
 test: testdeps
 	$(GOTEST) -v ./...
