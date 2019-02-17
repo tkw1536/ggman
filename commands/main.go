@@ -25,6 +25,10 @@ func Main(args []string) (retval int, err string) {
 		retval, err = CanonCommand(parsed)
 	case "comps":
 		retval, err = CompsCommand(parsed)
+	case "fetch":
+		retval, err = FetchCommand(parsed)
+	case "pull":
+		retval, err = PullCommand(parsed)
 	default:
 		err = stringUnknownCommand
 		retval = ErrorUnknownCommand

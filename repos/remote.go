@@ -6,7 +6,7 @@ import (
 	"gopkg.in/src-d/go-git.v4"
 )
 
-// GetRemote gets the remote of a repository or nu
+// GetRemote gets the remote of a repository
 func GetRemote(filepath string) (uri string, err error) {
 	// open filepath or error out
 	repo, err := git.PlainOpen(filepath)
@@ -20,7 +20,7 @@ func GetRemote(filepath string) (uri string, err error) {
 		return
 	}
 
-	// get the canonical remote (commonly named 'origin'
+	// get the canonical remote (commonly named 'origin')
 	canon, err := getCanonicalRemote(remotes, "origin")
 	if err != nil {
 		return

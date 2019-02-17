@@ -118,6 +118,12 @@ To resolve a canonical url with a CANFILE, simply omit the `CANSPEC` attribute o
 To list the remotes of all installed repositories, use `ggman lsr`. 
 It takes an optional argument `--canonical` which, if provided, cause ggman to print canonical urls instead of the provided ones. 
 
+## 'ggman fetch' and 'ggman pull'
+
+To fetch data for all repositories, or to run git pull, use `ggman fetch` and `ggman pull` respectively. 
+
+
+
 ## LICENSE
 
 `ggman` is licensed under the terms of the MIT LICENSE, see [LICENSE](LICENSE). 
