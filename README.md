@@ -129,7 +129,7 @@ It takes an optional argument `--canonical` which, if provided, cause ggman to p
 
 To fetch data for all repositories, or to run git pull, use `ggman fetch` and `ggman pull` respectively. 
 
-### 'ggman clone'
+### 'ggman clone' and 'ggman link'
 
 To clone a new repoistory into the respective location, use `ggman clone` with the name of the repository as the argument, for example:
 
@@ -146,6 +146,22 @@ ggman clone https://github.com/hello/world.git
 ```
 
 will do the same as the above command. 
+
+However sometimes for various reasons a repository needs to live in a non-standard location outside of `GGROOT`. 
+For example, in the case of `go` packages these need to live within `$GOPATH`. 
+In this case, it is sometimes useful to symlink these repositories into the existing directory structure. 
+For this purpose, the `ggman link` command exists. 
+This takes the path to the local clone of an existing repository, which will then be linked into the existing structure. 
+For example
+
+```bash
+ggman link $HOME/go/src/github.com/hello/world
+```
+
+would link the repository in `$HOME/go/src/github.com/hello/world` into the right location. 
+Here, this corresponds to `$GGROOT/github.com/hello/world`. 
+
+
 
 
 ## LICENSE
