@@ -13,30 +13,50 @@ import (
 type GGArgs struct {
 	Command string
 	Pattern string
+	Help    bool
 	Args    []string
 }
 
+const helpLongForm = "--help"
+const helpShortForm = "-h"
+const helpLiteralForm = "help"
+
+const forLongForm = "--for"
+const forShortForm = "-f"
+const forLiteralForm = "for"
+
 // ParseArgs parses arguments from the command line
 func ParseArgs(args []string) (parsed *GGArgs, err string) {
+
+	// if we have no arguments, that is an error
 	count := len(args)
 	if count == 0 {
 		err = stringNeedOneArgument
 		return
 	}
 
-	if args[0] == "for" {
+	// if the first argument is help, everything else is ignroed
+	head := args[0]
+
+	// if the first argument is help, return help
+	if head == helpLiteralForm || head == helpShortForm || head == helpLongForm {
+		parsed = &GGArgs{"", "", true, args[1:]}
+		return
+	}
+
+	if head == forLiteralForm || head == forShortForm || head == forLongForm {
 		// gg for $pattern $command
 		if count < 3 {
 			err = stringNeedTwoAfterFor
 			return
 		}
 
-		parsed = &GGArgs{args[2], args[1], args[3:]}
+		parsed = &GGArgs{args[2], args[1], false, args[3:]}
 		return
 	}
 
 	// gg $pattern $command
-	parsed = &GGArgs{args[0], "", args[1:]}
+	parsed = &GGArgs{args[0], "", false, args[1:]}
 	return
 }
 

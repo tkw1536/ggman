@@ -18,22 +18,40 @@ func TestParseArgs(t *testing.T) {
 		{[]string{}, nil},
 
 		// command without arguments => ok
-		{[]string{"cmd"}, &GGArgs{"cmd", "", []string{}}},
+		{[]string{"cmd"}, &GGArgs{"cmd", "", false, []string{}}},
+
+		// command with help => help flag set
+		{[]string{"help", "cmd"}, &GGArgs{"", "", true, []string{"cmd"}}},
+		{[]string{"--help", "cmd"}, &GGArgs{"", "", true, []string{"cmd"}}},
+		{[]string{"-h", "cmd"}, &GGArgs{"", "", true, []string{"cmd"}}},
 
 		// command with arguments => ok
-		{[]string{"cmd", "a1", "a2"}, &GGArgs{"cmd", "", []string{"a1", "a2"}}},
+		{[]string{"cmd", "a1", "a2"}, &GGArgs{"cmd", "", false, []string{"a1", "a2"}}},
+
+		// command with help => passed through
+		{[]string{"cmd", "help", "a1"}, &GGArgs{"cmd", "", false, []string{"help", "a1"}}},
+		{[]string{"cmd", "--help", "a1"}, &GGArgs{"cmd", "", false, []string{"--help", "a1"}}},
+		{[]string{"cmd", "-h", "a1"}, &GGArgs{"cmd", "", false, []string{"-h", "a1"}}},
 
 		// only a for => parsing fails
 		{[]string{"for"}, nil},
+		{[]string{"--for"}, nil},
+		{[]string{"-f"}, nil},
 
 		// for without command => parsing fails
 		{[]string{"for", "match"}, nil},
+		{[]string{"--for", "match"}, nil},
+		{[]string{"-f", "match"}, nil},
 
 		// for with command => ok
-		{[]string{"for", "match", "cmd"}, &GGArgs{"cmd", "match", []string{}}},
+		{[]string{"for", "match", "cmd"}, &GGArgs{"cmd", "match", false, []string{}}},
+		{[]string{"--for", "match", "cmd"}, &GGArgs{"cmd", "match", false, []string{}}},
+		{[]string{"-f", "match", "cmd"}, &GGArgs{"cmd", "match", false, []string{}}},
 
 		// for with command and arguments => ok
-		{[]string{"for", "match", "cmd", "a1", "a2"}, &GGArgs{"cmd", "match", []string{"a1", "a2"}}},
+		{[]string{"for", "match", "cmd", "a1", "a2"}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}},
+		{[]string{"--for", "match", "cmd", "a1", "a2"}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}},
+		{[]string{"-f", "match", "cmd", "a1", "a2"}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}},
 	}
 
 	for _, row := range table {

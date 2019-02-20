@@ -1,6 +1,9 @@
 package commands
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 // Main is the main entry point for the program
 func Main(args []string) (retval int, err string) {
@@ -8,6 +11,14 @@ func Main(args []string) (retval int, err string) {
 	parsed, err := ParseArgs(os.Args[1:])
 	if err != "" {
 		retval = ErrorGeneralParsArgs
+		return
+	}
+
+	// for help, print help
+	if parsed.Help {
+		fmt.Println(stringUsage)
+		retval = 0
+		err = ""
 		return
 	}
 

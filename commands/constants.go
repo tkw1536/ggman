@@ -2,6 +2,22 @@ package commands
 
 // This file defines various resources used by all commands
 // such as strings
+const stringUsage string = `Usage: ggman [help|--help|-h] [for|--for|-f FILTER] COMMAND [ARGS...]
+
+	help, --help, -h
+		Print this usage dialog and exit
+	
+	for FILTER, --for FILTER, -f FILTER
+		Filter the list of repositories to apply command to by FILTER. 
+	
+	COMMAND [ARGS...]
+		Command to call. One of 'root', 'ls', 'lsr', 'where', 'canon',
+		'comps', 'fetch', 'pull', 'fix', 'clone', 'link', 'license'.
+		See individual commands for more help. 
+
+ggman is licensed under the terms of the MIT License. Use 'ggman license'
+to view licensing information. 
+`
 
 // ErrorCodeCustom is a return code that can be used by custom commands
 const ErrorCodeCustom int = 1
