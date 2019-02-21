@@ -3,13 +3,13 @@ package commands
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman/src/args"
 	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
 )
 
 // CanonCommand is the entry point for the canon command
-func CanonCommand(parsed *args.GGArgs) (retval int, err string) {
+func CanonCommand(parsed *program.GGArgs) (retval int, err string) {
 	// 'canon' takes no for
 	retval, err = parsed.EnsureNoFor()
 	if retval != 0 {
@@ -32,7 +32,7 @@ func CanonCommand(parsed *args.GGArgs) (retval int, err string) {
 		lines = append(lines, repos.CanLine{Pattern: "", Canonical: parsed.Args[1]})
 	} else {
 		// else read the canon file
-		lines, e = args.GetCanonOrPanic()
+		lines, e = program.GetCanonOrPanic()
 		if e != nil {
 			err = constants.StringInvalidCanfile
 			retval = constants.ErrorMissingConfig

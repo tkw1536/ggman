@@ -3,13 +3,13 @@ package commands
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman/src/args"
 	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
 )
 
 // LSCommand is the entry point for the ls command
-func LSCommand(parsed *args.GGArgs) (retval int, err string) {
+func LSCommand(parsed *program.GGArgs) (retval int, err string) {
 
 	// read the --exit-code flag
 	exitCodeFlag, ie := parsed.ParseSingleFlag("--exit-code")
@@ -20,7 +20,7 @@ func LSCommand(parsed *args.GGArgs) (retval int, err string) {
 	}
 
 	// get the root directory or panic
-	root, e := args.GetRootOrPanic()
+	root, e := program.GetRootOrPanic()
 	if e != nil {
 		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig

@@ -5,14 +5,14 @@ import (
 	"os"
 	"path"
 
-	"github.com/tkw1536/ggman/src/args"
 	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
 	"gopkg.in/src-d/go-git.v4"
 )
 
 // CloneCommand is the entry point for the clone command
-func CloneCommand(parsed *args.GGArgs) (retval int, err string) {
+func CloneCommand(parsed *program.GGArgs) (retval int, err string) {
 	// 'clone' takes no for
 	retval, err = parsed.EnsureNoFor()
 	if retval != 0 {
@@ -35,7 +35,7 @@ func CloneCommand(parsed *args.GGArgs) (retval int, err string) {
 	}
 
 	// get the canfile
-	lines, e := args.GetCanonOrPanic()
+	lines, e := program.GetCanonOrPanic()
 	if e != nil {
 		err = constants.StringInvalidCanfile
 		retval = constants.ErrorMissingConfig
@@ -46,7 +46,7 @@ func CloneCommand(parsed *args.GGArgs) (retval int, err string) {
 	cloneURI := remote.CanonicalWith(lines)
 
 	// get the root directory or panic
-	root, e := args.GetRootOrPanic()
+	root, e := program.GetRootOrPanic()
 	if e != nil {
 		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig

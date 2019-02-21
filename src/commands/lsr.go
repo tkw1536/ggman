@@ -3,13 +3,13 @@ package commands
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman/src/args"
 	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
 )
 
 // LSRCommand is the entry point for the lsr command
-func LSRCommand(parsed *args.GGArgs) (retval int, err string) {
+func LSRCommand(parsed *program.GGArgs) (retval int, err string) {
 
 	// read the --exit-code flag
 	shouldCanon, ie := parsed.ParseSingleFlag("--canonical")
@@ -22,7 +22,7 @@ func LSRCommand(parsed *args.GGArgs) (retval int, err string) {
 	var lines []repos.CanLine
 	var e error
 	if shouldCanon {
-		lines, e = args.GetCanonOrPanic()
+		lines, e = program.GetCanonOrPanic()
 		if e != nil {
 			err = constants.StringInvalidCanfile
 			retval = constants.ErrorMissingConfig
@@ -31,7 +31,7 @@ func LSRCommand(parsed *args.GGArgs) (retval int, err string) {
 	}
 
 	// get the root directory or panic
-	root, e := args.GetRootOrPanic()
+	root, e := program.GetRootOrPanic()
 	if e != nil {
 		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig
