@@ -105,3 +105,38 @@ func TestGGArgs_ParseSingleFlag(t *testing.T) {
 		})
 	}
 }
+
+func TestGGArgs_EnsureNoFor(t *testing.T) {
+	type fields struct {
+		Command string
+		Pattern string
+		Help    bool
+		Args    []string
+	}
+	tests := []struct {
+		name       string
+		fields     fields
+		wantRetval int
+		wantErr    string
+	}{
+		{"no for", fields{"example", "", false, []string{}}, 0, ""},
+		{"provided filter", fields{"example", "test", false, []string{}}, ErrorSpecificParseArgs, "Wrong number of arguments: 'example' takes no 'for' argument. "},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			parsed := &GGArgs{
+				Command: tt.fields.Command,
+				Pattern: tt.fields.Pattern,
+				Help:    tt.fields.Help,
+				Args:    tt.fields.Args,
+			}
+			gotRetval, gotErr := parsed.EnsureNoFor()
+			if gotRetval != tt.wantRetval {
+				t.Errorf("GGArgs.EnsureNoFor() gotRetval = %v, want %v", gotRetval, tt.wantRetval)
+			}
+			if gotErr != tt.wantErr {
+				t.Errorf("GGArgs.EnsureNoFor() gotErr = %v, want %v", gotErr, tt.wantErr)
+			}
+		})
+	}
+}

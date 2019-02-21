@@ -2,10 +2,9 @@ package commands
 
 // RootCommand is the entry point for the clone command
 func RootCommand(parsed *GGArgs) (retval int, err string) {
-	// 'root' takes not for
-	if parsed.Pattern != "" {
-		err = stringRootNoFor
-		retval = ErrorSpecificParseArgs
+	// 'root' takes no for
+	retval, err = parsed.EnsureNoFor()
+	if retval != 0 {
 		return
 	}
 

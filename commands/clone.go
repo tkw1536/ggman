@@ -11,11 +11,9 @@ import (
 
 // CloneCommand is the entry point for the clone command
 func CloneCommand(parsed *GGArgs) (retval int, err string) {
-
-	// 'clone' takes not for
-	if parsed.Pattern != "" {
-		err = stringCloneNoFor
-		retval = ErrorSpecificParseArgs
+	// 'clone' takes no for
+	retval, err = parsed.EnsureNoFor()
+	if retval != 0 {
 		return
 	}
 

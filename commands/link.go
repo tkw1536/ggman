@@ -11,11 +11,9 @@ import (
 
 // LinkCommand is the entry point for the link command
 func LinkCommand(parsed *GGArgs) (retval int, err string) {
-
-	// 'link' takes not for
-	if parsed.Pattern != "" {
-		err = stringLinkNoFor
-		retval = ErrorSpecificParseArgs
+	// 'link' takes no for
+	retval, err = parsed.EnsureNoFor()
+	if retval != 0 {
 		return
 	}
 

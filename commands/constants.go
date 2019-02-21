@@ -37,22 +37,17 @@ const stringNeedTwoAfterFor string = "Unable to parse arguments: At least two ar
 
 // ErrorSpecificParseArgs is the return code when specific argument parsing fails
 const ErrorSpecificParseArgs int = 4
-const stringRootNoFor string = "Wrong number of arguments: 'root' takes no 'for' argument. "
+const stringCmdNoFor string = "Wrong number of arguments: '%s' takes no 'for' argument. "
 const stringRootTakesNoArguments string = "Wrong number of arguments: 'root' takes no arguments. "
 const stringLSArguments string = "Unknown argument: 'ls' must be called with either '--exit-code' or no arguments. "
 const stringLSRArguments string = "Unknown argument: 'lsr' must be called with either '--canonical' or no arguments. "
-const stringWhereNoFor string = "Wrong number of arguments: 'where' takes no 'for' argument. "
 const stringWhereTakesOneArgument string = "Wrong number of arguments: 'where' takes exactly one arguments. "
-const stringCanonNoFor string = "Wrong number of arguments: 'canon' takes no 'for' argument. "
 const stringCanonTakesOneOrTwoArguments string = "Wrong number of arguments: 'canon' takes exactly one or exactly two arguments. "
-const stringCompsNoFor string = "Wrong number of arguments: 'comps' takes no 'for' argument. "
 const stringCompsTakesOneArgument string = "Wrong number of arguments: 'comps' takes exactly one argument. "
 const stringFetchTakesNoArguments string = "Wrong number of arguments: 'fetch' takes no arguments. "
 const stringPullTakesNoArguments string = "Wrong number of arguments: 'pull' takes no arguments. "
 const stringFixArguments string = "Wrong number of arguments: Unknown argument: 'fix' must be called with either '--simulate' or no arguments."
-const stringCloneNoFor string = "Wrong number of arguments: 'clone' takes no 'for' argument. "
 const stringCloneTakesOneArgument string = "Wrong number of arguments: 'clone' takes exactly one argument. "
-const stringLinkNoFor string = "Wrong number of arguments: 'link' takes no 'for' argument. "
 const stringLinkTakesOneArgument string = "Wrong number of arguments: 'link' takes exactly one argument. "
 
 // ErrorMissingConfig is the return code when the configuration is missing or invalid

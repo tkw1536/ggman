@@ -9,9 +9,8 @@ import (
 // CanonCommand is the entry point for the canon command
 func CanonCommand(parsed *GGArgs) (retval int, err string) {
 	// 'canon' takes no for
-	if parsed.Pattern != "" {
-		err = stringCanonNoFor
-		retval = ErrorSpecificParseArgs
+	retval, err = parsed.EnsureNoFor()
+	if retval != 0 {
 		return
 	}
 

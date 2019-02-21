@@ -9,9 +9,8 @@ import (
 // CompsCommand is the entry point for the compos command
 func CompsCommand(parsed *GGArgs) (retval int, err string) {
 	// 'comps' takes no for
-	if parsed.Pattern != "" {
-		err = stringCompsNoFor
-		retval = ErrorSpecificParseArgs
+	retval, err = parsed.EnsureNoFor()
+	if retval != 0 {
 		return
 	}
 

@@ -8,10 +8,9 @@ import (
 
 // WhereCommand is the entry point for the where command
 func WhereCommand(parsed *GGArgs) (retval int, err string) {
-	// we have an error
-	if parsed.Pattern != "" {
-		err = stringWhereNoFor
-		retval = ErrorSpecificParseArgs
+	// 'where' takes no for
+	retval, err = parsed.EnsureNoFor()
+	if retval != 0 {
 		return
 	}
 

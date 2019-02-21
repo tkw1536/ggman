@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/tkw1536/ggman/repos"
@@ -76,6 +77,16 @@ func (parsed *GGArgs) ParseSingleFlag(flag string) (value bool, err bool) {
 	// and return the error
 	value = la == 1
 	err = false
+	return
+}
+
+// EnsureNoFor markes a command as taking no for arguments
+func (parsed *GGArgs) EnsureNoFor() (retval int, err string) {
+	if parsed.Pattern != "" {
+		err = fmt.Sprintf(stringCmdNoFor, parsed.Command)
+		retval = ErrorSpecificParseArgs
+	}
+
 	return
 }
 
