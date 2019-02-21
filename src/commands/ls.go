@@ -3,8 +3,8 @@ package commands
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/repos"
+	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/repos"
 )
 
 // LSCommand is the entry point for the ls command

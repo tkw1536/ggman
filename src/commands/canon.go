@@ -3,8 +3,8 @@ package commands
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/repos"
+	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/repos"
 )
 
 // CanonCommand is the entry point for the canon command

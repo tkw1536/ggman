@@ -5,8 +5,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/repos"
+	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/repos"
 	"gopkg.in/src-d/go-git.v4"
 )
 

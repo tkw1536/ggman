@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tkw1536/ggman/utils"
+	"github.com/tkw1536/ggman/src/utils"
 )
 
 // We support three types of urls:

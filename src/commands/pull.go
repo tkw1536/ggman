@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/repos"
+	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/repos"
 )
 
-// FetchCommand is the entry point for the fetch command
-func FetchCommand(parsed *GGArgs) (retval int, err string) {
+// PullCommand is the entry point for the fetch command
+func PullCommand(parsed *GGArgs) (retval int, err string) {
 	la := len(parsed.Args)
 	// we accept no arguments
 	if la != 0 {
-		err = constants.StringFetchTakesNoArguments
+		err = constants.StringPullTakesNoArguments
 		retval = constants.ErrorSpecificParseArgs
 		return
 	}
@@ -30,10 +30,10 @@ func FetchCommand(parsed *GGArgs) (retval int, err string) {
 	rs := repos.Repos(root, parsed.Pattern)
 	hasError := false
 
-	// and fetch them
+	// and pull them
 	for _, repo := range rs {
-		fmt.Printf("Fetching %q\n", repo)
-		if e := repos.FetchRepo(repo); e != nil {
+		fmt.Printf("Pulling %q\n", repo)
+		if e := repos.PullRepo(repo); e != nil {
 			fmt.Fprintln(os.Stderr, e.Error())
 			hasError = true
 		}

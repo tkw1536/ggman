@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/tkw1536/ggman/commands"
+	"github.com/tkw1536/ggman/src/commands"
 )
 
 func main() {

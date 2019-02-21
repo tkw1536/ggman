@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/utils"
+	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/utils"
 )
 
 const tWL = 80

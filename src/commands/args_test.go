@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tkw1536/ggman/constants"
+	"github.com/tkw1536/ggman/src/constants"
 )
 
 func TestParseArgs(t *testing.T) {

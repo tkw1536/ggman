@@ -1,6 +1,6 @@
 package commands
 
-import "github.com/tkw1536/ggman/constants"
+import "github.com/tkw1536/ggman/src/constants"
 
 // RootCommand is the entry point for the clone command
 func RootCommand(parsed *GGArgs) (retval int, err string) {

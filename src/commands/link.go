@@ -6,8 +6,8 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/repos"
+	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/repos"
 )
 
 // LinkCommand is the entry point for the link command
