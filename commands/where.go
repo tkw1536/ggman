@@ -17,7 +17,7 @@ func WhereCommand(parsed *GGArgs) (retval int, err string) {
 
 	// we accept no arguments
 	if len(parsed.Args) != 1 {
-		err = stringWhereTakesOneArgument
+		err = constants.StringWhereTakesOneArgument
 		retval = constants.ErrorSpecificParseArgs
 		return
 	}
@@ -25,7 +25,7 @@ func WhereCommand(parsed *GGArgs) (retval int, err string) {
 	// get the root directory or panic
 	root, e := getRootOrPanic()
 	if e != nil {
-		err = stringUnableParseRootDirectory
+		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig
 		return
 	}
@@ -33,7 +33,7 @@ func WhereCommand(parsed *GGArgs) (retval int, err string) {
 	// parse the repository in questions
 	r, e := repos.NewRepoURI(parsed.Args[0])
 	if e != nil {
-		err = stringUnparsedRepoName
+		err = constants.StringUnparsedRepoName
 		retval = constants.ErrorInvalidRepo
 		return
 	}

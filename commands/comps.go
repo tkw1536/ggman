@@ -17,7 +17,7 @@ func CompsCommand(parsed *GGArgs) (retval int, err string) {
 
 	// we accept one argument
 	if len(parsed.Args) != 1 {
-		err = stringCompsTakesOneArgument
+		err = constants.StringCompsTakesOneArgument
 		retval = constants.ErrorSpecificParseArgs
 		return
 	}
@@ -25,7 +25,7 @@ func CompsCommand(parsed *GGArgs) (retval int, err string) {
 	// parse the repo uri
 	uri, e := repos.NewRepoURI(parsed.Args[0])
 	if e != nil {
-		err = stringUnparsedRepoName
+		err = constants.StringUnparsedRepoName
 		retval = constants.ErrorInvalidRepo
 		return
 	}

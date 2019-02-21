@@ -5,10 +5,17 @@ import (
 	"os"
 
 	"github.com/tkw1536/ggman/constants"
+	"github.com/tkw1536/ggman/utils"
 )
+
+const tWL = 80
 
 // Main is the main entry point for the program
 func Main(args []string) (retval int, err string) {
+	defer func() {
+		err = utils.WrapStringPreserveJ(err, tWL)
+	}()
+
 	// parse the arguments
 	parsed, err := ParseArgs(os.Args[1:])
 	if err != "" {
@@ -18,7 +25,7 @@ func Main(args []string) (retval int, err string) {
 
 	// for help, print help
 	if parsed.Help {
-		fmt.Println(stringUsage)
+		fmt.Println(utils.WrapStringPreserveJ(constants.StringUsage, tWL))
 		retval = 0
 		err = ""
 		return
@@ -51,7 +58,7 @@ func Main(args []string) (retval int, err string) {
 	case "license":
 		retval, err = LicenseCommand(parsed)
 	default:
-		err = stringUnknownCommand
+		err = constants.StringUnknownCommand
 		retval = constants.ErrorUnknownCommand
 	}
 

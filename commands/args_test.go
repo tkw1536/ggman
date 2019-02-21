@@ -17,7 +17,7 @@ func TestParseArgs(t *testing.T) {
 		wantParsed *GGArgs
 		wantErr    string
 	}{
-		{"no arguments", args{[]string{}}, nil, stringNeedOneArgument},
+		{"no arguments", args{[]string{}}, nil, constants.StringNeedOneArgument},
 
 		{"command without arguments", args{[]string{"cmd"}}, &GGArgs{"cmd", "", false, []string{}}, ""},
 
@@ -31,13 +31,13 @@ func TestParseArgs(t *testing.T) {
 		{"command with help (2)", args{[]string{"cmd", "--help", "a1"}}, &GGArgs{"cmd", "", false, []string{"--help", "a1"}}, ""},
 		{"command with help (3)", args{[]string{"cmd", "-h", "a1"}}, &GGArgs{"cmd", "", false, []string{"-h", "a1"}}, ""},
 
-		{"only a for (1)", args{[]string{"for"}}, nil, stringNeedTwoAfterFor},
-		{"only a for (2)", args{[]string{"--for"}}, nil, stringNeedTwoAfterFor},
-		{"only a for (3)", args{[]string{"-f"}}, nil, stringNeedTwoAfterFor},
+		{"only a for (1)", args{[]string{"for"}}, nil, constants.StringNeedTwoAfterFor},
+		{"only a for (2)", args{[]string{"--for"}}, nil, constants.StringNeedTwoAfterFor},
+		{"only a for (3)", args{[]string{"-f"}}, nil, constants.StringNeedTwoAfterFor},
 
-		{"for without command (1)", args{[]string{"for", "match"}}, nil, stringNeedTwoAfterFor},
-		{"for without command (2)", args{[]string{"--for", "match"}}, nil, stringNeedTwoAfterFor},
-		{"for without command (3)", args{[]string{"-f", "match"}}, nil, stringNeedTwoAfterFor},
+		{"for without command (1)", args{[]string{"for", "match"}}, nil, constants.StringNeedTwoAfterFor},
+		{"for without command (2)", args{[]string{"--for", "match"}}, nil, constants.StringNeedTwoAfterFor},
+		{"for without command (3)", args{[]string{"-f", "match"}}, nil, constants.StringNeedTwoAfterFor},
 
 		{"for with command (1)", args{[]string{"for", "match", "cmd"}}, &GGArgs{"cmd", "match", false, []string{}}, ""},
 		{"for with command (2)", args{[]string{"--for", "match", "cmd"}}, &GGArgs{"cmd", "match", false, []string{}}, ""},

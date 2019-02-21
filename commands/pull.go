@@ -13,7 +13,7 @@ func PullCommand(parsed *GGArgs) (retval int, err string) {
 	la := len(parsed.Args)
 	// we accept no arguments
 	if la != 0 {
-		err = stringPullTakesNoArguments
+		err = constants.StringPullTakesNoArguments
 		retval = constants.ErrorSpecificParseArgs
 		return
 	}
@@ -21,7 +21,7 @@ func PullCommand(parsed *GGArgs) (retval int, err string) {
 	// get the root directory or panic
 	root, e := getRootOrPanic()
 	if e != nil {
-		err = stringUnableParseRootDirectory
+		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig
 		return
 	}

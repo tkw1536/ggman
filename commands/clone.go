@@ -20,7 +20,7 @@ func CloneCommand(parsed *GGArgs) (retval int, err string) {
 
 	// read the repo to clone
 	if len(parsed.Args) != 1 {
-		err = stringCloneTakesOneArgument
+		err = constants.StringCloneTakesOneArgument
 		retval = constants.ErrorSpecificParseArgs
 		return
 	}
@@ -28,7 +28,7 @@ func CloneCommand(parsed *GGArgs) (retval int, err string) {
 	// parse the repo uri
 	remote, e := repos.NewRepoURI(parsed.Args[0])
 	if e != nil {
-		err = stringUnparsedRepoName
+		err = constants.StringUnparsedRepoName
 		retval = constants.ErrorInvalidRepo
 		return
 	}
@@ -36,7 +36,7 @@ func CloneCommand(parsed *GGArgs) (retval int, err string) {
 	// get the canfile
 	lines, e := getCanonOrPanic()
 	if e != nil {
-		err = stringInvalidCanfile
+		err = constants.StringInvalidCanfile
 		retval = constants.ErrorMissingConfig
 		return
 	}
@@ -47,7 +47,7 @@ func CloneCommand(parsed *GGArgs) (retval int, err string) {
 	// get the root directory or panic
 	root, e := getRootOrPanic()
 	if e != nil {
-		err = stringUnableParseRootDirectory
+		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig
 		return
 	}
@@ -65,7 +65,7 @@ func cloneRepository(from string, to string) (retval int, err string) {
 
 	// if we can open a repository in 'to', it already exists
 	if _, e := git.PlainOpen(to); e == nil {
-		err = stringRepoAlreadyExists
+		err = constants.StringRepoAlreadyExists
 		retval = constants.ErrorCodeCustom
 		return
 	}

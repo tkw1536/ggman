@@ -33,7 +33,7 @@ func ParseArgs(args []string) (parsed *GGArgs, err string) {
 	// if we have no arguments, that is an error
 	count := len(args)
 	if count == 0 {
-		err = stringNeedOneArgument
+		err = constants.StringNeedOneArgument
 		return
 	}
 
@@ -49,7 +49,7 @@ func ParseArgs(args []string) (parsed *GGArgs, err string) {
 	if head == forLiteralForm || head == forShortForm || head == forLongForm {
 		// gg for $pattern $command
 		if count < 3 {
-			err = stringNeedTwoAfterFor
+			err = constants.StringNeedTwoAfterFor
 			return
 		}
 
@@ -84,7 +84,7 @@ func (parsed *GGArgs) ParseSingleFlag(flag string) (value bool, err bool) {
 // EnsureNoFor markes a command as taking no for arguments
 func (parsed *GGArgs) EnsureNoFor() (retval int, err string) {
 	if parsed.Pattern != "" {
-		err = fmt.Sprintf(stringCmdNoFor, parsed.Command)
+		err = fmt.Sprintf(constants.StringCmdNoFor, parsed.Command)
 		retval = constants.ErrorSpecificParseArgs
 	}
 

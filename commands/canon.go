@@ -18,7 +18,7 @@ func CanonCommand(parsed *GGArgs) (retval int, err string) {
 	// we accept one arguments
 	la := len(parsed.Args)
 	if la > 2 || la == 0 {
-		err = stringCanonTakesOneOrTwoArguments
+		err = constants.StringCanonTakesOneOrTwoArguments
 		retval = constants.ErrorSpecificParseArgs
 		return
 	}
@@ -33,7 +33,7 @@ func CanonCommand(parsed *GGArgs) (retval int, err string) {
 		// else read the canon file
 		lines, e = getCanonOrPanic()
 		if e != nil {
-			err = stringInvalidCanfile
+			err = constants.StringInvalidCanfile
 			retval = constants.ErrorMissingConfig
 			return
 		}
@@ -48,7 +48,7 @@ func printCanonOrError(lines []repos.CanLine, repo string) (retval int, err stri
 	// parse the repo uri
 	uri, e := repos.NewRepoURI(repo)
 	if e != nil {
-		err = stringUnparsedRepoName
+		err = constants.StringUnparsedRepoName
 		retval = constants.ErrorInvalidRepo
 		return
 	}

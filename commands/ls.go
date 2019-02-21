@@ -13,7 +13,7 @@ func LSCommand(parsed *GGArgs) (retval int, err string) {
 	// read the --exit-code flag
 	exitCodeFlag, ie := parsed.ParseSingleFlag("--exit-code")
 	if ie {
-		err = stringLSArguments
+		err = constants.StringLSArguments
 		retval = constants.ErrorSpecificParseArgs
 		return
 	}
@@ -21,7 +21,7 @@ func LSCommand(parsed *GGArgs) (retval int, err string) {
 	// get the root directory or panic
 	root, e := getRootOrPanic()
 	if e != nil {
-		err = stringUnableParseRootDirectory
+		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig
 		return
 	}

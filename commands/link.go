@@ -20,7 +20,7 @@ func LinkCommand(parsed *GGArgs) (retval int, err string) {
 
 	// read the repo to link
 	if len(parsed.Args) != 1 {
-		err = stringLinkTakesOneArgument
+		err = constants.StringLinkTakesOneArgument
 		retval = constants.ErrorSpecificParseArgs
 		return
 	}
@@ -28,7 +28,7 @@ func LinkCommand(parsed *GGArgs) (retval int, err string) {
 	// get the root directory or panic
 	root, e := getRootOrPanic()
 	if e != nil {
-		err = stringUnableParseRootDirectory
+		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig
 		return
 	}
@@ -44,7 +44,7 @@ func linkRepository(from string, root string) (retval int, err string) {
 	// open the source repository and get the remotre
 	r, e := repos.GetRemote(from)
 	if e != nil {
-		err = stringLinkDoesNotExist
+		err = constants.StringLinkDoesNotExist
 		retval = constants.ErrorCodeCustom
 		return
 	}
@@ -63,14 +63,14 @@ func linkRepository(from string, root string) (retval int, err string) {
 
 	// if it's the same path, we throw an error
 	if from == to {
-		err = stringLinkSamePath
+		err = constants.StringLinkSamePath
 		retval = constants.ErrorCodeCustom
 		return
 	}
 
 	// make sure it doesn't exist
 	if _, e := os.Stat(to); !os.IsNotExist(e) {
-		err = stringLinkAlreadyExists
+		err = constants.StringLinkAlreadyExists
 		retval = constants.ErrorCodeCustom
 		return
 	}

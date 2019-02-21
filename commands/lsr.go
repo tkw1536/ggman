@@ -13,7 +13,7 @@ func LSRCommand(parsed *GGArgs) (retval int, err string) {
 	// read the --exit-code flag
 	shouldCanon, ie := parsed.ParseSingleFlag("--canonical")
 	if ie {
-		err = stringLSArguments
+		err = constants.StringLSArguments
 		retval = constants.ErrorSpecificParseArgs
 		return
 	}
@@ -23,7 +23,7 @@ func LSRCommand(parsed *GGArgs) (retval int, err string) {
 	if shouldCanon {
 		lines, e = getCanonOrPanic()
 		if e != nil {
-			err = stringInvalidCanfile
+			err = constants.StringInvalidCanfile
 			retval = constants.ErrorMissingConfig
 			return
 		}
@@ -32,7 +32,7 @@ func LSRCommand(parsed *GGArgs) (retval int, err string) {
 	// get the root directory or panic
 	root, e := getRootOrPanic()
 	if e != nil {
-		err = stringUnableParseRootDirectory
+		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig
 		return
 	}

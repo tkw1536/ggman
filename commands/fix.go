@@ -14,7 +14,7 @@ func FixCommand(parsed *GGArgs) (retval int, err string) {
 	// read the --simulate flag
 	simulateFlag, ie := parsed.ParseSingleFlag("--simulate")
 	if ie {
-		err = stringFixArguments
+		err = constants.StringFixArguments
 		retval = constants.ErrorSpecificParseArgs
 		return
 	}
@@ -22,7 +22,7 @@ func FixCommand(parsed *GGArgs) (retval int, err string) {
 	// get the canfile
 	lines, e := getCanonOrPanic()
 	if e != nil {
-		err = stringInvalidCanfile
+		err = constants.StringInvalidCanfile
 		retval = constants.ErrorMissingConfig
 		return
 	}
@@ -30,7 +30,7 @@ func FixCommand(parsed *GGArgs) (retval int, err string) {
 	// get the root directory or panic
 	root, e := getRootOrPanic()
 	if e != nil {
-		err = stringUnableParseRootDirectory
+		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig
 		return
 	}
