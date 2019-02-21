@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 
+	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/repos"
 )
 
@@ -13,7 +14,7 @@ func LSCommand(parsed *GGArgs) (retval int, err string) {
 	exitCodeFlag, ie := parsed.ParseSingleFlag("--exit-code")
 	if ie {
 		err = stringLSArguments
-		retval = ErrorSpecificParseArgs
+		retval = constants.ErrorSpecificParseArgs
 		return
 	}
 
@@ -21,7 +22,7 @@ func LSCommand(parsed *GGArgs) (retval int, err string) {
 	root, e := getRootOrPanic()
 	if e != nil {
 		err = stringUnableParseRootDirectory
-		retval = ErrorMissingConfig
+		retval = constants.ErrorMissingConfig
 		return
 	}
 
@@ -36,7 +37,7 @@ func LSCommand(parsed *GGArgs) (retval int, err string) {
 	// if we have --exit-code set and no results
 	// we need to exit with an error code
 	if exitCodeFlag && len(repos) == 0 {
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 	}
 
 	return

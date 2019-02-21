@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/repos"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -84,7 +85,7 @@ func (parsed *GGArgs) ParseSingleFlag(flag string) (value bool, err bool) {
 func (parsed *GGArgs) EnsureNoFor() (retval int, err string) {
 	if parsed.Pattern != "" {
 		err = fmt.Sprintf(stringCmdNoFor, parsed.Command)
-		retval = ErrorSpecificParseArgs
+		retval = constants.ErrorSpecificParseArgs
 	}
 
 	return

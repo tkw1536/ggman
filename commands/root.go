@@ -1,5 +1,7 @@
 package commands
 
+import "github.com/tkw1536/ggman/constants"
+
 // RootCommand is the entry point for the clone command
 func RootCommand(parsed *GGArgs) (retval int, err string) {
 	// 'root' takes no for
@@ -11,7 +13,7 @@ func RootCommand(parsed *GGArgs) (retval int, err string) {
 	// we accept no arguments
 	if len(parsed.Args) != 0 {
 		err = stringRootTakesNoArguments
-		retval = ErrorSpecificParseArgs
+		retval = constants.ErrorSpecificParseArgs
 		return
 	}
 
@@ -19,7 +21,7 @@ func RootCommand(parsed *GGArgs) (retval int, err string) {
 	root, e := getRootOrPanic()
 	if e != nil {
 		err = stringUnableParseRootDirectory
-		retval = ErrorMissingConfig
+		retval = constants.ErrorMissingConfig
 		return
 	}
 

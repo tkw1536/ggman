@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/repos"
 	"gopkg.in/src-d/go-git.v4"
 )
@@ -20,7 +21,7 @@ func CloneCommand(parsed *GGArgs) (retval int, err string) {
 	// read the repo to clone
 	if len(parsed.Args) != 1 {
 		err = stringCloneTakesOneArgument
-		retval = ErrorSpecificParseArgs
+		retval = constants.ErrorSpecificParseArgs
 		return
 	}
 
@@ -28,7 +29,7 @@ func CloneCommand(parsed *GGArgs) (retval int, err string) {
 	remote, e := repos.NewRepoURI(parsed.Args[0])
 	if e != nil {
 		err = stringUnparsedRepoName
-		retval = ErrorInvalidRepo
+		retval = constants.ErrorInvalidRepo
 		return
 	}
 
@@ -36,7 +37,7 @@ func CloneCommand(parsed *GGArgs) (retval int, err string) {
 	lines, e := getCanonOrPanic()
 	if e != nil {
 		err = stringInvalidCanfile
-		retval = ErrorMissingConfig
+		retval = constants.ErrorMissingConfig
 		return
 	}
 
@@ -47,7 +48,7 @@ func CloneCommand(parsed *GGArgs) (retval int, err string) {
 	root, e := getRootOrPanic()
 	if e != nil {
 		err = stringUnableParseRootDirectory
-		retval = ErrorMissingConfig
+		retval = constants.ErrorMissingConfig
 		return
 	}
 
@@ -65,21 +66,21 @@ func cloneRepository(from string, to string) (retval int, err string) {
 	// if we can open a repository in 'to', it already exists
 	if _, e := git.PlainOpen(to); e == nil {
 		err = stringRepoAlreadyExists
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 		return
 	}
 
 	// make the folder to clone into
 	if e := os.MkdirAll(to, os.ModePerm); e != nil {
 		err = e.Error()
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 		return
 	}
 
 	// do the clone
 	if _, e := git.PlainClone(to, false, &git.CloneOptions{URL: from, Progress: os.Stdout}); e != nil {
 		err = e.Error()
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 		return
 	}
 

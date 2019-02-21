@@ -3,6 +3,8 @@ package commands
 import (
 	"fmt"
 	"os"
+
+	"github.com/tkw1536/ggman/constants"
 )
 
 // Main is the main entry point for the program
@@ -10,7 +12,7 @@ func Main(args []string) (retval int, err string) {
 	// parse the arguments
 	parsed, err := ParseArgs(os.Args[1:])
 	if err != "" {
-		retval = ErrorGeneralParsArgs
+		retval = constants.ErrorGeneralParsArgs
 		return
 	}
 
@@ -50,7 +52,7 @@ func Main(args []string) (retval int, err string) {
 		retval, err = LicenseCommand(parsed)
 	default:
 		err = stringUnknownCommand
-		retval = ErrorUnknownCommand
+		retval = constants.ErrorUnknownCommand
 	}
 
 	// and return

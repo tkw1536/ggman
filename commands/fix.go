@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/repos"
 )
 
@@ -14,7 +15,7 @@ func FixCommand(parsed *GGArgs) (retval int, err string) {
 	simulateFlag, ie := parsed.ParseSingleFlag("--simulate")
 	if ie {
 		err = stringFixArguments
-		retval = ErrorSpecificParseArgs
+		retval = constants.ErrorSpecificParseArgs
 		return
 	}
 
@@ -22,7 +23,7 @@ func FixCommand(parsed *GGArgs) (retval int, err string) {
 	lines, e := getCanonOrPanic()
 	if e != nil {
 		err = stringInvalidCanfile
-		retval = ErrorMissingConfig
+		retval = constants.ErrorMissingConfig
 		return
 	}
 
@@ -30,7 +31,7 @@ func FixCommand(parsed *GGArgs) (retval int, err string) {
 	root, e := getRootOrPanic()
 	if e != nil {
 		err = stringUnableParseRootDirectory
-		retval = ErrorMissingConfig
+		retval = constants.ErrorMissingConfig
 		return
 	}
 
@@ -55,7 +56,7 @@ func FixCommand(parsed *GGArgs) (retval int, err string) {
 
 	// if we had an error, indicate that to the user
 	if hasError {
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 	}
 
 	// and finish

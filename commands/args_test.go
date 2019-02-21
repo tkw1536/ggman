@@ -3,6 +3,8 @@ package commands
 import (
 	"reflect"
 	"testing"
+
+	"github.com/tkw1536/ggman/constants"
 )
 
 func TestParseArgs(t *testing.T) {
@@ -43,7 +45,7 @@ func TestParseArgs(t *testing.T) {
 
 		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}, ""},
 		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}, ""},
-		{"for with command and arguments (3)", args{[]string{"--f", "match", "cmd", "a1", "a2"}}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}, ""},
+		{"for with command and arguments (3)", args{[]string{"-f", "match", "cmd", "a1", "a2"}}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}, ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -112,7 +114,7 @@ func TestGGArgs_EnsureNoFor(t *testing.T) {
 		wantErr    string
 	}{
 		{"no for", fields{"example", "", false, []string{}}, 0, ""},
-		{"provided filter", fields{"example", "test", false, []string{}}, ErrorSpecificParseArgs, "Wrong number of arguments: 'example' takes no 'for' argument. "},
+		{"provided filter", fields{"example", "test", false, []string{}}, constants.ErrorSpecificParseArgs, "Wrong number of arguments: 'example' takes no 'for' argument. "},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

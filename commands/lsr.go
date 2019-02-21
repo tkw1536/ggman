@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 
+	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/repos"
 )
 
@@ -13,7 +14,7 @@ func LSRCommand(parsed *GGArgs) (retval int, err string) {
 	shouldCanon, ie := parsed.ParseSingleFlag("--canonical")
 	if ie {
 		err = stringLSArguments
-		retval = ErrorSpecificParseArgs
+		retval = constants.ErrorSpecificParseArgs
 		return
 	}
 
@@ -23,7 +24,7 @@ func LSRCommand(parsed *GGArgs) (retval int, err string) {
 		lines, e = getCanonOrPanic()
 		if e != nil {
 			err = stringInvalidCanfile
-			retval = ErrorMissingConfig
+			retval = constants.ErrorMissingConfig
 			return
 		}
 	}
@@ -32,7 +33,7 @@ func LSRCommand(parsed *GGArgs) (retval int, err string) {
 	root, e := getRootOrPanic()
 	if e != nil {
 		err = stringUnableParseRootDirectory
-		retval = ErrorMissingConfig
+		retval = constants.ErrorMissingConfig
 		return
 	}
 
@@ -55,7 +56,7 @@ func LSRCommand(parsed *GGArgs) (retval int, err string) {
 	// if we have --exit-code set and no results
 	// we need to exit with an error code
 	if shouldCanon && len(rs) == 0 {
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 	}
 
 	return

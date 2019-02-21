@@ -3,6 +3,7 @@ package commands
 import (
 	"path"
 
+	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/repos"
 )
 
@@ -17,7 +18,7 @@ func WhereCommand(parsed *GGArgs) (retval int, err string) {
 	// we accept no arguments
 	if len(parsed.Args) != 1 {
 		err = stringWhereTakesOneArgument
-		retval = ErrorSpecificParseArgs
+		retval = constants.ErrorSpecificParseArgs
 		return
 	}
 
@@ -25,7 +26,7 @@ func WhereCommand(parsed *GGArgs) (retval int, err string) {
 	root, e := getRootOrPanic()
 	if e != nil {
 		err = stringUnableParseRootDirectory
-		retval = ErrorMissingConfig
+		retval = constants.ErrorMissingConfig
 		return
 	}
 
@@ -33,7 +34,7 @@ func WhereCommand(parsed *GGArgs) (retval int, err string) {
 	r, e := repos.NewRepoURI(parsed.Args[0])
 	if e != nil {
 		err = stringUnparsedRepoName
-		retval = ErrorInvalidRepo
+		retval = constants.ErrorInvalidRepo
 		return
 	}
 

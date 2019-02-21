@@ -19,24 +19,16 @@ ggman is licensed under the terms of the MIT License. Use 'ggman license'
 to view licensing information. 
 `
 
-// ErrorCodeCustom is a return code that can be used by custom commands
-const ErrorCodeCustom int = 1
 const stringRepoAlreadyExists string = "Unable to clone repository: Another git repository already exists in target location. "
 const stringLinkDoesNotExist string = "Unable to link repository: Can not open source repository. "
 const stringLinkAlreadyExists string = "Unable to link repository: Another directory already exists in target location. "
 const stringLinkSamePath string = "Unable to link repository: Link source and target are identical. "
 
-// ErrorUnknownCommand is the return code when an unknown command is called
-const ErrorUnknownCommand int = 2
 const stringUnknownCommand string = "Unknown command. Must be one of 'root', 'ls', 'lsr', 'where', 'canon', 'comps', 'fetch', 'pull', 'fix', 'clone', 'link', 'license'. "
 
-// ErrorGeneralParsArgs is the return code when generic argument parsing fails
-const ErrorGeneralParsArgs int = 3
 const stringNeedOneArgument string = "Unable to parse arguments: Need at least one argument. \nUse `ggman license` to view licensing information. "
 const stringNeedTwoAfterFor string = "Unable to parse arguments: At least two arguments needed after 'for' keyword. "
 
-// ErrorSpecificParseArgs is the return code when specific argument parsing fails
-const ErrorSpecificParseArgs int = 4
 const stringCmdNoFor string = "Wrong number of arguments: '%s' takes no 'for' argument. "
 const stringRootTakesNoArguments string = "Wrong number of arguments: 'root' takes no arguments. "
 const stringLSArguments string = "Unknown argument: 'ls' must be called with either '--exit-code' or no arguments. "
@@ -50,11 +42,7 @@ const stringFixArguments string = "Wrong number of arguments: Unknown argument: 
 const stringCloneTakesOneArgument string = "Wrong number of arguments: 'clone' takes exactly one argument. "
 const stringLinkTakesOneArgument string = "Wrong number of arguments: 'link' takes exactly one argument. "
 
-// ErrorMissingConfig is the return code when the configuration is missing or invalid
-const ErrorMissingConfig int = 5
 const stringUnableParseRootDirectory string = "Unable to find GGROOT directory. "
 const stringInvalidCanfile string = "Invalid CANFILE found. "
 
-// ErrorInvalidRepo is the return code when an invalid repo name is passed
-const ErrorInvalidRepo int = 6
 const stringUnparsedRepoName string = "Unable to parse repository name. "

@@ -6,6 +6,7 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/repos"
 )
 
@@ -20,7 +21,7 @@ func LinkCommand(parsed *GGArgs) (retval int, err string) {
 	// read the repo to link
 	if len(parsed.Args) != 1 {
 		err = stringLinkTakesOneArgument
-		retval = ErrorSpecificParseArgs
+		retval = constants.ErrorSpecificParseArgs
 		return
 	}
 
@@ -28,7 +29,7 @@ func LinkCommand(parsed *GGArgs) (retval int, err string) {
 	root, e := getRootOrPanic()
 	if e != nil {
 		err = stringUnableParseRootDirectory
-		retval = ErrorMissingConfig
+		retval = constants.ErrorMissingConfig
 		return
 	}
 
@@ -44,7 +45,7 @@ func linkRepository(from string, root string) (retval int, err string) {
 	r, e := repos.GetRemote(from)
 	if e != nil {
 		err = stringLinkDoesNotExist
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 		return
 	}
 
@@ -52,7 +53,7 @@ func linkRepository(from string, root string) (retval int, err string) {
 	remote, e := repos.NewRepoURI(r)
 	if e != nil {
 		err = e.Error()
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 		return
 	}
 
@@ -63,14 +64,14 @@ func linkRepository(from string, root string) (retval int, err string) {
 	// if it's the same path, we throw an error
 	if from == to {
 		err = stringLinkSamePath
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 		return
 	}
 
 	// make sure it doesn't exist
 	if _, e := os.Stat(to); !os.IsNotExist(e) {
 		err = stringLinkAlreadyExists
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 		return
 	}
 
@@ -79,14 +80,14 @@ func linkRepository(from string, root string) (retval int, err string) {
 	// make the parent folder
 	if e := os.MkdirAll(parentTo, os.ModePerm); e != nil {
 		err = e.Error()
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 		return
 	}
 
 	// and make the symlink
 	if e := os.Symlink(from, to); e != nil {
 		err = e.Error()
-		retval = ErrorCodeCustom
+		retval = constants.ErrorCodeCustom
 		return
 	}
 

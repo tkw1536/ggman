@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 
+	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/repos"
 )
 
@@ -18,7 +19,7 @@ func CanonCommand(parsed *GGArgs) (retval int, err string) {
 	la := len(parsed.Args)
 	if la > 2 || la == 0 {
 		err = stringCanonTakesOneOrTwoArguments
-		retval = ErrorSpecificParseArgs
+		retval = constants.ErrorSpecificParseArgs
 		return
 	}
 
@@ -33,7 +34,7 @@ func CanonCommand(parsed *GGArgs) (retval int, err string) {
 		lines, e = getCanonOrPanic()
 		if e != nil {
 			err = stringInvalidCanfile
-			retval = ErrorMissingConfig
+			retval = constants.ErrorMissingConfig
 			return
 		}
 
@@ -48,7 +49,7 @@ func printCanonOrError(lines []repos.CanLine, repo string) (retval int, err stri
 	uri, e := repos.NewRepoURI(repo)
 	if e != nil {
 		err = stringUnparsedRepoName
-		retval = ErrorInvalidRepo
+		retval = constants.ErrorInvalidRepo
 		return
 	}
 
