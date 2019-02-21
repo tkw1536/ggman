@@ -12,10 +12,8 @@ import (
 func LSCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 
 	// read the --exit-code flag
-	exitCodeFlag, ie := parsed.ParseSingleFlag("--exit-code")
-	if ie {
-		err = constants.StringLSArguments
-		retval = constants.ErrorSpecificParseArgs
+	exitCodeFlag, retval, err := parsed.ParseSingleFlag("--exit-code")
+	if retval != 0 {
 		return
 	}
 

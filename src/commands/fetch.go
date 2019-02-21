@@ -11,11 +11,8 @@ import (
 
 // FetchCommand is the entry point for the fetch command
 func FetchCommand(parsed *program.SubCommandArgs) (retval int, err string) {
-	la := len(parsed.Args)
-	// we accept no arguments
-	if la != 0 {
-		err = constants.StringFetchTakesNoArguments
-		retval = constants.ErrorSpecificParseArgs
+	retval, err = parsed.EnsureNoArguments()
+	if retval != 0 {
 		return
 	}
 

@@ -14,9 +14,8 @@ func RootCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 	}
 
 	// we accept no arguments
-	if len(parsed.Args) != 0 {
-		err = constants.StringRootTakesNoArguments
-		retval = constants.ErrorSpecificParseArgs
+	retval, err = parsed.EnsureNoArguments()
+	if retval != 0 {
 		return
 	}
 

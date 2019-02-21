@@ -62,21 +62,18 @@ func ParseArgs(args []string) (parsed *SubCommandArgs, err string) {
 }
 
 // ParseSingleFlag parses a single optional flag
-func (parsed *SubCommandArgs) ParseSingleFlag(flag string) (value bool, err bool) {
+func (parsed *SubCommandArgs) ParseSingleFlag(flag string) (value bool, retval int, err string) {
 	la := len(parsed.Args)
 
 	// if we have too many arguments throw an error
-	if la > 1 {
-		err = true
-		return
-	} else if la == 1 && parsed.Args[0] != flag {
-		err = true
+	if la > 1 || (la == 1 && parsed.Args[0] != flag) {
+		err = fmt.Sprintf(constants.StringUnknownArgument, parsed.Command, flag)
+		retval = constants.ErrorSpecificParseArgs
 		return
 	}
 
-	// and return the error
+	// return the value
 	value = la == 1
-	err = false
 	return
 }
 
@@ -85,6 +82,17 @@ func (parsed *SubCommandArgs) EnsureNoFor() (retval int, err string) {
 	if parsed.Pattern != "" {
 		err = fmt.Sprintf(constants.StringCmdNoFor, parsed.Command)
 		retval = constants.ErrorSpecificParseArgs
+	}
+
+	return
+}
+
+// EnsureNoArguments marks a command as taking no arguments
+func (parsed *SubCommandArgs) EnsureNoArguments() (retval int, err string) {
+	if len(parsed.Args) != 0 {
+		err = fmt.Sprintf(constants.StringTakesNoArguments, parsed.Command)
+		retval = constants.ErrorSpecificParseArgs
+		return
 	}
 
 	return

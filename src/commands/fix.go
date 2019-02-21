@@ -13,10 +13,8 @@ import (
 func FixCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 
 	// read the --simulate flag
-	simulateFlag, ie := parsed.ParseSingleFlag("--simulate")
-	if ie {
-		err = constants.StringFixArguments
-		retval = constants.ErrorSpecificParseArgs
+	simulateFlag, retval, err := parsed.ParseSingleFlag("--simulate")
+	if retval != 0 {
 		return
 	}
 

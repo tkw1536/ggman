@@ -11,11 +11,8 @@ import (
 
 // PullCommand is the entry point for the fetch command
 func PullCommand(parsed *program.SubCommandArgs) (retval int, err string) {
-	la := len(parsed.Args)
-	// we accept no arguments
-	if la != 0 {
-		err = constants.StringPullTakesNoArguments
-		retval = constants.ErrorSpecificParseArgs
+	retval, err = parsed.EnsureNoArguments()
+	if retval != 0 {
 		return
 	}
 

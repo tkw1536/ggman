@@ -11,11 +11,9 @@ import (
 // LSRCommand is the entry point for the lsr command
 func LSRCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 
-	// read the --exit-code flag
-	shouldCanon, ie := parsed.ParseSingleFlag("--canonical")
-	if ie {
-		err = constants.StringLSArguments
-		retval = constants.ErrorSpecificParseArgs
+	// read the --canonical flag
+	shouldCanon, retval, err := parsed.ParseSingleFlag("--canonical")
+	if retval != 0 {
 		return
 	}
 
