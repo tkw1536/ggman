@@ -1,68 +1,60 @@
 package commands
 
 import (
+	"reflect"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
-// TestParseArgs tests the ParseArgs Function
 func TestParseArgs(t *testing.T) {
-	assert := assert.New(t)
-
-	table := []struct {
-		input    []string
-		expected *GGArgs
-	}{
-		// no arguments => parsing fails
-		{[]string{}, nil},
-
-		// command without arguments => ok
-		{[]string{"cmd"}, &GGArgs{"cmd", "", false, []string{}}},
-
-		// command with help => help flag set
-		{[]string{"help", "cmd"}, &GGArgs{"", "", true, []string{"cmd"}}},
-		{[]string{"--help", "cmd"}, &GGArgs{"", "", true, []string{"cmd"}}},
-		{[]string{"-h", "cmd"}, &GGArgs{"", "", true, []string{"cmd"}}},
-
-		// command with arguments => ok
-		{[]string{"cmd", "a1", "a2"}, &GGArgs{"cmd", "", false, []string{"a1", "a2"}}},
-
-		// command with help => passed through
-		{[]string{"cmd", "help", "a1"}, &GGArgs{"cmd", "", false, []string{"help", "a1"}}},
-		{[]string{"cmd", "--help", "a1"}, &GGArgs{"cmd", "", false, []string{"--help", "a1"}}},
-		{[]string{"cmd", "-h", "a1"}, &GGArgs{"cmd", "", false, []string{"-h", "a1"}}},
-
-		// only a for => parsing fails
-		{[]string{"for"}, nil},
-		{[]string{"--for"}, nil},
-		{[]string{"-f"}, nil},
-
-		// for without command => parsing fails
-		{[]string{"for", "match"}, nil},
-		{[]string{"--for", "match"}, nil},
-		{[]string{"-f", "match"}, nil},
-
-		// for with command => ok
-		{[]string{"for", "match", "cmd"}, &GGArgs{"cmd", "match", false, []string{}}},
-		{[]string{"--for", "match", "cmd"}, &GGArgs{"cmd", "match", false, []string{}}},
-		{[]string{"-f", "match", "cmd"}, &GGArgs{"cmd", "match", false, []string{}}},
-
-		// for with command and arguments => ok
-		{[]string{"for", "match", "cmd", "a1", "a2"}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}},
-		{[]string{"--for", "match", "cmd", "a1", "a2"}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}},
-		{[]string{"-f", "match", "cmd", "a1", "a2"}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}},
+	type args struct {
+		args []string
 	}
+	tests := []struct {
+		name       string
+		args       args
+		wantParsed *GGArgs
+		wantErr    string
+	}{
+		{"no arguments", args{[]string{}}, nil, stringNeedOneArgument},
 
-	for _, row := range table {
-		res, err := ParseArgs(row.input)
-		if row.expected == nil {
-			assert.Nil(res)
-			assert.NotEqual("", err)
-		} else {
-			assert.Equal(row.expected, res)
-			assert.Equal("", err)
-		}
+		{"command without arguments", args{[]string{"cmd"}}, &GGArgs{"cmd", "", false, []string{}}, ""},
+
+		{"command with help (1)", args{[]string{"help", "cmd"}}, &GGArgs{"", "", true, []string{"cmd"}}, ""},
+		{"command with help (2)", args{[]string{"--help", "cmd"}}, &GGArgs{"", "", true, []string{"cmd"}}, ""},
+		{"command with help (3)", args{[]string{"-h", "cmd"}}, &GGArgs{"", "", true, []string{"cmd"}}, ""},
+
+		{"command with arguments", args{[]string{"cmd", "a1", "a2"}}, &GGArgs{"cmd", "", false, []string{"a1", "a2"}}, ""},
+
+		{"command with help (1)", args{[]string{"cmd", "help", "a1"}}, &GGArgs{"cmd", "", false, []string{"help", "a1"}}, ""},
+		{"command with help (2)", args{[]string{"cmd", "--help", "a1"}}, &GGArgs{"cmd", "", false, []string{"--help", "a1"}}, ""},
+		{"command with help (3)", args{[]string{"cmd", "-h", "a1"}}, &GGArgs{"cmd", "", false, []string{"-h", "a1"}}, ""},
+
+		{"only a for (1)", args{[]string{"for"}}, nil, stringNeedTwoAfterFor},
+		{"only a for (2)", args{[]string{"--for"}}, nil, stringNeedTwoAfterFor},
+		{"only a for (3)", args{[]string{"-f"}}, nil, stringNeedTwoAfterFor},
+
+		{"for without command (1)", args{[]string{"for", "match"}}, nil, stringNeedTwoAfterFor},
+		{"for without command (2)", args{[]string{"--for", "match"}}, nil, stringNeedTwoAfterFor},
+		{"for without command (3)", args{[]string{"-f", "match"}}, nil, stringNeedTwoAfterFor},
+
+		{"for with command (1)", args{[]string{"for", "match", "cmd"}}, &GGArgs{"cmd", "match", false, []string{}}, ""},
+		{"for with command (2)", args{[]string{"--for", "match", "cmd"}}, &GGArgs{"cmd", "match", false, []string{}}, ""},
+		{"for with command (3)", args{[]string{"-f", "match", "cmd"}}, &GGArgs{"cmd", "match", false, []string{}}, ""},
+
+		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}, ""},
+		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}, ""},
+		{"for with command and arguments (3)", args{[]string{"--f", "match", "cmd", "a1", "a2"}}, &GGArgs{"cmd", "match", false, []string{"a1", "a2"}}, ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotParsed, gotErr := ParseArgs(tt.args.args)
+			if !reflect.DeepEqual(gotParsed, tt.wantParsed) {
+				t.Errorf("ParseArgs() gotParsed = %v, want %v", gotParsed, tt.wantParsed)
+			}
+			if gotErr != tt.wantErr {
+				t.Errorf("ParseArgs() gotErr = %v, want %v", gotErr, tt.wantErr)
+			}
+		})
 	}
 }
 
