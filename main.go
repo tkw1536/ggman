@@ -3,12 +3,12 @@ package main
 import (
 	"os"
 
-	"github.com/tkw1536/ggman/src/commands"
+	"github.com/tkw1536/ggman/src"
 )
 
 func main() {
 	// run the main command
-	retval, err := commands.Main(os.Args[1:])
+	retval, err := src.Main(os.Args[1:])
 
 	// if we are not exiting with status code zero, print the error message
 	// and then exit

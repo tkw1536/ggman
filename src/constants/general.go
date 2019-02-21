@@ -10,8 +10,7 @@ const StringUsage string = `Usage: ggman [help|--help|-h] [for|--for|-f FILTER] 
 		Filter the list of repositories to apply command to by FILTER. 
 	
 	COMMAND [ARGS...]
-		Command to call. One of 'root', 'ls', 'lsr', 'where', 'canon',
-		'comps', 'fetch', 'pull', 'fix', 'clone', 'link', 'license'.
+		Command to call. One of %s.
 		See individual commands for more help. 
 
 ggman is licensed under the terms of the MIT License. Use 'ggman license'

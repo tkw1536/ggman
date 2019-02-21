@@ -1,9 +1,12 @@
 package commands
 
-import "github.com/tkw1536/ggman/src/constants"
+import (
+	"github.com/tkw1536/ggman/src/args"
+	"github.com/tkw1536/ggman/src/constants"
+)
 
 // RootCommand is the entry point for the clone command
-func RootCommand(parsed *GGArgs) (retval int, err string) {
+func RootCommand(parsed *args.GGArgs) (retval int, err string) {
 	// 'root' takes no for
 	retval, err = parsed.EnsureNoFor()
 	if retval != 0 {
@@ -18,7 +21,7 @@ func RootCommand(parsed *GGArgs) (retval int, err string) {
 	}
 
 	// get the root directory or panic
-	root, e := getRootOrPanic()
+	root, e := args.GetRootOrPanic()
 	if e != nil {
 		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig

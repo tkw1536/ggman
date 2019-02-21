@@ -1,13 +1,9 @@
-package commands
+package args
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/tkw1536/ggman/src/constants"
-	"github.com/tkw1536/ggman/src/repos"
-
-	homedir "github.com/mitchellh/go-homedir"
 )
 
 // GGArgs represents the arguments passed to a gg command
@@ -89,17 +85,4 @@ func (parsed *GGArgs) EnsureNoFor() (retval int, err string) {
 	}
 
 	return
-}
-
-func getRootOrPanic() (value string, err error) {
-	value = os.Getenv("GGROOT")
-	if len(value) == 0 {
-		value, err = homedir.Expand("~/Projects")
-	}
-
-	return
-}
-
-func getCanonOrPanic() (lines []repos.CanLine, err error) {
-	return repos.ReadDefaultCanFile()
 }

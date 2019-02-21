@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/tkw1536/ggman/src/args"
 	"github.com/tkw1536/ggman/src/constants"
 	"github.com/tkw1536/ggman/src/repos"
 )
 
 // PullCommand is the entry point for the fetch command
-func PullCommand(parsed *GGArgs) (retval int, err string) {
+func PullCommand(parsed *args.GGArgs) (retval int, err string) {
 	la := len(parsed.Args)
 	// we accept no arguments
 	if la != 0 {
@@ -19,7 +20,7 @@ func PullCommand(parsed *GGArgs) (retval int, err string) {
 	}
 
 	// get the root directory or panic
-	root, e := getRootOrPanic()
+	root, e := args.GetRootOrPanic()
 	if e != nil {
 		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig

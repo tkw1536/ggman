@@ -3,12 +3,13 @@ package commands
 import (
 	"fmt"
 
+	"github.com/tkw1536/ggman/src/args"
 	"github.com/tkw1536/ggman/src/constants"
 	"github.com/tkw1536/ggman/src/repos"
 )
 
 // CompsCommand is the entry point for the compos command
-func CompsCommand(parsed *GGArgs) (retval int, err string) {
+func CompsCommand(parsed *args.GGArgs) (retval int, err string) {
 	// 'comps' takes no for
 	retval, err = parsed.EnsureNoFor()
 	if retval != 0 {

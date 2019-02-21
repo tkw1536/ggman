@@ -6,12 +6,13 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/tkw1536/ggman/src/args"
 	"github.com/tkw1536/ggman/src/constants"
 	"github.com/tkw1536/ggman/src/repos"
 )
 
 // LinkCommand is the entry point for the link command
-func LinkCommand(parsed *GGArgs) (retval int, err string) {
+func LinkCommand(parsed *args.GGArgs) (retval int, err string) {
 	// 'link' takes no for
 	retval, err = parsed.EnsureNoFor()
 	if retval != 0 {
@@ -26,7 +27,7 @@ func LinkCommand(parsed *GGArgs) (retval int, err string) {
 	}
 
 	// get the root directory or panic
-	root, e := getRootOrPanic()
+	root, e := args.GetRootOrPanic()
 	if e != nil {
 		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig

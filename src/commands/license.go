@@ -2,10 +2,12 @@ package commands
 
 import (
 	"fmt"
+
+	"github.com/tkw1536/ggman/src/args"
 )
 
 // LicenseCommand is the entry point for the license command
-func LicenseCommand(parsed *GGArgs) (retval int, err string) {
+func LicenseCommand(parsed *args.GGArgs) (retval int, err string) {
 	fmt.Print(`
 ggman -- A golang script that can manage multiple git repositories locally
 https://github.com/tkw1536/ggman

@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/tkw1536/ggman/src/args"
 	"github.com/tkw1536/ggman/src/constants"
 	"github.com/tkw1536/ggman/src/repos"
 )
 
 // FixCommand is the entry point for the fix command
-func FixCommand(parsed *GGArgs) (retval int, err string) {
+func FixCommand(parsed *args.GGArgs) (retval int, err string) {
 
 	// read the --simulate flag
 	simulateFlag, ie := parsed.ParseSingleFlag("--simulate")
@@ -20,7 +21,7 @@ func FixCommand(parsed *GGArgs) (retval int, err string) {
 	}
 
 	// get the canfile
-	lines, e := getCanonOrPanic()
+	lines, e := args.GetCanonOrPanic()
 	if e != nil {
 		err = constants.StringInvalidCanfile
 		retval = constants.ErrorMissingConfig
@@ -28,7 +29,7 @@ func FixCommand(parsed *GGArgs) (retval int, err string) {
 	}
 
 	// get the root directory or panic
-	root, e := getRootOrPanic()
+	root, e := args.GetRootOrPanic()
 	if e != nil {
 		err = constants.StringUnableParseRootDirectory
 		retval = constants.ErrorMissingConfig
