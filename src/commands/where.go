@@ -16,10 +16,9 @@ func WhereCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 		return
 	}
 
-	// we accept no arguments
-	if len(parsed.Args) != 1 {
-		err = constants.StringWhereTakesOneArgument
-		retval = constants.ErrorSpecificParseArgs
+	// where takes exactly 1 argument
+	_, argv, retval, err := parsed.EnsureArguments(1, 1)
+	if retval != 0 {
 		return
 	}
 
@@ -32,7 +31,7 @@ func WhereCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 	}
 
 	// parse the repository in questions
-	r, e := repos.NewRepoURI(parsed.Args[0])
+	r, e := repos.NewRepoURI(argv[0])
 	if e != nil {
 		err = constants.StringUnparsedRepoName
 		retval = constants.ErrorInvalidRepo

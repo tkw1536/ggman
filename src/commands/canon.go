@@ -16,20 +16,18 @@ func CanonCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 		return
 	}
 
-	// we accept one arguments
-	la := len(parsed.Args)
-	if la > 2 || la == 0 {
-		err = constants.StringCanonTakesOneOrTwoArguments
-		retval = constants.ErrorSpecificParseArgs
+	// cannon takes exactly 1 or exactly 2 arguments
+	argc, argv, retval, err := parsed.EnsureArguments(1, 2)
+	if retval != 0 {
 		return
 	}
 
 	var lines []repos.CanLine
 	var e error
 
-	if la == 2 {
+	if argc == 2 {
 		// if we have two argument, use the specific specification given
-		lines = append(lines, repos.CanLine{Pattern: "", Canonical: parsed.Args[1]})
+		lines = append(lines, repos.CanLine{Pattern: "", Canonical: argv[1]})
 	} else {
 		// else read the canon file
 		lines, e = program.GetCanonOrPanic()
@@ -42,7 +40,7 @@ func CanonCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 	}
 
 	// print the canonical url or error
-	return printCanonOrError(lines, parsed.Args[0])
+	return printCanonOrError(lines, argv[0])
 }
 
 func printCanonOrError(lines []repos.CanLine, repo string) (retval int, err string) {

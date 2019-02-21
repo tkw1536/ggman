@@ -19,10 +19,9 @@ func LinkCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 		return
 	}
 
-	// read the repo to link
-	if len(parsed.Args) != 1 {
-		err = constants.StringLinkTakesOneArgument
-		retval = constants.ErrorSpecificParseArgs
+	// link takes exactly 1 argument
+	_, argv, retval, err := parsed.EnsureArguments(1, 1)
+	if retval != 0 {
 		return
 	}
 
@@ -34,7 +33,7 @@ func LinkCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 		return
 	}
 
-	return linkRepository(filepath.Clean(parsed.Args[0]), root)
+	return linkRepository(filepath.Clean(argv[0]), root)
 
 	// figure out where it goes
 	//targetPath := path.Join(append([]string{root}, remote.Components()...)...)

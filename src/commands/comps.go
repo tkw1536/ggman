@@ -16,15 +16,14 @@ func CompsCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 		return
 	}
 
-	// we accept one argument
-	if len(parsed.Args) != 1 {
-		err = constants.StringCompsTakesOneArgument
-		retval = constants.ErrorSpecificParseArgs
+	// comps takes exactly 1 argument
+	_, argv, retval, err := parsed.EnsureArguments(1, 1)
+	if retval != 0 {
 		return
 	}
 
 	// parse the repo uri
-	uri, e := repos.NewRepoURI(parsed.Args[0])
+	uri, e := repos.NewRepoURI(argv[0])
 	if e != nil {
 		err = constants.StringUnparsedRepoName
 		retval = constants.ErrorInvalidRepo

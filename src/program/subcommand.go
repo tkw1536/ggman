@@ -15,7 +15,7 @@ type SubCommandArgs struct {
 	Command string
 	Pattern string
 	Help    bool
-	Args    []string
+	args    []string
 }
 
 const helpLongForm = "--help"
@@ -63,10 +63,10 @@ func ParseArgs(args []string) (parsed *SubCommandArgs, err string) {
 
 // ParseSingleFlag parses a single optional flag
 func (parsed *SubCommandArgs) ParseSingleFlag(flag string) (value bool, retval int, err string) {
-	la := len(parsed.Args)
+	la := len(parsed.args)
 
 	// if we have too many arguments throw an error
-	if la > 1 || (la == 1 && parsed.Args[0] != flag) {
+	if la > 1 || (la == 1 && parsed.args[0] != flag) {
 		err = fmt.Sprintf(constants.StringUnknownArgument, parsed.Command, flag)
 		retval = constants.ErrorSpecificParseArgs
 		return
@@ -89,11 +89,41 @@ func (parsed *SubCommandArgs) EnsureNoFor() (retval int, err string) {
 
 // EnsureNoArguments marks a command as taking no arguments
 func (parsed *SubCommandArgs) EnsureNoArguments() (retval int, err string) {
-	if len(parsed.Args) != 0 {
-		err = fmt.Sprintf(constants.StringTakesNoArguments, parsed.Command)
+	_, _, retval, err = parsed.EnsureArguments(0, 0)
+	return
+}
+
+// EnsureArguments ensures that between min and max (both inclusive) arguments are given
+func (parsed *SubCommandArgs) EnsureArguments(min int, max int) (argc int, argv []string, retval int, err string) {
+	argc = len(parsed.args)
+
+	// if we are outside of the range
+	if argc < min || argc > max {
+		// reset argc and argv
+		argc = 0
+
+		// error is specific
 		retval = constants.ErrorSpecificParseArgs
+
+		// if we have min == max we take an exact number of arguments
+		if min == max {
+			if min != 0 {
+				err = fmt.Sprintf(constants.StringTakesExactlyArguments, parsed.Command, min)
+
+				// special case: no arguments
+			} else {
+				err = fmt.Sprintf(constants.StringTakesNoArguments, parsed.Command)
+			}
+
+			// if we do not, we have a range
+		} else {
+			err = fmt.Sprintf(constants.StringTakesBetweenArguments, parsed.Command, min, max)
+		}
+
 		return
 	}
 
+	// return the arguments too
+	argv = parsed.args
 	return
 }

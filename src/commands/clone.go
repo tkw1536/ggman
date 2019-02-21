@@ -19,15 +19,14 @@ func CloneCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 		return
 	}
 
-	// read the repo to clone
-	if len(parsed.Args) != 1 {
-		err = constants.StringCloneTakesOneArgument
-		retval = constants.ErrorSpecificParseArgs
+	// canon takes exactly 1 argument
+	_, argv, retval, err := parsed.EnsureArguments(1, 1)
+	if retval != 0 {
 		return
 	}
 
 	// parse the repo uri
-	remote, e := repos.NewRepoURI(parsed.Args[0])
+	remote, e := repos.NewRepoURI(argv[0])
 	if e != nil {
 		err = constants.StringUnparsedRepoName
 		retval = constants.ErrorInvalidRepo
