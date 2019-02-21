@@ -12,7 +12,7 @@ import (
 )
 
 // CloneCommand is the entry point for the clone command
-func CloneCommand(parsed *program.GGArgs) (retval int, err string) {
+func CloneCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 	// 'clone' takes no for
 	retval, err = parsed.EnsureNoFor()
 	if retval != 0 {

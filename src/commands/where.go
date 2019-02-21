@@ -9,7 +9,7 @@ import (
 )
 
 // WhereCommand is the entry point for the where command
-func WhereCommand(parsed *program.GGArgs) (retval int, err string) {
+func WhereCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 	// 'where' takes no for
 	retval, err = parsed.EnsureNoFor()
 	if retval != 0 {

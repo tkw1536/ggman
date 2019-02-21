@@ -6,13 +6,13 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
 )
 
 // LinkCommand is the entry point for the link command
-func LinkCommand(parsed *program.GGArgs) (retval int, err string) {
+func LinkCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 	// 'link' takes no for
 	retval, err = parsed.EnsureNoFor()
 	if retval != 0 {

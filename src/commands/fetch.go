@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
 )
 
 // FetchCommand is the entry point for the fetch command
-func FetchCommand(parsed *program.GGArgs) (retval int, err string) {
+func FetchCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 	la := len(parsed.Args)
 	// we accept no arguments
 	if la != 0 {

@@ -9,7 +9,7 @@ import (
 )
 
 // CanonCommand is the entry point for the canon command
-func CanonCommand(parsed *program.GGArgs) (retval int, err string) {
+func CanonCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 	// 'canon' takes no for
 	retval, err = parsed.EnsureNoFor()
 	if retval != 0 {

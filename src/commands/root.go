@@ -6,7 +6,7 @@ import (
 )
 
 // RootCommand is the entry point for the clone command
-func RootCommand(parsed *program.GGArgs) (retval int, err string) {
+func RootCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 	// 'root' takes no for
 	retval, err = parsed.EnsureNoFor()
 	if retval != 0 {

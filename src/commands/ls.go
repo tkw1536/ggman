@@ -9,7 +9,7 @@ import (
 )
 
 // LSCommand is the entry point for the ls command
-func LSCommand(parsed *program.GGArgs) (retval int, err string) {
+func LSCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 
 	// read the --exit-code flag
 	exitCodeFlag, ie := parsed.ParseSingleFlag("--exit-code")

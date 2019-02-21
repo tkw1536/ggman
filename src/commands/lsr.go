@@ -9,7 +9,7 @@ import (
 )
 
 // LSRCommand is the entry point for the lsr command
-func LSRCommand(parsed *program.GGArgs) (retval int, err string) {
+func LSRCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 
 	// read the --exit-code flag
 	shouldCanon, ie := parsed.ParseSingleFlag("--canonical")

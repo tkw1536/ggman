@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
 )
 
 // FixCommand is the entry point for the fix command
-func FixCommand(parsed *program.GGArgs) (retval int, err string) {
+func FixCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 
 	// read the --simulate flag
 	simulateFlag, ie := parsed.ParseSingleFlag("--simulate")
