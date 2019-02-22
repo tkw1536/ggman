@@ -3,15 +3,14 @@ package constants
 // StringUsage is a usage string
 const StringUsage string = `Usage: ggman [help|--help|-h] [for|--for|-f FILTER] COMMAND [ARGS...]
 
-	help, --help, -h
-		Print this usage dialog and exit
+    help, --help, -h
+        Print this usage dialog and exit
 	
-	for FILTER, --for FILTER, -f FILTER
-		Filter the list of repositories to apply command to by FILTER. 
+    for FILTER, --for FILTER, -f FILTER
+        Filter the list of repositories to apply command to by FILTER. 
 	
-	COMMAND [ARGS...]
-		Command to call. One of %s.
-		See individual commands for more help. 
+    COMMAND [ARGS...]
+	    Command to call. One of %s. See individual commands for more help. 
 
 ggman is licensed under the terms of the MIT License. Use 'ggman license'
 to view licensing information. 

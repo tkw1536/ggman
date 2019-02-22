@@ -9,24 +9,12 @@ import (
 )
 
 // LSCommand is the entry point for the ls command
-func LSCommand(parsed *program.SubCommandArgs) (retval int, err string) {
-
-	// read the --exit-code flag
-	exitCodeFlag, retval, err := parsed.ParseSingleFlag("--exit-code")
-	if retval != 0 {
-		return
-	}
-
-	// get the root directory or panic
-	root, e := program.GetRootOrPanic()
-	if e != nil {
-		err = constants.StringUnableParseRootDirectory
-		retval = constants.ErrorMissingConfig
-		return
-	}
+func LSCommand(runtime *program.SubRuntime) (retval int, err string) {
+	exitCodeFlag := runtime.Flag
+	root := runtime.Root
 
 	// find all the repos
-	repos := repos.Repos(root, parsed.Pattern)
+	repos := repos.Repos(root, runtime.For)
 
 	// and print them
 	for _, repo := range repos {

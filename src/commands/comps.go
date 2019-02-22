@@ -9,18 +9,8 @@ import (
 )
 
 // CompsCommand is the entry point for the compos command
-func CompsCommand(parsed *program.SubCommandArgs) (retval int, err string) {
-	// 'comps' takes no for
-	retval, err = parsed.EnsureNoFor()
-	if retval != 0 {
-		return
-	}
-
-	// comps takes exactly 1 argument
-	_, argv, retval, err := parsed.EnsureArguments(1, 1)
-	if retval != 0 {
-		return
-	}
+func CompsCommand(runtime *program.SubRuntime) (retval int, err string) {
+	argv := runtime.Argv
 
 	// parse the repo uri
 	uri, e := repos.NewRepoURI(argv[0])

@@ -9,18 +9,9 @@ import (
 )
 
 // CanonCommand is the entry point for the canon command
-func CanonCommand(parsed *program.SubCommandArgs) (retval int, err string) {
-	// 'canon' takes no for
-	retval, err = parsed.EnsureNoFor()
-	if retval != 0 {
-		return
-	}
-
-	// cannon takes exactly 1 or exactly 2 arguments
-	argc, argv, retval, err := parsed.EnsureArguments(1, 2)
-	if retval != 0 {
-		return
-	}
+func CanonCommand(runtime *program.SubRuntime) (retval int, err string) {
+	argc := runtime.Argc
+	argv := runtime.Argv
 
 	var lines []repos.CanLine
 	var e error

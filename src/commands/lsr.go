@@ -9,14 +9,10 @@ import (
 )
 
 // LSRCommand is the entry point for the lsr command
-func LSRCommand(parsed *program.SubCommandArgs) (retval int, err string) {
+func LSRCommand(runtime *program.SubRuntime) (retval int, err string) {
+	shouldCanon := runtime.Flag
 
-	// read the --canonical flag
-	shouldCanon, retval, err := parsed.ParseSingleFlag("--canonical")
-	if retval != 0 {
-		return
-	}
-
+	// conditionally read the canon lines
 	var lines []repos.CanLine
 	var e error
 	if shouldCanon {
@@ -28,16 +24,11 @@ func LSRCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 		}
 	}
 
-	// get the root directory or panic
-	root, e := program.GetRootOrPanic()
-	if e != nil {
-		err = constants.StringUnableParseRootDirectory
-		retval = constants.ErrorMissingConfig
-		return
-	}
+	// get the root
+	root := runtime.Root
 
 	// find all the repos
-	rs := repos.Repos(root, parsed.Pattern)
+	rs := repos.Repos(root, runtime.For)
 
 	// and print them
 	for _, repo := range rs {
@@ -50,12 +41,6 @@ func LSRCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 
 			}
 		}
-	}
-
-	// if we have --exit-code set and no results
-	// we need to exit with an error code
-	if shouldCanon && len(rs) == 0 {
-		retval = constants.ErrorCodeCustom
 	}
 
 	return

@@ -12,18 +12,10 @@ import (
 )
 
 // CloneCommand is the entry point for the clone command
-func CloneCommand(parsed *program.SubCommandArgs) (retval int, err string) {
-	// 'clone' takes no for
-	retval, err = parsed.EnsureNoFor()
-	if retval != 0 {
-		return
-	}
-
-	// canon takes exactly 1 argument
-	_, argv, retval, err := parsed.EnsureArguments(1, 1)
-	if retval != 0 {
-		return
-	}
+func CloneCommand(runtime *program.SubRuntime) (retval int, err string) {
+	argv := runtime.Argv
+	lines := runtime.Canfile
+	root := runtime.Root
 
 	// parse the repo uri
 	remote, e := repos.NewRepoURI(argv[0])
@@ -33,24 +25,8 @@ func CloneCommand(parsed *program.SubCommandArgs) (retval int, err string) {
 		return
 	}
 
-	// get the canfile
-	lines, e := program.GetCanonOrPanic()
-	if e != nil {
-		err = constants.StringInvalidCanfile
-		retval = constants.ErrorMissingConfig
-		return
-	}
-
 	// get the canonical url
 	cloneURI := remote.CanonicalWith(lines)
-
-	// get the root directory or panic
-	root, e := program.GetRootOrPanic()
-	if e != nil {
-		err = constants.StringUnableParseRootDirectory
-		retval = constants.ErrorMissingConfig
-		return
-	}
 
 	// figure out where it goes
 	targetPath := path.Join(append([]string{root}, remote.Components()...)...)

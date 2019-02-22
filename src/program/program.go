@@ -12,18 +12,21 @@ import (
 // Program represents a main program
 type Program struct {
 	commands   map[string]SubCommand
+	options    map[string]*SubOptions
 	wrapLength int
 }
 
 // NewProgram makes a new program
 func NewProgram() *Program {
 	cmds := make(map[string]SubCommand)
-	return &Program{commands: cmds, wrapLength: 80}
+	opts := make(map[string]*SubOptions)
+	return &Program{commands: cmds, options: opts, wrapLength: 80}
 }
 
 // Register registers a new sub-command with this program
-func (pgrm *Program) Register(name string, sub SubCommand) {
+func (pgrm *Program) Register(name string, sub SubCommand, opts *SubOptions) {
 	pgrm.commands[name] = sub
+	pgrm.options[name] = opts
 }
 
 // Run runs this program
@@ -41,24 +44,38 @@ func (pgrm *Program) Run(argv []string) (retval int, err string) {
 
 	// for help, print help
 	if parsed.Help {
-		fmt.Println(utils.WrapStringPreserveJ(
-			fmt.Sprintf(constants.StringUsage, pgrm.knownCommands()),
-			pgrm.wrapLength))
+		pgrm.Print(fmt.Sprintf(constants.StringUsage, pgrm.knownCommands()))
 
 		retval = 0
 		err = ""
 		return
 	}
 
-	// if we have a known command, run it
-	if val, ok := pgrm.commands[parsed.Command]; ok {
-		retval, err = val(parsed)
+	// extract the command and options
+	cmd, ok := pgrm.commands[parsed.Command]
+	opts, ok2 := pgrm.options[parsed.Command]
 
-		// else throw an error
-	} else {
+	// if we did not find both the command and options, something went wrong
+	if !(ok && ok2) {
 		err = fmt.Sprintf(constants.StringUnknownCommand, pgrm.knownCommands())
 		retval = constants.ErrorUnknownCommand
+		return
 	}
+
+	// prepare to parse options
+	var runtime *SubRuntime
+	var shouldContinue bool
+
+	// apply the options to the argumen ts
+	runtime, shouldContinue, retval, err = opts.Apply(pgrm, parsed)
+
+	// if we do not continue, we should abort here
+	if !shouldContinue {
+		return
+	}
+
+	// finally run the command
+	retval, err = cmd(runtime)
 
 	// and return
 	return
@@ -71,4 +88,9 @@ func (pgrm *Program) knownCommands() string {
 	}
 	sort.Strings(keys)
 	return strings.Join(keys, ", ")
+}
+
+// Print prints output to the command line
+func (pgrm *Program) Print(s string) {
+	fmt.Println(utils.WrapStringPreserveJ(s, pgrm.wrapLength))
 }

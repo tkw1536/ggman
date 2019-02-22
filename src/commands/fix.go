@@ -10,32 +10,15 @@ import (
 )
 
 // FixCommand is the entry point for the fix command
-func FixCommand(parsed *program.SubCommandArgs) (retval int, err string) {
+func FixCommand(runtime *program.SubRuntime) (retval int, err string) {
 
-	// read the --simulate flag
-	simulateFlag, retval, err := parsed.ParseSingleFlag("--simulate")
-	if retval != 0 {
-		return
-	}
-
-	// get the canfile
-	lines, e := program.GetCanonOrPanic()
-	if e != nil {
-		err = constants.StringInvalidCanfile
-		retval = constants.ErrorMissingConfig
-		return
-	}
-
-	// get the root directory or panic
-	root, e := program.GetRootOrPanic()
-	if e != nil {
-		err = constants.StringUnableParseRootDirectory
-		retval = constants.ErrorMissingConfig
-		return
-	}
+	// read runtime info
+	simulateFlag := runtime.Flag
+	lines := runtime.Canfile
+	root := runtime.Root
 
 	// find all the repos
-	rs := repos.Repos(root, parsed.Pattern)
+	rs := repos.Repos(root, runtime.For)
 	hasError := false
 
 	var msg string

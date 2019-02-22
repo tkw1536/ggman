@@ -7,7 +7,7 @@ import (
 )
 
 // LicenseCommand is the entry point for the license command
-func LicenseCommand(parsed *program.SubCommandArgs) (retval int, err string) {
+func LicenseCommand(runtime *program.SubRuntime) (retval int, err string) {
 	fmt.Print(`
 ggman -- A golang script that can manage multiple git repositories locally
 https://github.com/tkw1536/ggman

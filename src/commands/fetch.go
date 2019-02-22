@@ -10,22 +10,11 @@ import (
 )
 
 // FetchCommand is the entry point for the fetch command
-func FetchCommand(parsed *program.SubCommandArgs) (retval int, err string) {
-	retval, err = parsed.EnsureNoArguments()
-	if retval != 0 {
-		return
-	}
-
-	// get the root directory or panic
-	root, e := program.GetRootOrPanic()
-	if e != nil {
-		err = constants.StringUnableParseRootDirectory
-		retval = constants.ErrorMissingConfig
-		return
-	}
+func FetchCommand(runtime *program.SubRuntime) (retval int, err string) {
+	root := runtime.Root
 
 	// find all the repos
-	rs := repos.Repos(root, parsed.Pattern)
+	rs := repos.Repos(root, runtime.For)
 	hasError := false
 
 	// and fetch them

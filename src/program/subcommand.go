@@ -7,7 +7,7 @@ import (
 )
 
 // SubCommand represents a command that can be run with the program
-type SubCommand func(args *SubCommandArgs) (retval int, err string)
+type SubCommand func(runtime *SubRuntime) (retval int, err string)
 
 // SubCommandArgs represents the arguments passed to a gg command
 // gg [for $pattern] $command [$args...]

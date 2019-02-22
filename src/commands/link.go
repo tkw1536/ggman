@@ -12,26 +12,9 @@ import (
 )
 
 // LinkCommand is the entry point for the link command
-func LinkCommand(parsed *program.SubCommandArgs) (retval int, err string) {
-	// 'link' takes no for
-	retval, err = parsed.EnsureNoFor()
-	if retval != 0 {
-		return
-	}
-
-	// link takes exactly 1 argument
-	_, argv, retval, err := parsed.EnsureArguments(1, 1)
-	if retval != 0 {
-		return
-	}
-
-	// get the root directory or panic
-	root, e := program.GetRootOrPanic()
-	if e != nil {
-		err = constants.StringUnableParseRootDirectory
-		retval = constants.ErrorMissingConfig
-		return
-	}
+func LinkCommand(runtime *program.SubRuntime) (retval int, err string) {
+	argv := runtime.Argv
+	root := runtime.Root
 
 	return linkRepository(filepath.Clean(argv[0]), root)
 
