@@ -215,6 +215,11 @@ func TestSubCommandArgs_EnsureArguments(t *testing.T) {
 		{"2 arguments, too few", fields{"example", "", false, []string{"world"}}, args{2, 2}, 0, nil, constants.ErrorSpecificParseArgs, "Wrong number of arguments: 'example' takes exactly 2 argument(s). "},
 		{"2 arguments, enough (2)", fields{"example", "", false, []string{"hello", "world"}}, args{2, 2}, 2, []string{"hello", "world"}, 0, ""},
 		{"2 arguments, too many", fields{"example", "", false, []string{"hello", "world", "you"}}, args{2, 2}, 0, nil, constants.ErrorSpecificParseArgs, "Wrong number of arguments: 'example' takes exactly 2 argument(s). "},
+
+		// taking at leas 1 args
+		{"at least 1 arguments, not enough", fields{"example", "", false, []string{}}, args{1, -1}, 0, nil, constants.ErrorSpecificParseArgs, "Wrong number of arguments: 'example' takes at least 1 argument(s). "},
+		{"at least 1 arguments, enough", fields{"example", "", false, []string{"world"}}, args{1, -1}, 1, []string{"world"}, 0, ""},
+		{"at least 1 arguments, more than enough", fields{"example", "", false, []string{"goodbye", "cruel", "world"}}, args{1, -1}, 3, []string{"goodbye", "cruel", "world"}, 0, ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

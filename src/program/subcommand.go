@@ -98,7 +98,7 @@ func (parsed *SubCommandArgs) EnsureArguments(min int, max int) (argc int, argv 
 	argc = len(parsed.args)
 
 	// if we are outside of the range
-	if argc < min || argc > max {
+	if argc < min || ((max != -1) && (argc > max)) {
 		// reset argc and argv
 		argc = 0
 
@@ -114,6 +114,10 @@ func (parsed *SubCommandArgs) EnsureArguments(min int, max int) (argc int, argv 
 			} else {
 				err = fmt.Sprintf(constants.StringTakesNoArguments, parsed.Command)
 			}
+
+			// special case: maximal number of arguments == -1 => unlimited number of arguments allowed
+		} else if max == -1 {
+			err = fmt.Sprintf(constants.StringTakesMinArguments, parsed.Command, min)
 
 			// if we do not, we have a range
 		} else {
