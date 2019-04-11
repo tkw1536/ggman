@@ -1,5 +1,6 @@
 # The binary (for now)
 out/
+ggman
 
 # Binaries for programs and plugins
 *.exe
