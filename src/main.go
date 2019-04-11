@@ -30,7 +30,7 @@ func Main(argv []string) (retval int, err string) {
 
 	ggman.Register("fix", commands.FixCommand, &program.SubOptions{ForArgument: program.OptionalFor, Flag: "--simulate", UsageDescription: constants.StringSimulateFlagUsage, NeedsRoot: true, NeedsCANFILE: true})
 
-	ggman.Register("clone", commands.CloneCommand, &program.SubOptions{MinArgs: 1, MaxArgs: 1, Metavar: "URI", UsageDescription: constants.StringCloneURIUsage, NeedsRoot: true, NeedsCANFILE: true})
+	ggman.Register("clone", commands.CloneCommand, &program.SubOptions{MinArgs: 1, MaxArgs: -1, Metavar: "ARG", UsageDescription: constants.StringCloneURIUsage, NeedsRoot: true, NeedsCANFILE: true})
 	ggman.Register("link", commands.LinkCommand, &program.SubOptions{MinArgs: 1, MaxArgs: 1, Metavar: "PATH", UsageDescription: constants.StringLinkPathUsage, NeedsRoot: true})
 
 	ggman.Register("license", commands.LicenseCommand, &program.SubOptions{})

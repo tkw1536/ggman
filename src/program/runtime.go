@@ -84,10 +84,16 @@ func (opt *SubOptions) Usage(name string) (usage string) {
 			mv = "ARGUMENT"
 		}
 
-		// write out the argument an appropriate number of times
-		flagString += strings.Repeat(" "+mv, opt.MinArgs)
-		flagString += strings.Repeat(" ["+mv, opt.MaxArgs-opt.MinArgs)
-		flagString += strings.Repeat("]", opt.MaxArgs-opt.MinArgs)
+		if opt.MaxArgs == -1 {
+			// write out the argument an appropriate number of times
+			flagString += strings.Repeat(" "+mv, opt.MinArgs)
+			flagString += " [" + mv + " ... ]"
+		} else {
+			// write out the argument an appropriate number of times
+			flagString += strings.Repeat(" "+mv, opt.MinArgs)
+			flagString += strings.Repeat(" ["+mv, opt.MaxArgs-opt.MinArgs)
+			flagString += strings.Repeat("]", opt.MaxArgs-opt.MinArgs)
+		}
 	}
 
 	usage += flagString

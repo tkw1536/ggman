@@ -19,7 +19,7 @@ const StringSimulateFlagUsage string = "If set, only print what would be done. "
 const StringCompsURIUsage string = "Repository URI to print components of. "
 
 // StringCloneURIUsage represents  the Clone URI usage string
-const StringCloneURIUsage string = "URI of repository to clone. "
+const StringCloneURIUsage string = "URI of repository to clone and arguments to pass to 'git clone'"
 
 // StringLinkPathUsage represents  the Link PATH usage string
 const StringLinkPathUsage string = "Path of repository to symlink. "

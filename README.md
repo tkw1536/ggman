@@ -175,7 +175,7 @@ This page includes releases for Linux, Mac OS X and Windows.
 Note that these binaries are compressed with [`upx`](https://upx.github.io) in order to decrease executable size. 
 
 After obtaining the binary (through either of the two means), simply place it in your `$PATH`. 
-`ggman` does not depend on any external software (no need for `git` even). 
+`ggman` does not depend on any external software (although having `git` in `$PATH` allows for passing through arguments to `clone`). 
 
 ## LICENSE
 
