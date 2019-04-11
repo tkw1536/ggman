@@ -44,7 +44,7 @@ func (pgrm *Program) Run(argv []string) (retval int, err string) {
 
 	// for help, print help
 	if parsed.Help {
-		pgrm.Print(fmt.Sprintf(constants.StringUsage, pgrm.knownCommands()))
+		pgrm.Print(fmt.Sprintf(constants.StringUsage, constants.BuildVersion, constants.BuildTime, pgrm.knownCommands()))
 
 		retval = 0
 		err = ""

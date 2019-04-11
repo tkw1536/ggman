@@ -1,7 +1,10 @@
 package constants
 
 // StringUsage is a usage string
-const StringUsage string = `Usage: ggman [help|--help|-h] [for|--for|-f FILTER] COMMAND [ARGS...]
+const StringUsage string = `ggman version %s
+(built %s)
+
+Usage: ggman [help|--help|-h] [for|--for|-f FILTER] COMMAND [ARGS...]
 
     help, --help, -h
         Print this usage dialog and exit
