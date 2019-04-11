@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/gitwrap"
 	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
 )
@@ -32,7 +33,7 @@ func LSRCommand(runtime *program.SubRuntime) (retval int, err string) {
 
 	// and print them
 	for _, repo := range rs {
-		remote, err := repos.GetRemote(repo)
+		remote, err := gitwrap.GetRemote(repo)
 		if err == nil {
 			if shouldCanon {
 				printCanonOrError(lines, remote)

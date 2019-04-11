@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/gitwrap"
 	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
 )
@@ -30,7 +31,7 @@ func FixCommand(runtime *program.SubRuntime) (retval int, err string) {
 		} else {
 			msg = fmt.Sprintf("Fixing remote of %q", repo)
 		}
-		if e := repos.FixRemote(repo, simulateFlag, msg, lines); e != nil {
+		if e := gitwrap.FixRemote(repo, simulateFlag, msg, lines); e != nil {
 			fmt.Fprintln(os.Stderr, e.Error())
 			hasError = true
 		}

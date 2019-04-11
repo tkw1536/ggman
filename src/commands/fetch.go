@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/gitwrap"
 	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
 )
@@ -20,7 +21,7 @@ func FetchCommand(runtime *program.SubRuntime) (retval int, err string) {
 	// and fetch them
 	for _, repo := range rs {
 		fmt.Printf("Fetching %q\n", repo)
-		if e := repos.FetchRepo(repo); e != nil {
+		if e := gitwrap.FetchRepository(repo); e != nil {
 			fmt.Fprintln(os.Stderr, e.Error())
 			hasError = true
 		}

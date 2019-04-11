@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/tkw1536/ggman/src/gitwrap"
+
 	"github.com/tkw1536/ggman/src/constants"
 	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
@@ -20,7 +22,7 @@ func PullCommand(runtime *program.SubRuntime) (retval int, err string) {
 	// and pull them
 	for _, repo := range rs {
 		fmt.Printf("Pulling %q\n", repo)
-		if e := repos.PullRepo(repo); e != nil {
+		if e := gitwrap.FetchRepository(repo); e != nil {
 			fmt.Fprintln(os.Stderr, e.Error())
 			hasError = true
 		}

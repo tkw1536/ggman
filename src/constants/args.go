@@ -14,3 +14,6 @@ const StringTakesExactlyArguments string = "Wrong number of arguments: '%s' take
 
 // StringTakesBetweenArguments is an error message for specific argument parsing
 const StringTakesBetweenArguments string = "Wrong number of arguments: '%s' takes between %d and %d arguments. "
+
+// StringTakesMinArguments is an error message for specific argument parsing
+const StringTakesMinArguments string = "Wrong number of arguments: '%s' takes at least %d argument(s). "

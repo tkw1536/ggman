@@ -1,14 +1,14 @@
-package repos
+package gitwrap
 
 import (
 	"fmt"
 	"os"
 
-	"gopkg.in/src-d/go-git.v4"
+	git "gopkg.in/src-d/go-git.v4"
 )
 
-// FetchRepo fetches a repository
-func FetchRepo(root string) (err error) {
+// FetchRepository fetches a reposiitory remote
+func FetchRepository(root string) (err error) {
 	// open the repository
 	r, err := git.PlainOpen(root)
 	if err != nil {
@@ -32,8 +32,8 @@ func FetchRepo(root string) (err error) {
 	return
 }
 
-// PullRepo pulls a repository
-func PullRepo(root string) (err error) {
+// PullRepository pulls a repository
+func PullRepository(root string) (err error) {
 	// open the repository
 	r, err := git.PlainOpen(root)
 	if err != nil {

@@ -1,10 +1,11 @@
-package repos
+package gitwrap
 
 import (
 	"errors"
 	"fmt"
 
-	"gopkg.in/src-d/go-git.v4"
+	"github.com/tkw1536/ggman/src/repos"
+	git "gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/config"
 )
 
@@ -34,7 +35,7 @@ func GetRemote(filepath string) (uri string, err error) {
 }
 
 // FixRemote updates the remote of a repository with a given CanLine array
-func FixRemote(filepath string, simulate bool, initialLogLine string, lines []CanLine) (err error) {
+func FixRemote(filepath string, simulate bool, initialLogLine string, lines []repos.CanLine) (err error) {
 	// if we did not print anything, we need to still print something
 	didPrint := false
 	defer (func() {
@@ -78,11 +79,11 @@ func FixRemote(filepath string, simulate bool, initialLogLine string, lines []Ca
 }
 
 // fixURLs fixes the urls of a remote
-func fixURLs(config *config.RemoteConfig, initialLogLine string, lines []CanLine) (didPrint bool, fixed []string) {
+func fixURLs(config *config.RemoteConfig, initialLogLine string, lines []repos.CanLine) (didPrint bool, fixed []string) {
 	didPrint = false
 
 	for _, url := range config.URLs {
-		current, err := NewRepoURI(url)
+		current, err := repos.NewRepoURI(url)
 		if err != nil {
 			continue
 		}

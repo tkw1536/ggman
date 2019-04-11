@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/src/gitwrap"
 	"github.com/tkw1536/ggman/src/program"
 	"github.com/tkw1536/ggman/src/repos"
 )
@@ -17,15 +18,12 @@ func LinkCommand(runtime *program.SubRuntime) (retval int, err string) {
 	root := runtime.Root
 
 	return linkRepository(filepath.Clean(argv[0]), root)
-
-	// figure out where it goes
-	//targetPath := path.Join(append([]string{root}, remote.Components()...)...)
 }
 
 func linkRepository(from string, root string) (retval int, err string) {
 
 	// open the source repository and get the remotre
-	r, e := repos.GetRemote(from)
+	r, e := gitwrap.GetRemote(from)
 	if e != nil {
 		err = constants.StringLinkDoesNotExist
 		retval = constants.ErrorCodeCustom
