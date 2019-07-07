@@ -11,26 +11,26 @@ GGMANVERSIONFLAGS=-X 'github.com/tkw1536/ggman/src/constants.BuildVersion=$(shel
 # Binary paths
 OUT_DIR=out
 BINARY_NAME=ggman
-BINARY_UNIX=$(BINARY_NAME)_unix
+BINARY_UNIX=$(BINARY_NAME)
 BINARY_MACOS=$(BINARY_NAME)_mac
-BINARY_WINDOWS=$(BINARY_NAME)_windows.exe
+BINARY_WINDOWS=$(BINARY_NAME).exe
 
-all: test build
+all: test build dist
 
-build: build-local build-linux build-macos build-windows
+build: build-local
 build-local: deps
 	$(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS)" -o $(OUT_DIR)/$(BINARY_NAME)
+
+dist: mindist
 build-linux: deps
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(OUT_DIR)/$(BINARY_UNIX)
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(OUT_DIR)/dist/$(BINARY_UNIX)
 build-macos: deps
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(OUT_DIR)/$(BINARY_MACOS)
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(OUT_DIR)/dist/$(BINARY_MACOS)
 build-windows: deps
-	go get golang.org/x/sys/windows
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(OUT_DIR)/$(BINARY_WINDOWS)
-build-upx: build-linux build-macos build-windows
-	upx --brute $(OUT_DIR)/$(BINARY_UNIX)
-	upx --brute $(OUT_DIR)/$(BINARY_MACOS)
-	upx --brute $(OUT_DIR)/$(BINARY_WINDOWS)
+	-go get golang.org/x/sys/windows
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(OUT_DIR)/dist/$(BINARY_WINDOWS)
+mindist: build-linux build-macos build-windows
+	upx --brute $(OUT_DIR)/dist//$(BINARY_UNIX) $(OUT_DIR)/dist//$(BINARY_MACOS) $(OUT_DIR)/dist//$(BINARY_WINDOWS)
 
 
 test: testdeps
