@@ -21,6 +21,14 @@ func LinkCommand(runtime *program.SubRuntime) (retval int, err string) {
 }
 
 func linkRepository(from string, root string) (retval int, err string) {
+	// make sure that the path is absolute
+	// to avoid relative symlinks
+	from, e := filepath.Abs(from)
+	if e != nil {
+		err = constants.StringLinkDoesNotExist
+		retval = constants.ErrorCodeCustom
+		return
+	}
 
 	// open the source repository and get the remotre
 	r, e := gitwrap.GetRemote(from)
