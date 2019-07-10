@@ -16,6 +16,7 @@ BINARY_MACOS=$(BINARY_NAME)_mac
 BINARY_WINDOWS=$(BINARY_NAME).exe
 
 all: test build dist
+travis: build-linux build-macos build-windows test
 
 build: build-local
 build-local: deps
@@ -30,7 +31,7 @@ build-windows: deps
 	-go get golang.org/x/sys/windows
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(OUT_DIR)/dist/$(BINARY_WINDOWS)
 mindist: build-linux build-macos build-windows
-	upx --brute $(OUT_DIR)/dist//$(BINARY_UNIX) $(OUT_DIR)/dist//$(BINARY_MACOS) $(OUT_DIR)/dist//$(BINARY_WINDOWS)
+	upx --brute $(OUT_DIR)/dist/$(BINARY_UNIX) $(OUT_DIR)/dist/$(BINARY_MACOS) $(OUT_DIR)/dist/$(BINARY_WINDOWS)
 
 
 test: testdeps
