@@ -161,6 +161,19 @@ ggman link $HOME/go/src/github.com/hello/world
 would link the repository in `$HOME/go/src/github.com/hello/world` into the right location. 
 Here, this corresponds to `$GGROOT/github.com/hello/world`. 
 
+### Useful aliases
+
+Sometimes, it is desireable to be able to cd into a specific directory. 
+For this purpose the following alias can be set up.
+```bash
+# ggcd allows 'cd'-ing into a directory given a repository name
+# e.g ggcd github.com/hello/world will cd into the directory where the
+# 'github.com/hello/world' repository is checked out. 
+ggcd () {
+	ggman -f $1 ls --exit-code && cd $(ggman -f $1 ls --exit-code 2>&1)
+}
+```
+
 ## getting `ggman`
 
 To get `ggman` you have two options:
