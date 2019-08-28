@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 // Repos collects all git repositories in a given root folder
@@ -15,6 +16,52 @@ func Repos(root string, pattern string) (paths []string) {
 			reposInternal(&paths, root, "", pattern, true)
 		}
 	}
+	return
+}
+
+// Here returns the root and relative path to the root of the current path
+// of the given git repository.
+func Here(here string, root string) (repoPath string, relTreePath string) {
+	// ensure that root is an absolute path
+	// so that we can check if the candidate path is inside it
+	root, err := filepath.Abs(root)
+	if err != nil {
+		return "", ""
+	}
+
+	// start with a possible repository path at the given one
+	// we need to make it absolute so that we can navigate upwards
+	// and check if it is contained in root
+	here, err = filepath.Abs(here)
+	if err != nil {
+		return "", ""
+	}
+	repoPath = here
+
+	// check if a path is a git repo root
+	for !isGitRepoRoot(repoPath) {
+		// move the path to the parent and check it
+		newPath, err := filepath.Abs(filepath.Join(repoPath, ".."))
+		if err != nil || newPath == repoPath {
+			return "", ""
+		}
+		repoPath = newPath
+
+		// if we moved outside of the root directory
+		// (e.g. by resolving symlinks) we can immediatly exit
+		if !strings.HasPrefix(repoPath, root) {
+			return "", ""
+		}
+	}
+
+	// resolve the relative path from the repository path
+	// to the path we started at
+	relTreePath, err = filepath.Rel(repoPath, here)
+	if err != nil {
+		return "", ""
+	}
+
+	// and return
 	return
 }
 

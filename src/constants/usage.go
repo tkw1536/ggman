@@ -12,7 +12,7 @@ const StringWhereRepoUsage string = "Repository URI to find location of. "
 // StringCanonUsage represents the canon usage string
 const StringCanonUsage string = "The URL of which to get the canonical location and an optional CANSPEC. "
 
-// StringCanonUsage represents the simulate usage string
+// StringSimulateFlagUsage represents the simulate usage string
 const StringSimulateFlagUsage string = "If set, only print what would be done. "
 
 // StringCompsURIUsage represents the Comps URI usage string
@@ -23,3 +23,6 @@ const StringCloneURIUsage string = "URI of repository to clone and arguments to 
 
 // StringLinkPathUsage represents  the Link PATH usage string
 const StringLinkPathUsage string = "Path of repository to symlink. "
+
+// StringTreeFlagUsage represents the tree code usage string
+const StringTreeFlagUsage string = "If provided, print the current HEAD reference and relative path to the root of the git worktree. "

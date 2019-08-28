@@ -161,6 +161,29 @@ ggman link $HOME/go/src/github.com/hello/world
 would link the repository in `$HOME/go/src/github.com/hello/world` into the right location. 
 Here, this corresponds to `$GGROOT/github.com/hello/world`. 
 
+### `ggman here`, `ggman web` and `ggman url`
+
+```bash
+ggman here
+```
+prints the current ggman-controlled repository. 
+In addition, the command takes an optional `--tree` argument. 
+When provided, also prints the location relative to the current git worktree root. 
+
+Similarly, 
+
+```bash
+ggman web
+```
+attempts to open the url of the current repository in a web-browser. 
+For this purpose it uses the CANSPEC `https://^/$`, which may not work with all git hosts. 
+It also takes an optional `--tree`, which behaves similar and above and optionally opens a url pointing to the current folder. 
+
+```bash
+ggman url
+```
+is the same as `ggman web`, except that it only prints the URL to stdout. 
+
 ### Useful aliases
 
 Sometimes, it is desireable to be able to cd into a specific directory. 

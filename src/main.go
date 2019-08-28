@@ -35,6 +35,11 @@ func Main(argv []string) (retval int, err string) {
 
 	ggman.Register("license", commands.LicenseCommand, &program.SubOptions{})
 
+	ggman.Register("here", commands.HereCommand, &program.SubOptions{NeedsRoot: true, Flag: "--tree", UsageDescription: constants.StringTreeFlagUsage})
+
+	ggman.Register("web", commands.WebCommand, &program.SubOptions{NeedsRoot: true, Flag: "--tree", UsageDescription: constants.StringTreeFlagUsage})
+	ggman.Register("url", commands.URLCommand, &program.SubOptions{NeedsRoot: true, Flag: "--tree", UsageDescription: constants.StringTreeFlagUsage})
+
 	// and run it
 	return ggman.Run(argv)
 }
