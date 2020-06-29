@@ -1,6 +1,7 @@
 # Go itself
 GOCMD=go
 GOBUILD=$(GOCMD) build
+GOINSTALL=$(GOCMD) install
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
@@ -9,39 +10,46 @@ GOGET=$(GOCMD) get
 GGMANVERSIONFLAGS=-X 'github.com/tkw1536/ggman/src/constants.BuildVersion=$(shell git describe --tags HEAD)' -X 'github.com/tkw1536/ggman/src/constants.buildTime=$(shell date +%s)'
 
 # Binary paths
-OUT_DIR=out
+DIST_DIR=dist
 BINARY_NAME=ggman
-BINARY_UNIX=$(BINARY_NAME)
-BINARY_MACOS=$(BINARY_NAME)_mac
-BINARY_WINDOWS=$(BINARY_NAME).exe
+BINARY_UNIX=$(DIST_DIR)/$(BINARY_NAME)
+BINARY_MACOS=$(DIST_DIR)/$(BINARY_NAME)_mac
+BINARY_WINDOWS=$(DIST_DIR)/$(BINARY_NAME).exe
 
-all: test build dist
-travis: build-linux build-macos build-windows test
+# almost all the targets are phone
 
-build: build-local
-build-local: deps
-	$(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS)" -o $(OUT_DIR)/$(BINARY_NAME)
 
-dist: mindist
-build-linux: deps
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(OUT_DIR)/dist/$(BINARY_UNIX)
-build-macos: deps
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(OUT_DIR)/dist/$(BINARY_MACOS)
-build-windows: deps
+all: $(BINARY_UNIX) $(BINARY_MACOS) $(BINARY_WINDOWS)
+.PHONY: all install test testdeps clean deps dist
+
+$(BINARY_NAME): deps
+	$(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS)" -o $(BINARY_NAME)
+
+$(BINARY_UNIX): deps
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(BINARY_UNIX)
+
+$(BINARY_MACOS): deps
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(BINARY_MACOS)
+
+$(BINARY_WINDOWS): deps
 	-go get golang.org/x/sys/windows
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(OUT_DIR)/dist/$(BINARY_WINDOWS)
-mindist: build-linux build-macos build-windows
-	upx --brute $(OUT_DIR)/dist/$(BINARY_UNIX) $(OUT_DIR)/dist/$(BINARY_MACOS) $(OUT_DIR)/dist/$(BINARY_WINDOWS)
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(BINARY_WINDOWS)
 
+dist: $(BINARY_UNIX) $(BINARY_MACOS) $(BINARY_WINDOWS)
+	upx --brute $(BINARY_UNIX) $(BINARY_MACOS) $(BINARY_WINDOWS)
+
+install:
+	$(GOINSTALL) -ldflags="$(GGMANVERSIONFLAGS)"
 
 test: testdeps
 	$(GOTEST) -v ./...
+testdeps:
+	$(GOGET) -v ./...
+
 clean: 
 	$(GOCLEAN)
+	rm $(BINARY_NAME)
 	rm -rf $(OUT_DIR)
-run: build-local
-	./$(BINARY_NAME)
+
 deps:
-	$(GOGET) -v ./...
-testdeps:
 	$(GOGET) -v ./...

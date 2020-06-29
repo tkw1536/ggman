@@ -1,5 +1,5 @@
 # The binary (for now)
-out/
+dist/
 ggman
 
 # Binaries for programs and plugins
