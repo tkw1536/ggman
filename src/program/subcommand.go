@@ -15,12 +15,17 @@ type SubCommandArgs struct {
 	Command string
 	Pattern string
 	Help    bool
+	Version bool
 	args    []string
 }
 
 const helpLongForm = "--help"
 const helpShortForm = "-h"
 const helpLiteralForm = "help"
+
+const versionLongForm = "--version"
+const versionShortForm = "-v"
+const versionLiteralForm = "version"
 
 const forLongForm = "--for"
 const forShortForm = "-f"
@@ -41,7 +46,18 @@ func ParseArgs(args []string) (parsed *SubCommandArgs, err string) {
 
 	// if the first argument is help, return help
 	if head == helpLiteralForm || head == helpShortForm || head == helpLongForm {
-		parsed = &SubCommandArgs{"", "", true, args[1:]}
+		parsed = &SubCommandArgs{
+			Help: true,
+			args: args[1:],
+		}
+		return
+	}
+
+	if head == versionLiteralForm || head == versionShortForm || head == versionLongForm {
+		parsed = &SubCommandArgs{
+			Version: true,
+			args:    args[1:],
+		}
 		return
 	}
 
@@ -52,12 +68,19 @@ func ParseArgs(args []string) (parsed *SubCommandArgs, err string) {
 			return
 		}
 
-		parsed = &SubCommandArgs{args[2], args[1], false, args[3:]}
+		parsed = &SubCommandArgs{
+			Command: args[2],
+			Pattern: args[1],
+			args:    args[3:],
+		}
 		return
 	}
 
 	// gg $pattern $command
-	parsed = &SubCommandArgs{args[0], "", false, args[1:]}
+	parsed = &SubCommandArgs{
+		Command: args[0],
+		args:    args[1:],
+	}
 	return
 }
 

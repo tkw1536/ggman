@@ -19,17 +19,25 @@ func TestParseArgs(t *testing.T) {
 	}{
 		{"no arguments", args{[]string{}}, nil, constants.StringNeedOneArgument},
 
-		{"command without arguments", args{[]string{"cmd"}}, &SubCommandArgs{"cmd", "", false, []string{}}, ""},
+		{"command without arguments", args{[]string{"cmd"}}, &SubCommandArgs{"cmd", "", false, false, []string{}}, ""},
 
-		{"command with help (1)", args{[]string{"help", "cmd"}}, &SubCommandArgs{"", "", true, []string{"cmd"}}, ""},
-		{"command with help (2)", args{[]string{"--help", "cmd"}}, &SubCommandArgs{"", "", true, []string{"cmd"}}, ""},
-		{"command with help (3)", args{[]string{"-h", "cmd"}}, &SubCommandArgs{"", "", true, []string{"cmd"}}, ""},
+		{"help with command (1)", args{[]string{"help", "cmd"}}, &SubCommandArgs{"", "", true, false, []string{"cmd"}}, ""},
+		{"help with command (2)", args{[]string{"--help", "cmd"}}, &SubCommandArgs{"", "", true, false, []string{"cmd"}}, ""},
+		{"help with command (3)", args{[]string{"-h", "cmd"}}, &SubCommandArgs{"", "", true, false, []string{"cmd"}}, ""},
 
-		{"command with arguments", args{[]string{"cmd", "a1", "a2"}}, &SubCommandArgs{"cmd", "", false, []string{"a1", "a2"}}, ""},
+		{"version with command (1)", args{[]string{"version", "cmd"}}, &SubCommandArgs{"", "", false, true, []string{"cmd"}}, ""},
+		{"version with command (2)", args{[]string{"--version", "cmd"}}, &SubCommandArgs{"", "", false, true, []string{"cmd"}}, ""},
+		{"version with command (3)", args{[]string{"-v", "cmd"}}, &SubCommandArgs{"", "", false, true, []string{"cmd"}}, ""},
 
-		{"command with help (1)", args{[]string{"cmd", "help", "a1"}}, &SubCommandArgs{"cmd", "", false, []string{"help", "a1"}}, ""},
-		{"command with help (2)", args{[]string{"cmd", "--help", "a1"}}, &SubCommandArgs{"cmd", "", false, []string{"--help", "a1"}}, ""},
-		{"command with help (3)", args{[]string{"cmd", "-h", "a1"}}, &SubCommandArgs{"cmd", "", false, []string{"-h", "a1"}}, ""},
+		{"command with arguments", args{[]string{"cmd", "a1", "a2"}}, &SubCommandArgs{"cmd", "", false, false, []string{"a1", "a2"}}, ""},
+
+		{"command with help (1)", args{[]string{"cmd", "help", "a1"}}, &SubCommandArgs{"cmd", "", false, false, []string{"help", "a1"}}, ""},
+		{"command with help (2)", args{[]string{"cmd", "--help", "a1"}}, &SubCommandArgs{"cmd", "", false, false, []string{"--help", "a1"}}, ""},
+		{"command with help (3)", args{[]string{"cmd", "-h", "a1"}}, &SubCommandArgs{"cmd", "", false, false, []string{"-h", "a1"}}, ""},
+
+		{"command with version (1)", args{[]string{"cmd", "version", "a1"}}, &SubCommandArgs{"cmd", "", false, false, []string{"version", "a1"}}, ""},
+		{"command with version (2)", args{[]string{"cmd", "--version", "a1"}}, &SubCommandArgs{"cmd", "", false, false, []string{"--version", "a1"}}, ""},
+		{"command with version (3)", args{[]string{"cmd", "-v", "a1"}}, &SubCommandArgs{"cmd", "", false, false, []string{"-v", "a1"}}, ""},
 
 		{"only a for (1)", args{[]string{"for"}}, nil, constants.StringNeedTwoAfterFor},
 		{"only a for (2)", args{[]string{"--for"}}, nil, constants.StringNeedTwoAfterFor},
@@ -39,22 +47,22 @@ func TestParseArgs(t *testing.T) {
 		{"for without command (2)", args{[]string{"--for", "match"}}, nil, constants.StringNeedTwoAfterFor},
 		{"for without command (3)", args{[]string{"-f", "match"}}, nil, constants.StringNeedTwoAfterFor},
 
-		{"for with command (1)", args{[]string{"for", "match", "cmd"}}, &SubCommandArgs{"cmd", "match", false, []string{}}, ""},
-		{"for with command (2)", args{[]string{"--for", "match", "cmd"}}, &SubCommandArgs{"cmd", "match", false, []string{}}, ""},
-		{"for with command (3)", args{[]string{"-f", "match", "cmd"}}, &SubCommandArgs{"cmd", "match", false, []string{}}, ""},
+		{"for with command (1)", args{[]string{"for", "match", "cmd"}}, &SubCommandArgs{"cmd", "match", false, false, []string{}}, ""},
+		{"for with command (2)", args{[]string{"--for", "match", "cmd"}}, &SubCommandArgs{"cmd", "match", false, false, []string{}}, ""},
+		{"for with command (3)", args{[]string{"-f", "match", "cmd"}}, &SubCommandArgs{"cmd", "match", false, false, []string{}}, ""},
 
-		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, &SubCommandArgs{"cmd", "match", false, []string{"a1", "a2"}}, ""},
-		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, &SubCommandArgs{"cmd", "match", false, []string{"a1", "a2"}}, ""},
-		{"for with command and arguments (3)", args{[]string{"-f", "match", "cmd", "a1", "a2"}}, &SubCommandArgs{"cmd", "match", false, []string{"a1", "a2"}}, ""},
+		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, &SubCommandArgs{"cmd", "match", false, false, []string{"a1", "a2"}}, ""},
+		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, &SubCommandArgs{"cmd", "match", false, false, []string{"a1", "a2"}}, ""},
+		{"for with command and arguments (3)", args{[]string{"-f", "match", "cmd", "a1", "a2"}}, &SubCommandArgs{"cmd", "match", false, false, []string{"a1", "a2"}}, ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotParsed, gotErr := ParseArgs(tt.args.args)
 			if !reflect.DeepEqual(gotParsed, tt.wantParsed) {
-				t.Errorf("ParseArgs() gotParsed = %v, want %v", gotParsed, tt.wantParsed)
+				t.Errorf("ParseArgs(): %s: gotParsed = %v, want %v", tt.name, gotParsed, tt.wantParsed)
 			}
 			if gotErr != tt.wantErr {
-				t.Errorf("ParseArgs() gotErr = %v, want %v", gotErr, tt.wantErr)
+				t.Errorf("ParseArgs(): %s gotErr = %v, want %v", tt.name, gotErr, tt.wantErr)
 			}
 		})
 	}

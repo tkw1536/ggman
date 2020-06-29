@@ -51,6 +51,14 @@ func (pgrm *Program) Run(argv []string) (retval int, err string) {
 		return
 	}
 
+	if parsed.Version {
+		pgrm.Print(fmt.Sprintf(constants.StringVersion, constants.BuildVersion, constants.BuildTime))
+
+		retval = 0
+		err = ""
+		return
+	}
+
 	// extract the command and options
 	cmd, ok := pgrm.commands[parsed.Command]
 	opts, ok2 := pgrm.options[parsed.Command]
