@@ -48,8 +48,8 @@ testdeps:
 
 clean: 
 	$(GOCLEAN)
-	rm $(BINARY_NAME)
-	rm -rf $(OUT_DIR)
+	rm -f $(BINARY_NAME)
+	rm -rf $(DIST_DIR)
 
 deps:
 	$(GOGET) -v ./...
