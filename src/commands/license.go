@@ -15,7 +15,7 @@ https://github.com/tkw1536/ggman
 =============================================================================
 ggman is licensed under the terms of the MIT License:
 
-Copyright (c) 2018-19 Tom Wiesing
+Copyright (c) 2018-20 Tom Wiesing
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
