@@ -214,6 +214,36 @@ After obtaining the binary (through either of the two means), simply place it in
 Alternatively, you can simply type `make install` from the source code to have it installed directly. 
 `ggman` does not depend on any external software (although having `git` in `$PATH` allows for passing through arguments to `clone`). 
 
+## Changelog
+
+### 1.4.0 (Upcoming)
+
+- refactored internal flag handling
+- refactored `Makefile`
+- moved to `travis-ci.com`
+- added a CHANGELOG to the README
+
+### 1.3.0 (Released [Aug 29 2019](https://github.com/tkw1536/ggman/releases/tag/v1.3.0))
+
+- added `ggman web` which opens the current repository in a web browser
+- added `ggman url` which prints the (web) url of the current repository
+- added `ggman here` command which prints the current repository
+
+### 1.2.0 (Released [Jul 10 2019](https://github.com/tkw1536/ggman/releases/tag/v1.2.0))
+
+- `ggman link` now creates absolute symlinks instead of exactly echoing the path the user entered
+- Added a bash alias to the README
+
+### 1.1.0 (Released [Apr 11 2019](https://github.com/tkw1536/ggman/releases/edit/v1.1.0))
+
+- Use external `git clone` command when available and allow passing options to it
+- Added help command and better subcommand help behaviour
+- Add versioning information to help page
+
+### 1.0.0 (Released [Feb 17 2019](https://github.com/tkw1536/ggman/releases/tag/v1.0.0))
+
+- Initial release
+
 ## LICENSE
 
 `ggman` is licensed under the terms of the MIT LICENSE, see [LICENSE](LICENSE). 
