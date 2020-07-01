@@ -84,19 +84,31 @@ func ParseArgs(args []string) (parsed *SubCommandArgs, err string) {
 	return
 }
 
-// ParseSingleFlag parses a single optional flag
-func (parsed *SubCommandArgs) ParseSingleFlag(flag string) (value bool, retval int, err string) {
+// ParseFlag parses a single flag
+func (parsed *SubCommandArgs) ParseFlag(opt *SubOptions) (value bool, retval int, err string) {
 	la := len(parsed.args)
 
-	// if we have too many arguments throw an error
-	if la > 1 || (la == 1 && parsed.args[0] != flag) {
-		err = fmt.Sprintf(constants.StringUnknownArgument, parsed.Command, flag)
-		retval = constants.ErrorSpecificParseArgs
-		return
+	// check if the flag has been set
+	// and if so remove the flag from the rest of the args
+	if la > 0 && parsed.args[0] == opt.Flag {
+		value = true
+		parsed.args = parsed.args[1:]
 	}
 
-	// return the value
-	value = la == 1
+	// if we have exactly zero arguments, the flag is mandatory or to be omitted
+	if opt.MinArgs == 0 && opt.MaxArgs == 0 {
+
+		// when we got extra arguments, or we got an invalid flag value
+		// show a dedicated error message
+		if la > 1 || (la == 1 && !value) {
+			err = fmt.Sprintf(constants.StringUnknownArgument, parsed.Command, opt.Flag)
+			retval = constants.ErrorSpecificParseArgs
+			return
+		}
+
+	}
+
+	// and return
 	return
 }
 

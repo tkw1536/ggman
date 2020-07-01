@@ -25,8 +25,11 @@ type SubOptions struct {
 	// if set, the command is assumed to take a single flag of the given name
 	Flag string
 
-	// Description of the flag or the argument
+	// Description of the argument
 	UsageDescription string
+
+	// Description of the flag
+	FlagDescription string
 
 	// environment configuration the command needs
 	NeedsRoot    bool
@@ -74,29 +77,30 @@ func (opt *SubOptions) Usage(name string) (usage string) {
 	// the name and help
 	usage += " " + name + " [help|--help|-h]"
 
-	flagString := ""
+	flagSyntax := ""
 	if opt.Flag != "" {
-		flagString += " [" + opt.Flag + "]"
-	} else {
-		// read the metavar
-		mv := opt.Metavar
-		if mv == "" {
-			mv = "ARGUMENT"
-		}
-
-		if opt.MaxArgs == -1 {
-			// write out the argument an appropriate number of times
-			flagString += strings.Repeat(" "+mv, opt.MinArgs)
-			flagString += " [" + mv + " ... ]"
-		} else {
-			// write out the argument an appropriate number of times
-			flagString += strings.Repeat(" "+mv, opt.MinArgs)
-			flagString += strings.Repeat(" ["+mv, opt.MaxArgs-opt.MinArgs)
-			flagString += strings.Repeat("]", opt.MaxArgs-opt.MinArgs)
-		}
+		flagSyntax += " [" + opt.Flag + "]"
 	}
 
-	usage += flagString
+	// read the metavar
+	mv := opt.Metavar
+	if mv == "" {
+		mv = "ARGUMENT"
+	}
+
+	argSyntax := ""
+	if opt.MaxArgs == -1 {
+		// write out the argument an appropriate number of times
+		argSyntax += strings.Repeat(" "+mv, opt.MinArgs)
+		argSyntax += " [" + mv + " ... ]"
+	} else {
+		// write out the argument an appropriate number of times
+		argSyntax += strings.Repeat(" "+mv, opt.MinArgs)
+		argSyntax += strings.Repeat(" ["+mv, opt.MaxArgs-opt.MinArgs)
+		argSyntax += strings.Repeat("]", opt.MaxArgs-opt.MinArgs)
+	}
+
+	usage += flagSyntax + argSyntax
 
 	// start with the help argument
 	usage += `
@@ -112,11 +116,20 @@ func (opt *SubOptions) Usage(name string) (usage string) {
         Filter the list of repositories to apply command to by FILTER.`
 	}
 
-	// and finally add the argument description
-	usage += fmt.Sprintf(`
+	// if there is a flag, add a flagdescription
+	if opt.Flag != "" {
+		usage += fmt.Sprintf(`
 
    %s
-        %s`, flagString, opt.UsageDescription)
+        %s`, flagSyntax, opt.FlagDescription)
+	}
+
+	if opt.UsageDescription != "" {
+		usage += fmt.Sprintf(`
+
+   %s
+        %s`, argSyntax, opt.UsageDescription)
+	}
 
 	return
 }
@@ -144,17 +157,16 @@ func (opt *SubOptions) Apply(pgrm *Program, Args *SubCommandArgs) (runtime *SubR
 
 	// either read a flag
 	if opt.Flag != "" {
-		runtime.Flag, retval, err = Args.ParseSingleFlag(opt.Flag)
+		runtime.Flag, retval, err = Args.ParseFlag(opt)
 		if retval != 0 {
 			return
 		}
+	}
 
-		// or read the arguments
-	} else {
-		runtime.Argc, runtime.Argv, retval, err = Args.EnsureArguments(opt.MinArgs, opt.MaxArgs)
-		if retval != 0 {
-			return
-		}
+	// read the arguments
+	runtime.Argc, runtime.Argv, retval, err = Args.EnsureArguments(opt.MinArgs, opt.MaxArgs)
+	if retval != 0 {
+		return
 	}
 
 	// read the root folder or panic

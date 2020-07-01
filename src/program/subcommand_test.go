@@ -59,10 +59,10 @@ func TestParseArgs(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			gotParsed, gotErr := ParseArgs(tt.args.args)
 			if !reflect.DeepEqual(gotParsed, tt.wantParsed) {
-				t.Errorf("ParseArgs(): %s: gotParsed = %v, want %v", tt.name, gotParsed, tt.wantParsed)
+				t.Errorf("ParseArgs(): gotParsed = %v, want %v", gotParsed, tt.wantParsed)
 			}
 			if gotErr != tt.wantErr {
-				t.Errorf("ParseArgs(): %s gotErr = %v, want %v", tt.name, gotErr, tt.wantErr)
+				t.Errorf("ParseArgs(): gotErr = %v, want %v", gotErr, tt.wantErr)
 			}
 		})
 	}
@@ -81,15 +81,23 @@ func TestGGArgs_ParseSingleFlag(t *testing.T) {
 		name       string
 		fields     fields
 		args       args
+		opt        *SubOptions
 		wantValue  bool
 		wantRetval int
+		wantArgs   []string
 		wantErr    string
 	}{
-		// giving no arguments
-		{"no arguments given", fields{"cmd", "", []string{}}, args{"--test"}, false, 0, ""},
-		{"right argument given", fields{"cmd", "", []string{"--test"}}, args{"--test"}, true, 0, ""},
-		{"wrong argument given", fields{"cmd", "", []string{"--fake"}}, args{"--test"}, false, constants.ErrorSpecificParseArgs, "Unknown argument: 'cmd' must be called with either '--test' or no arguments. "},
-		{"too many arguments", fields{"cmd", "", []string{"--fake", "--untrue"}}, args{"--test"}, false, constants.ErrorSpecificParseArgs, "Unknown argument: 'cmd' must be called with either '--test' or no arguments. "},
+		// not allowing extra arguments
+		{"noextra: no arguments given", fields{"cmd", "", []string{}}, args{"--test"}, &SubOptions{Flag: "--test"}, false, 0, []string{}, ""},
+		{"noextra: right argument given", fields{"cmd", "", []string{"--test"}}, args{"--test"}, &SubOptions{Flag: "--test"}, true, 0, []string{}, ""},
+		{"noextra: wrong argument given", fields{"cmd", "", []string{"--fake"}}, args{"--test"}, &SubOptions{Flag: "--test"}, false, constants.ErrorSpecificParseArgs, []string{"--fake"}, "Unknown argument: 'cmd' must be called with either '--test' or no arguments. "},
+		{"noextra: too many arguments", fields{"cmd", "", []string{"--fake", "--untrue"}}, args{"--test"}, &SubOptions{Flag: "--test"}, false, constants.ErrorSpecificParseArgs, []string{"--fake", "--untrue"}, "Unknown argument: 'cmd' must be called with either '--test' or no arguments. "},
+
+		// with extra arguments
+		{"extra: no arguments given", fields{"cmd", "", []string{}}, args{"--test"}, &SubOptions{Flag: "--test", MinArgs: 1, MaxArgs: 1}, false, 0, []string{}, ""},
+		{"extra: right argument given", fields{"cmd", "", []string{"--test"}}, args{"--test"}, &SubOptions{Flag: "--test", MinArgs: 1, MaxArgs: 1}, true, 0, []string{}, ""},
+		{"extra: wrong argument given", fields{"cmd", "", []string{"--fake"}}, args{"--test"}, &SubOptions{Flag: "--test", MinArgs: 1, MaxArgs: 1}, false, 0, []string{"--fake"}, ""},
+		{"extra: too many arguments", fields{"cmd", "", []string{"--fake", "--untrue"}}, args{"--test"}, &SubOptions{Flag: "--test", MinArgs: 1, MaxArgs: 1}, false, 0, []string{"--fake", "--untrue"}, ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -98,16 +106,21 @@ func TestGGArgs_ParseSingleFlag(t *testing.T) {
 				Pattern: tt.fields.Pattern,
 				args:    tt.fields.Args,
 			}
-			gotValue, gotRetval, gotErr := parsed.ParseSingleFlag(tt.args.flag)
+			gotValue, gotRetval, gotErr := parsed.ParseFlag(tt.opt)
+			gotArgs := parsed.args
 			if gotValue != tt.wantValue {
 				t.Errorf("GGArgs.ParseSingleFlag() gotValue = %v, want %v", gotValue, tt.wantValue)
 			}
 			if gotRetval != tt.wantRetval {
 				t.Errorf("GGArgs.ParseSingleFlag() gotRetval = %v, want %v", gotRetval, tt.wantRetval)
 			}
+			if !reflect.DeepEqual(gotArgs, tt.wantArgs) {
+				t.Errorf("GGArgs.ParseSingleFlag() gotArgs = %v, want %v", gotArgs, tt.wantArgs)
+			}
 			if gotErr != tt.wantErr {
 				t.Errorf("GGArgs.ParseSingleFlag() gotErr = %v, want %v", gotErr, tt.wantErr)
 			}
+
 		})
 	}
 }
