@@ -26,3 +26,6 @@ const StringLinkPathUsage string = "Path of repository to symlink. "
 
 // StringTreeFlagUsage represents the tree code usage string
 const StringTreeFlagUsage string = "If provided, print the current HEAD reference and relative path to the root of the git worktree. "
+
+// StringWebBaseUsage represents the tree uri usage string
+const StringWebBaseUsage string = "If provided, replace the first component with the provided base url. Alternatively you can use on of the predefined urls %s. "

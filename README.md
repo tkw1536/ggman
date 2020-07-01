@@ -184,6 +184,21 @@ ggman url
 ```
 is the same as `ggman web`, except that it only prints the URL to stdout. 
 
+`ggman web` and `ggman url` also take an optional base url. 
+If it is provided, the first component of the url is replace with the given base. 
+ggman also supports a number of "default" base urls. 
+For example:
+
+```
+ggman web travisci
+```
+
+will open the current repo on travis-ci.com. 
+The following base urls are supported:
+
+- `circle` - CircleCI
+- `travis` - TravisCI
+
 ### Useful aliases
 
 Sometimes, it is desireable to be able to cd into a specific directory. 
@@ -218,6 +233,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 
 ### 1.4.0 (Upcoming)
 
+- added a `BASE` url to `ggman web` and `ggman url`
 - refactored internal flag handling
 - refactored `Makefile`
 - moved to `travis-ci.com`
