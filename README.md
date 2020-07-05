@@ -210,6 +210,10 @@ For this purpose the following alias can be set up.
 ggcd () {
 	ggman -f $1 ls --exit-code && cd $(ggman -f $1 ls --exit-code 2>&1)
 }
+# ggcode is like ggcd, except it opens an editor (here vscode) instead of cding. 
+ggcode () {
+	ggman -f $1 ls --exit-code && code $(ggman -f $1 ls --exit-code 2>&1)
+}
 ```
 
 ## getting `ggman`
