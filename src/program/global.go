@@ -18,6 +18,6 @@ func GetRootOrPanic() (value string, err error) {
 }
 
 // GetCanonOrPanic returns the default canon file or panics
-func GetCanonOrPanic() (lines []repos.CanLine, err error) {
-	return repos.ReadDefaultCanFile()
+func GetCanonOrPanic() (file repos.CanFile, err error) {
+	return file, (&file).ReadDefault()
 }

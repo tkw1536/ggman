@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/pkg/errors v0.8.1
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	golang.org/x/crypto v0.0.0-20200128174031-69ecbb4d6d5d // indirect

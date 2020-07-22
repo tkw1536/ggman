@@ -2,11 +2,12 @@ package repos
 
 import (
 	"bufio"
-	"errors"
 	"os"
 	"os/user"
 	"path"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // CanLine represents a line within in the canonical configuration file
@@ -15,9 +16,44 @@ type CanLine struct {
 	Canonical string
 }
 
-// ReadDefaultCanFile reads the default canonical file
-// or returns the default contents of the file if it does not exist
-func ReadDefaultCanFile() ([]CanLine, error) {
+// ErrEmpty is an error representing an empty CanLine
+var ErrEmpty = errors.New("CanLine is empty")
+
+// Unmarshal reads a CanLine from a string
+func (cl *CanLine) Unmarshal(s string) error {
+	s = strings.TrimSpace(s)
+
+	// if the line is empty or starts with a comment character return nothing
+	if s == "" || strings.HasPrefix(s, "#") || strings.HasPrefix(s, "//") || strings.HasPrefix(s, ";") {
+		return ErrEmpty
+	}
+
+	// get the fields of the string
+	fields := strings.Fields(s)
+	fieldsLength := len(fields)
+
+	// switch based on the length
+	switch fieldsLength {
+	case 0:
+		return errors.Errorf("strings.Fields() unexpectedly returned 0-length slice")
+	case 1:
+		fields = []string{"", fields[0]}
+	default:
+		break
+	}
+
+	cl.Pattern = fields[0]
+	cl.Canonical = fields[1]
+
+	return nil
+}
+
+// CanFile represents a list of CanLines
+type CanFile []CanLine
+
+// ReadDefault reads the default canonical file
+// if it does not exist, loads the default contents
+func (cf *CanFile) ReadDefault() error {
 	// the list of files to try and read
 	var files []string
 
@@ -33,81 +69,68 @@ func ReadDefaultCanFile() ([]CanLine, error) {
 		files = append(files, path.Join(usr.HomeDir, ".ggman"))
 	}
 
+	// if a canfile exists, read it
 	for _, file := range files {
 		if _, err := os.Stat(file); !os.IsNotExist(err) {
-			return ReadCanFile(file)
+			return errors.Wrapf(cf.unmarshalFile(file), "Error reading CanFile %q", file)
 		}
 	}
 
-	// finally fall back onto the default can file
-	return defaultCanFile()
+	// fallback to the default
+	return cf.loadDefault()
 }
 
-const canLineDefault = "git@^:$.git"
+func (cf *CanFile) unmarshalFile(filename string) error {
+	// start with an empty CanFile
+	*cf = nil
 
-// defaultCanFile generates the default canFile
-func defaultCanFile() (lines []CanLine, err error) {
-	line := ReadCanLine(canLineDefault)
-
-	// bail out if it is invalid (or a comment)
-	if line == nil {
-		return nil, errors.New("Invalid default CanFile")
-	}
-
-	// append the can line to the return array
-	lines = append(lines, *line)
-
-	// and return
-	return
-}
-
-// ReadCanFile reads lines from the canonical file
-func ReadCanFile(filename string) (lines []CanLine, err error) {
 	// open the file
-	file, err := os.Open(filename)
-	defer file.Close()
+	f, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	// make a text and a line
+	var lineText string
+	lineStruct := &CanLine{}
 
 	// scan through it
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		// read every line
-		newLine := ReadCanLine(scanner.Text())
-		// add every valid line
-		if newLine != nil {
-			lines = append(lines, *newLine)
+		lineText = scanner.Text()
+		err = lineStruct.Unmarshal(lineText)
+		if err != nil {
+			if err == ErrEmpty {
+				continue
+			}
+			return errors.Wrapf(err, "Invalid CanLine %q", lineText)
 		}
+
+		*cf = append(*cf, *lineStruct)
 	}
 
 	// if there was an error, return the error
 	if err := scanner.Err(); err != nil {
-		return nil, err
+		return errors.Wrap(err, "Error scanning file")
 	}
 
 	// else return the lines
-	return
+	return nil
 }
 
-// ReadCanLine reads a single canonical line
-func ReadCanLine(line string) (cl *CanLine) {
-	// remove all the spaces
-	trimmed := strings.TrimSpace(line)
+var defaultCanLines = []string{
+	"git@^:$.git",
+}
 
-	// if the line is empty or starts with a comment character return nothing
-	if trimmed == "" || strings.HasPrefix(trimmed, "#") || strings.HasPrefix(trimmed, "//") || strings.HasPrefix(trimmed, ";") {
-		return
+// loadDefault loads the default lines into this CanFile
+func (cf *CanFile) loadDefault() error {
+	*cf = make([]CanLine, len(defaultCanLines))
+	for i, cl := range defaultCanLines {
+		(*cf)[i] = CanLine{}
+		if err := (&((*cf)[i])).Unmarshal(cl); err != nil {
+			return errors.Wrapf(err, "Unable to read default can line %q (index %d)", cl, i)
+		}
 	}
-
-	// get the fields of the string
-	fields := strings.Fields(trimmed)
-
-	// if we have only one field, assume it is the default
-	if len(fields) == 1 {
-		cl = &CanLine{"", fields[0]}
-
-		// else take the first two fields
-	} else {
-		cl = &CanLine{fields[0], fields[1]}
-	}
-
-	return
+	return nil
 }

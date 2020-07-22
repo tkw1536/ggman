@@ -236,6 +236,8 @@ Alternatively, you can simply type `make install` from the source code to have i
 ## Changelog
 
 ### 1.5.0 (Upcoming)
+- rewrite handling of CanFile
+- added more tests
 
 ### 1.4.0 (Released [Jul 1 2020](https://github.com/tkw1536/ggman/releases/tag/v1.4.0))
 
