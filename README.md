@@ -227,7 +227,7 @@ After cloning this repository, you can then simply type `make` and executables w
 2. Download a pre-built binary. 
 You can download a pre-built binary from the [releases page](https://github.com/tkw1536/ggman/releases/latest) on GitHub. 
 This page includes releases for Linux, Mac OS X and Windows. 
-Note that these binaries are compressed with [`upx`](https://upx.github.io) in order to decrease executable size. 
+Note that older binaries were compressed with [`upx`](https://upx.github.io) in order to decrease executable size. 
 
 After obtaining the binary (through either of the two means), simply place it in your `$PATH`. 
 Alternatively, you can simply type `make install` from the source code to have it installed directly. 
@@ -236,6 +236,10 @@ Alternatively, you can simply type `make install` from the source code to have i
 ## Changelog
 
 ### 1.5.0 (Upcoming)
+
+### 1.4.1 (Released [Jul 23 2020](https://github.com/tkw1536/ggman/releases/tag/v1.4.1))
+
+- stop compressing binary releases with upx
 - added 'godoc' and 'localgodoc `BASE` urls to `ggman web` and `ggman url`
 - rewrite handling of CanFile
 - added more tests
