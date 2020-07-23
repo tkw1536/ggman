@@ -236,6 +236,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 ## Changelog
 
 ### 1.5.0 (Upcoming)
+- added 'godoc' and 'localgodoc `BASE` urls to `ggman web` and `ggman url`
 - rewrite handling of CanFile
 - added more tests
 

@@ -24,7 +24,15 @@ func URLCommand(runtime *program.SubRuntime) (retval int, err string) {
 }
 
 // WebBuiltInBases is a map of built-in bases for the url and web commands
-var WebBuiltInBases map[string]string
+var WebBuiltInBases = map[string]struct {
+	URL         string
+	IncludeHost bool
+}{
+	"travis":     {"https://travis-ci.com", false},
+	"circle":     {"https://app.circleci.com/pipelines/github", false},
+	"godoc":      {"https://pkg.go.dev/", true},
+	"localgodoc": {"http://localhost:6060/pkg/", true},
+}
 
 // FmtWebBuiltInBaseNames returns a formatted string with all builtin bases
 func FmtWebBuiltInBaseNames() string {
@@ -76,7 +84,10 @@ func webCommandInternal(runtime *program.SubRuntime, openInstead bool) (retval i
 	// lookup in the builtins
 	// we can do this safely because none of them start with https://
 	if builtIn, ok := WebBuiltInBases[base]; ok {
-		base = builtIn
+		base = builtIn.URL
+		if builtIn.IncludeHost {
+			base += uri.HostName
+		}
 	}
 
 	// set the hostname to the base
@@ -104,10 +115,4 @@ func webCommandInternal(runtime *program.SubRuntime, openInstead bool) (retval i
 	}
 
 	return
-}
-
-func init() {
-	WebBuiltInBases = make(map[string]string)
-	WebBuiltInBases["travis"] = "https://travis-ci.com"
-	WebBuiltInBases["circle"] = "https://app.circleci.com/pipelines/github"
 }
