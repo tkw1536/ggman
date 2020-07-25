@@ -1,22 +1,32 @@
-package src
+package ggman
 
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman/src/commands"
-	"github.com/tkw1536/ggman/src/constants"
-	"github.com/tkw1536/ggman/src/program"
+	"github.com/tkw1536/ggman/commands"
+	"github.com/tkw1536/ggman/constants"
+	"github.com/tkw1536/ggman/program"
 )
 
-const tWL = 80
-
-// Main is the main entry point for the program
+// Main is the main entry point for the ggman program
+// It takes as arguments the command line parameters and returns a pair of (return value, error).
+//
+// This code is only intended to be called by a main package like:
+//
+// func main() {
+//    retval, err := Main(os.Args[1:])
+//    if retval != 0 && err != "" {
+//      os.Stderr.WriteString(err + "\n")
+//    }
+//    os.Exit(retval)
+//  }
+//
 func Main(argv []string) (retval int, err string) {
-
-	// make a new program
+	// create a new ggman program
 	ggman := program.NewProgram()
 
-	// register all the commands
+	// register all the subcommands
+
 	ggman.Register("root", commands.RootCommand, &program.SubOptions{NeedsRoot: true})
 
 	ggman.Register("ls", commands.LSCommand, &program.SubOptions{ForArgument: program.OptionalFor, Flag: "--exit-code", FlagDescription: constants.StringExitFlagUsage, NeedsRoot: true})

@@ -3,9 +3,9 @@ package commands
 import (
 	"path"
 
-	"github.com/tkw1536/ggman/src/constants"
-	"github.com/tkw1536/ggman/src/program"
-	"github.com/tkw1536/ggman/src/repos"
+	"github.com/tkw1536/ggman/constants"
+	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/repos"
 )
 
 // WhereCommand is the entry point for the where command

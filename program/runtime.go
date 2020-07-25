@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/tkw1536/ggman/src/constants"
-	"github.com/tkw1536/ggman/src/utils"
+	"github.com/tkw1536/ggman/constants"
+	"github.com/tkw1536/ggman/utils"
 
-	"github.com/tkw1536/ggman/src/repos"
+	"github.com/tkw1536/ggman/repos"
 )
 
 // SubOptions Represents the options a sub-command takes

@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/tkw1536/ggman/src/program"
+	"github.com/tkw1536/ggman/program"
 )
 
 // RootCommand is the entry point for the clone command

@@ -5,8 +5,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/tkw1536/ggman/src/constants"
-	"github.com/tkw1536/ggman/src/utils"
+	"github.com/tkw1536/ggman/constants"
+	"github.com/tkw1536/ggman/utils"
 )
 
 // Program represents a main program

@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/mitchellh/go-homedir"
-	"github.com/tkw1536/ggman/src/repos"
+	"github.com/tkw1536/ggman/repos"
 )
 
 // GetRootOrPanic gets the default root folder or panics()

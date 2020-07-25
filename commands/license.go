@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman/src/program"
+	"github.com/tkw1536/ggman/program"
 )
 
 // LicenseCommand is the entry point for the license command

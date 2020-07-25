@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/constants"
 	git "gopkg.in/src-d/go-git.v4"
 )
 

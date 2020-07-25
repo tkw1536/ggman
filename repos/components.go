@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/tkw1536/ggman/src/utils"
+	"github.com/tkw1536/ggman/utils"
 )
 
 var reSlash = regexp.MustCompile("/+")

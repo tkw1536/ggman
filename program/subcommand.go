@@ -3,7 +3,7 @@ package program
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman/src/constants"
+	"github.com/tkw1536/ggman/constants"
 )
 
 // SubCommand represents a command that can be run with the program

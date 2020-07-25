@@ -1,6 +1,6 @@
 # The binary (for now)
 dist/
-ggman
+/ggman
 
 # Binaries for programs and plugins
 *.exe
