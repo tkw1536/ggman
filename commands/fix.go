@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/gitwrap"
 	"github.com/tkw1536/ggman/program"
@@ -22,16 +23,43 @@ func FixCommand(runtime *program.SubRuntime) (retval int, err string) {
 	rs := repos.Repos(root, runtime.For)
 	hasError := false
 
-	var msg string
-
 	// and fix them all
 	for _, repo := range rs {
+
+		// we might have to print a log message
+		var initialMessage string
+		didPrintInitialMessage := false
 		if simulateFlag {
-			msg = fmt.Sprintf("Simulate fixing remote of %q", repo)
+			initialMessage = fmt.Sprintf("Simulate fixing remote of %q", repo)
 		} else {
-			msg = fmt.Sprintf("Fixing remote of %q", repo)
+			initialMessage = fmt.Sprintf("Fixing remote of %q", repo)
 		}
-		if e := gitwrap.Implementation.FixRemotes(repo, simulateFlag, msg, lines); e != nil {
+
+		if e := gitwrap.Git.UpdateRemotes(repo, func(url, remoteName string) (string, error) {
+
+			// print a log message if we haven't already
+			if !didPrintInitialMessage {
+				didPrintInitialMessage = true
+				fmt.Println(initialMessage)
+			}
+
+			// compute the new canonical url
+			rurl, err := repos.NewRepoURI(url)
+			if err != nil {
+				return "", errors.Wrap(err, "Unable to parse repository url")
+
+			}
+			canon := rurl.CanonicalWith(lines)
+
+			fmt.Printf("Updating %s: %s -> %s\n", remoteName, url, canon)
+
+			// either return the canonical url, or (if we're simulating) the old url
+			if simulateFlag {
+				return url, nil
+			}
+
+			return canon, nil
+		}); e != nil {
 			fmt.Fprintln(os.Stderr, e.Error())
 			hasError = true
 		}

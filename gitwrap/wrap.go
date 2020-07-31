@@ -1,182 +1,69 @@
 // Package gitwrap contains a wrapper for git functionality
 package gitwrap
 
-import (
-	"fmt"
-	"os"
-	"sync"
+// TODO: Refactor return values by this package into more useful errors
 
-	"github.com/pkg/errors"
-	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/repos"
-)
+// GitImplementationWrapper represents a wrapper around an GitImplementation
+// As opposed to a GitImplementation, which poses certain requirements and assumptions on the caller, a GitImplementationWrapper does not.
+// A GitImplementation is intended to be called by seperate package.
+type GitImplementationWrapper interface {
 
-// ErrNotARepository is an error that is returned when the clonePath parameter is not a repository
-var ErrNotARepository = errors.New("not a repository")
+	// Clone clones a remote repository from remoteURI to clonePath.
+	// Writes to os.Stdout and os.Stderr.
+	//
+	// remoteURI is the remote git uri to clone the repository from.
+	// clonePath is the local path to clone the repository to.
+	// extraargs are arguments as would be passed to a 'git clone' command.
+	//
+	// If there is already a repository at clonePath returns ErrCloneAlreadyExists.
+	// If the underlying 'git' process exits abnormally, returns.
+	// If extraargs is non-empty and extra arguments are not supported by this Wrapper, returns ErrArgumentsUnsupported.
+	// May return other error types for other errors.
+	Clone(remoteURI, clonePath string, extraargs ...string) error
 
-// GitWrap is a git implementation
-type GitWrap struct {
-	git   GitImplementation
-	mutex sync.Mutex
+	// GetHeadRef gets a resolved reference to head at the repository at clonePath.
+	//
+	// When getting the reference succeeded, returns err = nil.
+	// If there is no repository at clonePath returns err = ErrNotARepository.
+	// May return other error types for other errors.
+	GetHeadRef(clonePath string) (ref string, err error)
+
+	// Fetch fetches all remotes of the repository at clonePath.
+	// May attempt to read credentials from os.Stdin.
+	// Writes to os.Stdout and os.Stderr.
+	//
+	// When fetching succeeded, returns nil.
+	// If there is no repository at clonePath returns ErrNotARepository.
+	// May return other error types for other errors.
+	Fetch(clonePath string) error
+
+	// Pull fetches the repository at clonePath and merges in changes where appropriate.
+	// May attempt to read credentials from os.Stdin.
+	// Writes to os.Stdout and os.Stderr.
+	//
+	// When pulling succeeded, returns nil.
+	// If there is no repository at clonePath returns ErrNotARepository.
+	// May return other error types for other errors.
+	Pull(clonePath string) error
+
+	// GetRemote gets the url of the canonical remote at clonePath.
+	// The semantics of 'canonical' are determined by the underlying git implementation.
+	// Typically this function returns the url of the tracked remote of the currently checked out branch or the 'origin' remote.
+	// If no remote exists, an empty url is returned.
+	//
+	// If there is no repository at clonePath returns ErrNotARepository.
+	// May return other error types for other errors.
+	GetRemote(clonePath string) (url string, err error)
+
+	// UpdateRemotes updates the urls of all remotes of the repository at clonePath.
+	// updateFunc is a function that is called for each remote url to be updated.
+	// It should return the new url corresponding to each old url.
+	// If it returns a non-nil error, updating the current remote of the repository is instead aborted and error is returned.
+	//
+	// If there is no repository at clonePath returns ErrNotARepository.
+	// May return other error types for other errors.
+	UpdateRemotes(clonePath string, updateFunc func(url, remoteName string) (newRemote string, err error)) error
 }
 
-func (impl *GitWrap) ensureInit() {
-	impl.mutex.Lock()
-	defer impl.mutex.Unlock()
-
-	// we try to initialize a git implementation
-	// if there already is a git, we return immedialty because we are done.
-	// else we first try to initialize a gitGitImpl, and then fallback to goGitImpl.
-
-	if impl.git != nil {
-		return
-	}
-
-	impl.git = &gitgit{}
-	if impl.git.Init() == nil {
-		return
-	}
-
-	impl.git = &gogit{}
-	if err := impl.git.Init(); err != nil {
-		panic(err)
-	}
-}
-
-// Clone clones a repository from remoteURI to clonePath.
-func (impl *GitWrap) Clone(remoteURI, clonePath string, extraargs ...string) (retval int, err string) {
-	impl.ensureInit()
-
-	fmt.Printf("Cloning %q into %q ...\n", remoteURI, clonePath)
-
-	// check if the repository already exists
-	if _, isRepo := impl.git.IsRepository(clonePath); isRepo {
-		err = constants.StringRepoAlreadyExists
-		retval = constants.ErrorCodeCustom
-		return
-	}
-
-	// make the directory to clone the repository into
-	if e := os.MkdirAll(clonePath, os.ModePerm); e != nil {
-		err = e.Error()
-		retval = constants.ErrorCodeCustom
-		return
-	}
-
-	// run the clone code and return
-	retval, e := impl.git.Clone(remoteURI, clonePath, extraargs...)
-	if e != nil {
-		err = e.Error()
-	}
-	return
-}
-
-// GetHeadRef gets a resolved reference to head at the repository at clonePath
-func (impl *GitWrap) GetHeadRef(clonePath string) (name string, err error) {
-	impl.ensureInit()
-
-	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
-	if !isRepo {
-		return "", ErrNotARepository
-	}
-
-	// and return the reference to the head
-	return impl.git.GetHeadRef(clonePath, repoObject)
-}
-
-// Fetch fetches all remotes of the repository at clonePath
-func (impl *GitWrap) Fetch(clonePath string) (err error) {
-	impl.ensureInit()
-
-	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
-	if !isRepo {
-		return ErrNotARepository
-	}
-
-	return impl.git.Fetch(clonePath, repoObject)
-}
-
-// Pull fetches and merges the main repository at clonePath
-func (impl *GitWrap) Pull(clonePath string) (err error) {
-	impl.ensureInit()
-
-	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
-	if !isRepo {
-		return ErrNotARepository
-	}
-
-	return impl.git.Pull(clonePath, repoObject)
-}
-
-// GetRemote gets the url of the canonical remote at clonePath
-func (impl *GitWrap) GetRemote(clonePath string) (uri string, err error) {
-	impl.ensureInit()
-
-	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
-	if !isRepo {
-		err = ErrNotARepository
-		return
-	}
-
-	// get all the uris
-	_, uris, err := impl.git.GetCanonicalRemote(clonePath, repoObject)
-	if err != nil || len(uris) == 0 {
-		return
-	}
-
-	// use the first uri
-	uri = uris[0]
-	return
-}
-
-// FixRemotes updates all remotes of a repository with a given CanLine array
-func (impl *GitWrap) FixRemotes(clonePath string, simulate bool, initialLogLine string, lines []repos.CanLine) (err error) {
-	impl.ensureInit()
-
-	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
-	if !isRepo {
-		return ErrNotARepository
-	}
-
-	// get all the remotes listed in the repository
-	remotes, err := impl.git.GetRemotes(clonePath, repoObject)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(initialLogLine)
-
-	// iterate over all the remotes, and their URLs
-	// then fix each url with the provided []repos.CanLine
-	// and store them again if we're not simulating
-
-	for remote, urls := range remotes {
-		canonURLs := make([]string, len(urls))
-		for i, url := range urls {
-			current, err := repos.NewRepoURI(url)
-			if err != nil {
-				continue
-			}
-			canonURLs[i] = current.CanonicalWith(lines)
-			if canonURLs[i] != url {
-				fmt.Printf("Updating %s: %s -> %s\n", remote, url, canonURLs[i])
-			}
-		}
-
-		if simulate {
-			continue
-		}
-
-		err := impl.git.SetRemoteURLs(clonePath, repoObject, remote, canonURLs)
-		if err != nil {
-			return err
-		}
-	}
-
-	return
-}
+// Git is the default git implementation
+var Git = NewGitWrapper(nil)

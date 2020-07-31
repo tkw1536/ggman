@@ -189,21 +189,19 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject interface{}, remoteName 
 	return
 }
 
-func (gogit) Clone(remoteURI, clonePath string, extraargs ...string) (code int, err error) {
+func (gogit) Clone(remoteURI, clonePath string, extraargs ...string) error {
 	// doesn't support extra arguments
 	if len(extraargs) > 0 {
-		err = ErrArgumentsUnsupported
-		return
+		return ErrArgumentsUnsupported
 	}
 
-	// run a plain 'git clone'
-	_, err = git.PlainClone(clonePath, false, &git.CloneOptions{URL: remoteURI, Progress: os.Stdout})
+	// run a plain git clone but intercept all errors
+	_, err := git.PlainClone(clonePath, false, &git.CloneOptions{URL: remoteURI, Progress: os.Stdout})
 	if err != nil {
-		code = 1
-		err = errors.Wrap(err, "Unable to clone repository")
+		err = GitExitError{error: errors.Wrap(err, "Unable clone repository"), Code: 1}
 	}
 
-	return
+	return err
 }
 
 func (gogit) Fetch(clonePath string, cache interface{}) (err error) {

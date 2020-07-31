@@ -64,7 +64,7 @@ func webCommandInternal(runtime *program.SubRuntime, openInstead bool) (retval i
 	}
 
 	// get the remote
-	remote, e := gitwrap.Implementation.GetRemote(root)
+	remote, e := gitwrap.Git.GetRemote(root)
 	if e != nil {
 		return constants.ErrorInvalidRepo, constants.StringOutsideRepository
 	}
@@ -97,7 +97,7 @@ func webCommandInternal(runtime *program.SubRuntime, openInstead bool) (retval i
 	url := uri.Canonical("^/$")
 
 	if runtime.Flag {
-		ref, e := gitwrap.Implementation.GetHeadRef(root)
+		ref, e := gitwrap.Git.GetHeadRef(root)
 		if e != nil {
 			return constants.ErrorInvalidRepo, constants.StringUnparsedRepoName
 		}

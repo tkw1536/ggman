@@ -5,6 +5,7 @@ import (
 )
 
 // GitImplementation is an interface that represents a working implementation of git.
+// It is not intended to be called directly by an external function, instead it is intended to be called by a GitImplementationWrapper only.
 type GitImplementation interface {
 
 	// Init is used to initialize this git implementation
@@ -59,20 +60,24 @@ type GitImplementation interface {
 	SetRemoteURLs(clonePath string, repoObject interface{}, remoteName string, newURLs []string) (err error)
 
 	// Clone tries to clone the repository at 'from' to the folder 'to'.
-	// Output should be directed to os.Stdout and os.Stderr.
+	// May attempt to read credentials from os.Stdin.
+	// Output is directed to os.Stdout and os.Stderr.
 	//
 	// remoteURI will be the uri of the remote repository.
 	// clonePath will be the path to a local folder where the repository should be cloned to.
 	// It is guaranteed to exist, and be empty.
 	//
 	// extraargs will be additional arguments, in the form of arguments of a 'git clone' command.
-	// When this implementation does not support arguments, it should return ErrArgumentsUnsupported whenever arguments is a list of length > 0.
+	// When this implementation does not support arguments, it returns ErrArgumentsUnsupported whenever arguments is a list of length > 0.
 	//
-	// code is the return code that a normal git command would return
-	Clone(remoteURI, clonePath string, extraargs ...string) (code int, err error)
+	// If the clone succeeds returns, err = nil.
+	// If the underlying clone command returns a non-zero code, returns an error of type GitExitError.
+	// If something else goes wrong, may return any other error type.
+	Clone(remoteURI, clonePath string, extraargs ...string) error
 
 	// Fetch should fetch new objects and refs from all remotes of the repository cloned at clonePath.
-	// Output should be directed to os.Stdout and os.Stderr.
+	// May attempt to read credentials from os.Stdin.
+	// Output is directed to os.Stdout and os.Stderr.
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
@@ -80,7 +85,8 @@ type GitImplementation interface {
 
 	// Pull should fetch new objects and refs from all remotes of the repository cloned at clonePath.
 	// It then merges them into the local branch wherever an upstream is set.
-	// Output should be directed to os.Stdout and os.Stderr.
+	// May attempt to read credentials from os.Stdin.
+	// Output is directed to os.Stdout and os.Stderr.
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
@@ -89,6 +95,3 @@ type GitImplementation interface {
 
 // ErrArgumentsUnsupported is an error that is returned when arguments are not supported by a GitImplementation.
 var ErrArgumentsUnsupported = errors.New("GitImplementation does not support extra clone arguments")
-
-// Implementation is *the* GitImpl
-var Implementation = &GitWrap{}

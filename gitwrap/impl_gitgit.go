@@ -15,7 +15,7 @@ func (gg *gitgit) Init() (err error) {
 	return
 }
 
-func (gg *gitgit) Clone(remoteURI, clonePath string, extraargs ...string) (code int, err error) {
+func (gg *gitgit) Clone(remoteURI, clonePath string, extraargs ...string) error {
 
 	gargs := append([]string{"clone", remoteURI, clonePath}, extraargs...)
 
@@ -24,13 +24,12 @@ func (gg *gitgit) Clone(remoteURI, clonePath string, extraargs ...string) (code 
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	// run the command and don't treat exitError as an error
-	err = cmd.Run()
+	// run the underlying command, but treat ExitError specially by turning it into a GitExitError
+	err := cmd.Run()
 	if exitError, isExitError := err.(*exec.ExitError); isExitError {
-		code = exitError.ExitCode()
-		err = nil
+		err = GitExitError{error: err, Code: exitError.ExitCode()}
 	}
-	return
+	return err
 }
 
 func init() {

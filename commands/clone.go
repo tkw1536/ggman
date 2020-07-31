@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"fmt"
 	"path"
 
 	"github.com/tkw1536/ggman/constants"
@@ -23,12 +24,25 @@ func CloneCommand(runtime *program.SubRuntime) (retval int, err string) {
 		return
 	}
 
-	// get the canonical url
-	cloneURI := remote.CanonicalWith(lines)
+	// get the canonical uri
+	remoteURI := remote.CanonicalWith(lines)
+	clonePath := path.Join(append([]string{root}, remote.Components()...)...)
 
-	// figure out where it goes
-	targetPath := path.Join(append([]string{root}, remote.Components()...)...)
+	// and do the actual command
+	fmt.Printf("Cloning %q into %q ...\n", remoteURI, clonePath)
+	// catch special error types, and set the appropriate error messages and return values
+	switch cloneErr := gitwrap.Git.Clone(remoteURI, clonePath, argv[1:]...); cloneErr {
+	case nil:
+	case gitwrap.ErrCloneAlreadyExists:
+		err = constants.StringRepoAlreadyExists
+		retval = constants.ErrorCodeCustom
+	case gitwrap.ErrArgumentsUnsupported:
+		err = constants.StringNoExternalGitnoArguments
+		retval = constants.ErrorCodeCustom
+	default:
+		err = cloneErr.Error()
+		retval = constants.ErrorCodeCustom
+	}
 
-	// and finish
-	return gitwrap.Implementation.Clone(cloneURI, targetPath, argv[1:]...)
+	return
 }

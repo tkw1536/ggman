@@ -21,7 +21,7 @@ func FetchCommand(runtime *program.SubRuntime) (retval int, err string) {
 	// and fetch them
 	for _, repo := range rs {
 		fmt.Printf("Fetching %q\n", repo)
-		if e := gitwrap.Implementation.Fetch(repo); e != nil {
+		if e := gitwrap.Git.Fetch(repo); e != nil {
 			fmt.Fprintln(os.Stderr, e.Error())
 			hasError = true
 		}
