@@ -2,6 +2,18 @@ package utils
 
 import "strings"
 
+// SplitBefore splits into two parts given a seperator
+// if the seperator does not exist in the source string, only suffix is returned
+func SplitBefore(s string, sep string) (prefix string, suffix string) {
+	return splitTwo(s, sep, false)
+}
+
+// SplitAfter splits into two parts given a seperator
+// if the seperator does not exist in the source string, only prefix is returned
+func SplitAfter(s string, sep string) (prefix string, suffix string) {
+	return splitTwo(s, sep, true)
+}
+
 func splitTwo(s string, sep string, returnPrefix bool) (prefix string, suffix string) {
 	parts := strings.SplitN(s, sep, 2)
 	if len(parts) == 1 {
@@ -15,18 +27,6 @@ func splitTwo(s string, sep string, returnPrefix bool) (prefix string, suffix st
 		suffix = parts[1]
 	}
 	return
-}
-
-// SplitBefore splits into two parts given a seperator
-// if the seperator does not exist in the source string, only suffix is returned
-func SplitBefore(s string, sep string) (prefix string, suffix string) {
-	return splitTwo(s, sep, false)
-}
-
-// SplitAfter splits into two parts given a seperator
-// if the seperator does not exist in the source string, only prefix is returned
-func SplitAfter(s string, sep string) (prefix string, suffix string) {
-	return splitTwo(s, sep, true)
 }
 
 // TrimSuffixWhile repeatedly trims a suffix from a string
