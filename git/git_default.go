@@ -20,6 +20,11 @@ type dfltGitWrapper struct {
 	mutex sync.Mutex
 }
 
+func (impl *dfltGitWrapper) Plumbing() Plumbing {
+	impl.ensureInit()
+	return impl.Plumbing()
+}
+
 func (impl *dfltGitWrapper) ensureInit() {
 	impl.mutex.Lock()
 	defer impl.mutex.Unlock()

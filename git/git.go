@@ -5,6 +5,8 @@ package git
 // As opposed to Plumbing, which poses certain requirements and assumptions on the caller, a Git does not.
 // A Git is intended to be called by seperate package.
 type Git interface {
+	// Plumbing returns the plumbing used by this git.
+	Plumbing() Plumbing
 
 	// Clone clones a remote repository from remoteURI to clonePath.
 	// Writes to os.Stdout and os.Stderr.
