@@ -1,12 +1,12 @@
-package gitwrap
+package git
 
 import (
 	"errors"
 )
 
-// GitImplementation is an interface that represents a working implementation of git.
-// It is not intended to be called directly by an external function, instead it is intended to be called by a GitImplementationWrapper only.
-type GitImplementation interface {
+// Plumbing is an interface that represents a working internal implementation of git.
+// It is not intended to be called directly by an external function, instead it is intended to be called by the Git interface only.
+type Plumbing interface {
 
 	// Init is used to initialize this git implementation
 	// When initialization fails, for example due to missing dependencies, returns a non-nil error
@@ -18,7 +18,7 @@ type GitImplementation interface {
 	// This function returns a pair, a boolean isRepo that indicates if this object is a repository
 	// and an optional repoObject value.
 	// The repoObject value will only be taken into account when isRepo is true, and passed to other functions in this git implementation.
-	// The semantics of the repoObject are determined by this GitImplementation and should not be used outside of it.
+	// The semantics of the repoObject are determined by this Plumbing and should not be used outside of it.
 	// Note that the repoObject may be used for more than one subsequent call.
 	//
 	// This function surpresses all errors, and if something goes wrong assumed that isRepo is false.
@@ -44,7 +44,7 @@ type GitImplementation interface {
 	GetRemotes(clonePath string, repoObject interface{}) (remotes map[string][]string, err error)
 
 	// GetCanonicalRemote gets the name of the canonical remote of the reposity cloned at clonePath.
-	// The GitImplementation is free to decided what the canonical remote is, but it is typically the remote of the currently checked out branch or the 'origin' remote.
+	// The Plumbing is free to decided what the canonical remote is, but it is typically the remote of the currently checked out branch or the 'origin' remote.
 	// If no remote exists, an empty name is returned.
 	//
 	// This function should only be called if IsRepository(clonePath) returns true.
@@ -71,7 +71,7 @@ type GitImplementation interface {
 	// When this implementation does not support arguments, it returns ErrArgumentsUnsupported whenever arguments is a list of length > 0.
 	//
 	// If the clone succeeds returns, err = nil.
-	// If the underlying clone command returns a non-zero code, returns an error of type GitExitError.
+	// If the underlying clone command returns a non-zero code, returns an error of type ExitError.
 	// If something else goes wrong, may return any other error type.
 	Clone(remoteURI, clonePath string, extraargs ...string) error
 
@@ -93,5 +93,5 @@ type GitImplementation interface {
 	Pull(clonePath string, cache interface{}) (err error)
 }
 
-// ErrArgumentsUnsupported is an error that is returned when arguments are not supported by a GitImplementation.
-var ErrArgumentsUnsupported = errors.New("GitImplementation does not support extra clone arguments")
+// ErrArgumentsUnsupported is an error that is returned when arguments are not supported by a Plumbing.
+var ErrArgumentsUnsupported = errors.New("Plumbing does not support extra clone arguments")

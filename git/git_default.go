@@ -1,22 +1,22 @@
-package gitwrap
+package git
 
 import (
 	"os"
 	"sync"
 )
 
-// NewGitWrapper creates a new GitImplementationWrapper wrapping a specific GitImplementation.
+// NewGitFromPlumbing creates a new Git wrapping a specific Plumbing.
 //
-// When git is nil, attempts to automatically select a GitImplementation automatically.
+// When git is nil, attempts to automatically select a Plumbing automatically.
 //
-// The implementation of this function relies on the underlying GitImplementation (be it a default one or a caller provided one) to conform according to the specification.
+// The implementation of this function relies on the underlying Plumbing (be it a default one or a caller provided one) to conform according to the specification.
 // In particular, this function does not checks on the error values returned and passes them directly from the implementation to the caller
-func NewGitWrapper(git GitImplementation) GitImplementationWrapper {
-	return &dfltGitWrapper{git: git}
+func NewGitFromPlumbing(plumbing Plumbing) Git {
+	return &dfltGitWrapper{git: plumbing}
 }
 
 type dfltGitWrapper struct {
-	git   GitImplementation
+	git   Plumbing
 	mutex sync.Mutex
 }
 

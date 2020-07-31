@@ -1,4 +1,4 @@
-package gitwrap
+package git
 
 import (
 	"os"
@@ -24,15 +24,15 @@ func (gg *gitgit) Clone(remoteURI, clonePath string, extraargs ...string) error 
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	// run the underlying command, but treat ExitError specially by turning it into a GitExitError
+	// run the underlying command, but treat ExitError specially by turning it into a ExitError
 	err := cmd.Run()
 	if exitError, isExitError := err.(*exec.ExitError); isExitError {
-		err = GitExitError{error: err, Code: exitError.ExitCode()}
+		err = ExitError{error: err, Code: exitError.ExitCode()}
 	}
 	return err
 }
 
 func init() {
 	// check that goGitImpl is a git implementation
-	var _ GitImplementation = (*gitgit)(nil)
+	var _ Plumbing = (*gitgit)(nil)
 }

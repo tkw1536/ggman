@@ -1,12 +1,10 @@
-// Package gitwrap contains a wrapper for git functionality
-package gitwrap
+// Package git contains a wrapper for git functionality
+package git
 
-// TODO: Refactor return values by this package into more useful errors
-
-// GitImplementationWrapper represents a wrapper around an GitImplementation
-// As opposed to a GitImplementation, which poses certain requirements and assumptions on the caller, a GitImplementationWrapper does not.
-// A GitImplementation is intended to be called by seperate package.
-type GitImplementationWrapper interface {
+// Git represents a wrapper around a Plumbing instance.
+// As opposed to Plumbing, which poses certain requirements and assumptions on the caller, a Git does not.
+// A Git is intended to be called by seperate package.
+type Git interface {
 
 	// Clone clones a remote repository from remoteURI to clonePath.
 	// Writes to os.Stdout and os.Stderr.
@@ -65,5 +63,5 @@ type GitImplementationWrapper interface {
 	UpdateRemotes(clonePath string, updateFunc func(url, remoteName string) (newRemote string, err error)) error
 }
 
-// Git is the default git implementation
-var Git = NewGitWrapper(nil)
+// Default is the default git
+var Default = NewGitFromPlumbing(nil)

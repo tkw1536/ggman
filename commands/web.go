@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/gitwrap"
+	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/repos"
 
@@ -64,7 +64,7 @@ func webCommandInternal(runtime *program.SubRuntime, openInstead bool) (retval i
 	}
 
 	// get the remote
-	remote, e := gitwrap.Git.GetRemote(root)
+	remote, e := git.Default.GetRemote(root)
 	if e != nil {
 		return constants.ErrorInvalidRepo, constants.StringOutsideRepository
 	}
@@ -97,7 +97,7 @@ func webCommandInternal(runtime *program.SubRuntime, openInstead bool) (retval i
 	url := uri.Canonical("^/$")
 
 	if runtime.Flag {
-		ref, e := gitwrap.Git.GetHeadRef(root)
+		ref, e := git.Default.GetHeadRef(root)
 		if e != nil {
 			return constants.ErrorInvalidRepo, constants.StringUnparsedRepoName
 		}

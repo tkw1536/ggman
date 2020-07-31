@@ -5,7 +5,7 @@ import (
 	"path"
 
 	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/gitwrap"
+	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/repos"
 )
@@ -31,12 +31,12 @@ func CloneCommand(runtime *program.SubRuntime) (retval int, err string) {
 	// and do the actual command
 	fmt.Printf("Cloning %q into %q ...\n", remoteURI, clonePath)
 	// catch special error types, and set the appropriate error messages and return values
-	switch cloneErr := gitwrap.Git.Clone(remoteURI, clonePath, argv[1:]...); cloneErr {
+	switch cloneErr := git.Default.Clone(remoteURI, clonePath, argv[1:]...); cloneErr {
 	case nil:
-	case gitwrap.ErrCloneAlreadyExists:
+	case git.ErrCloneAlreadyExists:
 		err = constants.StringRepoAlreadyExists
 		retval = constants.ErrorCodeCustom
-	case gitwrap.ErrArgumentsUnsupported:
+	case git.ErrArgumentsUnsupported:
 		err = constants.StringNoExternalGitnoArguments
 		retval = constants.ErrorCodeCustom
 	default:

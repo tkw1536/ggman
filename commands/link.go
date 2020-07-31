@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/gitwrap"
+	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/repos"
 )
@@ -31,7 +31,7 @@ func linkRepository(from string, root string) (retval int, err string) {
 	}
 
 	// open the source repository and get the remotre
-	r, e := gitwrap.Git.GetRemote(from)
+	r, e := git.Default.GetRemote(from)
 	if e != nil {
 		err = constants.StringLinkDoesNotExist
 		retval = constants.ErrorCodeCustom

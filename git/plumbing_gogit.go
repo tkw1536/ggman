@@ -1,4 +1,4 @@
-package gitwrap
+package git
 
 import (
 	"os"
@@ -198,7 +198,7 @@ func (gogit) Clone(remoteURI, clonePath string, extraargs ...string) error {
 	// run a plain git clone but intercept all errors
 	_, err := git.PlainClone(clonePath, false, &git.CloneOptions{URL: remoteURI, Progress: os.Stdout})
 	if err != nil {
-		err = GitExitError{error: errors.Wrap(err, "Unable clone repository"), Code: 1}
+		err = ExitError{error: errors.Wrap(err, "Unable clone repository"), Code: 1}
 	}
 
 	return err
@@ -261,5 +261,5 @@ func ignoreErrUpToDate(err error) error {
 
 func init() {
 	// check that goGitImpl is a git implementation
-	var _ GitImplementation = (*gogit)(nil)
+	var _ Plumbing = (*gogit)(nil)
 }

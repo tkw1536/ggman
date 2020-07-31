@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/gitwrap"
+	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/repos"
 )
@@ -35,7 +35,7 @@ func FixCommand(runtime *program.SubRuntime) (retval int, err string) {
 			initialMessage = fmt.Sprintf("Fixing remote of %q", repo)
 		}
 
-		if e := gitwrap.Git.UpdateRemotes(repo, func(url, remoteName string) (string, error) {
+		if e := git.Default.UpdateRemotes(repo, func(url, remoteName string) (string, error) {
 
 			// print a log message if we haven't already
 			if !didPrintInitialMessage {
