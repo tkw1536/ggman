@@ -31,7 +31,7 @@ func FixCommand(runtime *program.SubRuntime) (retval int, err string) {
 		} else {
 			msg = fmt.Sprintf("Fixing remote of %q", repo)
 		}
-		if e := gitwrap.FixRemote(repo, simulateFlag, msg, lines); e != nil {
+		if e := gitwrap.Implementation.FixRemotes(repo, simulateFlag, msg, lines); e != nil {
 			fmt.Fprintln(os.Stderr, e.Error())
 			hasError = true
 		}

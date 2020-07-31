@@ -31,7 +31,7 @@ func linkRepository(from string, root string) (retval int, err string) {
 	}
 
 	// open the source repository and get the remotre
-	r, e := gitwrap.GetRemote(from)
+	r, e := gitwrap.Implementation.GetRemote(from)
 	if e != nil {
 		err = constants.StringLinkDoesNotExist
 		retval = constants.ErrorCodeCustom

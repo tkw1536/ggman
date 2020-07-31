@@ -30,5 +30,5 @@ func CloneCommand(runtime *program.SubRuntime) (retval int, err string) {
 	targetPath := path.Join(append([]string{root}, remote.Components()...)...)
 
 	// and finish
-	return gitwrap.CloneRepository(cloneURI, targetPath, argv[1:]...)
+	return gitwrap.Implementation.Clone(cloneURI, targetPath, argv[1:]...)
 }

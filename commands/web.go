@@ -64,7 +64,7 @@ func webCommandInternal(runtime *program.SubRuntime, openInstead bool) (retval i
 	}
 
 	// get the remote
-	remote, e := gitwrap.GetRemote(root)
+	remote, e := gitwrap.Implementation.GetRemote(root)
 	if e != nil {
 		return constants.ErrorInvalidRepo, constants.StringOutsideRepository
 	}
@@ -97,11 +97,11 @@ func webCommandInternal(runtime *program.SubRuntime, openInstead bool) (retval i
 	url := uri.Canonical("^/$")
 
 	if runtime.Flag {
-		ref, e := gitwrap.GetHeadRef(root)
+		ref, e := gitwrap.Implementation.GetHeadRef(root)
 		if e != nil {
 			return constants.ErrorInvalidRepo, constants.StringUnparsedRepoName
 		}
-		// TODO: replace master with something useful
+		// TODO: do we want to replace the HEAD branch with something more useful?
 		url += "/tree/" + ref + "/" + relative
 	}
 

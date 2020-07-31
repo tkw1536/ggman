@@ -22,7 +22,7 @@ func PullCommand(runtime *program.SubRuntime) (retval int, err string) {
 	// and pull them
 	for _, repo := range rs {
 		fmt.Printf("Pulling %q\n", repo)
-		if e := gitwrap.FetchRepository(repo); e != nil {
+		if e := gitwrap.Implementation.Pull(repo); e != nil {
 			fmt.Fprintln(os.Stderr, e.Error())
 			hasError = true
 		}

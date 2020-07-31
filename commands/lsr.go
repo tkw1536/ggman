@@ -33,7 +33,7 @@ func LSRCommand(runtime *program.SubRuntime) (retval int, err string) {
 
 	// and print them
 	for _, repo := range rs {
-		remote, err := gitwrap.GetRemote(repo)
+		remote, err := gitwrap.Implementation.GetRemote(repo)
 		if err == nil {
 			if shouldCanon {
 				printCanonOrError(lines, remote)
