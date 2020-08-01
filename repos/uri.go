@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tkw1536/ggman/utils"
+	"github.com/tkw1536/ggman/util"
 )
 
 // We support three types of urls:
@@ -33,25 +33,25 @@ type RepoURI struct {
 // NewRepoURI parses a new repo uri from a string
 func NewRepoURI(s string) (repo *RepoURI, err error) {
 	// trim off the scheme and make sure that it validates
-	scheme, rest := utils.SplitBefore(s, "://")
+	scheme, rest := util.SplitBefore(s, "://")
 	if scheme != "" && !validateScheme(scheme) {
 		rest = scheme + "://" + rest
 	}
 
 	// trim off authentication
-	auth, rest := utils.SplitBefore(rest, "@")
-	user, password := utils.SplitAfter(auth, ":")
+	auth, rest := util.SplitBefore(rest, "@")
+	user, password := util.SplitAfter(auth, ":")
 
 	// if we have a ':', we need to determine if it is a port or a path
 	var hostname, path, sport string
 	var port int
 	if strings.ContainsRune(rest, ':') {
 		// trim off the hostname
-		hostname, path = utils.SplitBefore(rest, ":")
+		hostname, path = util.SplitBefore(rest, ":")
 
 		// if we have a scheme, then we have to parse everything after ':' as a port
 		if scheme != "" {
-			sport, path = utils.SplitAfter(path, "/")
+			sport, path = util.SplitAfter(path, "/")
 			if port, err = parsePort(sport); err != nil {
 				path = sport + "/" + path
 				port = 0
@@ -61,7 +61,7 @@ func NewRepoURI(s string) (repo *RepoURI, err error) {
 
 	} else {
 		// the first part of the url is a hostname
-		hostname, path = utils.SplitAfter(rest, "/")
+		hostname, path = util.SplitAfter(rest, "/")
 	}
 
 	repo = &RepoURI{scheme, user, password, hostname, port, path}

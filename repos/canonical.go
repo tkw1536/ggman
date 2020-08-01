@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/tkw1536/ggman/utils"
+	"github.com/tkw1536/ggman/util"
 )
 
 var specReplace = regexp.MustCompile("[\\^\\%]")
@@ -20,7 +20,7 @@ func (rURI *RepoURI) Canonical(cspec string) (canonical string) {
 	components := rURI.Components()
 
 	// split into prefix and suffix
-	prefix, suffix := utils.SplitAfter(cspec, "$")
+	prefix, suffix := util.SplitAfter(cspec, "$")
 
 	prefix = specReplace.ReplaceAllStringFunc(prefix, func(s string) string {
 		// if everything is empty, return the string as is

@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/tkw1536/ggman/utils"
+	"github.com/tkw1536/ggman/util"
 )
 
 var reSlash = regexp.MustCompile("/+")
@@ -14,9 +14,9 @@ func (rURI *RepoURI) Components() (parts []string) {
 
 	// normalize the path
 	path := (*rURI).Path
-	path = utils.TrimPrefixWhile(utils.TrimSuffixWhile(path, "/"), "/")
+	path = util.TrimPrefixWhile(util.TrimSuffixWhile(path, "/"), "/")
 	path = strings.TrimSuffix(path, ".git")
-	path = utils.TrimSuffixWhile(path, "/")
+	path = util.TrimSuffixWhile(path, "/")
 	path = reSlash.ReplaceAllString(path, "/")
 
 	// get the host and the username

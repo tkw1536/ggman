@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/utils"
+	"github.com/tkw1536/ggman/util"
 )
 
 // Program represents a main program
@@ -32,7 +32,7 @@ func (pgrm *Program) Register(name string, sub SubCommand, opts *SubOptions) {
 // Run runs this program
 func (pgrm *Program) Run(argv []string) (retval int, err string) {
 	defer func() {
-		err = utils.WrapStringPreserveJ(err, pgrm.wrapLength)
+		err = util.WrapStringPreserveJ(err, pgrm.wrapLength)
 	}()
 
 	// parse the arguments
@@ -100,5 +100,5 @@ func (pgrm *Program) knownCommands() string {
 
 // Print prints output to the command line
 func (pgrm *Program) Print(s string) {
-	fmt.Println(utils.WrapStringPreserveJ(s, pgrm.wrapLength))
+	fmt.Println(util.WrapStringPreserveJ(s, pgrm.wrapLength))
 }

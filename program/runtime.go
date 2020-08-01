@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/utils"
+	"github.com/tkw1536/ggman/util"
 
 	"github.com/tkw1536/ggman/repos"
 )
@@ -140,7 +140,7 @@ func (opt *SubOptions) Apply(pgrm *Program, Args *SubCommandArgs) (runtime *SubR
 	runtime = &SubRuntime{Args: Args}
 
 	// if we have a 'help' argument, print the usage and then exit
-	if utils.SliceContainsAny(Args.args, helpLongForm, helpShortForm, helpLiteralForm) {
+	if util.SliceContainsAny(Args.args, helpLongForm, helpShortForm, helpLiteralForm) {
 		pgrm.Print(opt.Usage(Args.Command))
 		return
 	}

@@ -1,4 +1,4 @@
-package utils
+package util
 
 import (
 	"reflect"
@@ -34,6 +34,12 @@ func TestWrapLine(t *testing.T) {
 	}
 }
 
+func BenchmarkWrapLine(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		WrapLine(` Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget tortor massa. Nullam gravida massa id dui placerat condimentum. Proin volutpat massa eu enim luctus convallis. Integer a nulla facilisis, convallis elit id, tristique nisi. Duis enim diam, viverra sed quam quis, scelerisque aliquam mi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed consectetur cursus libero, non lobortis mi tempor sit amet. Nullam sapien sapien, imperdiet id cursus non, consequat sed neque. Fusce sollicitudin tortor pulvinar, placerat urna sit amet, luctus tellus. Vivamus sit amet ligula purus. `, 20)
+	}
+}
+
 func TestWrapLinePreserve(t *testing.T) {
 	type args struct {
 		line   string
@@ -52,6 +58,7 @@ func TestWrapLinePreserve(t *testing.T) {
 
 		{"wrap text normally", args{"hello world beautiful you are", 20}, []string{"hello world", "beautiful you are"}},
 		{"wrap text removing spaces", args{"    hello    world    beautiful you are   ", 20}, []string{"    hello world", "    beautiful you", "    are"}},
+		{"wrap only spaces", args{"               ", 20}, []string{"               "}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -59,6 +66,12 @@ func TestWrapLinePreserve(t *testing.T) {
 				t.Errorf("WrapLinePreserve() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func BenchmarkWrapLinePreserve(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		WrapLinePreserve(`         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget tortor massa. Nullam gravida massa id dui placerat condimentum. Proin volutpat massa eu enim luctus convallis. Integer a nulla facilisis, convallis elit id, tristique nisi. Duis enim diam, viverra sed quam quis, scelerisque aliquam mi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed consectetur cursus libero, non lobortis mi tempor sit amet. Nullam sapien sapien, imperdiet id cursus non, consequat sed neque. Fusce sollicitudin tortor pulvinar, placerat urna sit amet, luctus tellus. Vivamus sit amet ligula purus. `, 20)
 	}
 }
 
