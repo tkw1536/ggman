@@ -4,8 +4,8 @@ import (
 	"os"
 	"path"
 
+	git "github.com/go-git/go-git/v5"
 	"github.com/pkg/errors"
-	git "gopkg.in/src-d/go-git.v4"
 )
 
 type gogit struct{}
