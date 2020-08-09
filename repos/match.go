@@ -7,7 +7,7 @@ import (
 )
 
 // Matches checks if a repiository URI matches a given pattern
-func (rURI *RepoURI) Matches(pattern string) bool {
+func (rURI *RepoURL) Matches(pattern string) bool {
 	// if we have an 'everything' pattern, return true immediatly
 	if pattern == "" || pattern == "*" {
 		return true
@@ -18,10 +18,7 @@ func (rURI *RepoURI) Matches(pattern string) bool {
 
 	// parse components of strings and ignore any casing
 
-	puri, es := NewRepoURI(pattern)
-	if es != nil {
-		return false
-	}
+	puri := ParseRepoURL(pattern)
 
 	patternComponents := puri.Components()
 	patternLength := len(patternComponents)
@@ -40,13 +37,5 @@ func (rURI *RepoURI) Matches(pattern string) bool {
 
 // MatchesString checks if a string matches a given repository pattern
 func MatchesString(pattern string, s string) bool {
-
-	// turn the input string into a repo uri
-	curi, es := NewRepoURI(s)
-	if es != nil {
-		return false
-	}
-
-	// and check if that matches the pattern
-	return curi.Matches(pattern)
+	return ParseRepoURL(s).Matches(pattern)
 }

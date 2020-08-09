@@ -35,16 +35,9 @@ func CanonCommand(runtime *program.SubRuntime) (retval int, err string) {
 }
 
 func printCanonOrError(lines []repos.CanLine, repo string) (retval int, err string) {
-	// parse the repo uri
-	uri, e := repos.NewRepoURI(repo)
-	if e != nil {
-		err = constants.StringUnparsedRepoName
-		retval = constants.ErrorInvalidRepo
-		return
-	}
 
 	// get the canonical one based on the canfile
-	canonical := uri.CanonicalWith(lines)
+	canonical := repos.ParseRepoURL(repo).CanonicalWith(lines)
 	fmt.Println(canonical)
 
 	return

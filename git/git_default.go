@@ -16,8 +16,8 @@ func NewGitFromPlumbing(plumbing Plumbing) Git {
 }
 
 type dfltGitWrapper struct {
-	git   Plumbing
-	mutex sync.Mutex
+	m   sync.Mutex
+	git Plumbing
 }
 
 func (impl *dfltGitWrapper) Plumbing() Plumbing {
@@ -26,8 +26,8 @@ func (impl *dfltGitWrapper) Plumbing() Plumbing {
 }
 
 func (impl *dfltGitWrapper) ensureInit() {
-	impl.mutex.Lock()
-	defer impl.mutex.Unlock()
+	impl.m.Lock()
+	defer impl.m.Unlock()
 
 	// We try to initialize a dflt
 	// if there already is a git, we return immedialty because we are done.
@@ -123,7 +123,7 @@ func (impl *dfltGitWrapper) GetRemote(clonePath string) (uri string, err error) 
 	return
 }
 
-func (impl *dfltGitWrapper) UpdateRemotes(clonePath string, updateFunc func(url, remoteName string) (string, error)) (err error) {
+func (impl *dfltGitWrapper) UpdateRemotes(clonePath string, updateFunc func(url, name string) (string, error)) (err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository

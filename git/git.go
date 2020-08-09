@@ -62,7 +62,7 @@ type Git interface {
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	UpdateRemotes(clonePath string, updateFunc func(url, remoteName string) (newRemote string, err error)) error
+	UpdateRemotes(clonePath string, updateFunc func(url, name string) (newURL string, err error)) error
 }
 
 // Default is the default git

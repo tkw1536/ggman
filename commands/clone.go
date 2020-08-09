@@ -17,12 +17,7 @@ func CloneCommand(runtime *program.SubRuntime) (retval int, err string) {
 	root := runtime.Root
 
 	// parse the repo uri
-	remote, e := repos.NewRepoURI(argv[0])
-	if e != nil {
-		err = constants.StringUnparsedRepoName
-		retval = constants.ErrorInvalidRepo
-		return
-	}
+	remote := repos.ParseRepoURL(argv[0])
 
 	// get the canonical uri
 	remoteURI := remote.CanonicalWith(lines)

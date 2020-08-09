@@ -70,13 +70,10 @@ func webCommandInternal(runtime *program.SubRuntime, openInstead bool) (retval i
 	}
 
 	// parse it as a repo url
-	uri, e := repos.NewRepoURI(remote)
-	if e != nil {
-		return constants.ErrorInvalidRepo, constants.StringUnparsedRepoName
-	}
+	url := repos.ParseRepoURL(remote)
 
 	// set the base host
-	base := "https://" + uri.HostName
+	base := "https://" + url.HostName
 	if runtime.Argc > 0 {
 		base = runtime.Argv[0]
 	}
@@ -86,32 +83,32 @@ func webCommandInternal(runtime *program.SubRuntime, openInstead bool) (retval i
 	if builtIn, ok := WebBuiltInBases[base]; ok {
 		base = builtIn.URL
 		if builtIn.IncludeHost {
-			base += uri.HostName
+			base += url.HostName
 		}
 	}
 
 	// set the hostname to the base
-	uri.HostName = base
+	url.HostName = base
 
 	// get the web url
-	url := uri.Canonical("^/$")
+	weburl := url.Canonical("^/$")
 
 	if runtime.Flag {
 		ref, e := git.Default.GetHeadRef(root)
 		if e != nil {
-			return constants.ErrorInvalidRepo, constants.StringUnparsedRepoName
+			return constants.ErrorInvalidRepo, constants.StringOutsideRepository
 		}
 		// TODO: do we want to replace the HEAD branch with something more useful?
-		url += "/tree/" + ref + "/" + relative
+		weburl += "/tree/" + ref + "/" + relative
 	}
 
 	// open the url
 	if openInstead {
-		open.Start(url)
+		open.Start(weburl)
 
 		// print the url
 	} else {
-		fmt.Println(url)
+		fmt.Println(weburl)
 	}
 
 	return

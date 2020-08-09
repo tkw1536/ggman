@@ -10,7 +10,7 @@ import (
 var reSlash = regexp.MustCompile("/+")
 
 // Components gets the Components of a Repo URI
-func (rURI *RepoURI) Components() (parts []string) {
+func (rURI *RepoURL) Components() (parts []string) {
 
 	// normalize the path
 	path := (*rURI).Path

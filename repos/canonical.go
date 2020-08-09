@@ -15,7 +15,7 @@ var specReplace = regexp.MustCompile("[\\^\\%]")
 // % -- replaced by the second un-used component of the URI (commonly username)
 // $ -- replaced by all remaining components in the URI joined with a '/'. Also stops all processing afterwards
 // If $ does not exist in the cspec, it is assumed to be at the end of the cspec.
-func (rURI *RepoURI) Canonical(cspec string) (canonical string) {
+func (rURI *RepoURL) Canonical(cspec string) (canonical string) {
 	// get the components of the URI
 	components := rURI.Components()
 
@@ -50,7 +50,7 @@ func (rURI *RepoURI) Canonical(cspec string) (canonical string) {
 }
 
 // CanonicalWith returns the canonical url given a set of lines
-func (rURI *RepoURI) CanonicalWith(lines []CanLine) (canonical string) {
+func (rURI *RepoURL) CanonicalWith(lines CanFile) (canonical string) {
 	for _, line := range lines {
 		if rURI.Matches(line.Pattern) {
 			return rURI.Canonical(line.Canonical)
@@ -63,9 +63,5 @@ func (rURI *RepoURI) CanonicalWith(lines []CanLine) (canonical string) {
 // IsCanonicalURI checks if a given URI is in canonical form
 // using a specific canonical specification
 func IsCanonicalURI(s string, cspec string) bool {
-	uri, err := NewRepoURI(s)
-	if err != nil {
-		return false
-	}
-	return uri.Canonical(cspec) == s
+	return ParseRepoURL(s).Canonical(cspec) == s
 }

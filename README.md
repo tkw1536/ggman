@@ -238,6 +238,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 ### 1.5.0 (Upcoming)
 
 - upgrade to new version of go-git
+- rewrite internal url handling
 - rewrite internal handling of git commands
 
 ### 1.4.1 (Released [Jul 23 2020](https://github.com/tkw1536/ggman/releases/tag/v1.4.1))

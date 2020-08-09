@@ -39,12 +39,7 @@ func linkRepository(from string, root string) (retval int, err string) {
 	}
 
 	// get the remote url
-	remote, e := repos.NewRepoURI(r)
-	if e != nil {
-		err = e.Error()
-		retval = constants.ErrorCodeCustom
-		return
-	}
+	remote := repos.ParseRepoURL(r)
 
 	// find the target path
 	to := path.Join(append([]string{root}, remote.Components()...)...)

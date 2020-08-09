@@ -45,7 +45,7 @@ func TestRepoURI_Components(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rURI := &RepoURI{
+			rURI := &RepoURL{
 				Scheme:   tt.fields.Scheme,
 				User:     tt.fields.User,
 				Password: tt.fields.Password,

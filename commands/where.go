@@ -3,7 +3,6 @@ package commands
 import (
 	"path"
 
-	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/repos"
 )
@@ -14,12 +13,7 @@ func WhereCommand(runtime *program.SubRuntime) (retval int, err string) {
 	root := runtime.Root
 
 	// parse the repository in questions
-	r, e := repos.NewRepoURI(argv[0])
-	if e != nil {
-		err = constants.StringUnparsedRepoName
-		retval = constants.ErrorInvalidRepo
-		return
-	}
+	r := repos.ParseRepoURL(argv[0])
 
 	// and get it's components
 	components := r.Components()

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/program"
@@ -44,12 +43,7 @@ func FixCommand(runtime *program.SubRuntime) (retval int, err string) {
 			}
 
 			// compute the new canonical url
-			rurl, err := repos.NewRepoURI(url)
-			if err != nil {
-				return "", errors.Wrap(err, "Unable to parse repository url")
-
-			}
-			canon := rurl.CanonicalWith(lines)
+			canon := repos.ParseRepoURL(url).CanonicalWith(lines)
 
 			fmt.Printf("Updating %s: %s -> %s\n", remoteName, url, canon)
 

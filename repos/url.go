@@ -9,19 +9,8 @@ import (
 	"github.com/tkw1536/ggman/util"
 )
 
-// We support three types of urls:
-
-// 1. The long form:
-// [scheme://][user[:password]@]hostname[:port]/path
-// e.g. https://git:git@mydomain:1234/repo.git
-// e.g. https://git@mydomain/example
-
-// 2. The short form:
-// [scheme://][user[:password]@]hostname:path
-// e.g. mydomain:hello/world.git
-
-// RepoURI represents the URI to a single repository
-type RepoURI struct {
+// RepoURL represents the URI to a single repository
+type RepoURL struct {
 	Scheme   string
 	User     string
 	Password string
@@ -30,8 +19,19 @@ type RepoURI struct {
 	Path     string
 }
 
-// NewRepoURI parses a new repo uri from a string
-func NewRepoURI(s string) (repo *RepoURI, err error) {
+// ParseRepoURL parses a new repo uri from a string.
+//
+// We support two types of urls:
+//
+// 1. The long form:
+// [scheme://][user[:password]@]hostname[:port]/path
+// e.g. https://git:git@mydomain:1234/repo.git
+// e.g. https://git@mydomain/example
+//
+// 2. The short form:
+// [scheme://][user[:password]@]hostname:path
+// e.g. mydomain:hello/world.git
+func ParseRepoURL(s string) (repo *RepoURL) {
 	// trim off the scheme and make sure that it validates
 	scheme, rest := util.SplitBefore(s, "://")
 	if scheme != "" && !validateScheme(scheme) {
@@ -52,10 +52,9 @@ func NewRepoURI(s string) (repo *RepoURI, err error) {
 		// if we have a scheme, then we have to parse everything after ':' as a port
 		if scheme != "" {
 			sport, path = util.SplitAfter(path, "/")
+			var err error
 			if port, err = parsePort(sport); err != nil {
 				path = sport + "/" + path
-				port = 0
-				err = nil
 			}
 		}
 
@@ -64,9 +63,14 @@ func NewRepoURI(s string) (repo *RepoURI, err error) {
 		hostname, path = util.SplitAfter(rest, "/")
 	}
 
-	repo = &RepoURI{scheme, user, password, hostname, port, path}
+	repo = &RepoURL{scheme, user, password, hostname, port, path}
 
 	return
+}
+
+// ParseRepoURI is like ParseRepoURI, execpt also returns an error for legacy compatibility.
+func ParseRepoURI(s string) (repo *RepoURL, err error) {
+	return ParseRepoURL(s), nil
 }
 
 var schemeRegex = regexp.MustCompile("^[a-zA-Z][a-zA-Z0-9+\\-\\.]*$")
