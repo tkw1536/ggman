@@ -29,48 +29,43 @@ func (gogit) IsRepositoryUnsafe(localPath string) bool {
 	return !os.IsNotExist(err) && s.Mode().IsDir()
 }
 
-func (gogit) GetHeadRef(clonePath string, repoObject interface{}) (ref string, err error) {
-	// get the repository
+func (gogit) GetHeadRef(clonePath string, repoObject interface{}) (string, error) {
 	repo := repoObject.(*git.Repository)
 
-	// get the current head
+	// first get the name of the current HEAD
+	// or fail if that isn't possible
 	head, err := repo.Head()
 	if err != nil {
 		err = errors.Wrap(err, "Cannot resolve HEAD")
-		return
+		return "", err
 	}
-
 	name := head.Name()
 
-	// if we are on a branch or a tag
-	// we can return the appropriate short version
-	if name.IsBranch() || name.IsTag() {
-		ref = name.Short()
-
-		// else we need to resolve it
-		// because we probably have a detached HEAD
-	} else {
-		ref = head.Hash().String()
+	// if we have a branch or a tag, return the reference to it
+	if name.IsBranch() {
+		return name.Short(), nil
 	}
-	return
+
+	// else just return the plain old hash
+	return head.Hash().String(), nil
 }
 
-func (gogit) GetRemotes(clonePath string, repoObject interface{}) (remoteMap map[string][]string, err error) {
+func (gogit) GetRemotes(clonePath string, repoObject interface{}) (remotes map[string][]string, err error) {
 	// get the repository
 	r := repoObject.(*git.Repository)
 
 	// get all the remotes for the repository
-	remotes, err := r.Remotes()
+	gitRemotes, err := r.Remotes()
 	if err != nil {
 		err = errors.Wrap(err, "Unable to get remotes")
 		return
 	}
 
 	// make a map for remotes
-	remoteMap = make(map[string][]string, len(remotes))
-	for _, r := range remotes {
+	remotes = make(map[string][]string, len(gitRemotes))
+	for _, r := range gitRemotes {
 		cfg := r.Config()
-		remoteMap[cfg.Name] = cfg.URLs
+		remotes[cfg.Name] = cfg.URLs
 	}
 
 	return
@@ -79,11 +74,11 @@ func (gogit) GetRemotes(clonePath string, repoObject interface{}) (remoteMap map
 // originRemoteName is the name of the canonical remote
 const originRemoteName = "origin"
 
-func (gg gogit) GetCanonicalRemote(clonePath string, repoObject interface{}) (remoteName string, remoteURLs []string, err error) {
+func (gg gogit) GetCanonicalRemote(clonePath string, repoObject interface{}) (name string, urls []string, err error) {
 	// get a map of remotes
 	remotes, err := gg.GetRemotes(clonePath, repoObject)
 	if err != nil {
-		err = errors.Wrap(err, "Unabel to get remotes")
+		err = errors.Wrap(err, "Unable to get remotes")
 		return
 	}
 
@@ -94,23 +89,23 @@ func (gg gogit) GetCanonicalRemote(clonePath string, repoObject interface{}) (re
 
 	// if the current branch has a remote, use it
 	r := repoObject.(*git.Repository)
-	remoteName, _ = gg.getCurrentBranchRemote(r)
-	if remoteName != "" {
-		remoteURLs = remotes[remoteName]
+	name, _ = gg.getCurrentBranchRemote(r)
+	if name != "" {
+		urls = remotes[name]
 		return
 	}
 
 	// else if we have an 'origin' remote we use that
 	if originRemote, originRemoteExists := remotes[originRemoteName]; originRemoteExists {
-		remoteURLs = originRemote
-		remoteName = originRemoteName
+		urls = originRemote
+		name = originRemoteName
 		return
 	}
 
 	// else randomly use the first remote that we have
 	for rn, ru := range remotes {
-		remoteURLs = ru
-		remoteName = rn
+		urls = ru
+		name = rn
 		return
 	}
 
@@ -163,14 +158,14 @@ func (gg gogit) getCurrentBranchRemote(r *git.Repository) (name string, err erro
 	return
 }
 
-func (gogit) SetRemoteURLs(clonePath string, repoObject interface{}, remoteName string, newURLs []string) (err error) {
+func (gogit) SetRemoteURLs(clonePath string, repoObject interface{}, name string, urls []string) (err error) {
 	// get the repository
 	r := repoObject.(*git.Repository)
 
 	// get the desired remote
-	remote, err := r.Remote(remoteName)
+	remote, err := r.Remote(name)
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to find remote %s", remoteName)
+		err = errors.Wrapf(err, "Unable to find remote %s", name)
 		return
 	}
 
@@ -181,10 +176,16 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject interface{}, remoteName 
 	}
 
 	// update the urls
-	if len(cfg.Remotes[remote.Config().Name].URLs) != len(newURLs) {
+	if len(cfg.Remotes[remote.Config().Name].URLs) != len(urls) {
 		return errors.New("Cannot set remoteURL: Length of old and new urls must be identical")
 	}
-	cfg.Remotes[remote.Config().Name].URLs = newURLs
+	cfg.Remotes[remote.Config().Name].URLs = urls
+
+	// write back the configuration
+	if err = r.SetConfig(cfg); err != nil {
+		err = errors.Wrap(err, "Unable to store config")
+		return
+	}
 
 	return
 }

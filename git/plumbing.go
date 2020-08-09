@@ -49,15 +49,15 @@ type Plumbing interface {
 	//
 	// This function should only be called if IsRepository(clonePath) returns true.
 	// The second parameter must be the returned value from IsRepository().
-	GetCanonicalRemote(clonePath string, repoObject interface{}) (remoteName string, remoteURLs []string, err error)
+	GetCanonicalRemote(clonePath string, repoObject interface{}) (name string, urls []string, err error)
 
-	// SetRemoteURLs set the remote 'remoteName' of the repository at clonePath to newURLs.
-	// The remote remoteName must exist.
+	// SetRemoteURLs set the remote 'remote' of the repository at clonePath to urls.
+	// The remote 'name' must exist.
 	// Furthermore newURLs must be of the same length as the old URLs.
 	//
 	// This function should only be called if IsRepository(clonePath) returns true.
 	// The second parameter must be the returned value from IsRepository().
-	SetRemoteURLs(clonePath string, repoObject interface{}, remoteName string, newURLs []string) (err error)
+	SetRemoteURLs(clonePath string, repoObject interface{}, name string, urls []string) (err error)
 
 	// Clone tries to clone the repository at 'from' to the folder 'to'.
 	// May attempt to read credentials from os.Stdin.
