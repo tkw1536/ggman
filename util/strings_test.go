@@ -84,6 +84,12 @@ func TestTrimSuffixWhile(t *testing.T) {
 	}
 }
 
+func BenchmarkTrimSuffixWhile(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		TrimSuffixWhile("abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcdabc", "abc")
+	}
+}
+
 func TestTrimPrefixWhile(t *testing.T) {
 	type args struct {
 		s      string
