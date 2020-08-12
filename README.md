@@ -238,6 +238,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 ### 1.5.0 (Upcoming)
 
 - upgrade to new version of go-git
+- internal optimization and documentation
 - rewrite internal url handling
 - rewrite internal handling of git commands
 

@@ -1,4 +1,3 @@
-// Package util contains various utility functions used by ggman
 package util
 
 // SliceContainsAny returns true if at least one needle is contained in haystack.
