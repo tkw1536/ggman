@@ -6,141 +6,162 @@ import (
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/tkw1536/ggman/testutil"
 )
 
 func Test_gogit_IsRepository(t *testing.T) {
 	var gg gogit
 
-	t.Run("existing repository is a repository", func(t *testing.T) {
-		clonePath, _, cleanup := testutil.NewTestRepo()
-		defer cleanup()
+	// for this test, we make three directories for testing:
+	// - a folder with an existing repository in it
+	// - an empty folder
+	// - a deleted folder
+	// Only in the first of these IsRepository() should return true on.
 
-		_, isRepo := gg.IsRepository(clonePath)
-		if !isRepo {
-			t.Error("IsRepository() = false, wanted IsRepository() = true")
-		}
+	// make a folder with an empty repository
+	existingRepo, _, cleanup := testutil.NewTestRepo()
+	defer cleanup()
 
-	})
+	// make an empty folder
+	emptyFolder, cleanup := testutil.TempDir()
+	defer cleanup()
 
-	t.Run("empty folder is not repository", func(t *testing.T) {
-		clonePath, cleanup := testutil.TempDir()
-		defer cleanup()
+	// create a new folder that is deleted
+	deletedFolder, cleanup := testutil.TempDir()
+	cleanup()
 
-		_, isRepo := gg.IsRepository(clonePath)
-		if isRepo {
-			t.Error("IsRepository() = true, wanted IsRepository() = false")
-		}
-	})
-
-	t.Run("deleted folder is not repository", func(t *testing.T) {
-		clonePath, cleanup := testutil.TempDir()
-		defer cleanup()
-
-		_, isRepo := gg.IsRepository(clonePath)
-		if isRepo {
-			t.Error("IsRepository() = true, wanted IsRepository() = false")
-		}
-
-	})
+	type args struct {
+		localPath string
+	}
+	tests := []struct {
+		name       string
+		args       args
+		wantIsRepo bool
+	}{
+		{"existing repository is a repository", args{existingRepo}, true},
+		{"empty folder is not repository", args{emptyFolder}, false},
+		{"deleted folder is not repository", args{deletedFolder}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, gotIsRepo := gg.IsRepository(tt.args.localPath)
+			if gotIsRepo != tt.wantIsRepo {
+				t.Errorf("gogit.IsRepository() gotIsRepo = %v, want %v", gotIsRepo, tt.wantIsRepo)
+			}
+		})
+	}
 }
 
 func Test_gogit_IsRepositoryUnsafe(t *testing.T) {
 	var gg gogit
 
-	t.Run("existing repository is a repository", func(t *testing.T) {
-		clonePath, _, cleanup := testutil.NewTestRepo()
-		defer cleanup()
+	// This test behaves like the IsRepository() test.
+	// We again make three directories for testing:
+	// - a folder with an existing repository in it
+	// - an empty folder
+	// - a deleted folder
+	// Only in the first of these IsRepositoryUnsafe() should return true on.
 
-		isRepo := gg.IsRepositoryUnsafe(clonePath)
-		if !isRepo {
-			t.Error("IsRepositoryUnsafe() = false, wanted IsRepository() = true")
-		}
-
-	})
-
-	t.Run("empty folder is not repository", func(t *testing.T) {
-		clonePath, cleanup := testutil.TempDir()
-		defer cleanup()
-
-		isRepo := gg.IsRepositoryUnsafe(clonePath)
-		if isRepo {
-			t.Error("IsRepositoryUnsafe() = true, wanted IsRepository() = false")
-		}
-	})
-
-	t.Run("deleted folder is not repository", func(t *testing.T) {
-		clonePath, cleanup := testutil.TempDir()
-		cleanup()
-
-		isRepo := gg.IsRepositoryUnsafe(clonePath)
-		if isRepo {
-			t.Error("IsRepositoryUnsafe() = true, wanted IsRepository() = false")
-		}
-
-	})
-}
-
-func Test_gogit_GetHeadRef(t *testing.T) {
-	var gg gogit
-
-	// make a temporary repository
-	clonePath, repo, cleanup := testutil.NewTestRepo()
+	// make a folder with an empty repository
+	existingRepo, _, cleanup := testutil.NewTestRepo()
 	defer cleanup()
 
-	// get the repo object
-	ggRepoObject, isRepo := gg.IsRepository(clonePath)
-	if !isRepo {
-		panic("IsRepository() failed")
+	// make an empty folder
+	emptyFolder, cleanup := testutil.TempDir()
+	defer cleanup()
+
+	// create a new folder that is deleted
+	deletedFolder, cleanup := testutil.TempDir()
+	cleanup()
+
+	type args struct {
+		localPath string
 	}
-
-	t.Run("head of empty repository is not defined", func(t *testing.T) {
-		_, err := gg.GetHeadRef(clonePath, ggRepoObject)
-		if err == nil {
-			t.Error("GetHeadRef() got err == nil, want err != nil")
-		}
-	})
-
-	// make a new test commit and check it out on a new hash
-	worktree, commitHash := testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
-	if err := worktree.Checkout(&git.CheckoutOptions{
-		Hash: commitHash,
-	}); err != nil {
-		panic(err)
+	tests := []struct {
+		name       string
+		args       args
+		wantIsRepo bool
+	}{
+		{"existing repository is a repository", args{existingRepo}, true},
+		{"empty folder is not repository", args{emptyFolder}, false},
+		{"deleted folder is not repository", args{deletedFolder}, false},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotIsRepo := gg.IsRepositoryUnsafe(tt.args.localPath)
+			if gotIsRepo != tt.wantIsRepo {
+				t.Errorf("gogit.IsRepositoryUnsafe() gotIsRepo = %v, want %v", gotIsRepo, tt.wantIsRepo)
+			}
+		})
+	}
+}
 
-	t.Run("head of commit without branch or tag is a hash", func(t *testing.T) {
-		wantRef := commitHash.String()
-		ref, err := gg.GetHeadRef(clonePath, ggRepoObject)
-		if err != nil {
-			t.Error("GetHeadRef() got err != nil, want err == nil")
-		}
+func Test_gogit_GetHeadRefA(t *testing.T) {
+	var gg gogit
 
-		if ref != wantRef {
-			t.Errorf("GetHeadRef() got ref = %s, want ref = %s", ref, wantRef)
-		}
-	})
+	// for this test we make three repositories:
+	// - one with an empty repository
+	// - one with a checked out branch 'test'
+	// - one with a checked out hash
 
-	// checkout a new branch called 'test'
+	// make an empty repository
+	emptyRepo, _, cleanup := testutil.NewTestRepo()
+	defer cleanup()
+
+	// make a new repository and checkout a new branch 'test'
+	branchTestCheckout, repo, cleanup := testutil.NewTestRepo()
+	defer cleanup()
+	worktree, commit := testutil.CommitTestFiles(repo, nil)
 	if err := worktree.Checkout(&git.CheckoutOptions{
+		Hash:   commit,
+		Branch: plumbing.NewBranchReferenceName("test"),
 		Create: true,
-		Hash:   commitHash,
-		Branch: "refs/heads/test",
 	}); err != nil {
 		panic(err)
 	}
 
-	t.Run("head of a branch is the branch", func(t *testing.T) {
-		wantRef := "test"
-		ref, err := gg.GetHeadRef(clonePath, ggRepoObject)
-		if err != nil {
-			t.Error("GetHeadRef() got err != nil, want err == nil")
-		}
+	// make a new repository and checkout a hash
+	hashCheckout, repo, cleanup := testutil.NewTestRepo()
+	defer cleanup()
+	worktree, commit = testutil.CommitTestFiles(repo, nil)
+	if err := worktree.Checkout(&git.CheckoutOptions{
+		Hash: commit,
+	}); err != nil {
+		panic(err)
+	}
 
-		if ref != wantRef {
-			t.Errorf("GetHeadRef() got ref = %s, want ref = %s", ref, wantRef)
-		}
-	})
+	type args struct {
+		clonePath string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{"head of empty repository is not defined", args{emptyRepo}, "", true},
+		{"head of a branch is the branch", args{branchTestCheckout}, "test", false},
+		{"head of commit without branch or tag is a hash", args{hashCheckout}, commit.String(), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// get the repo object
+			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
+			if !isRepo {
+				panic("IsRepository() failed")
+			}
+
+			got, err := gg.GetHeadRef(tt.args.clonePath, ggRepoObject)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("gogit.GetHeadRef() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("gogit.GetHeadRef() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
 
 func Test_gogit_GetRemotes(t *testing.T) {
@@ -506,8 +527,6 @@ func Test_gogit_Fetch(t *testing.T) {
 		}
 	})
 }
-
-// TODO: More git testing
 
 func Test_gogit_Pull(t *testing.T) {
 	var gg gogit

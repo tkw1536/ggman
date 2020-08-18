@@ -11,10 +11,10 @@ import (
 // Repos collects all git repositories in a given root folder
 func Repos(root string, pattern string) (paths []string) {
 	if s, err := os.Stat(root); !os.IsNotExist(err) && s.IsDir() {
-		root, err = filepath.Abs(root)
-		if err == nil {
-			reposInternal(&paths, root, "", pattern, true)
+		if root, err = filepath.Abs(root); err != nil {
+			return
 		}
+		reposInternal(&paths, root, "", pattern, true)
 	}
 	return
 }

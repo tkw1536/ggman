@@ -47,6 +47,7 @@ const AuthorEmail = "jane.doe@example.com"
 
 // CommitTestFiles makes a new commit in the repository repo.
 // The commit will contain files with the names and content of the contained map.
+// When the map is nil, a default dummy file will be used instead.
 // The commit will appear to have been authored from a bogus author and have a bogus commit message.
 //
 // The function returns the worktree of the repository and the commit hash produced
@@ -63,6 +64,10 @@ func CommitTestFiles(repo *git.Repository, files map[string]string) (*git.Worktr
 		panic(err)
 	}
 	root := worktree.Filesystem.Root()
+
+	if files == nil {
+		files = map[string]string{"dummy.txt": "I am a dummy file. "}
+	}
 
 	// write each file to disk and add it to the staging area
 	for file, content := range files {
