@@ -7,7 +7,7 @@ import (
 )
 
 // Matches checks if a repiository URI matches a given pattern
-func (rURI *RepoURL) Matches(pattern string) bool {
+func (rURI URL) Matches(pattern string) bool {
 	// if we have an 'everything' pattern, return true immediatly
 	if pattern == "" || pattern == "*" {
 		return true

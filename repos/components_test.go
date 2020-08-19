@@ -11,7 +11,7 @@ func TestRepoURI_Components(t *testing.T) {
 		User     string
 		Password string
 		HostName string
-		Port     int
+		Port     uint16
 		Path     string
 	}
 	tests := []struct {
@@ -45,7 +45,7 @@ func TestRepoURI_Components(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rURI := &RepoURL{
+			rURI := &URL{
 				Scheme:   tt.fields.Scheme,
 				User:     tt.fields.User,
 				Password: tt.fields.Password,

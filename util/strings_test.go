@@ -32,6 +32,14 @@ func TestSplitBefore(t *testing.T) {
 	}
 }
 
+func Benchmark_SplitBefore(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		SplitBefore("a;b", ";")
+		SplitBefore("a;b;c", ";")
+		SplitBefore("aaa", ";")
+	}
+}
+
 func TestSplitAfter(t *testing.T) {
 	type args struct {
 		s   string
@@ -57,6 +65,14 @@ func TestSplitAfter(t *testing.T) {
 				t.Errorf("SplitAfterTwo() gotSuffix = %v, want %v", gotSuffix, tt.wantSuffix)
 			}
 		})
+	}
+}
+
+func Benchmark_SplitAfter(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		SplitAfter("a;b", ";")
+		SplitAfter("a;b;c", ";")
+		SplitAfter("aaa", ";")
 	}
 }
 

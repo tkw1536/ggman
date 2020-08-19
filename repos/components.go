@@ -10,18 +10,18 @@ import (
 var reSlash = regexp.MustCompile("/+")
 
 // Components gets the Components of a Repo URI
-func (rURI *RepoURL) Components() (parts []string) {
+func (rURI URL) Components() (parts []string) {
 
 	// normalize the path
-	path := (*rURI).Path
+	path := rURI.Path
 	path = util.TrimPrefixWhile(util.TrimSuffixWhile(path, "/"), "/")
 	path = strings.TrimSuffix(path, ".git")
 	path = util.TrimSuffixWhile(path, "/")
 	path = reSlash.ReplaceAllString(path, "/")
 
 	// get the host and the username
-	host := (*rURI).HostName
-	user := (*rURI).User
+	host := rURI.HostName
+	user := rURI.User
 
 	// split the path into parts
 	if path != "" {
