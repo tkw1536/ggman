@@ -1,6 +1,6 @@
 # ggman
 
-[![Build Status](https://travis-ci.com/tkw1536/ggman.svg?branch=main)](https://travis-ci.com/tkw1536/ggman)
+![CI Status](https://github.com/tkw1536/ggman/workflows/CI/badge.svg)
 
 A golang script that can manage multiple git repositories locally. 
 Golang rewrite of [GitManager](https://github.com/tkw1536/GitManager). 
@@ -241,6 +241,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 - internal optimization and documentation
 - rewrite and optimize internal url handling
 - rewrite internal handling of git commands
+- moved from Travis to GitHub Actions
 
 ### 1.4.1 (Released [Jul 23 2020](https://github.com/tkw1536/ggman/releases/tag/v1.4.1))
 

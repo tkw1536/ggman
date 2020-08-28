@@ -23,7 +23,7 @@ GGMAN_CMD_SRC=./cmd/ggman
 # almost all the targets are phony
 
 all: $(BINARY_UNIX) $(BINARY_MACOS) $(BINARY_WINDOWS)
-.PHONY: all install test testdeps clean deps dist
+.PHONY: all install test lint testdeps clean deps dist
 
 $(BINARY_NAME): deps
 	$(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS)" -o $(BINARY_NAME) $(GGMAN_CMD_SRC)
@@ -47,6 +47,9 @@ test: testdeps
 	$(GOTEST) -v ./...
 testdeps:
 	$(GOGET) -v ./...
+
+lint:
+	test -z $(shell gofmt -l .)
 
 clean: 
 	$(GOCLEAN)
