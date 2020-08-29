@@ -6,7 +6,10 @@ import (
 	"github.com/danwakefield/fnmatch"
 )
 
-// Matches checks if a repiository URI matches a given pattern
+// TODO: Document these functions more thoroughly
+// TODO: Support better kinds of matching?
+
+// Matches checks if a URL matches a given pattern.
 func (url URL) Matches(pattern string) bool {
 	// if we have an 'everything' pattern, return true immediatly
 	if pattern == "" || pattern == "*" {

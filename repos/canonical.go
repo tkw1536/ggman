@@ -15,9 +15,9 @@ var specReplace = regexp.MustCompile("[\\^\\%]")
 // % -- replaced by the second un-used component of the URI (commonly username)
 // $ -- replaced by all remaining components in the URI joined with a '/'. Also stops all processing afterwards
 // If $ does not exist in the cspec, it is assumed to be at the end of the cspec.
-func (rURI URL) Canonical(cspec string) (canonical string) {
+func (url URL) Canonical(cspec string) (canonical string) {
 	// get the components of the URI
-	components := rURI.Components()
+	components := url.Components()
 
 	// split into prefix and suffix
 	prefix, suffix := util.SplitAfter(cspec, "$")
@@ -50,10 +50,10 @@ func (rURI URL) Canonical(cspec string) (canonical string) {
 }
 
 // CanonicalWith returns the canonical url given a set of lines
-func (rURI URL) CanonicalWith(lines CanFile) (canonical string) {
+func (url URL) CanonicalWith(lines CanFile) (canonical string) {
 	for _, line := range lines {
-		if rURI.Matches(line.Pattern) {
-			return rURI.Canonical(line.Canonical)
+		if url.Matches(line.Pattern) {
+			return url.Canonical(line.Canonical)
 		}
 	}
 

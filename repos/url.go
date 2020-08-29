@@ -8,7 +8,12 @@ import (
 	"github.com/tkw1536/ggman/util"
 )
 
-// URL represents the URI to a single repository
+// URL represents the URL to a single git repository.
+//
+// URLs can be both concrete and a pattern matching a list of URLs.
+// The implementation does not distinguish between either case.
+//
+// For supported syntaxes of URLs, see ParseRepoURL.
 type URL struct {
 	Scheme   string
 	User     string

@@ -8,7 +8,11 @@ import (
 	"strings"
 )
 
+// TODO: Make use of the 'git' wrapper in these functions.
+
 // Repos collects all git repositories in a given root folder
+//
+// This function is currently untested.
 func Repos(root string, pattern string) (paths []string) {
 	if s, err := os.Stat(root); !os.IsNotExist(err) && s.IsDir() {
 		if root, err = filepath.Abs(root); err != nil {
@@ -21,6 +25,8 @@ func Repos(root string, pattern string) (paths []string) {
 
 // Here returns the root and relative path to the root of the current path
 // of the given git repository.
+//
+// This function is currently untested.
 func Here(here string, root string) (repoPath string, relTreePath string) {
 	// ensure that root is an absolute path
 	// so that we can check if the candidate path is inside it

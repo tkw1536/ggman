@@ -7,6 +7,10 @@ import (
 )
 
 // Components gets the components of a URL
+//
+// Components of the URL are the hostname, the username and components of the path.
+// Empty components are ignored.
+// Furthermore a username 'git' as well as a trailing suffix of '.git' are ignored as well.
 func (url URL) Components() []string {
 
 	// First split the path into components split by '/'.

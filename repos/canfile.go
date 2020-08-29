@@ -51,32 +51,38 @@ func (cl *CanLine) Unmarshal(s string) error {
 // CanFile represents a list of CanLines
 type CanFile []CanLine
 
-// ReadDefault reads the default canonical file
+// ReadDefault reads the default CanFile
 // if it does not exist, loads the default contents
+//
+// This function is currently untested.
 func (cf *CanFile) ReadDefault() error {
-	// the list of files to try and read
-	var files []string
 
-	// first try the GGMAN_CANFILE
+	// first determine the list of files to read
+	// These are:
+	// - the one pointed to by 'GGMAN_CANFILE'
+	// - $HOME/.ggman
+
+	files := make([]string, 0, 2)
+
 	canfile := os.Getenv("GGMAN_CANFILE")
 	if canfile != "" {
 		files = append(files, canfile)
 	}
-
-	// and then $HOME/.ggman
 	usr, err := user.Current()
 	if err == nil {
 		files = append(files, path.Join(usr.HomeDir, ".ggman"))
 	}
 
-	// if a canfile exists, read it
+	// Try to read each opf the files in order
+	// Skipping only non-existing ones.
+	// Finally fallback to the default.
+
 	for _, file := range files {
 		if _, err := os.Stat(file); !os.IsNotExist(err) {
 			return errors.Wrapf(cf.unmarshalFile(file), "Error reading CanFile %q", file)
 		}
 	}
 
-	// fallback to the default
 	return cf.loadDefault()
 }
 
@@ -127,8 +133,7 @@ var defaultCanLines = []string{
 func (cf *CanFile) loadDefault() error {
 	*cf = make([]CanLine, len(defaultCanLines))
 	for i, cl := range defaultCanLines {
-		(*cf)[i] = CanLine{}
-		if err := (&((*cf)[i])).Unmarshal(cl); err != nil {
+		if err := (*cf)[i].Unmarshal(cl); err != nil {
 			return errors.Wrapf(err, "Unable to read default can line %q (index %d)", cl, i)
 		}
 	}
