@@ -5,27 +5,22 @@ import (
 	"time"
 )
 
-var (
-	buildTime string
+// the following constants are related to versioning
+// and are set at buildtime by the Makefile.
+var buildTime string = "0"
+var buildVersion string = "v0.0.0-unknown"
 
-	//BuildTime is the time this program was built or the string 'unknown'
-	BuildTime string
-
-	// BuildVersion is the git version of this program or the srting 'unknown'
-	BuildVersion string
-)
+// BuildTime is the time this program was built
+// When the build time is not known, it is set to 1970-01-01.
+var BuildTime time.Time
 
 func init() {
-	if buildTime == "" {
-		BuildTime = "unknown"
-	} else {
-		i, err := strconv.ParseInt(buildTime, 10, 64)
-		if err != nil {
-			panic(err)
-		}
-		BuildTime = time.Unix(i, 0).String()
+	buildTimeInt, err := strconv.ParseInt(buildTime, 0, 64)
+	if err != nil {
+		panic("constants.buildTime invalid")
 	}
-	if BuildVersion == "" {
-		BuildVersion = "unknown"
-	}
+	BuildTime = time.Unix(buildTimeInt, 0).UTC()
 }
+
+// BuildVersion is the current version of this program
+var BuildVersion string = buildVersion

@@ -245,6 +245,8 @@ Alternatively, you can simply type `make install` from the source code to have i
 
 ### 1.5.1 (Upcoming)
 
+- cleanup runtime version handling
+
 ### 1.5.0 (Released [Aug 29 2020](https://github.com/tkw1536/ggman/releases/tag/v1.5.0))
 
 - added `ggman find-branch` command
