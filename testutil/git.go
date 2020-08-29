@@ -21,7 +21,6 @@ import (
 //   clonePath, repo, cleanup := NewTestRepo()
 //   defer cleanup()
 //
-// This function is itself untested.
 func NewTestRepo() (clonePath string, repo *git.Repository, cleanup func()) {
 
 	// first create a new temporary directory to put the git repository in
@@ -55,7 +54,6 @@ const AuthorEmail = "jane.doe@example.com"
 // The files will be written out to disk.
 // If an error occurs, panic() is called.
 //
-// This function is itself untested.
 func CommitTestFiles(repo *git.Repository, files map[string]string) (*git.Worktree, plumbing.Hash) {
 	// get the worktree of the repository
 	// and the root directory

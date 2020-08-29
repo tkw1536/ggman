@@ -14,7 +14,6 @@ import (
 //  dir, cleanup = TempDir()
 //  defer cleanup()
 //
-// This function is itself untested.
 func TempDir() (path string, cleanup func()) {
 	// This function is more or less a thin wrapper around ioutil.TempDir.
 	// The reason it exists is because it saves a lot of boilerplate, like checking err != nil.
