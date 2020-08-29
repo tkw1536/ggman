@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestRepoURI_Components(t *testing.T) {
+func TestURL_Components(t *testing.T) {
 	type fields struct {
 		Scheme   string
 		User     string
@@ -45,7 +45,7 @@ func TestRepoURI_Components(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rURI := &URL{
+			url := URL{
 				Scheme:   tt.fields.Scheme,
 				User:     tt.fields.User,
 				Password: tt.fields.Password,
@@ -53,9 +53,53 @@ func TestRepoURI_Components(t *testing.T) {
 				Port:     tt.fields.Port,
 				Path:     tt.fields.Path,
 			}
-			if gotParts := rURI.Components(); !reflect.DeepEqual(gotParts, tt.wantParts) {
+			if gotParts := url.Components(); !reflect.DeepEqual(gotParts, tt.wantParts) {
 				t.Errorf("RepoURI.Components() = %v, want %v", gotParts, tt.wantParts)
 			}
 		})
 	}
+}
+
+var benchComponentURLS = []URL{
+	{"", "git", "", "github.com", 0, "hello/world.git"},
+	{"", "git", "", "github.com", 0, "hello/world"},
+	{"", "git", "", "github.com", 0, "hello/world/"},
+	{"", "git", "", "github.com", 0, "hello/world//"},
+	{"ssh", "git", "", "github.com", 0, "hello/world.git"},
+	{"ssh", "git", "", "github.com", 0, "hello/world"},
+	{"ssh", "git", "", "github.com", 0, "hello/world/"},
+	{"ssh", "git", "", "github.com", 0, "hello/world//"},
+
+	{"", "user", "", "server.com", 0, "repository"},
+	{"", "user", "", "server.com", 0, "repository/"},
+	{"", "user", "", "server.com", 0, "repository//"},
+	{"", "user", "", "server.com", 0, "repository.git"},
+
+	{"", "user", "", "server.com", 1234, "repository"},
+	{"", "user", "", "server.com", 1234, "repository/"},
+	{"", "user", "", "server.com", 1234, "repository//"},
+	{"", "user", "", "server.com", 1234, "repository.git"},
+}
+
+func BenchmarkURL_Components(b *testing.B) {
+	// 7202
+	for i := 0; i < b.N; i++ {
+		benchComponentURLS[0].Components()
+		benchComponentURLS[1].Components()
+		benchComponentURLS[2].Components()
+		benchComponentURLS[3].Components()
+		benchComponentURLS[4].Components()
+		benchComponentURLS[5].Components()
+		benchComponentURLS[6].Components()
+		benchComponentURLS[7].Components()
+		benchComponentURLS[8].Components()
+		benchComponentURLS[9].Components()
+		benchComponentURLS[10].Components()
+		benchComponentURLS[11].Components()
+		benchComponentURLS[12].Components()
+		benchComponentURLS[13].Components()
+		benchComponentURLS[14].Components()
+		benchComponentURLS[15].Components()
+	}
+
 }

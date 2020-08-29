@@ -1,41 +1,33 @@
 package repos
 
 import (
-	"regexp"
 	"strings"
 
 	"github.com/tkw1536/ggman/util"
 )
 
-var reSlash = regexp.MustCompile("/+")
+// Components gets the components of a URL
+func (url URL) Components() []string {
 
-// Components gets the Components of a Repo URI
-func (rURI URL) Components() (parts []string) {
+	// First split the path into components split by '/'.
+	// and remove a '.git' from the last part.
+	parts := util.RemoveEmpty(strings.Split(url.Path, "/"))
+	lastPart := len(parts) - 1
+	if lastPart >= 0 {
+		parts[lastPart] = strings.TrimSuffix(parts[lastPart], ".git")
 
-	// normalize the path
-	path := rURI.Path
-	path = util.TrimPrefixWhile(util.TrimSuffixWhile(path, "/"), "/")
-	path = strings.TrimSuffix(path, ".git")
-	path = util.TrimSuffixWhile(path, "/")
-	path = reSlash.ReplaceAllString(path, "/")
-
-	// get the host and the username
-	host := rURI.HostName
-	user := rURI.User
-
-	// split the path into parts
-	if path != "" {
-		parts = strings.Split(path, "/")
-	} else {
-		parts = []string{}
+		// if we had a '/' before the .git, remove it
+		if parts[lastPart] == "" {
+			parts = parts[:lastPart]
+		}
 	}
 
-	// prepend (host, [user]) (with user iff a valid user exists)
-	if user != "" && user != "git" {
-		parts = append([]string{host, user}, parts...)
+	// Now prepend the hostname and user (unless it is 'git' or missing)
+	components := make([]string, 0, 2+len(parts))
+	if url.User != "" && url.User != "git" {
+		components = append(components, url.HostName, url.User)
 	} else {
-		parts = append([]string{host}, parts...)
+		components = append(components, url.HostName)
 	}
-
-	return
+	return append(components, parts...)
 }

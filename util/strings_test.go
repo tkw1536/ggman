@@ -1,6 +1,7 @@
 package util
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -76,56 +77,32 @@ func Benchmark_SplitAfter(b *testing.B) {
 	}
 }
 
-func TestTrimSuffixWhile(t *testing.T) {
+func TestRemoveEmpty(t *testing.T) {
 	type args struct {
-		s      string
-		suffix string
+		s []string
 	}
 	tests := []struct {
-		name        string
-		args        args
-		wantTrimmed string
+		name string
+		args args
+		want []string
 	}{
-		{"trimSingleChar", args{"abcd", "d"}, "abc"},
-		{"trimNonExistingChar", args{"abc", "d"}, "abc"},
-		{"trimRepeatingChar", args{"abcddd", "d"}, "abc"},
-		{"trimEmpty", args{"abc def", ""}, "abc def"},
+		{"remove from the nil slice", args{nil}, nil},
+		{"remove from the empty array", args{[]string{}}, []string{}},
+		{"remove from some places", args{[]string{"", "x", "y", "", "z"}}, []string{"x", "y", "z"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotTrimmed := TrimSuffixWhile(tt.args.s, tt.args.suffix); gotTrimmed != tt.wantTrimmed {
-				t.Errorf("TrimSuffixWhile() = %v, want %v", gotTrimmed, tt.wantTrimmed)
+			if got := RemoveEmpty(tt.args.s); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("RemoveEmpty() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func BenchmarkTrimSuffixWhile(b *testing.B) {
+func BenchmarkRemoveEmpty(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		TrimSuffixWhile("abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcdabc", "abc")
-	}
-}
-
-func TestTrimPrefixWhile(t *testing.T) {
-	type args struct {
-		s      string
-		prefix string
-	}
-	tests := []struct {
-		name        string
-		args        args
-		wantTrimmed string
-	}{
-		{"trimSingleChar", args{"abcd", "a"}, "bcd"},
-		{"trimNonExistingChar", args{"bcd", "a"}, "bcd"},
-		{"trimRepeatingChar", args{"aaabcd", "a"}, "bcd"},
-		{"trimEmpty", args{"abc def", ""}, "abc def"},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if gotTrimmed := TrimPrefixWhile(tt.args.s, tt.args.prefix); gotTrimmed != tt.wantTrimmed {
-				t.Errorf("TrimPrefixWhile() = %v, want %v", gotTrimmed, tt.wantTrimmed)
-			}
-		})
+		RemoveEmpty(nil)
+		RemoveEmpty([]string{})
+		RemoveEmpty([]string{"", "x", "y", "", "z"})
 	}
 }

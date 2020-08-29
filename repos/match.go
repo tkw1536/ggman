@@ -7,13 +7,13 @@ import (
 )
 
 // Matches checks if a repiository URI matches a given pattern
-func (rURI URL) Matches(pattern string) bool {
+func (url URL) Matches(pattern string) bool {
 	// if we have an 'everything' pattern, return true immediatly
 	if pattern == "" || pattern == "*" {
 		return true
 	}
 
-	components := rURI.Components()
+	components := url.Components()
 	componentsLength := len(components)
 
 	// parse components of strings and ignore any casing
@@ -36,6 +36,6 @@ func (rURI URL) Matches(pattern string) bool {
 }
 
 // MatchesString checks if a string matches a given repository pattern
-func MatchesString(pattern string, s string) bool {
+func MatchesString(pattern, s string) bool {
 	return ParseRepoURL(s).Matches(pattern)
 }

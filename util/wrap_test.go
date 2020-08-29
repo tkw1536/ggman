@@ -75,28 +75,6 @@ func BenchmarkWrapLinePreserve(b *testing.B) {
 	}
 }
 
-func TestWrapString(t *testing.T) {
-	type args struct {
-		s      string
-		length int
-	}
-	tests := []struct {
-		name      string
-		args      args
-		wantLines []string
-	}{
-		{"wrap linux lines", args{"hello \nworld beautiful\nyou are", 5}, []string{"hello", "world", "beautiful", "you", "are"}},
-		{"wrap windows lines", args{"hello \r\nworld beautiful\r\nyou are", 5}, []string{"hello", "world", "beautiful", "you", "are"}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if gotLines := WrapString(tt.args.s, tt.args.length); !reflect.DeepEqual(gotLines, tt.wantLines) {
-				t.Errorf("WrapString() = %v, want %v", gotLines, tt.wantLines)
-			}
-		})
-	}
-}
-
 func TestWrapStringPreserve(t *testing.T) {
 	type args struct {
 		s      string

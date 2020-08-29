@@ -97,16 +97,6 @@ func WrapLinePreserve(line string, length int) []string {
 	return lines
 }
 
-// WrapString is like WrapLine except that it first splits the input into newline seperated strings.
-// It then treats each line seperatly.
-func WrapString(s string, length int) (lines []string) {
-	for _, line := range strings.Split(strings.Replace(s, "\r\n", "\n", -1), "\n") {
-		lines = append(lines, WrapLine(line, length)...)
-	}
-
-	return
-}
-
 // WrapStringPreserve is like WrapLinePreserve except that it first splits the input into newline seperated strings.
 // It then treats each line seperatly.
 func WrapStringPreserve(s string, length int) (lines []string) {

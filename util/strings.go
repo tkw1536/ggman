@@ -1,6 +1,8 @@
 package util
 
-import "strings"
+import (
+	"strings"
+)
 
 // SplitBefore splits the string s into a part before a seperator, called the prefix, and a part after the seperator, called the suffix.
 // If seperator is not contained in the source string, prefix is empty and suffix is equal to the input string.
@@ -29,56 +31,30 @@ func SplitAfter(s, sep string) (prefix, suffix string) {
 	return s[:index], s[index+len(sep):]
 }
 
-// TrimSuffixWhile repeatedly removes a suffix from a string, until it is no longer a suffix of a string
-// If suffix is the empty string, returns s unchanged.
+// RemoveEmpty returns a slice that is like s, but with empty strings removed.
 //
-// See also TrimPrefixWhile.
-func TrimSuffixWhile(s, suffix string) string {
-	// A straightforward implementation of TrimSuffixWhile would be:
-	//
-	// for strings.HasSuffix(s, suffix) {
-	// 	s = strings.TrimSuffix(s, suffix)
-	// }
-	//
-	// However as TrimSuffix internally calls HasSuffix
-	// (to check if it actually needs to do something),
-	// this implementation is somewhat inefficient.
-	// It furthermore requires a special case for the empty suffix.
-	//
-	// Instead we just keep trying to trim the suffix of the string.
-	// If s does not have suffix, TrimSuffix() will leave it unchanged.
-	// Furthermore TrimSuffix changes s iff it changes s's length.
-	//
-	// To furthermore improve performance, we only compute the length of s
-	// at most once per iteration and store the previous length in the preLen variable.
-	//
-	// Note that in the first iteration, the for loop just checks that s is not the empty string.
-	// This is ok, as the empty string has only a single prefix (the empty string) and in that case we do not need to change the string.
-	var prevLen int
-
-	for curLen := len(s); prevLen != curLen; curLen = len(s) {
-		prevLen = curLen
-		s = strings.TrimSuffix(s, suffix)
-	}
-
-	return s
-}
-
-// TrimPrefixWhile repeatedly removes a prefix from a string, until it is no longer a prefix of a string.
-// If prefix is the empty string, returns s unchanged.
+// This function might invalidate the previous value of s.
+// It is recommended to store the return value of this function in the original variable.
+// The call should look something like:
 //
-// See also TrimSuffixWhile.
-func TrimPrefixWhile(s, prefix string) string {
+//  s = RemoveEmpty(s)
+//
+func RemoveEmpty(s []string) []string {
 
-	// This function exactly mirrors TrimSuffixWhile.
-	// See comments above for why we use this trick.
-
-	var prevLen int
-
-	for curLen := len(s); prevLen != curLen; curLen = len(s) {
-		prevLen = curLen
-		s = strings.TrimPrefix(s, prefix)
+	// This function contains an optimistic implementation that performs best
+	// when there are no empty strings in s.
+	//
+	// Furthermore, because the result slice is guaranteed to be smaller than the original slice
+	// this function will re-use the array underlying the slice s and not re-allocate new memory.
+	total := len(s)
+	i := 0
+	for i < total {
+		if s[i] == "" { // one could len(s[i]) == 0, but the compiler is smart enough
+			s = append(s[:i], s[i+1:]...)
+			total--
+			continue
+		}
+		i++
 	}
-
 	return s
 }
