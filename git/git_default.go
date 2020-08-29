@@ -158,3 +158,15 @@ func (impl *dfltGitWrapper) UpdateRemotes(clonePath string, updateFunc func(url,
 
 	return
 }
+
+func (impl *dfltGitWrapper) ContainsBranch(clonePath, branch string) (exists bool, err error) {
+	impl.ensureInit()
+
+	// check that the given folder is actually a repository
+	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	if !isRepo {
+		return false, ErrNotARepository
+	}
+
+	return impl.git.ContainsBranch(clonePath, repoObject, branch)
+}

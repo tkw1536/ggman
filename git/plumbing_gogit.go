@@ -252,6 +252,21 @@ func (gogit) Pull(clonePath string, cache interface{}) (err error) {
 	return
 }
 
+func (gogit) ContainsBranch(clonePath string, cache interface{}, branch string) (contains bool, err error) {
+	// get the repository
+	r := cache.(*git.Repository)
+
+	// try to open the branch
+	switch _, err := r.Branch(branch); err {
+	case git.ErrBranchNotFound:
+		return false, nil
+	case nil:
+		return true, nil
+	default:
+		return false, errors.Wrap(err, "Unable to read branch")
+	}
+}
+
 func ignoreErrUpToDate(err error) error {
 	if err == git.NoErrAlreadyUpToDate {
 		os.Stdout.WriteString(err.Error() + "\n")

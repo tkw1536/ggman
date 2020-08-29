@@ -581,3 +581,46 @@ func Test_gogit_Pull(t *testing.T) {
 		}
 	})
 }
+
+func Test_gogit_ContainsBranch(t *testing.T) {
+	var gg gogit
+
+	// In this test we only have a single repository.
+	// We create two branches 'branchA' and 'branchB'
+	clone, repo, cleanup := testutil.NewTestRepo()
+	defer cleanup()
+	repo.CreateBranch(&config.Branch{Name: "branchA"})
+	repo.CreateBranch(&config.Branch{Name: "branchB"})
+
+	type args struct {
+		branch string
+	}
+	tests := []struct {
+		name         string
+		args         args
+		wantContains bool
+		wantErr      bool
+	}{
+		{"branchA exists", args{"branchA"}, true, false},
+		{"branchB exists", args{"branchB"}, true, false},
+		{"branchC does not exist", args{"branchC"}, false, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			ggRepoObject, isRepo := gg.IsRepository(clone)
+			if !isRepo {
+				panic("IsRepository() failed")
+			}
+
+			gotContains, err := gg.ContainsBranch(clone, ggRepoObject, tt.args.branch)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("gogit.ContainsBranch() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotContains != tt.wantContains {
+				t.Errorf("gogit.ContainsBranch() = %v, want %v", gotContains, tt.wantContains)
+			}
+		})
+	}
+}

@@ -91,6 +91,12 @@ type Plumbing interface {
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
 	Pull(clonePath string, cache interface{}) (err error)
+
+	// ContainsBranch checks if the repository at clonePath contains a branch with the provided branch.
+	//
+	// This function will only be called if IsRepository(clonePath) returns true.
+	// The second parameter passed will be the returned value from IsRepository().
+	ContainsBranch(clonePath string, cache interface{}, branch string) (contains bool, err error)
 }
 
 // ErrArgumentsUnsupported is an error that is returned when arguments are not supported by a Plumbing.

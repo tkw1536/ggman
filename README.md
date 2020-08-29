@@ -199,6 +199,14 @@ The following base urls are supported:
 - `circle` - CircleCI
 - `travis` - TravisCI
 
+### 'ggman find-branch'
+
+git 2.28 introduced the `init.defaultBranch` option to set the name of the default branch of new repositories. 
+However this does not affect existing repositories. 
+
+To find repositories with an old branch, the `ggman find-branch` command can be used. 
+It takes a single argument (a branch name), and finds all repositories that contain a branch with the given name. 
+
 ### Useful aliases
 
 Sometimes, it is desireable to be able to cd into a specific directory. 
@@ -237,6 +245,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 
 ### 1.5.0 (Upcoming)
 
+- added `ggman find-branch` command
 - upgrade to new version of go-git
 - internal optimization and documentation
 - rewrite and optimize internal url handling
