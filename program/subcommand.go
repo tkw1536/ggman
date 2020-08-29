@@ -6,6 +6,8 @@ import (
 	"github.com/tkw1536/ggman/constants"
 )
 
+// TODO: Return a custom error type in these functions that isn't a string.
+
 // SubCommand represents a command that can be run with the program
 type SubCommand func(runtime *SubRuntime) (retval int, err string)
 
@@ -41,28 +43,24 @@ func ParseArgs(args []string) (parsed *SubCommandArgs, err string) {
 		return
 	}
 
-	// if the first argument is help, everything else is ignroed
-	head := args[0]
+	// The ParseArguments method only needs to examine the first argument.
+	// If this is a help, version or for argument, it gets treated accordingly.
+	// Otherwise, we assume it is a subcommand to be run and run it
 
-	// if the first argument is help, return help
-	if head == helpLiteralForm || head == helpShortForm || head == helpLongForm {
+	switch args[0] {
+	case helpLiteralForm, helpShortForm, helpLongForm:
 		parsed = &SubCommandArgs{
 			Help: true,
 			args: args[1:],
 		}
 		return
-	}
-
-	if head == versionLiteralForm || head == versionShortForm || head == versionLongForm {
+	case versionLiteralForm, versionShortForm, versionLongForm:
 		parsed = &SubCommandArgs{
 			Version: true,
 			args:    args[1:],
 		}
 		return
-	}
-
-	if head == forLiteralForm || head == forShortForm || head == forLongForm {
-		// gg for $pattern $command
+	case forLiteralForm, forShortForm, forLongForm:
 		if count < 3 {
 			err = constants.StringNeedTwoAfterFor
 			return
@@ -76,7 +74,6 @@ func ParseArgs(args []string) (parsed *SubCommandArgs, err string) {
 		return
 	}
 
-	// gg $pattern $command
 	parsed = &SubCommandArgs{
 		Command: args[0],
 		args:    args[1:],
