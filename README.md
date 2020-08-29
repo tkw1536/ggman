@@ -243,7 +243,9 @@ Alternatively, you can simply type `make install` from the source code to have i
 
 ## Changelog
 
-### 1.5.0 (Upcoming)
+### 1.5.1 (Upcoming)
+
+### 1.5.0 (Released [Aug 29 2020](https://github.com/tkw1536/ggman/releases/tag/v1.5.0))
 
 - added `ggman find-branch` command
 - upgrade to new version of go-git

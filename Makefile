@@ -7,7 +7,7 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 
 # Flags for versioning
-GGMANVERSIONFLAGS=-X 'github.com/tkw1536/ggman/src/constants.BuildVersion=$(shell git describe --tags HEAD)' -X 'github.com/tkw1536/ggman/constants.buildTime=$(shell date +%s)'
+GGMANVERSIONFLAGS=-X 'github.com/tkw1536/ggman/constants.BuildVersion=$(shell git describe --tags HEAD)' -X 'github.com/tkw1536/ggman/constants.buildTime=$(shell date +%s)'
 
 # Binary paths
 DIST_DIR=dist
