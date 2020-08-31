@@ -246,6 +246,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 ### 1.5.1 (Upcoming)
 
 - add internal utility to automatically re-generate license notices
+- bugfix: Add missing 'ggman find-branch' documentation
 - cleanup runtime version handling
 
 ### 1.5.0 (Released [Aug 29 2020](https://github.com/tkw1536/ggman/releases/tag/v1.5.0))

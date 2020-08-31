@@ -29,3 +29,6 @@ const StringTreeFlagUsage string = "If provided, print the current HEAD referenc
 
 // StringWebBaseUsage represents the tree uri usage string
 const StringWebBaseUsage string = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s. "
+
+// StringFindBranchUsage is the branch usage string
+const StringFindBranchUsage string = "Name of branch to find in repositories. "

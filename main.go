@@ -54,7 +54,7 @@ func Main(argv []string) (retval int, err string) {
 	ggman.Register("url", commands.URLCommand, &program.SubOptions{NeedsRoot: true, Flag: "--tree", MinArgs: 0, MaxArgs: 1, Metavar: "BASE", FlagDescription: constants.StringTreeFlagUsage, UsageDescription: webUsage})
 
 	ggman.Register("find-branch", commands.FindBranchCommand, &program.SubOptions{
-		NeedsRoot: true, MinArgs: 1, MaxArgs: 1, Metavar: "BRANCH", UsageDescription: "To be written",
+		NeedsRoot: true, MinArgs: 1, MaxArgs: 1, Metavar: "BRANCH", UsageDescription: constants.StringFindBranchUsage,
 	})
 	// and run it
 	return ggman.Run(argv)
