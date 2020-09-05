@@ -5,6 +5,7 @@ GOINSTALL=$(GOCMD) install
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
+GOGENERATE=$(GOCMD) generate
 
 # Flags for versioning
 GGMANVERSIONFLAGS=-X 'github.com/tkw1536/ggman/constants.buildVersion=$(shell git describe --tags HEAD)' -X 'github.com/tkw1536/ggman/constants.buildTime=$(shell date +%s)'
@@ -23,7 +24,7 @@ GGMAN_CMD_SRC=./cmd/ggman
 # almost all the targets are phony
 
 all: $(BINARY_UNIX) $(BINARY_MACOS) $(BINARY_WINDOWS)
-.PHONY: all install test lint testdeps clean deps dist
+.PHONY: all install test lint testdeps clean deps dist generate
 
 $(BINARY_NAME): deps
 	$(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS)" -o $(BINARY_NAME) $(GGMAN_CMD_SRC)
@@ -50,6 +51,9 @@ testdeps:
 
 lint:
 	test -z $(shell gofmt -l .)
+
+generate:
+	$(GOGENERATE) -v ./...
 
 clean: 
 	$(GOCLEAN)
