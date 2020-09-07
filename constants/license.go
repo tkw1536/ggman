@@ -40,4 +40,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 `
 
-//go:generate bash make_license_notices.sh github.com/tkw1536/ggman constants license_notices.go constants
+//go:generate bash make_license_notices.sh github.com/tkw1536/ggman constants license_notices.go StringLicenseNotices

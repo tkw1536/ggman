@@ -1,68 +1,210 @@
 #!/bin/bash
 
-# This script is used to generate license_notices.go.
-# Call it using 'go generate'. 
+# make_license_notices.sh
+#
+# Generate some go code for license notices. 
+#
+# (c) Tom Wiesing 2020 available under the terms of the MIT License. 
+#
+# It should be used by means of a go-generate command, such as:
+# //go:generate bash make_license_notices.sh INPACKAGE OUTPACKAGE OUTFILE DECLARATION
+
 set -e
 
-INPACKAGE="$1"
+###########################
+# Read parameters         #
+###########################
+
+INPACKAGE=$1
 OUTPACKAGE="$2"
 OUTFILE="$3"
+DECLARATION="${4:-LicenseNotices}"
 
-LICENSE_CSV=""
-LEGAL_TEXT=""
+###########################
+# Environment and globals #
+###########################
 
-function get_license_text() {
-    TEMPDIR=$(mktemp -d)
-    GOBIN="$(go env GOPATH)/bin"
+TEMPDIR=$(mktemp -d)
+GOBIN="$(go env GOPATH)/bin"
 
-    pushd "$TEMPDIR" > /dev/null 2>&1
-    go mod init temp > /dev/null 2>&1
-    go get github.com/google/go-licenses
-    go install github.com/google/go-licenses
-    popd > /dev/null 2>&1
+N=$'\n'
 
-    LICENSE_CSV=$("$GOBIN/go-licenses" csv "$INPACKAGE")
+###########################
+# Install Dependencies    #
+###########################
 
-    "$GOBIN/go-licenses" save "$INPACKAGE" --save_path="$TEMPDIR/legal"
+pushd "$TEMPDIR" > /dev/null 2>&1
+go mod init temp > /dev/null 2>&1
+go get github.com/google/go-licenses
+go install github.com/google/go-licenses
+popd > /dev/null 2>&1
 
-    pushd "$TEMPDIR/legal"  > /dev/null 2>&1
+###########################
+# Bootstrap comment       #
+###########################
 
-    N=$'\n'
-    for modfile in $(find ./ -name 'LICENSE' | sort); do
-        module=${modfile#"./"}
-        module=${module%"/LICENSE"}
-        LEGAL_TEXT="$LEGAL_TEXT$N================================================================================$N"
-        LEGAL_TEXT="$LEGAL_TEXT${N}Go Module $module$N$N"
-        LEGAL_TEXT="$LEGAL_TEXT$N$(cat "$modfile")"
-        LEGAL_TEXT="$LEGAL_TEXT$N================================================================================$N"
-    done
+LEGAL_COMMENT=$(cat <<EOF
+// ${DECLARATION} contains legal notices as required by packages that are depended upon.
+// It is intended to be printed to standard output to be read by the end user on demand.
+//
+// The value of the variable is determined at package init time, but omitted from this documenation.
+// Instead find below license information of dependent module.
+//
+EOF
+)
+LEGAL_COMMENT="$LEGAL_COMMENT${N}"
 
-    popd  > /dev/null 2>&1
-    rm -rf "$TEMPDIR"
+###########################
+# Function to record info  #
+###########################
+
+declare -A pkg_license
+declare -A pkg_url
+
+function record_license_info() {
+    PKG=$1
+    LICENSE=$2
+    URL=$3
+
+    pkg_license[$PKG]="$LICENSE"
+    pkg_url[$PKG]="$URL"
 }
 
-function prepend() {
-    while read line; do echo "${1}${line}"; done;
+
+###########################
+# Function to write text  #
+###########################
+
+function write_overview_text() {
+    PKG=$1
+    LICENSE=$2
+    URL=$3
+
+    LEGAL_TEXT="${LEGAL_TEXT}${N} - $PKG ($LICENSE"
+    if [ "${URL}" != "Unknown" ]; then
+        LEGAL_TEXT="${LEGAL_TEXT}; see ${URL}"
+    fi
+    LEGAL_TEXT="${LEGAL_TEXT})"
 }
 
-get_license_text
-LEGAL_TEXT="${LEGAL_TEXT/\`/\`+\"\`\"+\`}"
-LICENSE_CSV=$(echo "$LICENSE_CSV" | prepend '// ' | sort)
+function write_const_text() {
+    PKG=$1
+    LICENSE=$2
+    URL=$3
+    LICENSETEXT=$4
 
+    LEGAL_TEXT="${LEGAL_TEXT}${N}================================================================================${N}"
+    LEGAL_TEXT="${LEGAL_TEXT}${N}Module $PKG${N}"
+    LEGAL_TEXT="${LEGAL_TEXT}${N}Licensed under the Terms of the $LICENSE License. ${N}"
+    if [ "${URL}" != "Unknown" ]; then
+        LEGAL_TEXT="${LEGAL_TEXT}See also $URL. ${N}"
+    fi
+    LEGAL_TEXT="${LEGAL_TEXT}${N}${N}${LICENSETEXT}${N}"
+    LEGAL_TEXT="${LEGAL_TEXT}${N}================================================================================${N}"
+}
+
+function write_comment_text() {
+    PKG=$1
+    LICENSE=$2
+    URL=$3
+    LICENSETEXT=$4
+
+    LEGAL_COMMENT="${LEGAL_COMMENT}// ${N}"
+    LEGAL_COMMENT="${LEGAL_COMMENT}// Module ${PKG//\// }${N}"
+    LEGAL_COMMENT="${LEGAL_COMMENT}// ${N}"
+    LEGAL_COMMENT="${LEGAL_COMMENT}// Module $PKG is licensed under the Terms of the $LICENSE License. ${N}"
+    if [ "${URL}" != "Unknown" ]; then
+        LEGAL_COMMENT="${LEGAL_COMMENT}// See also $URL. ${N}"
+    fi
+
+    LEGAL_COMMENT="${LEGAL_COMMENT}// ${N}"
+    while IFS= read -r licenseline; do
+        LEGAL_COMMENT="${LEGAL_COMMENT}//  ${licenseline}${N}"
+    done <<< "$LICENSETEXT"
+
+}
+###########################
+# Read License CSV        #
+###########################
+
+LEGAL_TEXT="The following go packages are imported: ${N}"
+for line in $("$GOBIN/go-licenses" csv "$INPACKAGE/..." | sort); do
+    # parse the csv, skip $INPACKAGE
+    IFS=',' read -ra info <<< "$line"
+    if [ "${info[0]}" == "$INPACKAGE" ]; then
+        continue
+    fi
+
+    write_overview_text "${info[0]}" "${info[2]}" "${info[1]}"
+    record_license_info "${info[0]}" "${info[2]}" "${info[1]}"
+done
+LEGAL_TEXT="${LEGAL_TEXT}${N}"
+
+###########################
+# Generate License Text   #
+###########################
+
+"$GOBIN/go-licenses" save "$INPACKAGE/..." --save_path="$TEMPDIR/legal"
+
+pushd "$TEMPDIR/legal"  > /dev/null 2>&1
+for licensefile in $(find ./ -name 'LICENSE' | sort); do
+    pkg=${licensefile#"./"}
+    pkg=$(dirname "$pkg")
+    if [ "$pkg" == "$INPACKAGE" ]; then
+        continue
+    fi
+
+    license=${pkg_license[$pkg]}
+    licensetext=$(cat $licensefile)
+    url=${pkg_url[$pkg]}
+
+    write_const_text "$pkg" "$license" "$url" "$licensetext"
+    write_comment_text "$pkg" "$license" "$url" "$licensetext"
+done
+popd  > /dev/null 2>&1
+
+LEGAL_COMMENT=$(cat <<EOF
+${LEGAL_COMMENT}// 
+// Generation
+//
+// This variable is populated at package initialization time. 
+// Its' content (and this documentation) have been generated automatically using
+//
+//  make_license_notices.sh $*
+//
+// This variable was last updated at $(date -u +"%Y-%m-%dT%H:%M:%SZ"). 
+EOF
+)
+
+###########################
+# Cleanup                 #
+###########################
+
+rm -rf "$TEMPDIR"
+
+
+#########################
+# Write outfile         #
+#########################
+
+# escape `s
+LEGAL_TEXT="${LEGAL_TEXT//\`/\`+\"\`\"+\`}"
 
 rm -f "$OUTFILE"
 cat << EOF > "$OUTFILE"
 package $OUTPACKAGE
 
-// This file was generated automatically at $(date -u +"%Y-%m-%dT%H:%M:%SZ") using 'make_license_notices.sh'.
+// ===========================================================================================================
+// This file was generated automatically at $(date -u +"%Y-%m-%dT%H:%M:%SZ") using make_license_notices.sh $*.
 // Do not edit manually, as changes may be overwritten.
-
-// StringLicenseNotices are legal notices required by the license.
-//
-$LICENSE_CSV
-const StringLicenseNotices = \`${LEGAL_TEXT}\`
+// ===========================================================================================================
 
 
+${LEGAL_COMMENT}
+var ${DECLARATION} string
+func init() {
+    ${DECLARATION} = \`${LEGAL_TEXT}\`
+}
 EOF
 
 gofmt -w "$OUTFILE"
