@@ -1,7 +1,7 @@
 package legal
 
 // ===========================================================================================================
-// This file was generated automatically at 2020-09-07T18:34:56Z using make_license_notices.sh github.com/tkw1536/ggman legal notices.go Notices.
+// This file was generated automatically at 2020-09-07T19:21:16Z using make_license_notices.sh github.com/tkw1536/ggman legal notices.go Notices.
 // Do not edit manually, as changes may be overwritten.
 // ===========================================================================================================
 
@@ -763,6 +763,40 @@ package legal
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 //  DEALINGS IN THE SOFTWARE.
 //
+// Module github.com spf13 pflag
+//
+// Module github.com/spf13/pflag is licensed under the Terms of the BSD-3-Clause License.
+// See also https://github.com/spf13/pflag/blob/master/LICENSE.
+//
+//  Copyright (c) 2012 Alex Ogier. All rights reserved.
+//  Copyright (c) 2012 The Go Authors. All rights reserved.
+//
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions are
+//  met:
+//
+//     * Redistributions of source code must retain the above copyright
+//  notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above
+//  copyright notice, this list of conditions and the following disclaimer
+//  in the documentation and/or other materials provided with the
+//  distribution.
+//     * Neither the name of Google Inc. nor the names of its
+//  contributors may be used to endorse or promote products derived from
+//  this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+//  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+//  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+//  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+//  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+//  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+//  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
 // Module github.com xanzy ssh-agent
 //
 // Module github.com/xanzy/ssh-agent is licensed under the Terms of the Apache-2.0 License.
@@ -1101,7 +1135,7 @@ package legal
 //
 //  make_license_notices.sh github.com/tkw1536/ggman legal notices.go Notices
 //
-// This variable was last updated at 2020-09-07T18:34:56Z.
+// This variable was last updated at 2020-09-07T19:21:16Z.
 var Notices string
 
 func init() {
@@ -1119,6 +1153,7 @@ func init() {
  - github.com/pkg/browser (BSD-2-Clause; see https://github.com/pkg/browser/blob/master/LICENSE)
  - github.com/pkg/errors (BSD-2-Clause; see https://github.com/pkg/errors/blob/master/LICENSE)
  - github.com/sergi/go-diff/diffmatchpatch (MIT; see https://github.com/sergi/go-diff/blob/master/diffmatchpatch/LICENSE)
+ - github.com/spf13/pflag (BSD-3-Clause; see https://github.com/spf13/pflag/blob/master/LICENSE)
  - github.com/xanzy/ssh-agent (Apache-2.0; see https://github.com/xanzy/ssh-agent/blob/master/LICENSE)
  - golang.org/x/crypto (BSD-3-Clause)
  - golang.org/x/net (BSD-3-Clause)
@@ -1932,6 +1967,45 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+================================================================================
+
+================================================================================
+
+Module github.com/spf13/pflag
+
+Licensed under the Terms of the BSD-3-Clause License. 
+See also https://github.com/spf13/pflag/blob/master/LICENSE. 
+
+
+Copyright (c) 2012 Alex Ogier. All rights reserved.
+Copyright (c) 2012 The Go Authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ================================================================================
 

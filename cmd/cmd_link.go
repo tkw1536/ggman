@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"flag"
 	"os"
 	"path/filepath"
+
+	flag "github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"

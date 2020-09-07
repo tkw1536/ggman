@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"flag"
 	"sync"
+
+	flag "github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"

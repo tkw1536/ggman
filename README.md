@@ -245,6 +245,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 
 ### 1.6.0 (Upcoming)
 
+- replace 'flag' package by POSIX-compatible 'pflag' package
 - fully rework internal command and package structure as well as documentation
 - add internal utility to automatically re-generate license notices
 - bugfix: Add missing 'ggman find-branch' documentation

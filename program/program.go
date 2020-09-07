@@ -1,10 +1,11 @@
 package program
 
 import (
-	"flag"
 	"fmt"
 	"sort"
 	"strings"
+
+	flag "github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/constants"

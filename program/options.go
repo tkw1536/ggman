@@ -1,10 +1,11 @@
 package program
 
 import (
-	"flag"
 	"fmt"
 	"reflect"
 	"strings"
+
+	flag "github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman/env"
 )
@@ -68,6 +69,8 @@ func (opt Options) Usage(name string, flagset *flag.FlagSet) (usage string) {
 		usage += fmt.Sprintf(" [%s]", f.Flag())
 	}
 
+	usage += " [--]"
+
 	argSyntax := ""
 	if opt.MaxArgs == -1 {
 		// write out the argument an appropriate number of times
@@ -116,18 +119,19 @@ type flagUsage struct {
 
 // Flag returns the flag in the form '-flag value'
 func (f flagUsage) Flag() string {
-	s := fmt.Sprintf("-%s", f.flag.Name)
+	s := fmt.Sprintf("--%s", f.flag.Name)
 	if name, _ := flag.UnquoteUsage(f.flag); name != "" {
 		s += " " + name
 	}
 	return s
 }
 
-// Description returns a long form description of the flag
-// adapted from "flag".PrintDefaults
+// Description returns a long form description of the flag.
+//
+// This function has been adapated from flag.PrintDefaults
 func (f flagUsage) Description() string {
 	// extract the short flag de
-	description := fmt.Sprintf("-%s", f.flag.Name)
+	description := fmt.Sprintf("--%s", f.flag.Name)
 	name, usage := flag.UnquoteUsage(f.flag)
 	if len(name) > 0 {
 		description += " " + name
@@ -143,7 +147,7 @@ func (f flagUsage) Description() string {
 }
 
 // isZeroValue determines whether the default string represents the zero
-// value for a flag. Adapated from "flag".isZeroValue.
+// value for a flag. Adapated from flag "github.com/spf13/pflag".isZeroValue.
 func (f flagUsage) isZeroValue() bool {
 	// Build a zero value of the flag's Value type, and see if the
 	// result of calling its String method equals the value passed in.
