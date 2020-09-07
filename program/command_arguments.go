@@ -56,19 +56,12 @@ var errParseFlagSet = ggman.Error{
 	Message:  "Error parsing flags: %s",
 }
 
-// parseFlagset calls Parse() on the flagset, iff it is not nil and at least one flg is defined
+// parseFlagset calls Parse() on the flagset.
+// If the flagset has no defined flags (or is nil), immediatly returns nil
 //
 // When an error occurs, returns an error of type Error.
 func (args *CommandArguments) parseFlagset() (err error) {
-	// if the flagset is nil, do nothing
-	if args.Flagset == nil {
-		return nil
-	}
-
-	// the only way to check if a flagset has no flags is to call VisitAll
-	hasFlag := false
-	args.Flagset.VisitAll(func(_ *flag.Flag) { hasFlag = true })
-	if !hasFlag {
+	if args.Flagset == nil || !args.Flagset.HasFlags() {
 		return nil
 	}
 

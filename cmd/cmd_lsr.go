@@ -20,7 +20,7 @@ func (lsr) Name() string {
 }
 
 func (l *lsr) Options(flagset *flag.FlagSet) program.Options {
-	flagset.BoolVar(&l.Canonical, "canonical", l.Canonical, "If provided, print the canonical URLs to repositories. ")
+	flagset.BoolVarP(&l.Canonical, "canonical", "c", l.Canonical, "If provided, print the canonical URLs to repositories. ")
 	return program.Options{
 		Environment: env.Requirement{
 			AllowsFilter: true,

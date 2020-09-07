@@ -22,7 +22,7 @@ func (fix) Name() string {
 }
 
 func (f *fix) Options(flagset *flag.FlagSet) program.Options {
-	flagset.BoolVar(&f.Simulate, "simulate", f.Simulate, "If set, only print what would be done. ")
+	flagset.BoolVarP(&f.Simulate, "simulate", "s", f.Simulate, "If set, only print what would be done. ")
 	return program.Options{
 		Environment: env.Requirement{
 			NeedsRoot:    true,

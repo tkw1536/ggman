@@ -20,7 +20,7 @@ func (findBranch) Name() string {
 }
 
 func (f *findBranch) Options(flagset *flag.FlagSet) program.Options {
-	flagset.BoolVar(&f.ExitCode, "exit-code", f.ExitCode, "Exit with Code 1 when no repositories with provided branch exist. ")
+	flagset.BoolVarP(&f.ExitCode, "exit-code", "e", f.ExitCode, "Exit with Code 1 when no repositories with provided branch exist. ")
 
 	return program.Options{
 		MinArgs: 1,

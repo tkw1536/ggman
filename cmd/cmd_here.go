@@ -19,7 +19,7 @@ func (here) Name() string {
 }
 
 func (h *here) Options(flagset *flag.FlagSet) program.Options {
-	flagset.BoolVar(&h.Tree, "tree", h.Tree, "If provided, also print the current HEAD reference and relative path to the root of the git worktree. ")
+	flagset.BoolVarP(&h.Tree, "tree", "t", h.Tree, "If provided, also print the current HEAD reference and relative path to the root of the git worktree. ")
 	return program.Options{
 		Environment: env.Requirement{
 			NeedsRoot: true,

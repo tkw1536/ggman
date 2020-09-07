@@ -103,9 +103,13 @@ type flagUsage struct {
 	flag *flag.Flag
 }
 
-// Flag returns the flag in the form '-flag value'
+// Flag returns the flag in the form '--flag|-f value'
 func (f flagUsage) Flag() string {
 	s := fmt.Sprintf("--%s", f.flag.Name)
+	if shorthand := f.flag.Shorthand; shorthand != "" {
+		s += fmt.Sprintf("|-%s", shorthand)
+	}
+
 	if name, _ := flag.UnquoteUsage(f.flag); name != "" {
 		s += " " + name
 	}
@@ -113,11 +117,15 @@ func (f flagUsage) Flag() string {
 }
 
 // Description returns a long form description of the flag.
+// It is of the form '-f, --flag ARG' and 'DESCRIPTION (default DEFAULT)'
 //
 // This function has been adapated from flag.PrintDefaults
 func (f flagUsage) Description() string {
 	// extract the short flag de
 	description := fmt.Sprintf("--%s", f.flag.Name)
+	if shorthand := f.flag.Shorthand; shorthand != "" {
+		description = fmt.Sprintf("-%s, %s", shorthand, description)
+	}
 	name, usage := flag.UnquoteUsage(f.flag)
 	if len(name) > 0 {
 		description += " " + name

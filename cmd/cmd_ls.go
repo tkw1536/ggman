@@ -20,7 +20,7 @@ func (ls) Name() string {
 }
 
 func (l *ls) Options(flagset *flag.FlagSet) program.Options {
-	flagset.BoolVar(&l.ExitCode, "exit-code", l.ExitCode, "If provided, return exit code 1 if no repositories are found. ")
+	flagset.BoolVarP(&l.ExitCode, "exit-code", "e", l.ExitCode, "If provided, return exit code 1 if no repositories are found. ")
 	return program.Options{
 		Environment: env.Requirement{
 			AllowsFilter: true,
