@@ -6,6 +6,8 @@ import (
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/pkg/errors"
+	"github.com/tkw1536/ggman"
+	"github.com/tkw1536/ggman/util"
 )
 
 type gogit struct{}
@@ -175,13 +177,21 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject interface{}, name string
 		return
 	}
 
-	// update the urls
-	if len(cfg.Remotes[remote.Config().Name].URLs) != len(urls) {
+	// get the current remotes
+	remotes := cfg.Remotes[remote.Config().Name]
+
+	// if they haven't changed, we can return immediatly
+	if util.SliceEquals(remotes.URLs, urls) {
+		return nil
+	}
+
+	// check that they are of the new length
+	if len(remotes.URLs) != len(urls) {
 		return errors.New("Cannot set remoteURL: Length of old and new urls must be identical")
 	}
-	cfg.Remotes[remote.Config().Name].URLs = urls
 
-	// write back the configuration
+	// Write back the URLs
+	remotes.URLs = urls
 	if err = r.SetConfig(cfg); err != nil {
 		err = errors.Wrap(err, "Unable to store config")
 		return
@@ -190,14 +200,14 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject interface{}, name string
 	return
 }
 
-func (gogit) Clone(remoteURI, clonePath string, extraargs ...string) error {
+func (gogit) Clone(stream ggman.IOStream, remoteURI, clonePath string, extraargs ...string) error {
 	// doesn't support extra arguments
 	if len(extraargs) > 0 {
 		return ErrArgumentsUnsupported
 	}
 
 	// run a plain git clone but intercept all errors
-	_, err := git.PlainClone(clonePath, false, &git.CloneOptions{URL: remoteURI, Progress: os.Stdout})
+	_, err := git.PlainClone(clonePath, false, &git.CloneOptions{URL: remoteURI, Progress: stream.Stdout})
 	if err != nil {
 		err = ExitError{error: errors.Wrap(err, "Unable clone repository"), Code: 1}
 	}
@@ -205,7 +215,7 @@ func (gogit) Clone(remoteURI, clonePath string, extraargs ...string) error {
 	return err
 }
 
-func (gogit) Fetch(clonePath string, cache interface{}) (err error) {
+func (gogit) Fetch(stream ggman.IOStream, clonePath string, cache interface{}) (err error) {
 	// get the repository
 	r := cache.(*git.Repository)
 
@@ -218,7 +228,7 @@ func (gogit) Fetch(clonePath string, cache interface{}) (err error) {
 	// fetch all of the remotes for this repository
 	for _, remote := range remotes {
 		// fetch and write out an 'already up-to-date'
-		err = remote.Fetch(&git.FetchOptions{Progress: os.Stdout})
+		err = remote.Fetch(&git.FetchOptions{Progress: stream.Stdout})
 		err = ignoreErrUpToDate(err)
 
 		// fail on other errors
@@ -231,7 +241,7 @@ func (gogit) Fetch(clonePath string, cache interface{}) (err error) {
 	return
 }
 
-func (gogit) Pull(clonePath string, cache interface{}) (err error) {
+func (gogit) Pull(stream ggman.IOStream, clonePath string, cache interface{}) (err error) {
 	// get the repository
 	r := cache.(*git.Repository)
 
@@ -243,7 +253,7 @@ func (gogit) Pull(clonePath string, cache interface{}) (err error) {
 	}
 
 	// do a git pull, and ignore error already up-to-date
-	err = w.Pull(&git.PullOptions{Progress: os.Stdout})
+	err = w.Pull(&git.PullOptions{Progress: stream.Stdout})
 	err = ignoreErrUpToDate(err)
 	if err != nil {
 		err = errors.Wrap(err, "Unable to pull")

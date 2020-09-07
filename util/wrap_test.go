@@ -40,7 +40,7 @@ func BenchmarkWrapLine(b *testing.B) {
 	}
 }
 
-func TestWrapLinePreserve(t *testing.T) {
+func TestWrapLinePrefix(t *testing.T) {
 	type args struct {
 		line   string
 		length int
@@ -62,20 +62,20 @@ func TestWrapLinePreserve(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := WrapLinePreserve(tt.args.line, tt.args.length); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("WrapLinePreserve() = %v, want %v", got, tt.want)
+			if got := WrapLinePrefix(tt.args.line, tt.args.length); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("WrapLinePrefix() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func BenchmarkWrapLinePreserve(b *testing.B) {
+func BenchmarkWrapLinePrefix(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		WrapLinePreserve(`         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget tortor massa. Nullam gravida massa id dui placerat condimentum. Proin volutpat massa eu enim luctus convallis. Integer a nulla facilisis, convallis elit id, tristique nisi. Duis enim diam, viverra sed quam quis, scelerisque aliquam mi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed consectetur cursus libero, non lobortis mi tempor sit amet. Nullam sapien sapien, imperdiet id cursus non, consequat sed neque. Fusce sollicitudin tortor pulvinar, placerat urna sit amet, luctus tellus. Vivamus sit amet ligula purus. `, 20)
+		WrapLinePrefix(`         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget tortor massa. Nullam gravida massa id dui placerat condimentum. Proin volutpat massa eu enim luctus convallis. Integer a nulla facilisis, convallis elit id, tristique nisi. Duis enim diam, viverra sed quam quis, scelerisque aliquam mi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed consectetur cursus libero, non lobortis mi tempor sit amet. Nullam sapien sapien, imperdiet id cursus non, consequat sed neque. Fusce sollicitudin tortor pulvinar, placerat urna sit amet, luctus tellus. Vivamus sit amet ligula purus. `, 20)
 	}
 }
 
-func TestWrapStringPreserve(t *testing.T) {
+func TestWrapStringPrefix(t *testing.T) {
 	type args struct {
 		s      string
 		length int
@@ -90,8 +90,8 @@ func TestWrapStringPreserve(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotLines := WrapStringPreserve(tt.args.s, tt.args.length); !reflect.DeepEqual(gotLines, tt.wantLines) {
-				t.Errorf("WrapStringPreserve() = %v, want %v", gotLines, tt.wantLines)
+			if gotLines := WrapStringPrefix(tt.args.s, tt.args.length); !reflect.DeepEqual(gotLines, tt.wantLines) {
+				t.Errorf("WrapStringPrefix() = %v, want %v", gotLines, tt.wantLines)
 			}
 		})
 	}

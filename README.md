@@ -2,8 +2,8 @@
 
 ![CI Status](https://github.com/tkw1536/ggman/workflows/CI/badge.svg)
 
-A golang script that can manage multiple git repositories locally. 
-Golang rewrite of [GitManager](https://github.com/tkw1536/GitManager). 
+A golang tool that can manage all your git repositories. 
+Originally a rewrite of [GitManager](https://github.com/tkw1536/GitManager), but has diverged. 
 
 ## the `ggman` command
 
@@ -243,8 +243,9 @@ Alternatively, you can simply type `make install` from the source code to have i
 
 ## Changelog
 
-### 1.5.1 (Upcoming)
+### 1.6.0 (Upcoming)
 
+- fully rework internal command and package structure as well as documentation
 - add internal utility to automatically re-generate license notices
 - bugfix: Add missing 'ggman find-branch' documentation
 - cleanup runtime version handling

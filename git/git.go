@@ -1,15 +1,42 @@
-// Package git contains a wrapper for git functionality
+// Package git contains an implementation of git functionality.
+//
+// The implementation consists of the Git interface and the Plumbing interface.
+//
+// The Git interface (and it's default instance Default) provide a usable interface to Git Functionality.
+// The Git interface will automatically choose between using a os.Exec() call to a native "git" wrapper, or using a pure golang git implementation.
+// This should be used directly by callers.
+//
+// The Plumbing interface provides more direct control over which interface is used to interact with repositories.
+// Calls to a Plumbing typically place assumptions on the caller and require some setup.
+// For this reason, implementation of the Plumbing interface are not exported.
 package git
 
+import (
+	"github.com/tkw1536/ggman"
+)
+
 // Git represents a wrapper around a Plumbing instance.
+// It is goroutine-safe and initialization free.
+//
 // As opposed to Plumbing, which poses certain requirements and assumptions on the caller, a Git does not.
-// A Git is intended to be called by seperate package.
+// Using a Git can be as simple as:
+//
+//  err := git.Pull(ggman.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world")
+//
 type Git interface {
 	// Plumbing returns the plumbing used by this git.
 	Plumbing() Plumbing
 
+	// IsRepository checks if the directory at localPath is the root of a git repository.
+	IsRepository(localPath string) bool
+
+	// IsRepositoryQuick efficiently checks if the directly at localPath contains a repository.
+	// It is like IsRepository, except that it more quickly returns false than IsRepository.
+	IsRepositoryQuick(localPath string) bool
+
 	// Clone clones a remote repository from remoteURI to clonePath.
-	// Writes to os.Stdout and os.Stderr.
+	// May attempt to read credentials from stream.Stdin.
+	// Writes to stream.Stdout and stream.Stderr.
 	//
 	// remoteURI is the remote git uri to clone the repository from.
 	// clonePath is the local path to clone the repository to.
@@ -19,7 +46,7 @@ type Git interface {
 	// If the underlying 'git' process exits abnormally, returns.
 	// If extraargs is non-empty and extra arguments are not supported by this Wrapper, returns ErrArgumentsUnsupported.
 	// May return other error types for other errors.
-	Clone(remoteURI, clonePath string, extraargs ...string) error
+	Clone(stream ggman.IOStream, remoteURI, clonePath string, extraargs ...string) error
 
 	// GetHeadRef gets a resolved reference to head at the repository at clonePath.
 	//
@@ -29,22 +56,22 @@ type Git interface {
 	GetHeadRef(clonePath string) (ref string, err error)
 
 	// Fetch fetches all remotes of the repository at clonePath.
-	// May attempt to read credentials from os.Stdin.
-	// Writes to os.Stdout and os.Stderr.
+	// May attempt to read credentials from stream.Stdin.
+	// Writes to stream.Stdout and stream.Stderr.
 	//
 	// When fetching succeeded, returns nil.
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	Fetch(clonePath string) error
+	Fetch(stream ggman.IOStream, clonePath string) error
 
 	// Pull fetches the repository at clonePath and merges in changes where appropriate.
-	// May attempt to read credentials from os.Stdin.
-	// Writes to os.Stdout and os.Stderr.
+	// May attempt to read credentials from stream.Stdin.
+	// Writes to stream.Stdout and stream.Stderr.
 	//
 	// When pulling succeeded, returns nil.
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	Pull(clonePath string) error
+	Pull(stream ggman.IOStream, clonePath string) error
 
 	// GetRemote gets the url of the canonical remote at clonePath.
 	// The semantics of 'canonical' are determined by the underlying git implementation.
@@ -70,6 +97,3 @@ type Git interface {
 	// May return other error types for other errors.
 	ContainsBranch(clonePath, branch string) (exists bool, err error)
 }
-
-// Default is the default git
-var Default = NewGitFromPlumbing(nil)

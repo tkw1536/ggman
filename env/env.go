@@ -1,0 +1,310 @@
+package env
+
+import (
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/mitchellh/go-homedir"
+	"github.com/pkg/errors"
+	"github.com/tkw1536/ggman"
+	"github.com/tkw1536/ggman/git"
+)
+
+// TODO: Test this file
+
+// Env represents an environment to be used by ggman.
+//
+// The environment defines which git repositories are managed by ggman and where these are stored.
+// It furthremore determins how a URL is canonicalized using a CanFile.
+//
+// An environment consists of four parts, each are defined as a part of this struct.
+// See NewEnv on the defaults used by ggman.
+type Env struct {
+	// Git is a method of interacting with on-disk git repositories.
+	Git git.Git
+
+	// Vars are the values of environment variables.
+	// These are used to conditionally initialize the root and CanFile values.
+	Vars Variables
+
+	// Root is the Root folder of the environment.
+	// Repositories managed by ggman should be stored in this folder.
+	// See the Local() method.
+	Root string
+	// Filter is an optional filter for the environment.
+	// Repositories not matching the filter are considered to not be a part of the environment.
+	// See the Repos() method.
+	Filter Filter
+
+	// CanFile is the CanFile used to canonicalize repositories.
+	// See the Canonical() method.
+	CanFile CanFile
+}
+
+// Variables represents the values of specific environment variables.
+// Unset variables are represented as the empty string.
+type Variables struct {
+	// Home is the path to the users' home directory
+	// This is typically stored in the 'HOME' variable on unix-like systems
+	Home string
+
+	// GGROOT is the value of the 'GGROOT' environment variable
+	GGROOT string
+
+	// CANFILE is the value of the 'GGMAN_CANFILE' environment variable
+	CANFILE string
+}
+
+// Requirement represents a set of requirements on the Environment.
+type Requirement struct {
+	// Does the environment require a root directory?
+	NeedsRoot bool
+
+	// Does the environment allow filtering?
+	// AllowsFilter implies NeedsRoot.
+	AllowsFilter bool
+
+	// Does the environment require a CanFile?
+	NeedsCanFile bool
+}
+
+// NewEnv returns a new Env that fullfills the requirement r.
+//
+// See methods LoadDefaultRoot() and LoadDefaultCanFile() for a description of default values.
+//
+// When a CanFile is requested, it will try to load the file pointed to by the GGMAN_CANFILE environment variable.
+// If the variable does not exist, it will attempt to load the file ".ggman" in the users HOME directory.
+// Failing to open a CanFile, e.g. because of invalid syntax, results in an error of type Error.
+//
+// If r.AllowsFilter is false, NoFilter should be passed for the filter argument.
+// If r.AllowsFilter is true, a filter may be passed via the filter argument.
+func NewEnv(r Requirement, filter Filter) (Env, error) {
+
+	env := &Env{
+		Git:    git.NewGitFromPlumbing(nil),
+		Filter: filter,
+	}
+
+	env.Vars.Home, _ = homedir.Dir() // errors result in an empty home value
+	env.Vars.CANFILE = os.Getenv("GGMAN_CANFILE")
+	env.Vars.GGROOT = os.Getenv("GGROOT")
+
+	if r.NeedsRoot || r.AllowsFilter { // AllowsFilter implies NeedsRoot
+		if err := env.LoadDefaultRoot(); err != nil {
+			return *env, err
+		}
+	}
+
+	if r.NeedsCanFile {
+		if err := env.LoadDefaultCANFILE(); err != nil {
+			return *env, err
+		}
+	}
+
+	return *env, nil
+}
+
+var errMissingRoot = ggman.Error{
+	ExitCode: ggman.ExitInvalidEnvironment,
+	Message:  "Unable to find GGROOT directory. ",
+}
+
+// absRoot returns the absolute path to the root directory.
+// If the root directory is not set, returns an error of type Error.
+func (e Env) absRoot() (string, error) {
+	if e.Root == "" {
+		return "", errMissingRoot
+	}
+	root, err := filepath.Abs(e.Root)
+	if err != nil {
+		err = errInvalidRoot.WithMessageF(err)
+		return "", errMissingRoot
+	}
+	return root, nil
+}
+
+// ParseURL is a convenience alias of ParseURL.
+func (Env) ParseURL(url string) URL {
+	return ParseURL(url)
+}
+
+// LoadDefaultRoot sets env.Root according to the environment variables in e.Vars.
+// If e.Root is already set, does nothing and returns nil.
+//
+// If the GGROOT variable is set, it is used as the root directory.
+// If it is not set, the subdirectory 'Projects' of the home directory is used.
+//
+// The root directory does not have to exist for this function to return nil.
+// However if both GGROOT and Home are unset, this function returns an error of type Error.
+func (e *Env) LoadDefaultRoot() error {
+	if e.Root != "" {
+		return nil
+	}
+
+	e.Root = e.Vars.GGROOT
+	if e.Root != "" {
+		return nil
+	}
+
+	if e.Vars.Home == "" {
+		return errMissingRoot
+	}
+
+	e.Root = filepath.Join(e.Vars.Home, "Projects")
+	return nil
+}
+
+// LoadDefaultCANFILE sets env.CANFILE according to the environment variables in e.Vars.
+// If the CANFILE is already set, immediatly returns nil.
+//
+// If the GGMAN_CANFILE variable is set, it will use it as a filepath to read the CanFile from.
+// If it is not set it will attempt to load the file '.ggman' in the home directory.
+// If neither is set, this function will load an in-memory default CanFile.
+//
+// If loading a CanFile fails, an error of type Error is returned.
+// If loading succeeds, this function returns nil.
+func (e *Env) LoadDefaultCANFILE() error {
+	if e.CanFile != nil {
+		return nil
+	}
+
+	files := make([]string, 0, 2)
+	if e.Vars.CANFILE != "" {
+		files = append(files, e.Vars.CANFILE)
+	}
+	if e.Vars.Home != "" {
+		files = append(files, filepath.Join(e.Vars.Home, ".ggman"))
+	}
+
+	cf := CanFile(nil)
+
+	// In order, if a file exists read it or fail.
+	// If it doesn't exist continue to the next file.
+	for _, file := range files {
+		f, err := os.Open(file)
+		switch {
+		case err == nil: // do nothing
+		case os.IsNotExist(err):
+			continue
+		default:
+			return errors.Wrapf(err, "Unable to open CANFILE %q", file)
+		}
+		defer f.Close()
+		if _, err := (&cf).ReadFrom(f); err != nil {
+			return err
+		}
+		e.CanFile = cf
+		return nil
+	}
+
+	(&cf).ReadDefault()
+	e.CanFile = cf
+	return nil
+}
+
+// Local is the localpath to the repository pointed to by URL
+func (e Env) Local(url URL) string {
+	root, err := e.absRoot()
+	if err != nil {
+		panic("Env.Local(): Root not resolved")
+	}
+
+	path := append([]string{root}, url.Components()...)
+	return filepath.Join(path...)
+}
+
+var errInvalidRoot = ggman.Error{
+	ExitCode: ggman.ExitInvalidEnvironment,
+	Message:  "Unable to resolve root directory: %s",
+}
+
+var errNotResolved = ggman.Error{
+	ExitCode: ggman.ExitInvalidRepo,
+	Message:  "Unable to resolve repository %q",
+}
+
+// atMaxIterCount is the maximum number of recursions for the At function.
+// This prevents infinite loops in a symlinked filesystem.
+const atMaxIterCount = 1000
+
+// At returns the local path to a repository at the provided path, as well as the relative path within the repository.
+//
+// The algorithm proceeds as follows:
+//
+// First check if there is a repository at the provided path.
+// If there is a repository, returns it.
+// If there is not, recursively try parent directories until outside of the root directory.
+//
+// Assumes that the root directory is set.
+// If that is not the case, calls panic().
+// If no repository is found, returns an error of type Error.
+func (e Env) At(p string) (repo, worktree string, err error) {
+	root, err := e.absRoot()
+	if err != nil {
+		panic("Env.At(): Root not resolved")
+	}
+
+	// find the absolute path that p points to
+	// so that we can start searching
+	path, err := filepath.Abs(p)
+	if err != nil {
+		return "", "", errNotResolved.WithMessageF(p)
+	}
+
+	// start recursively searching, starting at 'path' doing at most count iterations.
+	// the regular exit condition is that repo should be the root of a repository.
+	// we addtionally need to check that the path is inside of the root.
+	repo = path
+	count := atMaxIterCount
+	for !e.Git.IsRepository(repo) {
+		count--
+		repo = filepath.Join(repo, "..")
+		if !strings.HasPrefix(repo, root) || root == "" || root == "/" || count == 0 {
+			return "", "", errNotResolved.WithMessageF(p)
+		}
+	}
+
+	// we have found the worktree path and the repository.
+	worktree, err = filepath.Rel(path, repo)
+	if err != nil {
+		return "", "", errNotResolved.WithMessageF(root)
+	}
+
+	return
+}
+
+// Canonical returns the canonical version of the URL url.
+// This requires that CanFile is not nil.
+// See the CanonicalWith() method of URL.
+func (e Env) Canonical(url URL) string {
+	if e.CanFile == nil {
+		panic("Env.Canonical(): CanFile is nil")
+	}
+	return url.CanonicalWith(e.CanFile)
+}
+
+// Filter is a filter for an environment.
+// A filter of an environment is implemented by the url.Match function.
+type Filter string
+
+// NoFilter is the absence of a Filter.
+const NoFilter Filter = ""
+
+// Repos returns a list of local paths to all repositories in this Envirionment.
+// TODO: Rewrite the entire logic of this method
+func (e Env) Repos() []string {
+	root, err := e.absRoot()
+	if err != nil {
+		panic("e.Repos(): Root not resolved")
+	}
+
+	// if the root directory does not exist or can not be opened, then not repositories exist
+	if s, err := os.Stat(root); err != nil || !s.IsDir() {
+		return nil
+	}
+
+	var paths []string
+	reposInternal(e.Git, &paths, root, "", string(e.Filter), true)
+	return paths
+}

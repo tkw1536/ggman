@@ -51,10 +51,10 @@ func WrapLine(line string, length int) []string {
 	return lines
 }
 
-// WrapLinePreserve is like WrapLine, except that it preserves any prefix of whitespace at the beginning of line
+// WrapLinePrefix is like WrapLine, except that it preserves any prefix of whitespace at the beginning of line
 // and prefixes it to every returned line. The wrapping length passed to WrapLine will be length - len(leading whitespace), or 1, whichever is bigger.
 // If line only contains whitespace, the return value will contain only the input line.
-func WrapLinePreserve(line string, length int) []string {
+func WrapLinePrefix(line string, length int) []string {
 
 	// if line is already very short, then we can return it directly
 	// and don't need to do any computation.
@@ -97,17 +97,17 @@ func WrapLinePreserve(line string, length int) []string {
 	return lines
 }
 
-// WrapStringPreserve is like WrapLinePreserve except that it first splits the input into newline seperated strings.
+// WrapStringPrefix is like WrapStringPrefix except that it first splits the input into newline seperated strings.
 // It then treats each line seperatly.
-func WrapStringPreserve(s string, length int) (lines []string) {
+func WrapStringPrefix(s string, length int) (lines []string) {
 	for _, line := range strings.Split(strings.Replace(s, "\r\n", "\n", -1), "\n") {
-		lines = append(lines, WrapLinePreserve(line, length)...)
+		lines = append(lines, WrapLinePrefix(line, length)...)
 	}
 
 	return
 }
 
-// WrapStringPreserveJ is like WrapStringPreserve except that it joins all resulting lines into a single string seperated by newlines.
-func WrapStringPreserveJ(s string, length int) string {
-	return strings.Join(WrapStringPreserve(s, length), "\n")
+// WrapStringsPrefix is like WrapStringPrefix except that it joins all resulting lines into a single string seperated by newlines.
+func WrapStringsPrefix(s string, length int) string {
+	return strings.Join(WrapStringPrefix(s, length), "\n")
 }

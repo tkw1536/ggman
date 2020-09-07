@@ -7,6 +7,7 @@ import (
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/testutil"
 )
 
@@ -416,7 +417,7 @@ func Test_gogit_Clone(t *testing.T) {
 		clone, cleanup := testutil.TempDir()
 		defer cleanup()
 
-		err := gg.Clone(remote, clone)
+		err := gg.Clone(ggman.NewEnvIOStream(), remote, clone)
 		if err != nil {
 			t.Error("Clone() got err != nil, want err = nil")
 		}
@@ -430,7 +431,7 @@ func Test_gogit_Clone(t *testing.T) {
 		clone, cleanup := testutil.TempDir()
 		defer cleanup()
 
-		err := gg.Clone(remote, clone, "--branch", "main")
+		err := gg.Clone(ggman.NewEnvIOStream(), remote, clone, "--branch", "main")
 		if err != ErrArgumentsUnsupported {
 			t.Error("Clone() got err != ErrArgumentsUnsupported, want err = ErrArgumentsUnsupported")
 		}
@@ -489,7 +490,7 @@ func Test_gogit_Fetch(t *testing.T) {
 	}
 
 	t.Run("fetching fetches all remotes", func(t *testing.T) {
-		err := gg.Fetch(clone, ggRepoObject)
+		err := gg.Fetch(ggman.NewEnvIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Fetch() returned err != nil, want err = nil")
 		}
@@ -521,7 +522,7 @@ func Test_gogit_Fetch(t *testing.T) {
 	})
 
 	t.Run("fetching an up-to-date repo returns no error", func(t *testing.T) {
-		err := gg.Fetch(clone, ggRepoObject)
+		err := gg.Fetch(ggman.NewEnvIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Fetch() returned err != nil, want err = nil")
 		}
@@ -559,7 +560,7 @@ func Test_gogit_Pull(t *testing.T) {
 	}
 
 	t.Run("pulling pulls a repository", func(t *testing.T) {
-		err := gg.Pull(clone, ggRepoObject)
+		err := gg.Pull(ggman.NewEnvIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Pull() returned err != nil, want err = nil")
 		}
@@ -575,7 +576,7 @@ func Test_gogit_Pull(t *testing.T) {
 	})
 
 	t.Run("pulling an up-to-date repo returns no error", func(t *testing.T) {
-		err := gg.Pull(clone, ggRepoObject)
+		err := gg.Pull(ggman.NewEnvIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Pull() returned err != nil, want err = nil")
 		}

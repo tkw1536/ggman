@@ -3,6 +3,8 @@ package git
 import (
 	"os"
 	"sync"
+
+	"github.com/tkw1536/ggman"
 )
 
 // NewGitFromPlumbing creates a new Git wrapping a specific Plumbing.
@@ -16,8 +18,8 @@ func NewGitFromPlumbing(plumbing Plumbing) Git {
 }
 
 type dfltGitWrapper struct {
-	m   sync.Mutex
-	git Plumbing
+	once sync.Once
+	git  Plumbing
 }
 
 func (impl *dfltGitWrapper) Plumbing() Plumbing {
@@ -26,29 +28,39 @@ func (impl *dfltGitWrapper) Plumbing() Plumbing {
 }
 
 func (impl *dfltGitWrapper) ensureInit() {
-	impl.m.Lock()
-	defer impl.m.Unlock()
+	impl.once.Do(func() {
+		// first try to use a gitgit
+		impl.git = &gitgit{}
+		if impl.git.Init() == nil {
+			return
+		}
 
-	// We try to initialize a dflt
-	// if there already is a git, we return immedialty because we are done.
-	// else we first try to initialize a gitGitImpl, and then fallback to goGitImpl.
-
-	if impl.git != nil {
-		return
-	}
-
-	impl.git = &gitgit{}
-	if impl.git.Init() == nil {
-		return
-	}
-
-	impl.git = &gogit{}
-	if err := impl.git.Init(); err != nil {
-		panic(err)
-	}
+		// then fallback to a gogit
+		impl.git = &gogit{}
+		if err := impl.git.Init(); err != nil {
+			panic(err)
+		}
+	})
 }
 
-func (impl *dfltGitWrapper) Clone(remoteURI, clonePath string, extraargs ...string) error {
+func (impl *dfltGitWrapper) IsRepository(localPath string) bool {
+	impl.ensureInit()
+
+	_, isRepo := impl.git.IsRepository(localPath)
+	return isRepo
+}
+
+func (impl *dfltGitWrapper) IsRepositoryQuick(localPath string) bool {
+	impl.ensureInit()
+
+	if !impl.git.IsRepositoryUnsafe(localPath) { // IsRepositoryUnsafe may not return false negatives
+		return false
+	}
+
+	return impl.IsRepository(localPath)
+}
+
+func (impl *dfltGitWrapper) Clone(stream ggman.IOStream, remoteURI, clonePath string, extraargs ...string) error {
 	impl.ensureInit()
 
 	// check if the repository already exists
@@ -62,7 +74,7 @@ func (impl *dfltGitWrapper) Clone(remoteURI, clonePath string, extraargs ...stri
 	}
 
 	// run the clone code and return
-	return impl.git.Clone(remoteURI, clonePath, extraargs...)
+	return impl.git.Clone(stream, remoteURI, clonePath, extraargs...)
 }
 
 func (impl *dfltGitWrapper) GetHeadRef(clonePath string) (ref string, err error) {
@@ -78,7 +90,7 @@ func (impl *dfltGitWrapper) GetHeadRef(clonePath string) (ref string, err error)
 	return impl.git.GetHeadRef(clonePath, repoObject)
 }
 
-func (impl *dfltGitWrapper) Fetch(clonePath string) error {
+func (impl *dfltGitWrapper) Fetch(stream ggman.IOStream, clonePath string) error {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -87,10 +99,10 @@ func (impl *dfltGitWrapper) Fetch(clonePath string) error {
 		return ErrNotARepository
 	}
 
-	return impl.git.Fetch(clonePath, repoObject)
+	return impl.git.Fetch(stream, clonePath, repoObject)
 }
 
-func (impl *dfltGitWrapper) Pull(clonePath string) error {
+func (impl *dfltGitWrapper) Pull(stream ggman.IOStream, clonePath string) error {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -99,7 +111,7 @@ func (impl *dfltGitWrapper) Pull(clonePath string) error {
 		return ErrNotARepository
 	}
 
-	return impl.git.Pull(clonePath, repoObject)
+	return impl.git.Pull(stream, clonePath, repoObject)
 }
 
 func (impl *dfltGitWrapper) GetRemote(clonePath string) (uri string, err error) {
@@ -139,7 +151,7 @@ func (impl *dfltGitWrapper) UpdateRemotes(clonePath string, updateFunc func(url,
 	}
 
 	// iterate over all the remotes, and their URLs
-	// then fix each url with the provided []repos.CanLine
+	// then fix each url with the provided []env.CanLine
 	// and store them again if we're not simulating
 
 	for remoteName, urls := range remotes {

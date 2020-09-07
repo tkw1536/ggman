@@ -2,14 +2,31 @@ package git
 
 import (
 	"errors"
+
+	"github.com/tkw1536/ggman"
 )
 
 // Plumbing is an interface that represents a working internal implementation of git.
-// It is not intended to be called directly by an external function, instead it is intended to be called by the Git interface only.
+// Plumbing is intended to be goroutine-safe, i.e. everything except the Init() method can be called from multiple goroutines at once.
+//
+// It is not intended to be called directly by an external caller, instead it is intended to be called by the Git interface only.
+// The reason for this is that it requires initalization and places certain assumptions on the caller.
+//
+// For instance, to pull a repository, the following code is required:
+//
+//  plumbing.Init() // called exactly once
+//  cache, isRepo := plumbing.IsRepository("/home/user/Projects/github.com/hello/world")
+//  if !isRepo {
+//    // error, not a repository
+//  }
+//  err = plumbining.Pull(ggman.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world", cache)
+//
+// Such code is typically handled by a Git instance that wraps a Plumbing.
 type Plumbing interface {
 
-	// Init is used to initialize this git implementation
-	// When initialization fails, for example due to missing dependencies, returns a non-nil error
+	// Init is used to initialize this Plumbing.
+	// Init should only be called once per Plumbing instance.
+	// When initialization fails, for example due to missing dependencies, returns a non-nil error,
 	Init() error
 
 	// IsRepository checks if the directory at localPath is the root of a git repository.
@@ -60,8 +77,8 @@ type Plumbing interface {
 	SetRemoteURLs(clonePath string, repoObject interface{}, name string, urls []string) (err error)
 
 	// Clone tries to clone the repository at 'from' to the folder 'to'.
-	// May attempt to read credentials from os.Stdin.
-	// Output is directed to os.Stdout and os.Stderr.
+	// May attempt to read credentials from stream.Stdin.
+	// Output is directed to stream.Stdout and stream.Stderr.
 	//
 	// remoteURI will be the uri of the remote repository.
 	// clonePath will be the path to a local folder where the repository should be cloned to.
@@ -73,24 +90,24 @@ type Plumbing interface {
 	// If the clone succeeds returns, err = nil.
 	// If the underlying clone command returns a non-zero code, returns an error of type ExitError.
 	// If something else goes wrong, may return any other error type.
-	Clone(remoteURI, clonePath string, extraargs ...string) error
+	Clone(stream ggman.IOStream, remoteURI, clonePath string, extraargs ...string) error
 
 	// Fetch should fetch new objects and refs from all remotes of the repository cloned at clonePath.
-	// May attempt to read credentials from os.Stdin.
-	// Output is directed to os.Stdout and os.Stderr.
+	// May attempt to read credentials from stream.Stdin.
+	// Output is directed to stream.Stdout and stream.Stderr.
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
-	Fetch(clonePath string, cache interface{}) (err error)
+	Fetch(stream ggman.IOStream, clonePath string, cache interface{}) (err error)
 
 	// Pull should fetch new objects and refs from all remotes of the repository cloned at clonePath.
 	// It then merges them into the local branch wherever an upstream is set.
-	// May attempt to read credentials from os.Stdin.
-	// Output is directed to os.Stdout and os.Stderr.
+	// May attempt to read credentials from stream.Stdin.
+	// Output is directed to stream.Stdout and stream.Stderr.
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
-	Pull(clonePath string, cache interface{}) (err error)
+	Pull(stream ggman.IOStream, clonePath string, cache interface{}) (err error)
 
 	// ContainsBranch checks if the repository at clonePath contains a branch with the provided branch.
 	//
