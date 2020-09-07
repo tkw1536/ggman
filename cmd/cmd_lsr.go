@@ -9,19 +9,19 @@ import (
 )
 
 // Lsr is the 'ggman lsr' command
-var Lsr program.Command = lsr{}
+var Lsr program.Command = &lsr{}
 
-type lsr struct{}
+type lsr struct {
+	Canonical bool
+}
 
 func (lsr) Name() string {
 	return "lsr"
 }
 
-func (lsr) Options(flagset *flag.FlagSet) program.Options {
+func (l *lsr) Options(flagset *flag.FlagSet) program.Options {
+	flagset.BoolVar(&l.Canonical, "canonical", l.Canonical, "If provided, print the canonical URLs to repositories. ")
 	return program.Options{
-		FlagValue:       "--canonical",
-		FlagDescription: "If provided, print the canonical URLs to repositories. ",
-
 		Environment: env.Requirement{
 			AllowsFilter: true,
 			NeedsRoot:    true,
@@ -38,11 +38,9 @@ var errInvalidCanfile = ggman.Error{
 	ExitCode: ggman.ExitInvalidEnvironment,
 }
 
-func (lsr) Run(context program.Context) error {
-	shouldCanon := context.Flag
-
+func (l lsr) Run(context program.Context) error {
 	var lines env.CanFile
-	if shouldCanon {
+	if l.Canonical {
 		if err := (&context.Env).LoadDefaultCANFILE(); err != nil {
 			return errInvalidCanfile
 		}
@@ -54,7 +52,7 @@ func (lsr) Run(context program.Context) error {
 		if err != nil {
 			continue
 		}
-		if shouldCanon {
+		if l.Canonical {
 			remote = context.ParseURL(remote).CanonicalWith(lines)
 		}
 		context.Println(remote)

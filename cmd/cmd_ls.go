@@ -9,19 +9,19 @@ import (
 )
 
 // Ls is the 'ggman ls' command
-var Ls program.Command = ls{}
+var Ls program.Command = &ls{}
 
-type ls struct{}
+type ls struct {
+	ExitCode bool
+}
 
 func (ls) Name() string {
 	return "ls"
 }
 
-func (ls) Options(flagset *flag.FlagSet) program.Options {
+func (l *ls) Options(flagset *flag.FlagSet) program.Options {
+	flagset.BoolVar(&l.ExitCode, "exit-code", l.ExitCode, "If provided, return exit code 1 if no repositories are found. ")
 	return program.Options{
-		FlagValue:       "--exit-code",
-		FlagDescription: "If provided, return exit code 1 if no repositories are found. ",
-
 		Environment: env.Requirement{
 			AllowsFilter: true,
 			NeedsRoot:    true,
@@ -37,7 +37,7 @@ var errLSExitFlag = ggman.Error{
 	ExitCode: ggman.ExitGeneric,
 }
 
-func (ls) Run(context program.Context) error {
+func (l ls) Run(context program.Context) error {
 	repos := context.Repos()
 	for _, repo := range repos {
 		context.Println(repo)
@@ -45,7 +45,7 @@ func (ls) Run(context program.Context) error {
 
 	// if we have --exit-code set and no results
 	// we need to exit with an error code
-	if context.Flag && len(repos) == 0 {
+	if l.ExitCode && len(repos) == 0 {
 		return errLSExitFlag
 	}
 

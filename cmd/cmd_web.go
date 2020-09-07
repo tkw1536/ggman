@@ -15,18 +15,18 @@ import (
 )
 
 // Web is the 'ggman web' command
-var Web program.Command = web{urlweb{openInstead: true}}
+var Web program.Command = web{&urlweb{openInstead: true}}
 
-type web struct{ urlweb }
+type web struct{ *urlweb }
 
 func (web) Name() string {
 	return "web"
 }
 
 // URL is the 'ggman url' command
-var URL program.Command = url{urlweb{openInstead: false}}
+var URL program.Command = url{&urlweb{openInstead: false}}
 
-type url struct{ urlweb }
+type url struct{ *urlweb }
 
 func (url) Name() string {
 	return "url"
@@ -34,6 +34,8 @@ func (url) Name() string {
 
 type urlweb struct {
 	openInstead bool
+
+	Tree bool
 }
 
 // WebBuiltInBases is a map of built-in bases for the url and web commands
@@ -70,11 +72,9 @@ func FmtWebBuiltInBaseNames() string {
 
 var stringWebBaseUsage = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s. "
 
-func (urlweb) Options(flagset *flag.FlagSet) program.Options {
+func (uw *urlweb) Options(flagset *flag.FlagSet) program.Options {
+	flagset.BoolVar(&uw.Tree, "tree", uw.Tree, "If provided, additionally use the HEAD reference and relative path to the root of the git worktree. ")
 	return program.Options{
-		FlagValue:       "--tree",
-		FlagDescription: "If provided, additionally use the HEAD reference and relative path to the root of the git worktree. ",
-
 		MinArgs: 0,
 		MaxArgs: 1,
 		Metavar: "BASE",
@@ -136,7 +136,7 @@ func (uw urlweb) Run(context program.Context) error {
 	// get the web url
 	weburl := url.Canonical("^/$")
 
-	if context.Flag {
+	if uw.Tree {
 		ref, e := context.Git.GetHeadRef(root)
 		if e != nil {
 			return errOutsideRepository

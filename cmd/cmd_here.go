@@ -8,19 +8,19 @@ import (
 )
 
 // Here is the 'ggman here' command
-var Here program.Command = here{}
+var Here program.Command = &here{}
 
-type here struct{}
+type here struct {
+	Tree bool
+}
 
 func (here) Name() string {
 	return "here"
 }
 
-func (here) Options(flagset *flag.FlagSet) program.Options {
+func (h *here) Options(flagset *flag.FlagSet) program.Options {
+	flagset.BoolVar(&h.Tree, "tree", h.Tree, "If provided, also print the current HEAD reference and relative path to the root of the git worktree. ")
 	return program.Options{
-		FlagValue:       "--tree",
-		FlagDescription: "If provided, also print the current HEAD reference and relative path to the root of the git worktree. ",
-
 		Environment: env.Requirement{
 			NeedsRoot: true,
 		},
@@ -31,14 +31,14 @@ func (here) AfterParse() error {
 	return nil
 }
 
-func (here) Run(context program.Context) error {
+func (h here) Run(context program.Context) error {
 	root, worktree, err := context.At(".")
 	if err != nil {
 		return err
 	}
 
 	context.Println(root)
-	if context.Flag {
+	if h.Tree {
 		context.Println(worktree)
 	}
 

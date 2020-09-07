@@ -21,10 +21,6 @@ type Options struct {
 	// the name of the metavar to use for the usage string
 	Metavar string
 
-	// if set, the command is assumed to take a single flag of the given name
-	// TODO: Move these into Flagset entirely
-	FlagValue string
-
 	// Description of the argument
 	UsageDescription string
 
@@ -54,11 +50,6 @@ func (opt Options) Usage(name string, flagset *flag.FlagSet) (usage string) {
 	// the name and help
 	usage += " " + name + " [help|--help|-h]"
 
-	flagSyntax := ""
-	if opt.FlagValue != "" {
-		flagSyntax += " [" + opt.FlagValue + "]"
-	}
-
 	// read the metavar
 	mv := opt.Metavar
 	if mv == "" {
@@ -83,7 +74,7 @@ func (opt Options) Usage(name string, flagset *flag.FlagSet) (usage string) {
 		argSyntax += strings.Repeat("]", opt.MaxArgs-opt.MinArgs)
 	}
 
-	usage += flagSyntax + argSyntax
+	usage += argSyntax
 
 	// start with the help argument
 	usage += fmt.Sprintf(usageTemplate, "help|--help|-h", "Print this usage message and exit.")
@@ -91,11 +82,6 @@ func (opt Options) Usage(name string, flagset *flag.FlagSet) (usage string) {
 	// contineu with the 'for' argument
 	if opt.Environment.AllowsFilter {
 		usage += fmt.Sprintf(usageTemplate, "for|--for|-f FILTER", "Filter the list of repositories to apply command to by FILTER.")
-	}
-
-	// if there is a flag, add a flagdescription
-	if opt.FlagValue != "" {
-		usage += fmt.Sprintf(usageTemplate, flagSyntax, opt.FlagDescription)
 	}
 
 	// add description for the flagset

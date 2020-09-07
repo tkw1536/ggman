@@ -11,19 +11,19 @@ import (
 )
 
 // Fix is the 'ggman fix' command
-var Fix program.Command = fix{}
+var Fix program.Command = &fix{}
 
-type fix struct{}
+type fix struct {
+	Simulate bool
+}
 
 func (fix) Name() string {
 	return "fix"
 }
 
-func (fix) Options(flagset *flag.FlagSet) program.Options {
+func (f *fix) Options(flagset *flag.FlagSet) program.Options {
+	flagset.BoolVar(&f.Simulate, "simulate", f.Simulate, "If set, only print what would be done. ")
 	return program.Options{
-		FlagValue:       "--simulate",
-		FlagDescription: "If set, only print what would be done. ",
-
 		Environment: env.Requirement{
 			NeedsRoot:    true,
 			NeedsCanFile: true,
@@ -40,8 +40,8 @@ var errFixCustom = ggman.Error{
 	ExitCode: ggman.ExitGeneric,
 }
 
-func (fix) Run(context program.Context) error {
-	simulate := context.Flag
+func (f fix) Run(context program.Context) error {
+	simulate := f.Simulate
 
 	hasError := false
 	for _, repo := range context.Repos() {

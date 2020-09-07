@@ -14,9 +14,6 @@ type CommandArguments struct {
 	Flagset *flag.FlagSet // flagset for custom options
 
 	Arguments // Arguments, first pass
-
-	// TODO: Move all these into FlagSet instead
-	Flag bool // Flag indicates if the flag was set
 }
 
 // Parse parses arguments from a set of parsed command arguments.
@@ -43,51 +40,12 @@ func (args *CommandArguments) Parse() error {
 		return err
 	}
 
-	if err := args.parseFlag(); err != nil {
-		return err
-	}
-
 	if err := args.parseFlagset(); err != nil {
 		return err
 	}
 
 	if err := args.checkArgumentCount(); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-var errParseUnknownFlag = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
-	Message:  "Unknown argument: '%s' must be called with either '%s' or no arguments. ",
-}
-
-// parseFlag parses the flag (if set in options) passed to this command.
-// This function implicitly assumes that Options and Arguments are set appropriatly.
-func (args *CommandArguments) parseFlag() error {
-	if args.Options.FlagValue == "" {
-		return nil
-	}
-
-	la := len(args.Argv)
-
-	// check if the flag has been set
-	// and if so remove the flag from the rest of the args
-	if la > 0 && args.Argv[0] == args.Options.FlagValue {
-		args.Flag = true
-		args.Argv = args.Argv[1:]
-	}
-
-	// if we have exactly zero arguments, the flag is mandatory or to be omitted
-	if args.Options.MinArgs == 0 && args.Options.MaxArgs == 0 {
-
-		// when we got extra arguments, or we got an invalid flag value
-		// show a dedicated error message
-		if la > 1 || (la == 1 && !args.Flag) {
-			return errParseUnknownFlag.WithMessageF(args.Command, args.Options.FlagValue)
-		}
-
 	}
 
 	return nil
