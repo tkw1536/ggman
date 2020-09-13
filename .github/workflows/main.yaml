@@ -20,10 +20,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
+      - name: Install gogenlicense
+        run: go get github.com/tkw1536/gogenlicense/cmd/gogenlicense
+      - uses: actions/checkout@v2
       - name: Run 'make generate'
-        run: make generate
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin
+          make generate
       - name: Run 'make all'
         run: make all
       - name: Upload executables
