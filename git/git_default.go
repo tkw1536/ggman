@@ -10,16 +10,19 @@ import (
 // NewGitFromPlumbing creates a new Git wrapping a specific Plumbing.
 //
 // When git is nil, attempts to automatically select a Plumbing automatically.
+// The second parameter is only used when plumbing is nil; it should contain the value of 'PATH' environment variable.
 //
 // The implementation of this function relies on the underlying Plumbing (be it a default one or a caller provided one) to conform according to the specification.
 // In particular, this function does not checks on the error values returned and passes them directly from the implementation to the caller
-func NewGitFromPlumbing(plumbing Plumbing) Git {
-	return &dfltGitWrapper{git: plumbing}
+func NewGitFromPlumbing(plumbing Plumbing, path string) Git {
+	return &dfltGitWrapper{git: plumbing, path: path}
 }
 
 type dfltGitWrapper struct {
 	once sync.Once
+
 	git  Plumbing
+	path string // the path to lookup 'git' in, if needed.
 }
 
 func (impl *dfltGitWrapper) Plumbing() Plumbing {
@@ -29,8 +32,12 @@ func (impl *dfltGitWrapper) Plumbing() Plumbing {
 
 func (impl *dfltGitWrapper) ensureInit() {
 	impl.once.Do(func() {
+		if impl.git != nil {
+			return
+		}
+
 		// first try to use a gitgit
-		impl.git = &gitgit{}
+		impl.git = &gitgit{gitPath: impl.path}
 		if impl.git.Init() == nil {
 			return
 		}

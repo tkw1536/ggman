@@ -102,7 +102,7 @@ func (p Program) Main(argv []string) (err error) {
 		IOStream:         p.IOStream,
 		CommandArguments: cmdargs,
 	}
-	if context.Env, err = env.NewEnv(options.Environment, cmdargs.For); err != nil {
+	if context.Env, err = env.NewEnv(options.Environment, env.ReadVariables(), cmdargs.For); err != nil {
 		return err
 	}
 

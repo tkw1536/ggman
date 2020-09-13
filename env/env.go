@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/git"
@@ -33,6 +32,7 @@ type Env struct {
 	// Repositories managed by ggman should be stored in this folder.
 	// See the Local() method.
 	Root string
+
 	// Filter is an optional filter for the environment.
 	// Repositories not matching the filter are considered to not be a part of the environment.
 	// See the Repos() method.
@@ -41,20 +41,6 @@ type Env struct {
 	// CanFile is the CanFile used to canonicalize repositories.
 	// See the Canonical() method.
 	CanFile CanFile
-}
-
-// Variables represents the values of specific environment variables.
-// Unset variables are represented as the empty string.
-type Variables struct {
-	// Home is the path to the users' home directory
-	// This is typically stored in the 'HOME' variable on unix-like systems
-	Home string
-
-	// GGROOT is the value of the 'GGROOT' environment variable
-	GGROOT string
-
-	// CANFILE is the value of the 'GGMAN_CANFILE' environment variable
-	CANFILE string
 }
 
 // Requirement represents a set of requirements on the Environment.
@@ -80,16 +66,13 @@ type Requirement struct {
 //
 // If r.AllowsFilter is false, NoFilter should be passed for the filter argument.
 // If r.AllowsFilter is true, a filter may be passed via the filter argument.
-func NewEnv(r Requirement, filter Filter) (Env, error) {
+func NewEnv(r Requirement, vars Variables, filter Filter) (Env, error) {
 
 	env := &Env{
-		Git:    git.NewGitFromPlumbing(nil),
+		Git:    git.NewGitFromPlumbing(nil, vars.PATH),
+		Vars:   vars,
 		Filter: filter,
 	}
-
-	env.Vars.Home, _ = homedir.Dir() // errors result in an empty home value
-	env.Vars.CANFILE = os.Getenv("GGMAN_CANFILE")
-	env.Vars.GGROOT = os.Getenv("GGROOT")
 
 	if r.NeedsRoot || r.AllowsFilter { // AllowsFilter implies NeedsRoot
 		if err := env.LoadDefaultRoot(); err != nil {
@@ -148,11 +131,11 @@ func (e *Env) LoadDefaultRoot() error {
 		return nil
 	}
 
-	if e.Vars.Home == "" {
+	if e.Vars.HOME == "" {
 		return errMissingRoot
 	}
 
-	e.Root = filepath.Join(e.Vars.Home, "Projects")
+	e.Root = filepath.Join(e.Vars.HOME, "Projects")
 	return nil
 }
 
@@ -174,8 +157,8 @@ func (e *Env) LoadDefaultCANFILE() error {
 	if e.Vars.CANFILE != "" {
 		files = append(files, e.Vars.CANFILE)
 	}
-	if e.Vars.Home != "" {
-		files = append(files, filepath.Join(e.Vars.Home, ".ggman"))
+	if e.Vars.HOME != "" {
+		files = append(files, filepath.Join(e.Vars.HOME, ".ggman"))
 	}
 
 	cf := CanFile(nil)
