@@ -147,7 +147,7 @@ func (args CommandArguments) checkForArgument() error {
 		return nil
 	}
 
-	if args.For != "" {
+	if !args.For.IsEmpty() {
 		return errParseNoFor.WithMessageF(args.Command)
 	}
 

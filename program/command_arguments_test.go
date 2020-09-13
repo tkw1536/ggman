@@ -144,26 +144,26 @@ func TestCommandArguments_checkForArgument(t *testing.T) {
 		{
 			"for not allowed, for not given",
 			Options{Environment: env.Requirement{AllowsFilter: false}},
-			Arguments{Command: "example", For: ""},
+			Arguments{Command: "example", For: env.NoFilter},
 			"",
 		},
 		{
 			"for not allowed, for given",
 			Options{Environment: env.Requirement{AllowsFilter: false}},
-			Arguments{Command: "example", For: "pattern"},
+			Arguments{Command: "example", For: env.NewFilter("pattern")},
 			"Wrong number of arguments: 'example' takes no 'for' argument. ",
 		},
 
 		{
 			"for allowed, for not given",
 			Options{Environment: env.Requirement{AllowsFilter: true}},
-			Arguments{Command: "example", For: ""},
+			Arguments{Command: "example", For: env.NoFilter},
 			"",
 		},
 		{
 			"for allowed, for given",
 			Options{Environment: env.Requirement{AllowsFilter: true}},
-			Arguments{Command: "example", For: "pattern"},
+			Arguments{Command: "example", For: env.NewFilter("pattern")},
 			"",
 		},
 	}

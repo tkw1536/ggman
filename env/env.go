@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/git"
+	"github.com/tkw1536/ggman/util"
 )
 
 // TODO: Test this file
@@ -284,27 +285,47 @@ func (e Env) Canonical(url URL) string {
 	return url.CanonicalWith(e.CanFile)
 }
 
-// Filter is a filter for an environment.
-// A filter of an environment is implemented by the url.Match function.
-type Filter string
+// reposBufferSize is the (currently hard-coded) size for the cache of the Repos function.
+// 200 should be larger than the largest number of repositories expected.
+// Note that this is only an optimization, the algorithm should perform even for a non-buffered channel.
+const reposBufferSize = 200
 
-// NoFilter is the absence of a Filter.
-const NoFilter Filter = ""
+// reposMaxParallelScan is the maximum number of folders to scan concurrently.
+// Set to 0 for unlimited.
+const reposMaxParallelScan = 0
 
-// Repos returns a list of local paths to all repositories in this Envirionment.
-// TODO: Rewrite the entire logic of this method
+// Repos returns a list of local paths to all repositories in this Environment.
+// This method silently ignores all errors.
+//
+// See the ScanRepos() method for more control.
 func (e Env) Repos() []string {
-	root, err := e.absRoot()
-	if err != nil {
-		panic("e.Repos(): Root not resolved")
+	repos, _ := e.ScanRepos("")
+	return repos
+}
+
+// ScanRepos scans for repositories in the provided folder that match the Filter of this environment.
+// When an error occurs, this function may still return a list of (incomplete) repositories along with an error.
+func (e Env) ScanRepos(folder string) ([]string, error) {
+	if folder == "" {
+		var err error
+		folder, err = e.absRoot()
+		if err != nil {
+			panic("e.Repos(): Root not resolved")
+		}
 	}
 
-	// if the root directory does not exist or can not be opened, then not repositories exist
-	if s, err := os.Stat(root); err != nil || !s.IsDir() {
-		return nil
-	}
+	return util.Scan(util.ScanOptions{
+		Root: folder,
 
-	var paths []string
-	reposInternal(e.Git, &paths, root, "", string(e.Filter), true)
-	return paths
+		Filter: func(path string) (match, cont bool) {
+			if e.Git.IsRepositoryQuick(path) {
+				return e.Filter.Matches(e.Root, path), false // never continue even if a repository does not match
+			}
+			return false, true
+		},
+
+		BufferSize:  reposBufferSize,
+		MaxParallel: reposMaxParallelScan,
+		FollowLinks: false, // TODO: Make this configurable
+	})
 }

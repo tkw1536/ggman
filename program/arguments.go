@@ -70,13 +70,15 @@ func (args *Arguments) Parse(argv []string) error {
 			return errParseArgsNeedTwoAfterFor
 		}
 
-		args.For = env.Filter(argv[1])
+		// parse the filter
+		args.For = env.NewFilter(argv[1])
 		args.Command = argv[2]
 		args.Argv = argv[3:] // overwrite the existing arguments
 
 		return nil
 	}
 
+	args.For = env.NoFilter
 	args.Argv = argv[1:]
 	args.Command = argv[0]
 

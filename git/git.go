@@ -31,7 +31,7 @@ type Git interface {
 	IsRepository(localPath string) bool
 
 	// IsRepositoryQuick efficiently checks if the directly at localPath contains a repository.
-	// It is like IsRepository, except that it more quickly returns false than IsRepository.
+	// It is like IsRepository, except that it returns false more quickly than IsRepository.
 	IsRepositoryQuick(localPath string) bool
 
 	// Clone clones a remote repository from remoteURI to clonePath.
