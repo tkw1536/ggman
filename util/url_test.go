@@ -2,7 +2,7 @@ package util
 
 import "testing"
 
-func Test_parsePort(t *testing.T) {
+func Test_ParsePort(t *testing.T) {
 	type args struct {
 		portstring string
 	}

@@ -32,8 +32,8 @@ func SplitAfter(s, sep string) (prefix, suffix string) {
 }
 
 // RemoveEmpty returns a slice that is like s, but with empty strings removed.
+// This function will invalidate the previous value of s.
 //
-// This function might invalidate the previous value of s.
 // It is recommended to store the return value of this function in the original variable.
 // The call should look something like:
 //
@@ -41,20 +41,14 @@ func SplitAfter(s, sep string) (prefix, suffix string) {
 //
 func RemoveEmpty(s []string) []string {
 
-	// This function contains an optimistic implementation that performs best
-	// when there are no empty strings in s.
-	//
-	// Furthermore, because the result slice is guaranteed to be smaller than the original slice
-	// this function will re-use the array underlying the slice s and not re-allocate new memory.
-	total := len(s)
-	i := 0
-	for i < total {
-		if s[i] == "" { // one could len(s[i]) == 0, but the compiler is smart enough
-			s = append(s[:i], s[i+1:]...)
-			total--
-			continue
+	// Because t is backed by the same slice as s, this function will never re-allocate.
+	// Furthermore, because strings are immutable, copying data over is cheap.
+
+	t := s[:0]
+	for _, v := range s {
+		if v != "" {
+			t = append(t, v)
 		}
-		i++
 	}
-	return s
+	return t
 }

@@ -43,10 +43,15 @@ func IsValidURLScheme(s string) bool {
 	// Instead we directly build code that implements this RegEx.
 	//
 	// For this we first check that the string is non-empty.
+	// Then we check that the first character is not a '+', '-' or '.'
 	// Then we check that each character is either alphanumeric or a '+', '-' or '.'
-	// Finally we check that the first character is not a '+' or '-'.
 
 	if len(s) == 0 {
+		return false
+	}
+
+	// if the first rune is invalid, no need to check everything else
+	if s[0] == '+' || s[0] == '-' || s[0] == '.' {
 		return false
 	}
 
@@ -57,7 +62,7 @@ func IsValidURLScheme(s string) bool {
 			r != '.' {
 			return false
 		}
-
 	}
-	return s[0] != '+' && s[0] != '-' && s[0] != '.'
+
+	return true
 }
