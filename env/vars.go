@@ -6,10 +6,11 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
-// TODO: Test me
-
 // Variables represents the values of specific environment variables.
 // Unset variables are represented as the empty string.
+//
+// This object is used to prevent code in ggman to access the environment directly, which is difficult to test.
+// Instead access goes through this layer of indirection which can be mocked during testing.
 type Variables struct {
 	// HOME is the path to the users' home directory
 	// This is typically stored in the 'HOME' variable on unix-like systems
