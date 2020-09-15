@@ -1,6 +1,7 @@
 package program
 
 import (
+	"github.com/spf13/pflag"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 )
@@ -16,23 +17,21 @@ type Arguments struct {
 	Version bool // the 'version' argument
 
 	Argv []string // the rest of the arguments to be passed to the command
+
+	flagset *pflag.FlagSet // flagset used internally
 }
 
-const helpLongForm = "--help"
-const helpShortForm = "-h"
 const helpLiteralForm = "help"
-
-const versionLongForm = "--version"
-const versionShortForm = "-v"
 const versionLiteralForm = "version"
-
-const forLongForm = "--for"
-const forShortForm = "-f"
-const forLiteralForm = "for"
 
 var errParseArgsNeedOneArgument = ggman.Error{
 	ExitCode: ggman.ExitGeneralArguments,
 	Message:  "Unable to parse arguments: Need at least one argument. Use `ggman license` to view licensing information. ",
+}
+
+var errParseArgsUnknownError = ggman.Error{
+	ExitCode: ggman.ExitGeneralArguments,
+	Message:  "Unable to parse arguments: %s",
 }
 
 var errParseArgsNeedTwoAfterFor = ggman.Error{
@@ -40,47 +39,92 @@ var errParseArgsNeedTwoAfterFor = ggman.Error{
 	Message:  "Unable to parse arguments: At least two arguments needed after 'for' keyword. ",
 }
 
+const errForNeedsArgument = "flag needs an argument: --for"
+const errFNeedsArgument = "flag needs an argument: 'f' in -f"
+
 // Parse parses arguments
 //
 // When parsing fails, returns an error of type Error.
 func (args *Arguments) Parse(argv []string) error {
-	// if we have no arguments, that is an error
-	count := len(argv)
-	if count == 0 {
-		return errParseArgsNeedOneArgument
+
+	// first parse arguments using the flagset
+	// and intercept special 'for' error messages.
+	fs := args.setflagset()
+	if err := fs.Parse(argv); err != nil {
+		msg := err.Error()
+		switch msg {
+		case errForNeedsArgument, errFNeedsArgument:
+			return errParseArgsNeedTwoAfterFor
+		default:
+			return errParseArgsUnknownError.WithMessageF(msg)
+		}
 	}
 
-	args.Argv = argv[1:] // usually arguments are after the first argument
+	// store the arguments we got and complain if there are none.
+	// If we had a 'for' argument though, we should raise an error.
+	args.Argv = fs.Args()
+	if len(args.Argv) == 0 {
+		switch {
+		case args.Help || args.Version:
+			return nil
+		case !args.For.IsEmpty():
+			return errParseArgsNeedTwoAfterFor
+		default:
+			return errParseArgsNeedOneArgument
+		}
+	}
 
-	// The Parse() method only needs to examine the first argument.
-	// If this is a help, version or the '--for' argument, it gets treated accordingly.
-	// Otherwise, we assume it is a subcommand to be run and run it
-
-	switch argv[0] {
-	case helpLiteralForm, helpShortForm, helpLongForm:
-		args.Help = true
+	// if we had help or version arguments we don't need to do
+	// any more parsing and can bail out.
+	if args.Help || args.Version {
 		return nil
-	case versionLiteralForm, versionShortForm, versionLongForm:
+	}
+
+	// setup command and arguments
+	args.Command = args.Argv[0]
+	args.Argv = args.Argv[1:]
+
+	// catch special undocumented legacy flags
+	// these can be provided with '--'s in front of their arguments
+	switch args.Command {
+	// ggman help
+	case "help":
+		args.Command = ""
+		args.Help = true
+	// ggman version
+	case "version":
+		args.Command = ""
 		args.Version = true
 
-		return nil
-	case forLiteralForm, forShortForm, forLongForm:
-		if count < 3 {
-			args.Argv = nil
+	// ggman for FILTER command args...
+	case "for":
+		if len(args.Argv) < 2 {
 			return errParseArgsNeedTwoAfterFor
 		}
-
-		// parse the filter
-		args.For = env.NewFilter(argv[1])
-		args.Command = argv[2]
-		args.Argv = argv[3:] // overwrite the existing arguments
-
-		return nil
+		args.For.Set(args.Argv[0])
+		args.Command = args.Argv[1]
+		args.Argv = args.Argv[2:]
 	}
 
-	args.For = env.NoFilter
-	args.Argv = argv[1:]
-	args.Command = argv[0]
-
 	return nil
+}
+
+// setflagset sets flagset to a new flagset for argument parsing
+func (args *Arguments) setflagset() (fs *pflag.FlagSet) {
+	if args.flagset != nil {
+		return args.flagset
+	}
+	defer func() { args.flagset = fs }()
+
+	fs = pflag.NewFlagSet("ggman", pflag.ContinueOnError)
+	fs.Usage = func() {}      // don't print a usage message on error
+	fs.SetInterspersed(false) // stop at the first regular argument
+	fs.SortFlags = false      // flag's shouldn't be sorted
+
+	fs.BoolVarP(&args.Help, "help", "h", false, "Print this usage dialog and exit.")
+	fs.BoolVarP(&args.Version, "version", "v", false, "Print version message and exit.")
+
+	fs.VarP(&args.For, "for", "f", "Filter the list of repositories to apply command to by `filter`.")
+
+	return fs
 }

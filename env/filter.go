@@ -8,6 +8,7 @@ import (
 )
 
 // Filter is a filter for an environment.
+// It satisifies the pflag Value interface.
 // A filter should only be created using the NewFilter method or by using the NoFilter variable.
 type Filter struct {
 	filter string
@@ -15,21 +16,27 @@ type Filter struct {
 	pattern []pattern
 }
 
-// NoFilter is the absence of a Filter.
-var NoFilter = Filter{filter: ""}
+func (f Filter) String() string {
+	return f.filter
+}
 
-// NewFilter creates a new filter from a stringq
-func NewFilter(input string) Filter {
-	components := ParseURL(input).Components()
+// Set sets the value of this filter
+func (f *Filter) Set(value string) error {
+	components := ParseURL(value).Components()
 	pattern := make([]pattern, len(components))
 	for i, c := range components {
 		pattern[i] = newPattern(c)
 	}
 
-	return Filter{
-		filter:  input,
-		pattern: pattern,
-	}
+	f.filter = value
+	f.pattern = pattern
+
+	return nil
+}
+
+// Type returns the type of this filter
+func (f Filter) Type() string {
+	return "filter"
 }
 
 // IsEmpty checks if the filter f includes all repositories
@@ -37,8 +44,14 @@ func (f Filter) IsEmpty() bool {
 	return f.filter == "" || f.filter == "*"
 }
 
-func (f Filter) String() string {
-	return f.filter
+// NoFilter is the absence of a Filter.
+var NoFilter Filter
+
+// NewFilter creates a new filter from a string
+func NewFilter(input string) Filter {
+	f := &Filter{}
+	f.Set(input)
+	return *f
 }
 
 // Matches checks if this filter matches the repository at clonePath.

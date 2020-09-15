@@ -31,7 +31,7 @@ func (args *CommandArguments) Parse() error {
 	// - the custom flag(s)
 	// - the right number of arguments
 
-	if util.SliceContainsAny(args.Argv, helpLongForm, helpShortForm, helpLiteralForm) {
+	if util.SliceContainsAny(args.Argv, "--help", "-h", "help") {
 		args.Help = true
 		return nil
 	}

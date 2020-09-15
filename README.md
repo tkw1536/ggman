@@ -46,7 +46,7 @@ If this is given, the command will return exit code 0 iff at least one repositor
 
 When running multi-repository operations, it is possible to limit the operations to a specific subset of repositories. 
 This is achieved by using the 'for' keyword along with a pattern. 
-For example, `ggman for 'github.com/*/example' ls` will list all repositories from `github.com` that are named `example`. 
+For example, `ggman --for 'github.com/*/example' ls` will list all repositories from `github.com` that are named `example`. 
 
 Examples for supported patterns can be found in this table:
 
@@ -58,7 +58,7 @@ Examples for supported patterns can be found in this table:
 | `github.com/*/*`   | `git@github.com:hello/world.git`, `git@github.com:bye/world.git`    |
 | `github.com/hello` | `git@github.com:hello/world.git`, `git@github.com:hello/mars.git`   |
 
-Note that the `for` keyword also works for exact repository urls, e.g. `ggman for 'https://github.com/tkw1536/GitManager' ls`. 
+Note that the `for` keyword also works for exact repository urls, e.g. `ggman --for 'https://github.com/tkw1536/GitManager' ls`. 
 
 ### 'ggman comps' and 'ggman canon'
 

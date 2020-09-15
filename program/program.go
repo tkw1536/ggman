@@ -2,8 +2,6 @@ package program
 
 import (
 	"fmt"
-	"sort"
-	"strings"
 
 	"github.com/spf13/pflag"
 
@@ -39,6 +37,24 @@ type Command interface {
 	Run(context Context) error
 }
 
+// Options represent the options for a specific command
+type Options struct {
+	Environment env.Requirement
+
+	// minimum and maximum number of arguments
+	MinArgs int
+	MaxArgs int
+
+	// the name of the metavar to use for the usage string
+	Metavar string
+
+	// Description of the argument
+	UsageDescription string
+
+	// Description of the flag
+	FlagDescription string
+}
+
 var errProgramUnknownCommand = ggman.Error{
 	ExitCode: ggman.ExitUnknownCommand,
 	Message:  "Unknown command. Must be one of %s. ",
@@ -62,7 +78,7 @@ func (p Program) Main(argv []string) (err error) {
 	// handle special cases
 	switch {
 	case args.Help:
-		p.printHelp()
+		p.StdoutWriteWrap(p.Usage(args.flagset))
 		return nil
 	case args.Version:
 		p.printVersion()
@@ -107,44 +123,6 @@ func (p Program) Main(argv []string) (err error) {
 	}
 
 	return command.Run(context)
-}
-
-// knownCommandsString returns a string containing all the known commands
-func (p Program) knownCommandsString() string {
-	keys := make([]string, 0, len(p.commands))
-	for k := range p.commands {
-		keys = append(keys, "'"+k+"'")
-	}
-	sort.Strings(keys)
-	return strings.Join(keys, ", ")
-}
-
-const stringUsage = `ggman version %s
-(built %s)
-
-Usage:
-    ggman [help|--help|-h] [version|--version|-v] [for|--for|-f FILTER] COMMAND [ARGS...]
-
-    help, --help, -h
-        Print this usage dialog and exit
-    
-    version|--version|-v
-		Print version message and exit. 
-	
-    for FILTER, --for FILTER, -f FILTER
-        Filter the list of repositories to apply command to by FILTER. 
-	
-    COMMAND [ARGS...]
-	    Command to call. One of %s. See individual commands for more help. 
-
-ggman is licensed under the terms of the MIT License. Use 'ggman license'
-to view licensing information. `
-
-// printHelp prints help for this program
-func (p Program) printHelp() {
-
-	// and write it to the context
-	p.StdoutWriteWrap(fmt.Sprintf(stringUsage, constants.BuildVersion, constants.BuildTime, p.knownCommandsString()))
 }
 
 const stringVersion = "ggman version %s, built %s"
