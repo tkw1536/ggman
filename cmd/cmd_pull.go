@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -20,7 +20,7 @@ func (pull) Name() string {
 	return "pull"
 }
 
-func (pull) Options(flagset *flag.FlagSet) program.Options {
+func (pull) Options(flagset *pflag.FlagSet) program.Options {
 	return program.Options{
 		Environment: env.Requirement{
 			AllowsFilter: true,

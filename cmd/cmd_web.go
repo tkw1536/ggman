@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -72,7 +72,7 @@ func FmtWebBuiltInBaseNames() string {
 
 var stringWebBaseUsage = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s. "
 
-func (uw *urlweb) Options(flagset *flag.FlagSet) program.Options {
+func (uw *urlweb) Options(flagset *pflag.FlagSet) program.Options {
 	flagset.BoolVarP(&uw.Tree, "tree", "t", uw.Tree, "If provided, additionally use the HEAD reference and relative path to the root of the git worktree. ")
 	return program.Options{
 		MinArgs: 0,

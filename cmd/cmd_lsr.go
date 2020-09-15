@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -19,7 +19,7 @@ func (lsr) Name() string {
 	return "lsr"
 }
 
-func (l *lsr) Options(flagset *flag.FlagSet) program.Options {
+func (l *lsr) Options(flagset *pflag.FlagSet) program.Options {
 	flagset.BoolVarP(&l.Canonical, "canonical", "c", l.Canonical, "If provided, print the canonical URLs to repositories. ")
 	return program.Options{
 		Environment: env.Requirement{

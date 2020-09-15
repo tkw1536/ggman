@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
@@ -16,7 +16,7 @@ func (canon) Name() string {
 	return "canon"
 }
 
-func (canon) Options(flagset *flag.FlagSet) program.Options {
+func (canon) Options(flagset *pflag.FlagSet) program.Options {
 	return program.Options{
 		MinArgs: 1,
 		MaxArgs: 2,

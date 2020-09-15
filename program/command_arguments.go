@@ -1,7 +1,7 @@
 package program
 
 import (
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/util"
@@ -10,8 +10,8 @@ import (
 // CommandArguments represent a parsed set of options for a specific subcommand
 // The zero value is ready to use, see the "Parse" method.
 type CommandArguments struct {
-	Options Options       // options for this command
-	Flagset *flag.FlagSet // flagset for custom options
+	Options Options        // options for this command
+	Flagset *pflag.FlagSet // flagset for custom options
 
 	Arguments // Arguments, first pass
 }
@@ -70,7 +70,7 @@ func (args *CommandArguments) parseFlagset() (err error) {
 	err = args.Flagset.Parse(args.Argv)
 	switch err {
 	case nil: /* do nothing */
-	case flag.ErrHelp: /* help error, set the help flag but nothing else */
+	case pflag.ErrHelp: /* help error, set the help flag but nothing else */
 		args.Help = true
 		err = nil
 	default:

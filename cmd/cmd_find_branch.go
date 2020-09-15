@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -19,7 +19,7 @@ func (findBranch) Name() string {
 	return "find-branch"
 }
 
-func (f *findBranch) Options(flagset *flag.FlagSet) program.Options {
+func (f *findBranch) Options(flagset *pflag.FlagSet) program.Options {
 	flagset.BoolVarP(&f.ExitCode, "exit-code", "e", f.ExitCode, "Exit with Code 1 when no repositories with provided branch exist. ")
 
 	return program.Options{

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -17,7 +17,7 @@ func (fetch) Name() string {
 	return "fetch"
 }
 
-func (fetch) Options(flagset *flag.FlagSet) program.Options {
+func (fetch) Options(flagset *pflag.FlagSet) program.Options {
 	return program.Options{
 		Environment: env.Requirement{
 			AllowsFilter: true,

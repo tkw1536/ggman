@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
@@ -16,7 +16,7 @@ func (where) Name() string {
 	return "where"
 }
 
-func (where) Options(flagset *flag.FlagSet) program.Options {
+func (where) Options(flagset *pflag.FlagSet) program.Options {
 	return program.Options{
 		MinArgs: 1,
 		MaxArgs: 1,

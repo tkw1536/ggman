@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman/env"
 )
@@ -32,11 +32,11 @@ type Options struct {
 const usageTemplate = "\n\n   %s\n       %s"
 
 // Usage returns a string representing the usage of the options induced by this command
-func (opt Options) Usage(name string, flagset *flag.FlagSet) (usage string) {
+func (opt Options) Usage(name string, flagset *pflag.FlagSet) (usage string) {
 
 	// gather all the usage information of all the flags
 	flags := make([]flagUsage, 0)
-	flagset.VisitAll(func(f *flag.Flag) {
+	flagset.VisitAll(func(f *pflag.Flag) {
 		flags = append(flags, flagUsage{flag: f})
 	})
 
@@ -100,7 +100,7 @@ func (opt Options) Usage(name string, flagset *flag.FlagSet) (usage string) {
 // flagUsage is a utility struct for descriptions about flags
 // It has been adapted from the defaultUsage funtions in the flag package.
 type flagUsage struct {
-	flag *flag.Flag
+	flag *pflag.Flag
 }
 
 // Flag returns the flag in the form '--flag|-f value'
@@ -110,7 +110,7 @@ func (f flagUsage) Flag() string {
 		s += fmt.Sprintf("|-%s", shorthand)
 	}
 
-	if name, _ := flag.UnquoteUsage(f.flag); name != "" {
+	if name, _ := pflag.UnquoteUsage(f.flag); name != "" {
 		s += " " + name
 	}
 	return s
@@ -126,7 +126,7 @@ func (f flagUsage) Description() string {
 	if shorthand := f.flag.Shorthand; shorthand != "" {
 		description = fmt.Sprintf("-%s, %s", shorthand, description)
 	}
-	name, usage := flag.UnquoteUsage(f.flag)
+	name, usage := pflag.UnquoteUsage(f.flag)
 	if len(name) > 0 {
 		description += " " + name
 	}
@@ -141,7 +141,7 @@ func (f flagUsage) Description() string {
 }
 
 // isZeroValue determines whether the default string represents the zero
-// value for a flag. Adapated from flag "github.com/spf13/pflag".isZeroValue.
+// value for a flag. Adapated from flag.isZeroValue.
 func (f flagUsage) isZeroValue() bool {
 	// Build a zero value of the flag's Value type, and see if the
 	// result of calling its String method equals the value passed in.
@@ -153,5 +153,5 @@ func (f flagUsage) isZeroValue() bool {
 	} else {
 		z = reflect.Zero(typ)
 	}
-	return f.flag.DefValue == z.Interface().(flag.Value).String()
+	return f.flag.DefValue == z.Interface().(pflag.Value).String()
 }

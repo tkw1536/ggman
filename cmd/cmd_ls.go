@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -19,7 +19,7 @@ func (ls) Name() string {
 	return "ls"
 }
 
-func (l *ls) Options(flagset *flag.FlagSet) program.Options {
+func (l *ls) Options(flagset *pflag.FlagSet) program.Options {
 	flagset.BoolVarP(&l.ExitCode, "exit-code", "e", l.ExitCode, "If provided, return exit code 1 if no repositories are found. ")
 	return program.Options{
 		Environment: env.Requirement{

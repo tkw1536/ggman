@@ -3,7 +3,7 @@ package cmd
 import (
 	"sync"
 
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -21,7 +21,7 @@ func (fix) Name() string {
 	return "fix"
 }
 
-func (f *fix) Options(flagset *flag.FlagSet) program.Options {
+func (f *fix) Options(flagset *pflag.FlagSet) program.Options {
 	flagset.BoolVarP(&f.Simulate, "simulate", "s", f.Simulate, "If set, only print what would be done. ")
 	return program.Options{
 		Environment: env.Requirement{

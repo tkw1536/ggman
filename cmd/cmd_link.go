@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -20,7 +20,7 @@ func (link) Name() string {
 	return "link"
 }
 
-func (link) Options(flagset *flag.FlagSet) program.Options {
+func (link) Options(flagset *pflag.FlagSet) program.Options {
 	return program.Options{
 		MinArgs: 1,
 		MaxArgs: 1,

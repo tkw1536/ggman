@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/constants"
@@ -26,7 +26,7 @@ type Command interface {
 	Name() string
 
 	// Options returns the options of this command and adds appropriate flags to the flagset
-	Options(flagset *flag.FlagSet) Options
+	Options(flagset *pflag.FlagSet) Options
 
 	// AfterParse is called after arguments have been parsed, but before the command is being run.
 	// It is intended to perform any additional error checking on arguments, and return an error if needed.
@@ -76,7 +76,7 @@ func (p Program) Main(argv []string) (err error) {
 	}
 
 	// get it's options
-	flagset := flag.NewFlagSet("ggman "+args.Command, flag.ContinueOnError)
+	flagset := pflag.NewFlagSet("ggman "+args.Command, pflag.ContinueOnError)
 	options := command.Options(flagset)
 
 	// parse the command arguments
