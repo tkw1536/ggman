@@ -32,18 +32,18 @@ func (canon) AfterParse() error {
 func (canon) Run(context program.Context) error {
 	var file env.CanFile
 
-	switch len(context.Argv) {
+	switch len(context.Args) {
 	case 1: // read the default CanFile
 		if err := (&(context.Env)).LoadDefaultCANFILE(); err != nil { //TODO: This breaks test isolation
 
 			return err
 		}
 	case 2: // use a custom CanLine
-		file = []env.CanLine{{Pattern: "", Canonical: context.Argv[1]}}
+		file = []env.CanLine{{Pattern: "", Canonical: context.Args[1]}}
 	}
 
 	// print out the canonical version of the file
-	canonical := env.ParseURL(context.Argv[0]).CanonicalWith(file)
+	canonical := env.ParseURL(context.Args[0]).CanonicalWith(file)
 	context.Println(canonical)
 
 	return nil

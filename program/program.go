@@ -70,15 +70,15 @@ func (p Program) Main(argv []string) (err error) {
 	}()
 
 	// parse the general arguments
-	var args Arguments
-	if err := (&args).Parse(argv); err != nil {
+	args := &Arguments{}
+	if err := args.Parse(argv); err != nil {
 		return err
 	}
 
 	// handle special cases
 	switch {
 	case args.Help:
-		p.StdoutWriteWrap(p.Usage(args.flagset))
+		p.StdoutWriteWrap(p.Usage(args.flagsetGlobal))
 		return nil
 	case args.Version:
 		p.printVersion()
@@ -91,34 +91,25 @@ func (p Program) Main(argv []string) (err error) {
 		return errProgramUnknownCommand.WithMessageF(p.knownCommandsString())
 	}
 
-	// get it's options
-	flagset := pflag.NewFlagSet("ggman "+args.Command, pflag.ContinueOnError)
-	options := command.Options(flagset)
-
 	// parse the command arguments
-	cmdargs := CommandArguments{
-		Flagset:   flagset,
-		Options:   options,
-		Arguments: args,
-	}
-
-	if err := (&cmdargs).Parse(); err != nil {
+	cmdargs := &CommandArguments{}
+	if err := cmdargs.Parse(command, *args); err != nil {
 		return err
 	}
 
 	// special cases of arguments
 	switch {
 	case cmdargs.Help:
-		p.StdoutWriteWrap(options.Usage(args.Command, flagset))
+		p.StdoutWriteWrap(cmdargs.options.Usage(args.Command, cmdargs.flagsetCommand))
 		return nil
 	}
 
 	// create a new context and make an environment for it
 	context := Context{
 		IOStream:         p.IOStream,
-		CommandArguments: cmdargs,
+		CommandArguments: *cmdargs,
 	}
-	if context.Env, err = env.NewEnv(options.Environment, env.ReadVariables(), cmdargs.For); err != nil {
+	if context.Env, err = env.NewEnv(cmdargs.options.Environment, env.ReadVariables(), cmdargs.For); err != nil {
 		return err
 	}
 

@@ -4,21 +4,23 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/util"
 )
 
 // Arguments represent a set of partially parsed arguments for an invocation of the 'ggman' program.
 //
 // These should be further parsed into CommandArguments using the appropriate Parse() method.
 type Arguments struct {
-	Command string     // the command, if provided
-	For     env.Filter // the 'for' argument, if provided
+	Command string
 
-	Help    bool // the 'help' argument
-	Version bool // the 'version' argument
+	For env.Filter
 
-	Argv []string // the rest of the arguments to be passed to the command
+	Help    bool
+	Version bool
 
-	flagset *pflag.FlagSet // flagset used internally
+	Args []string // non-flag arguments
+
+	flagsetGlobal *pflag.FlagSet // flagset used for global argument parsing
 }
 
 const helpLiteralForm = "help"
@@ -49,7 +51,7 @@ func (args *Arguments) Parse(argv []string) error {
 
 	// first parse arguments using the flagset
 	// and intercept special 'for' error messages.
-	fs := args.setflagset()
+	fs := args.setflagsetGlobal()
 	if err := fs.Parse(argv); err != nil {
 		msg := err.Error()
 		switch msg {
@@ -62,8 +64,8 @@ func (args *Arguments) Parse(argv []string) error {
 
 	// store the arguments we got and complain if there are none.
 	// If we had a 'for' argument though, we should raise an error.
-	args.Argv = fs.Args()
-	if len(args.Argv) == 0 {
+	args.Args = fs.Args()
+	if len(args.Args) == 0 {
 		switch {
 		case args.Help || args.Version:
 			return nil
@@ -81,8 +83,8 @@ func (args *Arguments) Parse(argv []string) error {
 	}
 
 	// setup command and arguments
-	args.Command = args.Argv[0]
-	args.Argv = args.Argv[1:]
+	args.Command = args.Args[0]
+	args.Args = args.Args[1:]
 
 	// catch special undocumented legacy flags
 	// these can be provided with '--'s in front of their arguments
@@ -98,23 +100,23 @@ func (args *Arguments) Parse(argv []string) error {
 
 	// ggman for FILTER command args...
 	case "for":
-		if len(args.Argv) < 2 {
+		if len(args.Args) < 2 {
 			return errParseArgsNeedTwoAfterFor
 		}
-		args.For.Set(args.Argv[0])
-		args.Command = args.Argv[1]
-		args.Argv = args.Argv[2:]
+		args.For.Set(args.Args[0])
+		args.Command = args.Args[1]
+		args.Args = args.Args[2:]
 	}
 
 	return nil
 }
 
-// setflagset sets flagset to a new flagset for argument parsing
-func (args *Arguments) setflagset() (fs *pflag.FlagSet) {
-	if args.flagset != nil {
-		return args.flagset
+// setflagsetGlobal sets flagset to a new flagset for argument parsing
+func (args *Arguments) setflagsetGlobal() (fs *pflag.FlagSet) {
+	if args.flagsetGlobal != nil {
+		return args.flagsetGlobal
 	}
-	defer func() { args.flagset = fs }()
+	defer func() { args.flagsetGlobal = fs }()
 
 	fs = pflag.NewFlagSet("ggman", pflag.ContinueOnError)
 	fs.Usage = func() {}      // don't print a usage message on error
@@ -127,4 +129,159 @@ func (args *Arguments) setflagset() (fs *pflag.FlagSet) {
 	fs.VarP(&args.For, "for", "f", "Filter the list of repositories to apply command to by `filter`.")
 
 	return fs
+}
+
+// CommandArguments represent a parsed set of options for a specific subcommand
+// The zero value is ready to use, see the "Parse" method.
+type CommandArguments struct {
+	Arguments // Arguments that were passed to the command globally
+
+	options        Options
+	flagsetCommand *pflag.FlagSet
+}
+
+// Parse parses arguments from a set of parsed command arguments.
+// It also calls .Parse() with the provided arguments on the flagset
+//
+// It expects that neither the Help nor Version flag of Arguments are true.
+//
+// When parsing fails, returns an error of type Error.
+func (args *CommandArguments) Parse(command Command, arguments Arguments) error {
+	args.prepare(command, arguments)
+
+	// We first have to check the following (in order):
+	// - a help flag
+	// - the 'for' flag
+	// - the custom flag(s)
+	// - the right number of arguments
+
+	if util.SliceContainsAny(args.Args, "--help", "-h", "help") {
+		args.Help = true
+		return nil
+	}
+
+	if err := args.checkForArgument(); err != nil {
+		return err
+	}
+
+	if err := args.parseFlagset(); err != nil {
+		return err
+	}
+
+	if err := args.checkArgumentCount(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// prepare prepares this CommandArguments for parsing arguments for command
+func (args *CommandArguments) prepare(command Command, arguments Arguments) {
+	args.flagsetCommand = pflag.NewFlagSet("ggman "+args.Command, pflag.ContinueOnError)
+
+	args.options = command.Options(args.flagsetCommand)
+	args.Arguments = arguments
+}
+
+var errParseFlagSet = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "Error parsing flags: %s",
+}
+
+// parseFlagset calls Parse() on the flagset.
+// If the flagset has no defined flags (or is nil), immediatly returns nil
+//
+// When an error occurs, returns an error of type Error.
+func (args *CommandArguments) parseFlagset() (err error) {
+	if args.flagsetCommand == nil || !args.flagsetCommand.HasFlags() {
+		return nil
+	}
+
+	args.flagsetCommand.Usage = func() {} // don't print any usage messages please
+
+	err = args.flagsetCommand.Parse(args.Args)
+	switch err {
+	case nil: /* do nothing */
+	case pflag.ErrHelp: /* help error, set the help flag but nothing else */
+		args.Help = true
+		err = nil
+	default:
+		err = errParseFlagSet.WithMessageF(err.Error())
+	}
+
+	// store back the parsed arguments
+	args.Args = args.flagsetCommand.Args()
+	return err
+}
+
+var errParseTakesExactlyArguments = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "Wrong number of arguments: '%s' takes exactly %d argument(s). ",
+}
+
+var errParseTakesNoArguments = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "Wrong number of arguments: '%s' takes no arguments. ",
+}
+
+var errParseTakesMinArguments = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "Wrong number of arguments: '%s' takes at least %d argument(s). ",
+}
+
+var errParseTakesBetweenArguments = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "Wrong number of arguments: '%s' takes between %d and %d arguments. ",
+}
+
+// checkArgumentCount checks that the correct number of arguments was passed to this command.
+// This function implicitly assumes that Options, Arguments and Argv are set appropriatly.
+// When the wrong number of arguments is passed, returns an error of type Error.
+func (args CommandArguments) checkArgumentCount() error {
+
+	min := args.options.MinArgs
+	max := args.options.MaxArgs
+
+	argc := len(args.Args)
+
+	// If we are outside the range for the arguments, we reset the counter to 0
+	// and return the appropriate error message.
+	//
+	// - we always need to be more than the minimum
+	// - we need to be below the max if the maximum is not unlimited
+	if argc < min || ((max != -1) && (argc > max)) {
+		switch {
+		case min == max && min == 0: // 0 arguments, but some given
+			return errParseTakesNoArguments.WithMessageF(args.Command)
+		case min == max: // exact number of arguments is wrong
+			return errParseTakesExactlyArguments.WithMessageF(args.Command, min)
+		case max == -1: // less than min arguments
+			return errParseTakesMinArguments.WithMessageF(args.Command, min)
+		default: // between set number of arguments
+			return errParseTakesBetweenArguments.WithMessageF(args.Command, min, max)
+		}
+	}
+
+	return nil
+}
+
+var errParseNoFor = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "Wrong number of arguments: '%s' takes no 'for' argument. ",
+}
+
+// checkForArgument checks that if a 'for' argument is not allowed it is not passed.
+// It expects args.For to be set appropriatly
+//
+// If the check fails, returns an error of type Error.
+func (args CommandArguments) checkForArgument() error {
+	if args.options.Environment.AllowsFilter {
+		return nil
+	}
+
+	if !args.For.IsEmpty() {
+		return errParseNoFor.WithMessageF(args.Command)
+	}
+
+	return nil
 }

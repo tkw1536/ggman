@@ -14,5 +14,5 @@ type Context struct {
 
 // URLV returns the ith argument, parsed as a URL
 func (c Context) URLV(i int) env.URL {
-	return c.ParseURL(c.Argv[i])
+	return c.ParseURL(c.Args[i])
 }

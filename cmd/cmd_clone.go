@@ -59,7 +59,7 @@ func (clone) Run(context program.Context) error {
 
 	// do the clone command!
 	context.Printf("Cloning %q into %q ...\n", remoteURI, clonePath)
-	switch err := context.Git.Clone(context.IOStream, remoteURI, clonePath, context.Argv[1:]...); err {
+	switch err := context.Git.Clone(context.IOStream, remoteURI, clonePath, context.Args[1:]...); err {
 	case nil:
 		return nil
 	case git.ErrCloneAlreadyExists:

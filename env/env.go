@@ -67,7 +67,6 @@ type Requirement struct {
 // If r.AllowsFilter is false, NoFilter should be passed for the filter argument.
 // If r.AllowsFilter is true, a filter may be passed via the filter argument.
 func NewEnv(r Requirement, vars Variables, filter Filter) (Env, error) {
-
 	env := &Env{
 		Git:    git.NewGitFromPlumbing(nil, vars.PATH),
 		Vars:   vars,
@@ -96,11 +95,11 @@ var errMissingRoot = ggman.Error{
 
 // absRoot returns the absolute path to the root directory.
 // If the root directory is not set, returns an error of type Error.
-func (e Env) absRoot() (string, error) {
-	if e.Root == "" {
+func (env Env) absRoot() (string, error) {
+	if env.Root == "" {
 		return "", errMissingRoot
 	}
-	root, err := filepath.Abs(e.Root)
+	root, err := filepath.Abs(env.Root)
 	if err != nil {
 		err = errInvalidRoot.WithMessageF(err)
 		return "", errMissingRoot
@@ -121,21 +120,21 @@ func (Env) ParseURL(url string) URL {
 //
 // The root directory does not have to exist for this function to return nil.
 // However if both GGROOT and Home are unset, this function returns an error of type Error.
-func (e *Env) LoadDefaultRoot() error {
-	if e.Root != "" {
+func (env *Env) LoadDefaultRoot() error {
+	if env.Root != "" {
 		return nil
 	}
 
-	e.Root = e.Vars.GGROOT
-	if e.Root != "" {
+	env.Root = env.Vars.GGROOT
+	if env.Root != "" {
 		return nil
 	}
 
-	if e.Vars.HOME == "" {
+	if env.Vars.HOME == "" {
 		return errMissingRoot
 	}
 
-	e.Root = filepath.Join(e.Vars.HOME, "Projects")
+	env.Root = filepath.Join(env.Vars.HOME, "Projects")
 	return nil
 }
 
@@ -148,17 +147,17 @@ func (e *Env) LoadDefaultRoot() error {
 //
 // If loading a CanFile fails, an error of type Error is returned.
 // If loading succeeds, this function returns nil.
-func (e *Env) LoadDefaultCANFILE() error {
-	if e.CanFile != nil {
+func (env *Env) LoadDefaultCANFILE() error {
+	if env.CanFile != nil {
 		return nil
 	}
 
 	files := make([]string, 0, 2)
-	if e.Vars.CANFILE != "" {
-		files = append(files, e.Vars.CANFILE)
+	if env.Vars.CANFILE != "" {
+		files = append(files, env.Vars.CANFILE)
 	}
-	if e.Vars.HOME != "" {
-		files = append(files, filepath.Join(e.Vars.HOME, ".ggman"))
+	if env.Vars.HOME != "" {
+		files = append(files, filepath.Join(env.Vars.HOME, ".ggman"))
 	}
 
 	cf := CanFile(nil)
@@ -178,18 +177,18 @@ func (e *Env) LoadDefaultCANFILE() error {
 		if _, err := (&cf).ReadFrom(f); err != nil {
 			return err
 		}
-		e.CanFile = cf
+		env.CanFile = cf
 		return nil
 	}
 
 	(&cf).ReadDefault()
-	e.CanFile = cf
+	env.CanFile = cf
 	return nil
 }
 
 // Local is the localpath to the repository pointed to by URL
-func (e Env) Local(url URL) string {
-	root, err := e.absRoot()
+func (env Env) Local(url URL) string {
+	root, err := env.absRoot()
 	if err != nil {
 		panic("Env.Local(): Root not resolved")
 	}
@@ -223,8 +222,8 @@ const atMaxIterCount = 1000
 // Assumes that the root directory is set.
 // If that is not the case, calls panic().
 // If no repository is found, returns an error of type Error.
-func (e Env) At(p string) (repo, worktree string, err error) {
-	root, err := e.absRoot()
+func (env Env) At(p string) (repo, worktree string, err error) {
+	root, err := env.absRoot()
 	if err != nil {
 		panic("Env.At(): Root not resolved")
 	}
@@ -241,7 +240,7 @@ func (e Env) At(p string) (repo, worktree string, err error) {
 	// we addtionally need to check that the path is inside of the root.
 	repo = path
 	count := atMaxIterCount
-	for !e.Git.IsRepository(repo) {
+	for !env.Git.IsRepository(repo) {
 		count--
 		repo = filepath.Join(repo, "..")
 		if !strings.HasPrefix(repo, root) || root == "" || root == "/" || count == 0 {
@@ -281,19 +280,19 @@ const reposMaxParallelScan = 0
 // This method silently ignores all errors.
 //
 // See the ScanRepos() method for more control.
-func (e Env) Repos() []string {
-	repos, _ := e.ScanRepos("")
+func (env Env) Repos() []string {
+	repos, _ := env.ScanRepos("")
 	return repos
 }
 
 // ScanRepos scans for repositories in the provided folder that match the Filter of this environment.
 // When an error occurs, this function may still return a list of (incomplete) repositories along with an error.
-func (e Env) ScanRepos(folder string) ([]string, error) {
+func (env Env) ScanRepos(folder string) ([]string, error) {
 	if folder == "" {
 		var err error
-		folder, err = e.absRoot()
+		folder, err = env.absRoot()
 		if err != nil {
-			panic("e.Repos(): Root not resolved")
+			panic("env.Repos(): Root not resolved")
 		}
 	}
 
@@ -301,8 +300,8 @@ func (e Env) ScanRepos(folder string) ([]string, error) {
 		Root: folder,
 
 		Filter: func(path string) (match, cont bool) {
-			if e.Git.IsRepositoryQuick(path) {
-				return e.Filter.Matches(e.Root, path), false // never continue even if a repository does not match
+			if env.Git.IsRepositoryQuick(path) {
+				return env.Filter.Matches(env.Root, path), false // never continue even if a repository does not match
 			}
 			return false, true
 		},

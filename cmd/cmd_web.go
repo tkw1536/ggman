@@ -117,8 +117,8 @@ func (uw urlweb) Run(context program.Context) error {
 
 	// set the base host
 	base := "https://" + url.HostName
-	if len(context.Argv) > 0 {
-		base = context.Argv[0]
+	if len(context.Args) > 0 {
+		base = context.Args[0]
 	}
 
 	// lookup in the builtins

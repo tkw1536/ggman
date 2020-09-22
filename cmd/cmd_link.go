@@ -62,7 +62,7 @@ var errLinkUnknown = ggman.Error{
 func (link) Run(context program.Context) error {
 	// make sure that the path is absolute
 	// to avoid relative symlinks
-	from, e := filepath.Abs(context.Argv[0])
+	from, e := filepath.Abs(context.Args[0])
 	if e != nil {
 		return errLinkDoesNotExist
 	}
