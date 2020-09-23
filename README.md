@@ -249,6 +249,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 - replace 'flag' package by POSIX-compatible 'pflag' package
 - fully rework internal command and package structure as well as documentation
 - add internal utility to automatically re-generate license notices
+- add 'branch' flag to 'ggman web' and 'ggman url'
 - bugfix: Add missing 'ggman find-branch' documentation
 - cleanup runtime version handling
 

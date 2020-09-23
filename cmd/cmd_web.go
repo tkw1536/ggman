@@ -35,7 +35,8 @@ func (url) Name() string {
 type urlweb struct {
 	openInstead bool
 
-	Tree bool
+	Branch bool
+	Tree   bool
 }
 
 // WebBuiltInBases is a map of built-in bases for the url and web commands
@@ -74,6 +75,7 @@ var stringWebBaseUsage = "If provided, replace the first component with the prov
 
 func (uw *urlweb) Options(flagset *pflag.FlagSet) program.Options {
 	flagset.BoolVarP(&uw.Tree, "tree", "t", uw.Tree, "If provided, additionally use the HEAD reference and relative path to the root of the git worktree. ")
+	flagset.BoolVarP(&uw.Branch, "branch", "b", uw.Branch, "If provided, include the HEAD reference in the resolved URL")
 	return program.Options{
 		MinArgs: 0,
 		MaxArgs: 1,
@@ -136,13 +138,17 @@ func (uw urlweb) Run(context program.Context) error {
 	// get the web url
 	weburl := url.Canonical("^/$")
 
-	if uw.Tree {
+	if uw.Tree || uw.Branch {
 		ref, e := context.Git.GetHeadRef(root)
 		if e != nil {
 			return errOutsideRepository
 		}
+
 		// TODO: do we want to replace the HEAD branch with something more useful?
-		weburl += "/tree/" + ref + "/" + relative
+		weburl += "/tree/" + ref
+		if uw.Tree {
+			weburl += "/" + relative
+		}
 	}
 
 	// print or open the url
