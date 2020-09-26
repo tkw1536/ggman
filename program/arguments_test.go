@@ -213,7 +213,7 @@ func TestCommandArguments_checkArgumentCount(t *testing.T) {
 	}
 }
 
-func TestCommandArguments_checkForArgument(t *testing.T) {
+func TestCommandArguments_checkFilterArgument(t *testing.T) {
 	tests := []struct {
 		name      string
 		options   Options
@@ -253,13 +253,13 @@ func TestCommandArguments_checkForArgument(t *testing.T) {
 				options:   tt.options,
 				Arguments: tt.arguments,
 			}
-			err := args.checkForArgument()
+			err := args.checkFilterArgument()
 			gotErr := ""
 			if err != nil {
 				gotErr = err.Error()
 			}
 			if gotErr != tt.wantErr {
-				t.Errorf("CommandArguments.checkForArgument() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("CommandArguments.checkFilterArgument() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

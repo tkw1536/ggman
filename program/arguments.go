@@ -160,7 +160,7 @@ func (args *CommandArguments) Parse(command Command, arguments Arguments) error 
 		return nil
 	}
 
-	if err := args.checkForArgument(); err != nil {
+	if err := args.checkFilterArgument(); err != nil {
 		return err
 	}
 
@@ -270,11 +270,11 @@ var errParseNoFor = ggman.Error{
 	Message:  "Wrong number of arguments: '%s' takes no 'for' argument. ",
 }
 
-// checkForArgument checks that if a 'for' argument is not allowed it is not passed.
+// checkFilterArgument checks that if a 'for' argument is not allowed it is not passed.
 // It expects args.For to be set appropriatly
 //
 // If the check fails, returns an error of type Error.
-func (args CommandArguments) checkForArgument() error {
+func (args CommandArguments) checkFilterArgument() error {
 	if args.options.Environment.AllowsFilter {
 		return nil
 	}
