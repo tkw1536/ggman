@@ -12,7 +12,11 @@ type Context struct {
 	CommandArguments
 }
 
-// URLV returns the ith argument, parsed as a URL
+// URLV returns the ith argument, parsed as a URL.
+//
+// It is a convenience wrapper for:
+//  c.ParseURL(c.Args[i])
+// This function is untested.
 func (c Context) URLV(i int) env.URL {
 	return c.ParseURL(c.Args[i])
 }
