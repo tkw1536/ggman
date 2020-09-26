@@ -48,7 +48,7 @@ func (f fix) Run(context program.Context) error {
 		var initialMessage sync.Once // send an initial log message to the user, once
 
 		if e := context.Git.UpdateRemotes(repo, func(url, remoteName string) (string, error) {
-			canon := context.Canonical(context.ParseURL(url))
+			canon := context.Canonical(env.ParseURL(url))
 
 			if url == canon {
 				return url, nil

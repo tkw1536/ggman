@@ -115,7 +115,7 @@ func (uw urlweb) Run(context program.Context) error {
 	}
 
 	// parse it as a repo url
-	url := context.ParseURL(remote)
+	url := env.ParseURL(remote)
 
 	// set the base host
 	base := "https://" + url.HostName

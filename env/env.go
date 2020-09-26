@@ -107,11 +107,6 @@ func (env Env) absRoot() (string, error) {
 	return root, nil
 }
 
-// ParseURL is a convenience alias of ParseURL.
-func (Env) ParseURL(url string) URL {
-	return ParseURL(url)
-}
-
 // LoadDefaultRoot sets env.Root according to the environment variables in e.Vars.
 // If e.Root is already set, does nothing and returns nil.
 //

@@ -44,6 +44,7 @@ func (l lsr) Run(context program.Context) error {
 		if err := (&context.Env).LoadDefaultCANFILE(); err != nil {
 			return errInvalidCanfile
 		}
+		lines = context.CanFile
 	}
 
 	// and print them
@@ -53,7 +54,7 @@ func (l lsr) Run(context program.Context) error {
 			continue
 		}
 		if l.Canonical {
-			remote = context.ParseURL(remote).CanonicalWith(lines)
+			remote = env.ParseURL(remote).CanonicalWith(lines)
 		}
 		context.Println(remote)
 	}
