@@ -34,7 +34,7 @@ func (canon) Run(context program.Context) error {
 
 	switch len(context.Args) {
 	case 1: // read the default CanFile
-		if err := (&(context.Env)).LoadDefaultCANFILE(); err != nil { //TODO: This breaks test isolation
+		if err := (&(context.Env)).LoadDefaultCANFILE(); err != nil {
 
 			return err
 		}

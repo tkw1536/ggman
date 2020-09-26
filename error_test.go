@@ -1,8 +1,11 @@
 package ggman
 
 import (
+	"errors"
 	"reflect"
 	"testing"
+
+	"github.com/tkw1536/ggman/testutil"
 )
 
 func TestAsError(t *testing.T) {
@@ -23,6 +26,14 @@ func TestAsError(t *testing.T) {
 				t.Errorf("AsError() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestAsErrorPanic(t *testing.T) {
+	_, gotPanic := testutil.DoesPanic(func() { AsError(errors.New("not an error")) })
+	wantPanic := interface{}("AsError: err must be nil or Error")
+	if wantPanic != gotPanic {
+		t.Errorf("AsError: got panic = %v, want = %v", gotPanic, wantPanic)
 	}
 }
 
