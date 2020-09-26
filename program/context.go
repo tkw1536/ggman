@@ -18,6 +18,7 @@ type Context struct {
 //  c.ParseURL(c.Args[i])
 // This function is untested.
 func (c Context) URLV(i int) env.URL {
-	// TODO: Make this work similar to env.At(), except returning the url
+	// TODO: Consider making this work similar to env.At(), except returning the url.
+	// i.e.: If this resolves to an existing path, and that path contains a repository, then it should return the url.
 	return env.ParseURL(c.Args[i])
 }

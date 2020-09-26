@@ -50,9 +50,6 @@ type Options struct {
 
 	// Description of the argument
 	UsageDescription string
-
-	// Description of the flag
-	FlagDescription string
 }
 
 var errProgramUnknownCommand = ggman.Error{
