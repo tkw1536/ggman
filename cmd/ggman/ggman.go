@@ -75,37 +75,9 @@ import (
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/cmd"
+	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
 )
-
-// subcommands is a list of all supported subcommands.
-var subcommands = []program.Command{
-	cmd.Root,
-
-	cmd.Ls,
-	cmd.Lsr,
-
-	cmd.Where,
-	cmd.Canon,
-	cmd.Comps,
-
-	cmd.Fetch,
-	cmd.Pull,
-
-	cmd.Fix,
-
-	cmd.Clone,
-	cmd.Link,
-
-	cmd.License,
-
-	cmd.Here,
-
-	cmd.Web,
-	cmd.URL,
-
-	cmd.FindBranch,
-}
 
 func main() {
 
@@ -122,12 +94,12 @@ func main() {
 
 	// Create the 'ggman' program and register all the subcommands
 	// Then execute the program and handle the exit code.
-	cmd := &program.Program{IOStream: ggman.NewEnvIOStream()}
-	for _, c := range subcommands {
-		cmd.Register(c)
+	pgrm := &program.Program{IOStream: ggman.NewEnvIOStream()}
+	for c := range cmd.All() {
+		pgrm.Register(c)
 	}
 
-	err := ggman.AsError(cmd.Main(os.Args[1:]))
+	err := ggman.AsError(pgrm.Main(env.ReadVariables(), os.Args[1:]))
 	err.Return()
 }
 

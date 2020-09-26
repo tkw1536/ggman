@@ -5,8 +5,9 @@ import (
 )
 
 // Record is an object that keeps track of recorded values.
-// It is safe for concurrent access.
-// The zero value is ready to use.
+// It is safe for concurrent access, the zero value is ready to use.
+//
+// A Record must not be copied after first use.
 type Record struct {
 	m sync.RWMutex
 

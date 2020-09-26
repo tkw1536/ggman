@@ -52,6 +52,17 @@ func NewEnvIOStream() IOStream {
 	}
 }
 
+// NewIOStream creates a new IOStream with the provided readers and writers.
+// It furthermore wraps output as set by wrap.
+func NewIOStream(Stdout, Stderr io.Writer, Stdin io.Reader, wrap int) IOStream {
+	return IOStream{
+		Stdin:  Stdin,
+		Stdout: Stdout,
+		Stderr: Stderr,
+		wrap:   wrap,
+	}
+}
+
 // StdoutWriteWrap is like
 //  io.Stdout.Write([]byte(s + "\n"))
 // but wrapped at a reasonable length

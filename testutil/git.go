@@ -27,13 +27,25 @@ func NewTestRepo() (clonePath string, repo *git.Repository, cleanup func()) {
 	clonePath, cleanup = TempDir()
 
 	// then actually do a git PlainInit
-	repo, err := git.PlainInit(clonePath, false)
-	if err != nil {
+	repo = NewTestRepoAt(clonePath)
+	if repo == nil {
 		cleanup()
-		panic(err)
+		panic("NewTestRepoAt(): Repository not created")
 	}
 
 	return
+}
+
+// NewTestRepoAt creates a new repository at the provided path.
+// When an error occurs, returns nil.
+//
+// This function is untested.
+func NewTestRepoAt(clonePath string) (repo *git.Repository) {
+	repo, err := git.PlainInit(clonePath, false)
+	if err != nil {
+		return nil
+	}
+	return repo
 }
 
 const commitMessage = "CommitTestFiles() commit"

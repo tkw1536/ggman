@@ -11,8 +11,6 @@ import (
 	"github.com/tkw1536/ggman/util"
 )
 
-// TODO: Test this file
-
 // Env represents an environment to be used by ggman.
 //
 // The environment defines which git repositories are managed by ggman and where these are stored.
@@ -66,6 +64,8 @@ type Requirement struct {
 //
 // If r.AllowsFilter is false, NoFilter should be passed for the filter argument.
 // If r.AllowsFilter is true, a filter may be passed via the filter argument.
+//
+// This function is untested.
 func NewEnv(r Requirement, vars Variables, filter Filter) (Env, error) {
 	env := &Env{
 		Git:    git.NewGitFromPlumbing(nil, vars.PATH),
@@ -95,6 +95,8 @@ var errMissingRoot = ggman.Error{
 
 // absRoot returns the absolute path to the root directory.
 // If the root directory is not set, returns an error of type Error.
+//
+// This function is untested.
 func (env Env) absRoot() (string, error) {
 	if env.Root == "" {
 		return "", errMissingRoot
@@ -155,7 +157,7 @@ func (env *Env) LoadDefaultCANFILE() error {
 		files = append(files, filepath.Join(env.Vars.HOME, ".ggman"))
 	}
 
-	cf := CanFile(nil)
+	var cf CanFile
 
 	// In order, if a file exists read it or fail.
 	// If it doesn't exist continue to the next file.
@@ -244,7 +246,7 @@ func (env Env) At(p string) (repo, worktree string, err error) {
 	}
 
 	// we have found the worktree path and the repository.
-	worktree, err = filepath.Rel(path, repo)
+	worktree, err = filepath.Rel(repo, path)
 	if err != nil {
 		return "", "", errNotResolved.WithMessageF(root)
 	}
@@ -255,11 +257,13 @@ func (env Env) At(p string) (repo, worktree string, err error) {
 // Canonical returns the canonical version of the URL url.
 // This requires that CanFile is not nil.
 // See the CanonicalWith() method of URL.
-func (e Env) Canonical(url URL) string {
-	if e.CanFile == nil {
+//
+// This function is untested.
+func (env Env) Canonical(url URL) string {
+	if env.CanFile == nil {
 		panic("Env.Canonical(): CanFile is nil")
 	}
-	return url.CanonicalWith(e.CanFile)
+	return url.CanonicalWith(env.CanFile)
 }
 
 // reposBufferSize is the (currently hard-coded) size for the cache of the Repos function.
@@ -275,6 +279,8 @@ const reposMaxParallelScan = 0
 // This method silently ignores all errors.
 //
 // See the ScanRepos() method for more control.
+//
+// This function is untested, because ScanRepos() is tested.
 func (env Env) Repos() []string {
 	repos, _ := env.ScanRepos("")
 	return repos
