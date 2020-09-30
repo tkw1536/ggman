@@ -182,7 +182,7 @@ func TestProgram_Main(t *testing.T) {
 			program.Register(fake)
 
 			// run the program
-			ret := ggman.AsError(program.Main(tt.variables, tt.args))
+			ret := ggman.AsError(program.Main(tt.variables, nil, tt.args))
 
 			// check all the error values
 			gotCode := uint8(ret.ExitCode)

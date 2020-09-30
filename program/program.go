@@ -8,6 +8,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/git"
 )
 
 // Program represents an executable program with a list of subcommands.
@@ -57,9 +58,11 @@ var errProgramUnknownCommand = ggman.Error{
 	Message:  "Unknown command. Must be one of %s. ",
 }
 
+// TODO: Consider moving plumbing and vars to move into program
+
 // Main is the entry point to this program.
 // When an error occurs, returns an error of type Error and writes the error to context.Stderr.
-func (p Program) Main(vars env.Variables, argv []string) (err error) {
+func (p Program) Main(vars env.Variables, plumbing git.Plumbing, argv []string) (err error) {
 	// whenever an error occurs, we want it printed
 	defer func() {
 		err = p.Die(err)
@@ -105,7 +108,7 @@ func (p Program) Main(vars env.Variables, argv []string) (err error) {
 		IOStream:         p.IOStream,
 		CommandArguments: *cmdargs,
 	}
-	if context.Env, err = env.NewEnv(cmdargs.options.Environment, vars, cmdargs.For); err != nil {
+	if context.Env, err = env.NewEnv(cmdargs.options.Environment, vars, plumbing, cmdargs.For); err != nil {
 		return err
 	}
 
