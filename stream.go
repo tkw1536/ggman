@@ -53,14 +53,34 @@ func NewEnvIOStream() IOStream {
 }
 
 // NewIOStream creates a new IOStream with the provided readers and writers.
+// If any of them are set to an empty stream, they are set to util.NullStream.
+// When wrap is set to 0, it is set to a reasonable default.
+//
 // It furthermore wraps output as set by wrap.
 func NewIOStream(Stdout, Stderr io.Writer, Stdin io.Reader, wrap int) IOStream {
+	if Stdout == nil {
+		Stdout = util.NullStream{}
+	}
+	if Stderr == nil {
+		Stderr = util.NullStream{}
+	}
+	if Stdin == nil {
+		Stdin = util.NullStream{}
+	}
+	if wrap == 0 {
+		wrap = ioDefaultWrap
+	}
 	return IOStream{
 		Stdin:  Stdin,
 		Stdout: Stdout,
 		Stderr: Stderr,
 		wrap:   wrap,
 	}
+}
+
+// NewNilIOStream is a convenience alias for NewIOStream(nil, nil, nil, 0).
+func NewNilIOStream() IOStream {
+	return NewIOStream(nil, nil, nil, 0)
 }
 
 // StdoutWriteWrap is like
