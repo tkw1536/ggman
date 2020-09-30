@@ -245,12 +245,12 @@ Alternatively, you can simply type `make install` from the source code to have i
 
 ### 1.6.0 (Upcoming)
 
+- rework, document and test new package structure
 - rework git repository scanning & filtering to take place in parallel
-- replace 'flag' package by POSIX-compatible 'pflag' package
-- fully rework internal command and package structure as well as documentation
 - add internal utility to automatically re-generate license notices
-- add 'branch' flag to 'ggman web' and 'ggman url'
-- bugfix: Add missing 'ggman find-branch' documentation
+- add `branch` flag to `ggman web` and `ggman url`
+- bugfix: Add missing `ggman find-branch` documentation
+- replace `flag` package by POSIX-compatible `pflag` package
 - cleanup runtime version handling
 
 ### 1.5.0 (Released [Aug 29 2020](https://github.com/tkw1536/ggman/releases/tag/v1.5.0))
