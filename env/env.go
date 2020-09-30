@@ -66,9 +66,9 @@ type Requirement struct {
 // If r.AllowsFilter is true, a filter may be passed via the filter argument.
 //
 // This function is untested.
-func NewEnv(r Requirement, vars Variables, filter Filter) (Env, error) {
+func NewEnv(r Requirement, vars Variables, plumbing git.Plumbing, filter Filter) (Env, error) {
 	env := &Env{
-		Git:    git.NewGitFromPlumbing(nil, vars.PATH),
+		Git:    git.NewGitFromPlumbing(plumbing, vars.PATH),
 		Vars:   vars,
 		Filter: filter,
 	}
