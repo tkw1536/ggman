@@ -417,7 +417,7 @@ func Test_gogit_Clone(t *testing.T) {
 		clone, cleanup := testutil.TempDir()
 		defer cleanup()
 
-		err := gg.Clone(ggman.NewEnvIOStream(), remote, clone)
+		err := gg.Clone(ggman.NewNilIOStream(), remote, clone)
 		if err != nil {
 			t.Error("Clone() got err != nil, want err = nil")
 		}
@@ -431,7 +431,7 @@ func Test_gogit_Clone(t *testing.T) {
 		clone, cleanup := testutil.TempDir()
 		defer cleanup()
 
-		err := gg.Clone(ggman.NewEnvIOStream(), remote, clone, "--branch", "main")
+		err := gg.Clone(ggman.NewNilIOStream(), remote, clone, "--branch", "main")
 		if err != ErrArgumentsUnsupported {
 			t.Error("Clone() got err != ErrArgumentsUnsupported, want err = ErrArgumentsUnsupported")
 		}
@@ -490,7 +490,7 @@ func Test_gogit_Fetch(t *testing.T) {
 	}
 
 	t.Run("fetching fetches all remotes", func(t *testing.T) {
-		err := gg.Fetch(ggman.NewEnvIOStream(), clone, ggRepoObject)
+		err := gg.Fetch(ggman.NewNilIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Fetch() returned err != nil, want err = nil")
 		}
@@ -522,7 +522,7 @@ func Test_gogit_Fetch(t *testing.T) {
 	})
 
 	t.Run("fetching an up-to-date repo returns no error", func(t *testing.T) {
-		err := gg.Fetch(ggman.NewEnvIOStream(), clone, ggRepoObject)
+		err := gg.Fetch(ggman.NewNilIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Fetch() returned err != nil, want err = nil")
 		}
@@ -560,7 +560,7 @@ func Test_gogit_Pull(t *testing.T) {
 	}
 
 	t.Run("pulling pulls a repository", func(t *testing.T) {
-		err := gg.Pull(ggman.NewEnvIOStream(), clone, ggRepoObject)
+		err := gg.Pull(ggman.NewNilIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Pull() returned err != nil, want err = nil")
 		}
@@ -576,7 +576,7 @@ func Test_gogit_Pull(t *testing.T) {
 	})
 
 	t.Run("pulling an up-to-date repo returns no error", func(t *testing.T) {
-		err := gg.Pull(ggman.NewEnvIOStream(), clone, ggRepoObject)
+		err := gg.Pull(ggman.NewNilIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Pull() returned err != nil, want err = nil")
 		}
