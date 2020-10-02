@@ -123,6 +123,16 @@ type Plumbing interface {
 	ContainsBranch(clonePath string, cache interface{}, branch string) (contains bool, err error)
 }
 
+// NewPlumbing returns an implementation of a plumbing that has no external dependencies.
+// The plumbing is guaranteed to have been initialized.
+//
+// There is no guarantee as to what plumbing is returned.
+func NewPlumbing() Plumbing {
+	gg := gogit{}
+	gg.Init()
+	return gg
+}
+
 // ErrArgumentsUnsupported is an error that is returned when arguments are not supported by a Plumbing.
 var ErrArgumentsUnsupported = errors.New("Plumbing does not support extra clone arguments")
 
