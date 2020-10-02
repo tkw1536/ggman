@@ -98,7 +98,7 @@ func Test_gogit_IsRepositoryUnsafe(t *testing.T) {
 	}
 }
 
-func Test_gogit_GetHeadRefA(t *testing.T) {
+func Test_gogit_GetHeadRef(t *testing.T) {
 	var gg gogit
 
 	// for this test we make three repositories:
