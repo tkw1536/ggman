@@ -8,7 +8,9 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
-// Fetch is the 'ggman fetch' command
+// Fetch is the 'ggman fetch' command.
+//
+// 'ggman fetch' is the equivalent of running 'git fetch --all' on all locally installed repositories.
 var Fetch program.Command = fetch{}
 
 type fetch struct{}

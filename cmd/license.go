@@ -7,7 +7,9 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
-// License is the 'ggman license' command
+// License is the 'ggman license' command.
+//
+// The license command prints to standard output legal notices about the ggman program.
 var License program.Command = license{}
 
 type license struct{}

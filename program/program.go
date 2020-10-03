@@ -2,6 +2,7 @@ package program
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/spf13/pflag"
 
@@ -19,7 +20,16 @@ type Program struct {
 	commands map[string]Command
 }
 
-// Command represents a single command to be parsed
+// Command represents a single command to be parsed.
+//
+// Typically command contains state that represents the parsed options.
+// This would prevent a single value of type command to run multiple times.
+// To work around this, the CloneCommand method exists.
+//
+// In order for the CloneCommand method to work correctly, a Command must fullfill the following:
+// If it is not implemented as a pointer receiver, the zero value is expected to be ready to use.
+// Otherwise the zero value of the element struct is expected to be ready to use.
+// See also CloneCommand.
 type Command interface {
 	// Name returns the name of this command
 	Name() string
@@ -36,6 +46,27 @@ type Command interface {
 	// This function should assume that flagset.Parse() has been called.
 	// The error returned should be either nil or of type ggman.Error
 	Run(context Context) error
+}
+
+// CloneCommand returns a new Command that behaves exactly like Command,
+// except that it does not modify any internal state of Command.
+//
+// This function is mostly intended to be used when a command should be called multiple times
+// during a single run of ggman.
+func CloneCommand(command Command) (cmd Command) {
+	cmdStruct := reflect.ValueOf(command) // cmd.CommandStruct
+
+	// clone := cmd.CommandStruct{...zero...}
+	var clone reflect.Value
+	if cmdStruct.Type().Kind() == reflect.Ptr {
+		clone = reflect.New(cmdStruct.Type().Elem())
+	} else {
+		clone = reflect.Zero(cmdStruct.Type())
+	}
+
+	// command = clone
+	reflect.ValueOf(&cmd).Elem().Set(clone)
+	return cmd
 }
 
 // Options represent the options for a specific command
@@ -58,11 +89,11 @@ var errProgramUnknownCommand = ggman.Error{
 	Message:  "Unknown command. Must be one of %s. ",
 }
 
-// TODO: Consider moving plumbing and vars to move into program
+// TODO: Move vars, plumbing and workdir into a shared struct or something
 
 // Main is the entry point to this program.
 // When an error occurs, returns an error of type Error and writes the error to context.Stderr.
-func (p Program) Main(vars env.Variables, plumbing git.Plumbing, argv []string) (err error) {
+func (p Program) Main(vars env.Variables, plumbing git.Plumbing, workdir string, argv []string) (err error) {
 	// whenever an error occurs, we want it printed
 	defer func() {
 		err = p.Die(err)
@@ -108,7 +139,7 @@ func (p Program) Main(vars env.Variables, plumbing git.Plumbing, argv []string) 
 		IOStream:         p.IOStream,
 		CommandArguments: *cmdargs,
 	}
-	if context.Env, err = env.NewEnv(cmdargs.options.Environment, vars, plumbing, cmdargs.For); err != nil {
+	if context.Env, err = env.NewEnv(cmdargs.options.Environment, vars, workdir, plumbing, cmdargs.For); err != nil {
 		return err
 	}
 

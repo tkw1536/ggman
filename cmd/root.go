@@ -7,7 +7,10 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
-// Root is the 'ggman root' command
+// Root is the 'ggman root' command.
+//
+// The 'ggman root' command prints the ggman root directory to standard output.
+// It does not require the root directory to exist.
 var Root program.Command = root{}
 
 type root struct{}
