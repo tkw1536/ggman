@@ -11,7 +11,9 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
-// Pull is the 'ggman pull' command
+// Pull is the 'ggman pull' command.
+//
+// 'ggman pull' is the equivalent of running 'git pull' on all locally installed repositories.
 var Pull program.Command = pull{}
 
 type pull struct{}
@@ -41,7 +43,7 @@ func (pull) Run(context program.Context) error {
 	hasError := false
 	for _, repo := range context.Env.Repos() {
 		context.Printf("Pulling %q\n", repo)
-		if e := context.Git.Pull(ggman.NewEnvIOStream(), repo); e != nil {
+		if e := context.Git.Pull(context.IOStream, repo); e != nil {
 			fmt.Fprintln(os.Stderr, e.Error())
 			hasError = true
 		}

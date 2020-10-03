@@ -10,7 +10,11 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
-// Fix is the 'ggman fix' command
+// Fix is the 'ggman fix' command.
+//
+// The 'ggman fix' command canonicalizes the urls of all remotes of a repository.
+//   --simulate
+// Instead of writing out the changes to disk, only print what would be done.
 var Fix program.Command = &fix{}
 
 type fix struct {

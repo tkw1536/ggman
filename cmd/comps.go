@@ -6,7 +6,10 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
-// Comps is the 'ggman comps' command
+// Comps is the 'ggman comps' command.
+//
+// When invoked, it prints the components of the first argument passed to it.
+// Each component is printed on a seperate line of standard output.
 var Comps program.Command = comps{}
 
 type comps struct{}

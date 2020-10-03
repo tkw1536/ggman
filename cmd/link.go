@@ -11,7 +11,9 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
-// Link is the 'ggman link' command
+// Link is the 'ggman link' command.
+//
+// The 'ggman link' symlinks the repository in the path passed as the first argument where it would have been cloned to inside 'ggman root'.
 var Link program.Command = link{}
 
 type link struct{}
@@ -62,7 +64,7 @@ var errLinkUnknown = ggman.Error{
 func (link) Run(context program.Context) error {
 	// make sure that the path is absolute
 	// to avoid relative symlinks
-	from, e := filepath.Abs(context.Args[0])
+	from, e := context.Abs(context.Args[0])
 	if e != nil {
 		return errLinkDoesNotExist
 	}

@@ -31,6 +31,9 @@ type Env struct {
 	// See the Local() method.
 	Root string
 
+	// Workdir is the working directory of this environment.
+	Workdir string
+
 	// Filter is an optional filter for the environment.
 	// Repositories not matching the filter are considered to not be a part of the environment.
 	// See the Repos() method.
@@ -66,11 +69,12 @@ type Requirement struct {
 // If r.AllowsFilter is true, a filter may be passed via the filter argument.
 //
 // This function is untested.
-func NewEnv(r Requirement, vars Variables, plumbing git.Plumbing, filter Filter) (Env, error) {
+func NewEnv(r Requirement, vars Variables, workdir string, plumbing git.Plumbing, filter Filter) (Env, error) {
 	env := &Env{
-		Git:    git.NewGitFromPlumbing(plumbing, vars.PATH),
-		Vars:   vars,
-		Filter: filter,
+		Git:     git.NewGitFromPlumbing(plumbing, vars.PATH),
+		Vars:    vars,
+		Filter:  filter,
+		Workdir: workdir,
 	}
 
 	if r.NeedsRoot || r.AllowsFilter { // AllowsFilter implies NeedsRoot
@@ -204,6 +208,12 @@ var errNotResolved = ggman.Error{
 	Message:  "Unable to resolve repository %q",
 }
 
+// Abs returns the absolute path to path.
+// path is resolved relative to the working directory of this environment.
+func (env Env) Abs(path string) (string, error) {
+	return filepath.Abs(filepath.Join(env.Workdir, path))
+}
+
 // atMaxIterCount is the maximum number of recursions for the At function.
 // This prevents infinite loops in a symlinked filesystem.
 const atMaxIterCount = 1000
@@ -227,7 +237,7 @@ func (env Env) At(p string) (repo, worktree string, err error) {
 
 	// find the absolute path that p points to
 	// so that we can start searching
-	path, err := filepath.Abs(p)
+	path, err := env.Abs(p)
 	if err != nil {
 		return "", "", errNotResolved.WithMessageF(p)
 	}

@@ -8,7 +8,12 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
-// Lsr is the 'ggman lsr' command
+// Lsr is the 'ggman lsr' command.
+//
+// When called, the ggman ls command prints a list of remotes of all locally installed repositories to standard output.
+// The remotes will be listed in dictionary order of their local installation paths.
+//  --canonical
+// When provided, instead of printing the urls directly, prints the canonical remotes of all repositories
 var Lsr program.Command = &lsr{}
 
 type lsr struct {

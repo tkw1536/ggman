@@ -14,19 +14,51 @@ import (
 	"github.com/pkg/browser"
 )
 
-// Web is the 'ggman web' command
-var Web program.Command = web{&urlweb{openInstead: true}}
+// Web is the 'ggman web' command.
+//
+// It attempts to open the url of the current repository in a webrowser.
+// The browser being used is determined by the underlying operating system.
+//
+// To determine the url it uses the CANSPEC `https://^/$`, which may not work with all git hosts.
+// For instance when the url of the repository git@github.com:tkw1536/ggman.git, this will open the url https://github.com/tkw1536/ggman in a browser.
+//
+//  --tree
+// This optional argument appends the string `/tree/$BRANCH/$PATH` to the url being opened, where $BRANCH is currently checked out branch and $PATH is the relative path from the repository root to the current folder.
+// On common Git Hosts, such as GitHub and GitLab, this shows a page of the current folder on the current branch.
+//  --branch
+// This argument works like '--tree', except that it does not append the local path to the url.
+//  BASE
+// An optional argument of the form 'BASE'.
+// If it is provided, the first component of the url is replace with the given base.
+// For instance, using the base 'https://pkg.go.dev' would open the current repository on the golang documentation homepage.
+// In addition to using a custom BASE, the following pre-defined bases 'travis' (TravisCI), 'circle' (CirclCI), 'godoc' (GoDoc) and 'localgodoc' (GoDoc when run on the local machine) can be used.
+//  --prefix
+// When provided, instead of replacing the hostname with the base, prefix it with the base instead.
+// This flag is ignored when no base is provided, or a built-in base is used.
+var Web program.Command = &web{}
 
-type web struct{ *urlweb }
+type web struct{ urlweb }
+
+func (w web) Run(context program.Context) error {
+	w.urlweb.openInstead = true
+	return w.urlweb.Run(context)
+}
 
 func (web) Name() string {
 	return "web"
 }
 
-// URL is the 'ggman url' command
-var URL program.Command = url{&urlweb{openInstead: false}}
+// URL is the 'ggman url' command.
+//
+// The ggman url command behaves exactly like the ggman web command, except that instead of opening the URL in a webbrowser it prints it to standard output.
+var URL program.Command = &url{}
 
-type url struct{ *urlweb }
+func (u url) Run(context program.Context) error {
+	u.urlweb.openInstead = false
+	return u.urlweb.Run(context)
+}
+
+type url struct{ urlweb }
 
 func (url) Name() string {
 	return "url"
@@ -35,8 +67,9 @@ func (url) Name() string {
 type urlweb struct {
 	openInstead bool
 
-	Branch bool
-	Tree   bool
+	Branch       bool
+	Tree         bool
+	BaseAsPrefix bool
 }
 
 // WebBuiltInBases is a map of built-in bases for the url and web commands
@@ -75,7 +108,8 @@ var stringWebBaseUsage = "If provided, replace the first component with the prov
 
 func (uw *urlweb) Options(flagset *pflag.FlagSet) program.Options {
 	flagset.BoolVarP(&uw.Tree, "tree", "t", uw.Tree, "If provided, additionally use the HEAD reference and relative path to the root of the git worktree. ")
-	flagset.BoolVarP(&uw.Branch, "branch", "b", uw.Branch, "If provided, include the HEAD reference in the resolved URL")
+	flagset.BoolVarP(&uw.Branch, "branch", "b", uw.Branch, "If provided, include the HEAD reference in the resolved URL. ")
+	flagset.BoolVarP(&uw.BaseAsPrefix, "prefix", "p", uw.BaseAsPrefix, "Treat the base argument as a prefix, instead of the hostname. ")
 	return program.Options{
 		MinArgs: 0,
 		MaxArgs: 1,
@@ -119,15 +153,19 @@ func (uw urlweb) Run(context program.Context) error {
 
 	// set the base host
 	base := "https://" + url.HostName
+
+	// if we have a base argument, we need to use it
 	if len(context.Args) > 0 {
 		base = context.Args[0]
-	}
 
-	// lookup in the builtins
-	// we can do this safely because none of them start with https://
-	if builtIn, ok := WebBuiltInBases[base]; ok {
-		base = builtIn.URL
-		if builtIn.IncludeHost {
+		// lookup in builtins
+		if builtIn, ok := WebBuiltInBases[base]; ok {
+			base = builtIn.URL
+			uw.BaseAsPrefix = builtIn.IncludeHost
+		}
+
+		// if we want to use the base as a prefix, add back the hostname
+		if uw.BaseAsPrefix {
 			base += url.HostName
 		}
 	}
@@ -153,7 +191,7 @@ func (uw urlweb) Run(context program.Context) error {
 
 	// print or open the url
 	if uw.openInstead {
-		browser.OpenURL(weburl)
+		browser.OpenURL(weburl) // TODO: This breaks test isolation and is very hard to test.
 	} else {
 		context.Println(weburl)
 	}

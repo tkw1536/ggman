@@ -9,7 +9,13 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
-// Clone is the 'ggman clone' command
+// Clone is the 'ggman clone' command.
+//
+// Clone clones the repository in the firsty argument into the path described to by 'ggman where'.
+// It canonizes the url before cloning it.
+// It optionally takes any argument that would be passed to the normal invocation of a git command.
+//
+// When 'git' is not available on the system ggman is running on, additional arguments may not be supported.
 var Clone program.Command = clone{}
 
 type clone struct{}
