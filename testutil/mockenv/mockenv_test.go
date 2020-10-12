@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/util"
 )
 
 // recordingT records a message passed to Errorf()
@@ -36,14 +37,16 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 		args        args
 		wantMessage string
 	}{
-		{"no replacement equal", fields{"/root/"}, args{"example", "example", "logprefix"}, ""},
-		{"no replacement not equal", fields{"/root/"}, args{"example", "example2", "logprefix"}, "logprefix got = \"example\", want = \"example2\""},
+		{"no replacement equal", fields{util.ToOSPath("/root/")}, args{"example", "example", "logprefix"}, ""},
+		{"no replacement not equal", fields{util.ToOSPath("/root/")}, args{"example", "example2", "logprefix"}, "logprefix got = \"example\", want = \"example2\""},
 
-		{"replace only ggroot ok", fields{"/root/"}, args{"prefix /root suffix", "prefix ${GGROOT} suffix", "logprefix"}, ""},
-		{"replace only ggroot not ok", fields{"/root/"}, args{"prefix /root suffix", "prefix ${GGROOT}/sub suffix", "logprefix"}, "logprefix got = \"prefix /root suffix\", want = \"prefix /root/sub suffix\""},
+		{"replace only ggroot ok", fields{util.ToOSPath("/root/")}, args{"prefix " + util.ToOSPath("/root") + " suffix", "prefix ${GGROOT} suffix", "logprefix"}, ""},
+		{"replace only ggroot not ok", fields{util.ToOSPath("/root/")}, args{"prefix " + util.ToOSPath("/root") + " suffix", "prefix ${GGROOT}/sub suffix", "logprefix"}, fmt.Sprintf("logprefix got = %q, want = %q", "prefix "+util.ToOSPath("/root")+" suffix", "prefix "+util.ToOSPath("/root")+"/sub suffix")},
 
-		{"replace full path ok", fields{"/root/"}, args{"prefix /root/a/b suffix", "prefix ${GGROOT a b} suffix", "logprefix"}, ""},
-		{"replace full path not ok", fields{"/root/"}, args{"prefix /root suffix", "prefix ${GGROOT a b} suffix", "logprefix"}, "logprefix got = \"prefix /root suffix\", want = \"prefix /root/a/b suffix\""},
+		{"replace full path ok", fields{util.ToOSPath("/root/")}, args{"prefix " + util.ToOSPath("/root/a/b") + " suffix", "prefix ${GGROOT a b} suffix", "logprefix"}, ""},
+		{"replace full path not ok", fields{util.ToOSPath("/root/")}, args{"prefix " + util.ToOSPath("/root") + " suffix", "prefix ${GGROOT a b} suffix", "logprefix"}, fmt.Sprintf("logprefix got = %q, want = %q", "prefix "+util.ToOSPath("/root")+" suffix", "prefix "+util.ToOSPath("/root/a/b")+" suffix")},
+
+		{"escape path with quotes", fields{util.ToOSPath("/root/")}, args{fmt.Sprintf("%q", util.ToOSPath("/root")), "\"${GGROOT}\"", "logprefix"}, ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

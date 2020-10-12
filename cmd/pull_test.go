@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/tkw1536/ggman/testutil"
@@ -15,6 +16,8 @@ func TestCommandPull(t *testing.T) {
 	repo, _ := mock.Register("https://github.com/hello/world.git")
 	clonePath := mock.Install("https://github.com/hello/world.git", "hello", "world")
 	testutil.CommitTestFiles(repo, nil)
+
+	escapedClonePath := fmt.Sprintf("%q", clonePath)
 
 	tests := []struct {
 		name    string
@@ -31,7 +34,7 @@ func TestCommandPull(t *testing.T) {
 			[]string{"pull"},
 
 			0,
-			"Pulling \"" + clonePath + "\"\nEnumerating objects: 3, done.\nCounting objects:  33% (1/3)\rCounting objects:  66% (2/3)\rCounting objects: 100% (3/3)\rCounting objects: 100% (3/3), done.\nCompressing objects:  50% (1/2)\rCompressing objects: 100% (2/2)\rCompressing objects: 100% (2/2), done.\nTotal 3 (delta 0), reused 0 (delta 0), pack-reused 0\n",
+			"Pulling " + escapedClonePath + "\nEnumerating objects: 3, done.\nCounting objects:  33% (1/3)\rCounting objects:  66% (2/3)\rCounting objects: 100% (3/3)\rCounting objects: 100% (3/3), done.\nCompressing objects:  50% (1/2)\rCompressing objects: 100% (2/2)\rCompressing objects: 100% (2/2), done.\nTotal 3 (delta 0), reused 0 (delta 0), pack-reused 0\n",
 			"",
 		},
 
@@ -41,7 +44,7 @@ func TestCommandPull(t *testing.T) {
 			[]string{"pull"},
 
 			0,
-			"Pulling \"" + clonePath + "\"\nalready up-to-date\n",
+			"Pulling " + escapedClonePath + "\nalready up-to-date\n",
 			"",
 		},
 	}
