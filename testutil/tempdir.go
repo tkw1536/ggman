@@ -3,6 +3,7 @@ package testutil
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 // TempDir creates a new temporary directory to be used during testing.
@@ -25,6 +26,11 @@ func TempDir() (path string, cleanup func()) {
 		if err := os.RemoveAll(path); err != nil {
 			panic(err)
 		}
+	}
+	path, err = filepath.EvalSymlinks(path)
+	if err != nil {
+		cleanup()
+		panic(err)
 	}
 	return
 }
