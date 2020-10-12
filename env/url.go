@@ -41,7 +41,11 @@ type URL struct {
 //
 // ParseURL always suceeds.
 // This can lead to unexpected parses of URLs when e.g. a port is specified incorrectly.
+//
+// For windows compatibility, '\\' is replaced by '/' in the input string.
 func ParseURL(s string) (repo URL) {
+	s = strings.ReplaceAll(s, "\\", "/") // windows
+
 	// we sometimes have to restore 's' to what it was before
 	// we could do this using string concatination, but that is slow.
 	// so we store it in a temporary variable called 'oldS'

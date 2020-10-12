@@ -143,7 +143,7 @@ func (mock *MockEnv) Run(command program.Command, workdir string, stdin string, 
 }
 
 // regular expression used for substiution
-var regexGGROOT = regexp.MustCompile(`\$\{GGROOT( [^\}]+)?\}`)
+var regexGGROOT = regexp.MustCompile(`.?\$\{GGROOT( [^\}]+)?\}.?`)
 
 // TestingT is an interface around TestingT
 type TestingT interface {
@@ -154,12 +154,32 @@ type TestingT interface {
 // If this is not the case, calls TestingT.Errorf().
 //
 // For consistency across runs, strings of the form `${GGROOT a b c}` in want are resolved into an absolute path.
+// Furthermore when the character preceeding the $ is a '"', additionally escapes the string.
 //
 // Context should be aditional information to be prefixed for the error message.
 func (mock *MockEnv) AssertOutput(t TestingT, got, want, prefix string) {
 	want = regexGGROOT.ReplaceAllStringFunc(want, func(s string) string {
-		parts := strings.Fields(s[:len(s)-1])[1:] // remove trailing '}' and first part (GGROOT)
-		return mock.resolve(parts...)
+		// extract the first character, actual characters, and the last character
+		first := string(s[0])
+		actual := s[1 : len(s)-1]
+		last := string(s[len(s)-1])
+
+		if actual[0] != '$' { // the first character was empty
+			first = ""
+			actual = "$" + actual
+		}
+		if actual[len(actual)-1] != '}' { // the last character was empty
+			last = ""
+			actual = actual + "}"
+		}
+
+		parts := strings.Fields(actual[:len(actual)-1])[1:] // remove trailing '}' and first part (${GGROOT)
+		actual = mock.resolve(parts...)
+
+		if first == "\"" && last == "\"" {
+			return fmt.Sprintf("%q", actual)
+		}
+		return first + actual + last
 	})
 	if got != want {
 		t.Errorf("%s got = %q, want = %q", prefix, got, want)

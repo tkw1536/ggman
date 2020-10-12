@@ -9,6 +9,7 @@ import (
 
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/testutil"
+	"github.com/tkw1536/ggman/util"
 )
 
 func TestEnv_LoadDefaultRoot(t *testing.T) {
@@ -204,27 +205,27 @@ func TestEnv_ScanRepos(t *testing.T) {
 		}
 	}
 
-	mkgit("a/aa/aaa")
-	mkgit("a/aa/aab")
-	mkgit("a/aa/aac")
-	mkgit("a/ab/aba")
-	mkgit("a/ab/abb")
-	mkgit("a/ab/abc")
-	mkgit("a/ac/aca")
-	mkgit("a/ac/acb")
-	mkgit("a/ac/acc")
+	mkgit(filepath.Join("a", "aa", "aaa"))
+	mkgit(filepath.Join("a", "aa", "aab"))
+	mkgit(filepath.Join("a", "aa", "aac"))
+	mkgit(filepath.Join("a", "ab", "aba"))
+	mkgit(filepath.Join("a", "ab", "abb"))
+	mkgit(filepath.Join("a", "ab", "abc"))
+	mkgit(filepath.Join("a", "ac", "aca"))
+	mkgit(filepath.Join("a", "ac", "acb"))
+	mkgit(filepath.Join("a", "ac", "acc"))
 
 	// utility to remove root from all the paths
-	trimsingle := func(path string) string {
+	trimPath := func(path string) string {
 		t, err := filepath.Rel(root, path)
 		if err != nil {
 			return path
 		}
 		return t
 	}
-	trim := func(paths []string) {
+	trimAll := func(paths []string) {
 		for idx := range paths {
-			paths[idx] = trimsingle(paths[idx])
+			paths[idx] = trimPath(paths[idx])
 		}
 	}
 
@@ -277,7 +278,8 @@ func TestEnv_ScanRepos(t *testing.T) {
 				t.Errorf("Env.ScanRepos() error = %v, wantErr %v", err, wantErr)
 				return
 			}
-			trim(got)
+			trimAll(got)
+			util.ToOSPaths(tt.want)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Env.ScanRepos() = %v, want %v", got, tt.want)
 			}

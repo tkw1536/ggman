@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/tkw1536/ggman/testutil/mockenv"
@@ -12,6 +13,8 @@ func TestCommandLink(t *testing.T) {
 
 	mock.Register("https://github.com/hello/world.git")
 	externalRepo := mock.Install("https://github.com/hello/world.git", "..", "external")
+
+	escapedExternalRepo := fmt.Sprintf("%q", externalRepo)
 
 	tests := []struct {
 		name    string
@@ -28,7 +31,7 @@ func TestCommandLink(t *testing.T) {
 			[]string{"link", "."},
 
 			0,
-			"Linking \"${GGROOT github.com hello world}\" -> \"" + externalRepo + "\"\n",
+			"Linking \"${GGROOT github.com hello world}\" -> " + escapedExternalRepo + "\n",
 			"",
 		},
 

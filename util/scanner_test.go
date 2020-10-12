@@ -11,6 +11,7 @@ import (
 )
 
 func TestScan(t *testing.T) {
+
 	base, cleanup := testutil.TempDir()
 	defer cleanup()
 
@@ -31,29 +32,30 @@ func TestScan(t *testing.T) {
 		}
 	}
 
-	mkdir("a/aa/aaa")
-	mkdir("a/aa/aab")
-	mkdir("a/aa/aac")
-	mkdir("a/ab/aba")
-	mkdir("a/ab/abb")
-	mkdir("a/ab/abc")
-	mkdir("a/ac/aca")
-	mkdir("a/ac/acb")
-	mkdir("a/ac/acc")
+	mkdir(filepath.Join("a", "aa", "aaa"))
+	mkdir(filepath.Join("a", "aa", "aab"))
+	mkdir(filepath.Join("a", "aa", "aac"))
+	mkdir(filepath.Join("a", "ab", "aba"))
+	mkdir(filepath.Join("a", "ab", "abb"))
+	mkdir(filepath.Join("a", "ab", "abc"))
+	mkdir(filepath.Join("a", "ac", "aca"))
+	mkdir(filepath.Join("a", "ac", "acb"))
+	mkdir(filepath.Join("a", "ac", "acc"))
 
-	symlink("", "a/aa/linked")
+	symlink("", filepath.Join("a", "aa", "linked"))
 
-	// utility functions to trim off the prefix
-	trimsingle := func(path string) string {
+	// trimPath makes path relative to the root
+	trimPath := func(path string) string {
 		t, err := filepath.Rel(base, path)
 		if err != nil {
 			return path
 		}
 		return t
 	}
-	trim := func(paths []string) {
+	// trimAll makes all paths relative to the root
+	trimAll := func(paths []string) {
 		for idx := range paths {
-			paths[idx] = trimsingle(paths[idx])
+			paths[idx] = trimPath(paths[idx])
 		}
 	}
 
@@ -95,7 +97,7 @@ func TestScan(t *testing.T) {
 				Root:        base,
 				FollowLinks: false,
 				Filter: func(path string) (match, cont bool) {
-					return strings.Count(trimsingle(path), "/") == 2, true
+					return strings.Count(trimPath(path), string(filepath.Separator)) == 2, true
 				},
 			},
 			[]string{
@@ -119,7 +121,7 @@ func TestScan(t *testing.T) {
 				Root:        base,
 				FollowLinks: false,
 				Filter: func(path string) (match, cont bool) {
-					return true, trimsingle(path) != "a/ab"
+					return true, trimPath(path) != ToOSPath("a/ab")
 				},
 			},
 			[]string{
@@ -141,7 +143,7 @@ func TestScan(t *testing.T) {
 			"scan a/aa, don't follow symlinks",
 
 			ScanOptions{
-				Root:        filepath.Join(base, "a/aa"),
+				Root:        filepath.Join(base, "a", "aa"),
 				FollowLinks: false,
 			},
 			[]string{
@@ -156,7 +158,7 @@ func TestScan(t *testing.T) {
 			"scan a/aa, follow symlinks", // a/aa/linked links to the root
 
 			ScanOptions{
-				Root:        filepath.Join(base, "a/aa"),
+				Root:        filepath.Join(base, "a", "aa"),
 				FollowLinks: true,
 			},
 			[]string{
@@ -181,7 +183,8 @@ func TestScan(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := Scan(tt.options)
-			trim(got)
+			trimAll(got)
+			ToOSPaths(tt.want)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Scan() error = %v, wantErr %v", err, tt.wantErr)
 				return
