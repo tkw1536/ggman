@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"runtime"
 
 	"github.com/pkg/errors"
 
@@ -151,6 +152,14 @@ func (gg *gitgit) Init() (err error) {
 }
 
 func (gg gitgit) findgit() (git string, err error) {
+	if runtime.GOOS == "windows" {
+		return gg.findGitByExtension([]string{"exe"})
+	}
+	return gg.findGitByMode()
+}
+
+// findGitByMode finds git by finding a file named 'git' with executable flag set
+func (gg gitgit) findGitByMode() (git string, err error) {
 	// this code has been adapted from exec.LookPath in the standard library
 	// it allows using a more generic path variables
 	for _, git := range filepath.SplitList(gg.gitPath) {
@@ -164,6 +173,28 @@ func (gg gitgit) findgit() (git string, err error) {
 		}
 		if m := d.Mode(); !m.IsDir() && m&0111 != 0 {
 			return git, nil
+		}
+	}
+	return "", exec.ErrNotFound
+}
+
+// findGitByExtension finds the git executable by looking for a non-directory file named "git.extension" where extension is in ext
+func (gg gitgit) findGitByExtension(exts []string) (git string, err error) {
+	// this code has been adapted from exec.LookPath in the standard library
+	// it allows using a more generic path variables
+	for _, git := range filepath.SplitList(gg.gitPath) {
+		if git == "" { // unix shell behavior
+			git = "."
+		}
+		for _, ext := range exts {
+			git = filepath.Join(git, "git."+ext) // TODO: Case insensitive extensions
+			d, err := os.Stat(git)
+			if err != nil {
+				continue
+			}
+			if m := d.Mode(); !m.IsDir() {
+				return git, nil
+			}
 		}
 	}
 	return "", exec.ErrNotFound

@@ -39,6 +39,9 @@ func TestNewGitFromPlumbing(t *testing.T) {
 	if err := ioutil.WriteFile(filepath.Join(dir, "git"), nil, os.ModePerm&0x111); err != nil {
 		panic(err)
 	}
+	if err := ioutil.WriteFile(filepath.Join(dir, "git.exe"), nil, os.ModePerm&0x111); err != nil {
+		panic(err)
+	}
 
 	// path with git => gitgit
 	if _, isgitgit := NewGitFromPlumbing(nil, dir).Plumbing().(*gitgit); !isgitgit {
