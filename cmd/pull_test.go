@@ -41,7 +41,7 @@ func TestCommandPull(t *testing.T) {
 			[]string{"pull"},
 
 			0,
-			"Pulling \"" + clonePath + "\"\n",
+			"Pulling \"" + clonePath + "\"\nalready up-to-date\n",
 			"",
 		},
 	}

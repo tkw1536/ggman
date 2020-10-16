@@ -409,7 +409,7 @@ func (gogit) Fetch(stream ggman.IOStream, clonePath string, cache interface{}) (
 	for _, remote := range remotes {
 		// fetch and write out an 'already up-to-date'
 		err = remote.Fetch(&git.FetchOptions{Progress: stream.Stdout})
-		err = ignoreErrUpToDate(err)
+		err = ignoreErrUpToDate(stream, err)
 
 		// fail on other errors
 		if err != nil {
@@ -434,7 +434,7 @@ func (gogit) Pull(stream ggman.IOStream, clonePath string, cache interface{}) (e
 
 	// do a git pull, and ignore error already up-to-date
 	err = w.Pull(&git.PullOptions{Progress: stream.Stdout})
-	err = ignoreErrUpToDate(err)
+	err = ignoreErrUpToDate(stream, err)
 	if err != nil {
 		err = errors.Wrap(err, "Unable to pull")
 	}
@@ -457,9 +457,9 @@ func (gogit) ContainsBranch(clonePath string, cache interface{}, branch string) 
 	}
 }
 
-func ignoreErrUpToDate(err error) error {
+func ignoreErrUpToDate(stream ggman.IOStream, err error) error {
 	if err == git.NoErrAlreadyUpToDate {
-		os.Stdout.WriteString(err.Error() + "\n")
+		stream.StdoutWriteWrap(err.Error())
 		err = nil
 	}
 	return err

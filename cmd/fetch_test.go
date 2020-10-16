@@ -41,7 +41,7 @@ func TestCommandFetch(t *testing.T) {
 			[]string{"fetch"},
 
 			0,
-			"Fetching \"" + clonePath + "\"\n",
+			"Fetching \"" + clonePath + "\"\nalready up-to-date\n",
 			"",
 		},
 	}
