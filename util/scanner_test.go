@@ -1,6 +1,7 @@
 package util
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -208,7 +209,7 @@ func Test_IsDirectory(t *testing.T) {
 
 	// make a file
 	file := filepath.Join(dir, "file")
-	if _, err := os.Create(file); err != nil {
+	if err := ioutil.WriteFile(file, nil, os.ModePerm); err != nil {
 		panic(err)
 	}
 
