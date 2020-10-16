@@ -245,6 +245,8 @@ Alternatively, you can simply type `make install` from the source code to have i
 
 ### 1.7.0 (Upcoming)
 
+- improved windows support
+
 ### 1.6.0 (Released [Oct 4 2020](https://github.com/tkw1536/ggman/releases/tag/v1.6.0)Version 1.6.0)
 
 - rework, document and test new package structure
