@@ -13,6 +13,7 @@ package git
 
 import (
 	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/tkw1536/ggman"
@@ -169,8 +170,8 @@ func (impl *dfltGitWrapper) Clone(stream ggman.IOStream, remoteURI, clonePath st
 		return ErrCloneAlreadyExists
 	}
 
-	// make the directory to clone the repository into
-	if err := os.MkdirAll(clonePath, os.ModePerm); err != nil {
+	// make the parent directory to clone the repository into
+	if err := os.MkdirAll(filepath.Join(clonePath, ".."), os.ModePerm); err != nil {
 		return err
 	}
 

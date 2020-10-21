@@ -90,7 +90,7 @@ type Plumbing interface {
 	//
 	// remoteURI will be the uri of the remote repository.
 	// clonePath will be the path to a local folder where the repository should be cloned to.
-	// It is guaranteed to exist, and be empty.
+	// It's parent is guaranteed to exist.
 	//
 	// extraargs will be additional arguments, in the form of arguments of a 'git clone' command.
 	// When this implementation does not support arguments, it returns ErrArgumentsUnsupported whenever arguments is a list of length > 0.
