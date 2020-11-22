@@ -129,7 +129,7 @@ It takes an optional argument `--canonical` which, if provided, cause ggman to p
 
 To fetch data for all repositories, or to run git pull, use `ggman fetch` and `ggman pull` respectively. 
 
-### 'ggman clone' and 'ggman link'
+### 'ggman clone', 'ggman link' and `ggman relocate`
 
 To clone a new repoistory into the respective location, use `ggman clone` with the name of the repository as the argument, for example:
 
@@ -160,6 +160,10 @@ ggman link $HOME/go/src/github.com/hello/world
 
 would link the repository in `$HOME/go/src/github.com/hello/world` into the right location. 
 Here, this corresponds to `$GGROOT/github.com/hello/world`. 
+
+Furthermore, sometimes a repository changes it's remote url and should be moved to the correct location. 
+For this purpose the `ggman relocate` command can be used. 
+It is called without arguments. 
 
 ### `ggman here`, `ggman web` and `ggman url`
 
@@ -245,6 +249,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 
 ### 1.7.0 (Upcoming)
 
+- add `ggman relocate` command to move repositories to where they should be
 - `ggman clone`: Only create parent folder to clone repository
 - improved windows support
 

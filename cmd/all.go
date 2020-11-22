@@ -44,6 +44,8 @@ func All() <-chan program.Command {
 		cmds <- URL
 
 		cmds <- FindBranch
+
+		cmds <- Relocate
 	}()
 
 	return cmds
