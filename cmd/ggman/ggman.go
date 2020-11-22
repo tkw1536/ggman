@@ -19,7 +19,7 @@
 //
 // Instead of running a subcommand, print version information to STDOUT and exit.
 //
-//  --for filter, -f filter
+//  --for filter, -f filter, --here, -H
 //
 // Apply FILTER to list of repositories. See Environment section below.
 //
@@ -46,6 +46,7 @@
 // Any subcommand that iterates over local repositories will recursively find all repositories inside the 'GGROOT' directory.
 // In some scenarios it is desired to filter the local list of repositories, e.g. applying only to those inside a specific namespace.
 // This can be achieved using the '--for' flag, which will match to any component of the url.
+// Furthermore the '--here' flag can also be used to match the repository in the current working directory.
 //
 // On 'github.com' and multiple other providers, it is usually possible to clone repositories via multiple urls.
 // For example, the repository at https://github.com/hello/world can be cloned using both

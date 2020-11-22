@@ -114,7 +114,7 @@ func TestOptions_Usage(t *testing.T) {
 			"command without args and allowing filter",
 			fields{Environment: env.Requirement{AllowsFilter: true}, UsageDescription: "usage"},
 			args{"a"},
-			"Usage: ggman [--for|-f FILTER] [global arguments] [--] a [--help|-h] [--bool|-b random] [--int dummy]\n\n   -h, --help\n       Print this usage message and exit.\n\n   -f, --for filter\n       Filter the list of repositories to apply command to by FILTER.\n\n   global arguments\n       Global arguments for ggman. See ggman --help for more information.\n\n   -b, --bool random\n       a random boolean argument with short\n\n   --int dummy\n       a dummy integer flag (default 12)\n\n   \n       usage",
+			"Usage: ggman [--for|-f FILTER] [--here|-H] [global arguments] [--] a [--help|-h] [--bool|-b random] [--int dummy]\n\n   -h, --help\n       Print this usage message and exit.\n\n   -f, --for filter\n       Filter the list of repositories to apply command to by FILTER.\n\n   -h, --here\n       Filter the list of repositories to apply command to only contain the current repository. \n\n   global arguments\n       Global arguments for ggman. See ggman --help for more information.\n\n   -b, --bool random\n       a random boolean argument with short\n\n   --int dummy\n       a dummy integer flag (default 12)\n\n   \n       usage",
 		},
 
 		{
@@ -155,7 +155,7 @@ func TestOptions_Usage(t *testing.T) {
 				UsageDescription: tt.fields.UsageDescription,
 			}
 			if gotUsage := opt.Usage(tt.args.name, flagset); gotUsage != tt.wantUsage {
-				t.Errorf("Options.Usage() = %v, want %v", gotUsage, tt.wantUsage)
+				t.Errorf("Options.Usage() = %q, want %q", gotUsage, tt.wantUsage)
 			}
 		})
 	}

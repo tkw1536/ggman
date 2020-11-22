@@ -11,13 +11,13 @@ func TestCommandLs(t *testing.T) {
 	defer cleanup()
 
 	mock.Register("https://github.com/hello/world.git")
-	mock.Install("https://github.com/hello/world.git", "github.com", "hello", "world")
+	ghHelloWorld := mock.Install("https://github.com/hello/world.git", "github.com", "hello", "world")
 
 	mock.Register("user@server.com/repo")
-	mock.Install("user@server.com/repo", "server.com", "user", "repo")
+	serverRepo := mock.Install("user@server.com/repo", "server.com", "user", "repo")
 
 	mock.Register("https://gitlab.com/hello/world.git")
-	mock.Install("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	glHelloWorld := mock.Install("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
 	tests := []struct {
 		name    string
@@ -79,6 +79,39 @@ func TestCommandLs(t *testing.T) {
 
 			1,
 			"",
+
+			"",
+		},
+
+		{
+			"list only current repository (github.com hello world)",
+			ghHelloWorld,
+			[]string{"--here", "ls"},
+
+			0,
+			"${GGROOT github.com hello world}\n",
+
+			"",
+		},
+
+		{
+			"list only current repository (server.com user repo)",
+			serverRepo,
+			[]string{"--here", "ls"},
+
+			0,
+			"${GGROOT server.com user repo}\n",
+
+			"",
+		},
+
+		{
+			"list only current repository (gitlab.com hello world)",
+			glHelloWorld,
+			[]string{"--here", "ls"},
+
+			0,
+			"${GGROOT gitlab.com hello world}\n",
 
 			"",
 		},

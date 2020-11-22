@@ -50,14 +50,14 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "display help",
 			args:       []string{"--help"},
-			wantStdout: "ggman version v0.0.0-unknown\n\nUsage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--] COMMAND [ARGS...]\n\n   -h, --help\n       Print this usage dialog and exit.\n\n   -v, --version\n       Print version message and exit.\n\n   -f, --for filter\n       Filter the list of repositories to apply command to by filter.\n\n   COMMAND [ARGS...]\n       Command to call. One of 'fake'. See individual commands for more help.\n\nggman is licensed under the terms of the MIT License. Use 'ggman license' to\nview licensing information.\n",
+			wantStdout: "ggman version v0.0.0-unknown\n\nUsage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\n   -h, --help\n       Print this usage dialog and exit.\n\n   -v, --version\n       Print version message and exit.\n\n   -f, --for filter\n       Filter the list of repositories to apply command to by filter.\n\n   -H, --here\n       Filter the list of repositories to apply command to only contain the\n       current repository.\n\n   COMMAND [ARGS...]\n       Command to call. One of 'fake'. See individual commands for more help.\n\nggman is licensed under the terms of the MIT License. Use 'ggman license' to\nview licensing information.\n",
 			wantCode:   0,
 		},
 
 		{
 			name:       "display help, don't run command",
 			args:       []string{"--help", "fake", "whatever"},
-			wantStdout: "ggman version v0.0.0-unknown\n\nUsage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--] COMMAND [ARGS...]\n\n   -h, --help\n       Print this usage dialog and exit.\n\n   -v, --version\n       Print version message and exit.\n\n   -f, --for filter\n       Filter the list of repositories to apply command to by filter.\n\n   COMMAND [ARGS...]\n       Command to call. One of 'fake'. See individual commands for more help.\n\nggman is licensed under the terms of the MIT License. Use 'ggman license' to\nview licensing information.\n",
+			wantStdout: "ggman version v0.0.0-unknown\n\nUsage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\n   -h, --help\n       Print this usage dialog and exit.\n\n   -v, --version\n       Print version message and exit.\n\n   -f, --for filter\n       Filter the list of repositories to apply command to by filter.\n\n   -H, --here\n       Filter the list of repositories to apply command to only contain the\n       current repository.\n\n   COMMAND [ARGS...]\n       Command to call. One of 'fake'. See individual commands for more help.\n\nggman is licensed under the terms of the MIT License. Use 'ggman license' to\nview licensing information.\n",
 			wantCode:   0,
 		},
 
@@ -152,6 +152,16 @@ func TestProgram_Main(t *testing.T) {
 			wantStdout: "Got filter: example\nGot arguments: hello,world\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
 			wantCode:   0,
+		},
+
+		{
+			name:       "'fake' with here",
+			args:       []string{"--here", "fake", "hello", "world"},
+			options:    Options{Environment: env.Requirement{AllowsFilter: true}, MinArgs: 1, MaxArgs: 2},
+			variables:  env.Variables{GGROOT: root},
+			wantStdout: "",
+			wantStderr: "Unable to initialize context: Unable to find current repository: Unable to\nresolve repository \".\"\n",
+			wantCode:   5,
 		},
 
 		{

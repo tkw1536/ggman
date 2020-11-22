@@ -13,7 +13,8 @@ import (
 type Arguments struct {
 	Command string
 
-	For env.Filter
+	For        env.Filter
+	filterHere bool // TODO: Don't mes
 
 	Help    bool
 	Version bool
@@ -127,6 +128,7 @@ func (args *Arguments) setflagsetGlobal() (fs *pflag.FlagSet) {
 	fs.BoolVarP(&args.Version, "version", "v", false, "Print version message and exit.")
 
 	fs.VarP(&args.For, "for", "f", "Filter the list of repositories to apply command to by `filter`.")
+	fs.BoolVarP(&args.filterHere, "here", "H", false, "Filter the list of repositories to apply command to only contain the current repository. ")
 
 	return fs
 }

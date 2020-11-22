@@ -42,7 +42,7 @@ For this purpose the `ggman ls` command lists all repositories that have been fo
 For easier integration into scripts, `ggman ls` supports an `--exit-code` argument. 
 If this is given, the command will return exit code 0 iff at least one repository is found, and exit code 1 otherwise. 
 
-### the 'for' keyword
+### the '--for' and '--here' arguments
 
 When running multi-repository operations, it is possible to limit the operations to a specific subset of repositories. 
 This is achieved by using the 'for' keyword along with a pattern. 
@@ -58,7 +58,10 @@ Examples for supported patterns can be found in this table:
 | `github.com/*/*`   | `git@github.com:hello/world.git`, `git@github.com:bye/world.git`    |
 | `github.com/hello` | `git@github.com:hello/world.git`, `git@github.com:hello/mars.git`   |
 
-Note that the `for` keyword also works for exact repository urls, e.g. `ggman --for 'https://github.com/tkw1536/GitManager' ls`. 
+Note that the `--for` argument also works for exact repository urls, e.g. `ggman --for 'https://github.com/tkw1536/GitManager' ls`. 
+
+In addition to the `--for` argument, the `--here` argument also works.
+It is a shortcut that is equivalent to calling `--for` with the remote of the repository located in the current working directory. 
 
 ### 'ggman comps' and 'ggman canon'
 
@@ -249,6 +252,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 
 ### 1.7.0 (Upcoming)
 
+- add `--here` flag as a convenience to filter the current repository
 - add `ggman relocate` command to move repositories to where they should be
 - `ggman clone`: Only create parent folder to clone repository
 - improved windows support

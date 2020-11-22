@@ -77,6 +77,7 @@ func (opt Options) Usage(name string, flagset *pflag.FlagSet) (usage string) {
 	// the for argument
 	if opt.Environment.AllowsFilter {
 		usage += " [--for|-f FILTER]"
+		usage += " [--here|-H]"
 	}
 
 	usage += " [global arguments] [--]"
@@ -115,9 +116,10 @@ func (opt Options) Usage(name string, flagset *pflag.FlagSet) (usage string) {
 	// start with the help argument
 	usage += fmt.Sprintf(usageTemplate, "-h, --help", "Print this usage message and exit.")
 
-	// contineu with the 'for' argument
+	// continue with the 'for' argument
 	if opt.Environment.AllowsFilter {
 		usage += fmt.Sprintf(usageTemplate, "-f, --for filter", "Filter the list of repositories to apply command to by FILTER.")
+		usage += fmt.Sprintf(usageTemplate, "-h, --here", "Filter the list of repositories to apply command to only contain the current repository. ")
 	}
 
 	usage += fmt.Sprintf(usageTemplate, "global arguments", "Global arguments for ggman. See ggman --help for more information.")

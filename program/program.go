@@ -91,6 +91,11 @@ var errProgramUnknownCommand = ggman.Error{
 
 // TODO: Move vars, plumbing and workdir into a shared struct or something
 
+var errInitContext = ggman.Error{
+	ExitCode: ggman.ExitInvalidEnvironment,
+	Message:  "Unable to initialize context: %s",
+}
+
 // Main is the entry point to this program.
 // When an error occurs, returns an error of type Error and writes the error to context.Stderr.
 func (p Program) Main(vars env.Variables, plumbing git.Plumbing, workdir string, argv []string) (err error) {
@@ -141,6 +146,11 @@ func (p Program) Main(vars env.Variables, plumbing git.Plumbing, workdir string,
 	}
 	if context.Env, err = env.NewEnv(cmdargs.options.Environment, vars, workdir, plumbing, cmdargs.For); err != nil {
 		return err
+	}
+
+	// initialize the context
+	if err := context.init(); err != nil {
+		return errInitContext.WithMessageF(err)
 	}
 
 	return command.Run(context)
