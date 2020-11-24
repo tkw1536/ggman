@@ -304,7 +304,7 @@ Alternatively, you can simply type `make install` from the source code to have i
 - `ggman link` now creates absolute symlinks instead of exactly echoing the path the user entered
 - Added a bash alias to the README
 
-### 1.1.0 (Released [Apr 11 2019](https://github.com/tkw1536/ggman/releases/edit/v1.1.0))
+### 1.1.0 (Released [Apr 11 2019](https://github.com/tkw1536/ggman/releases/tag/v1.1.0))
 
 - Use external `git clone` command when available and allow passing options to it
 - Added help command and better subcommand help behaviour
