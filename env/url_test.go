@@ -161,7 +161,6 @@ var benchComponentURLS = []URL{
 }
 
 func BenchmarkURL_Components(b *testing.B) {
-	// 7202
 	for i := 0; i < b.N; i++ {
 		benchComponentURLS[0].Components()
 		benchComponentURLS[1].Components()

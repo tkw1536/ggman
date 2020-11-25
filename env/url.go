@@ -112,11 +112,10 @@ func (url URL) Components() []string {
 	}
 
 	// Now prepend the hostname and user (unless it is 'git' or missing)
-	components := make([]string, 0, 2+len(parts))
+	components := make([]string, 1, 2+len(parts))
+	components[0] = url.HostName
 	if url.User != "" && url.User != "git" {
-		components = append(components, url.HostName, url.User)
-	} else {
-		components = append(components, url.HostName)
+		components = append(components, url.User)
 	}
 	return append(components, parts...)
 }
