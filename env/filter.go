@@ -1,129 +1,144 @@
 package env
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/danwakefield/fnmatch"
+	"github.com/tkw1536/ggman/util"
 )
 
-// Filter is a filter for an environment.
-// It satisifies the pflag Value interface.
-// A filter should only be created using the NewFilter method or by using the NoFilter variable.
-type Filter struct {
-	filter string
-
-	pattern []pattern
+// Filter is a predicate that matches repositories inside an environment.
+//
+// A filter is applied by recursively scanning the root folder for git repositories.
+// Each folder that is a repository will be passed to clonePath.
+//
+// Filter may also optionally implement FilterWithCandidates.
+type Filter interface {
+	// Matches checks if a repository at clonePath matches this filter.
+	// Root indicates the root of the environment.
+	Matches(root, clonePath string) bool
 }
 
-func (f Filter) String() string {
-	return f.filter
+// NoFilter is a special filter that matches every directory
+var NoFilter Filter = emptyFilter{}
+
+type emptyFilter struct{}
+
+func (emptyFilter) Matches(root, clonePath string) bool {
+	return true
 }
 
-// Set sets the value of this filter
-func (f *Filter) Set(value string) error {
-	components := ParseURL(value).Components()
-	pattern := make([]pattern, len(components))
-	for i, c := range components {
-		pattern[i] = newPattern(c)
+// FilterWithCandidates is a filter that in addition to being applied normally should also be applied to the provided candidates.
+type FilterWithCandidates interface {
+	Filter
+
+	// Candidates returns a list of folders that should be added regardless of their location.
+	// Paths in the return value may be assumed to exist, but may not be repositories.
+	// A FilterWithCandidates with a Candidates() function that returns a zero-length slice is equivalent to a regular filter.
+	Candidates() []string
+}
+
+// Candidates checks if Filter implements FilterWithCandidates and calls the Candidates() method when applicable.
+// When Filter does not implement FilterWithCandidates, returns nil
+func Candidates(f Filter) []string {
+	cFilter, isCFilter := f.(FilterWithCandidates)
+	if !isCFilter {
+		return nil
 	}
 
-	f.filter = value
-	f.pattern = pattern
-
-	return nil
+	return cFilter.Candidates()
 }
 
-// Type returns the type of this filter
-func (f Filter) Type() string {
-	return "filter"
+// PathFilter is a filter that always matches the provided paths.
+// It implements FilterWithCandidates.
+type PathFilter struct {
+	// Paths is the list of paths this filter should match.
+	// It is the callers responsibility to normalize paths accordingly.
+	Paths []string
 }
 
-// IsEmpty checks if the filter f includes all repositories
-func (f Filter) IsEmpty() bool {
-	return f.filter == "" || f.filter == "*"
+// Matches checks if a repository at clonePath matches this filter.
+// Root indicates the root of all repositories.
+func (pf PathFilter) Matches(root, clonePath string) bool {
+	return util.SliceContainsAny(pf.Paths, clonePath)
 }
 
-// NoFilter is the absence of a Filter.
-var NoFilter Filter
-
-// NewFilter creates a new filter from a string
-func NewFilter(input string) Filter {
-	f := &Filter{}
-	f.Set(input)
-	return *f
+// Candidates returns a list of folders that should be scanned regardless of their location.
+func (pf PathFilter) Candidates() []string {
+	return pf.Paths
 }
+
+// NewPatternFilter returns a new pattern filter with the appropriate value
+func NewPatternFilter(value string) (pat PatternFilter) {
+	pat.Set(value)
+	return
+}
+
+// PatternFilter is a Filter that matches both paths and URLs according to a pattern.
+// PatternFilter implements FilterValue
+type PatternFilter struct {
+	value   string
+	pattern util.SplitPattern
+}
+
+func (pat PatternFilter) String() string {
+	return pat.value
+}
+
+// Set sets the value of this filter.
+//
+// This function is untested because NewPatternFilter() is tested.
+func (pat *PatternFilter) Set(value string) {
+	pat.value = value
+	pat.pattern = util.NewSplitGlobPattern(value, func(s string) []string {
+		return ParseURL(s).Components()
+	})
+}
+
+var directoryUp string = ".." + string(os.PathSeparator)
 
 // Matches checks if this filter matches the repository at clonePath.
 // The caller may assume that there is a repository at clonePath.
-func (f Filter) Matches(root, clonePath string) bool {
-	if f.IsEmpty() { // this is neccessary with the current implementation
-		return true
-	}
+func (pat PatternFilter) Matches(root, clonePath string) bool {
 
 	relpath, err := filepath.Rel(root, clonePath)
-	if err != nil {
+	if err != nil || strings.HasPrefix(relpath, directoryUp) {
 		return false
 	}
-
-	return ParseURL(relpath).MatchesFilter(f)
+	return pat.pattern.Match(relpath)
 }
 
-// Matches checks if a URL matches a given filter.
-func (url URL) Matches(pattern string) bool {
-	filter := NewFilter(pattern)
-	if filter.IsEmpty() {
-		return true
-	}
-	return url.MatchesFilter(filter)
+// MatchesURL checks if this filter matches a url
+func (pat PatternFilter) MatchesURL(url URL) bool {
+	parts := strings.Join(url.Components(), string(os.PathSeparator))
+	return pat.pattern.Match(parts)
 }
 
-// MatchesFilter checks if a filter matches a pattern.
-func (url URL) MatchesFilter(filter Filter) bool {
-	components := url.Components()
+// DisjunctionFilter represents a filter that joins existing filters using an 'or' clause.
+type DisjunctionFilter struct {
+	Clauses []Filter
+}
 
-	last := len(components) - len(filter.pattern)
-outer:
-	for i := 0; i <= last; i++ {
-		for j, pattern := range filter.pattern {
-			if !pattern.Match(components[i+j]) {
-				continue outer
-			}
+// Matches checks if this filter matches any of the filters that were joined.
+func (or DisjunctionFilter) Matches(root, clonePath string) bool {
+	for _, f := range or.Clauses {
+		if f.Matches(root, clonePath) {
+			return true
 		}
-
-		return true
 	}
-
 	return false
 }
 
-// pattern represents a single component of a filter.
-type pattern interface {
-	Match(s string) bool
-}
+// Candidates returns the candidates of this filter
+func (or DisjunctionFilter) Candidates() []string {
 
-const patternExpensive = "*?\\["
-
-// newPattern makes a new pattern from a string
-func newPattern(s string) pattern {
-	if !strings.ContainsAny(s, patternExpensive) {
-		return cheappattern(s)
+	// gather a list of candidates
+	candidates := make([]string, 0, len(or.Clauses))
+	for _, clause := range or.Clauses { // most clauses will have exactly one candidate, hence len(or.Clauses) should be enough to never reallocate
+		candidates = append(candidates, Candidates(clause)...)
 	}
-	return exppattern(s)
-}
 
-// cheappattern is a pattern that does not contain any special characters
-// and can be evaluated by using string comparison operators.
-type cheappattern string
-
-func (p cheappattern) Match(s string) bool {
-	return strings.EqualFold(string(p), s)
-}
-
-// exppattern is a pattern that contains special characters that require it to be evaluated using
-// a call to fnamtch.
-type exppattern string
-
-func (p exppattern) Match(s string) bool {
-	return fnmatch.Match(string(p), s, fnmatch.FNM_CASEFOLD)
+	// remove duplicates from the result
+	return util.RemoveDuplicates(candidates)
 }

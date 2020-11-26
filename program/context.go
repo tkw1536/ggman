@@ -14,33 +14,30 @@ type Context struct {
 	CommandArguments
 }
 
-// init initializes this context and sets up additional variables
+// init initializes this context by setting up the environment according to the arguments
 func (c *Context) init() error {
-	if !c.filterHere {
-		return nil
+
+	// generate pattern filters for the "--for" arguments
+	clauses := make([]env.Filter, len(c.filterPatterns))
+	for i, pat := range c.filterPatterns {
+		clauses[i] = env.NewPatternFilter(pat)
 	}
 
-	if !c.options.Environment.AllowsFilter {
-		return errors.New("--here provided, but not allowed")
+	// generate a 'here' filter for the current repository
+	if c.filterHere {
+		repo, _, err := c.At(".")
+		if err != nil {
+			return errors.Wrap(err, "Unable to find current repository")
+		}
+
+		clauses = append(clauses, env.PathFilter{Paths: []string{repo}})
 	}
 
-	// find the current repository
-	repo, _, err := c.At(".")
-	if err != nil {
-		return errors.Wrap(err, "Unable to find current repository")
+	// only set the filter when we actually have something to filter by
+	if len(clauses) != 0 {
+		c.Filter = env.DisjunctionFilter{Clauses: clauses}
 	}
-
-	// get the remote
-	url, err := c.Git.GetRemote(repo)
-	if err != nil {
-		return errors.Wrap(err, "Unable to identify current repository")
-	}
-	if url == "" {
-		return errors.New("Current repository does not have a url and can not be filtered")
-	}
-
-	// and set it
-	return c.Env.Filter.Set(url)
+	return nil
 }
 
 // URLV returns the ith argument, parsed as a URL.

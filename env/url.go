@@ -164,8 +164,10 @@ func (url URL) Canonical(cspec string) (canonical string) {
 
 // CanonicalWith returns the canonical url given a set of lines
 func (url URL) CanonicalWith(lines CanFile) (canonical string) {
+	var pat PatternFilter
 	for _, line := range lines {
-		if url.Matches(line.Pattern) {
+		pat.Set(line.Pattern)
+		if pat.MatchesURL(url) {
 			return url.Canonical(line.Canonical)
 		}
 	}

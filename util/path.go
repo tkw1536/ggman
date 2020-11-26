@@ -25,11 +25,12 @@ func ToOSPath(path string) (result string) {
 }
 
 // ToOSPaths is like ToOSPath, but applies to each value in a slice or array.
-// ToOSPaths modifies the slice in-place.
+// ToOSPaths modifies the slice in-place and returns it for convenience.
 //
 // This function is untested.
-func ToOSPaths(paths []string) {
+func ToOSPaths(paths []string) []string {
 	for i := range paths {
 		paths[i] = ToOSPath(paths[i])
 	}
+	return paths
 }

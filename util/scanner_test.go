@@ -145,6 +145,26 @@ func TestScan(t *testing.T) {
 
 			ScanOptions{
 				Root:        filepath.Join(base, "a", "aa"),
+				ExtraRoots:  []string{filepath.Join(base, "a", "ac")},
+				FollowLinks: false,
+			},
+			[]string{
+				"a/aa",
+				"a/aa/aaa",
+				"a/aa/aab",
+				"a/aa/aac",
+				"a/ac",
+				"a/ac/aca",
+				"a/ac/acb",
+				"a/ac/acc",
+			},
+			false,
+		},
+		{
+			"scan a/aa and extra roots, don't follow links",
+
+			ScanOptions{
+				Root:        filepath.Join(base, "a", "aa"),
 				FollowLinks: false,
 			},
 			[]string{

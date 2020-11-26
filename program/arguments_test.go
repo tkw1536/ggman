@@ -19,33 +19,33 @@ func TestArguments_Parse(t *testing.T) {
 	}{
 		{"no arguments", args{[]string{}}, Arguments{}, errParseArgsNeedOneArgument},
 
-		{"command without arguments", args{[]string{"cmd"}}, Arguments{"cmd", env.NoFilter, false, false, false, []string{}, nil}, nil},
+		{"command without arguments", args{[]string{"cmd"}}, Arguments{Command: "cmd", Args: []string{}}, nil},
 
-		{"help with command (1)", args{[]string{"help", "cmd"}}, Arguments{"", env.NoFilter, false, true, false, []string{"cmd"}, nil}, nil},
-		{"help with command (2)", args{[]string{"--help", "cmd"}}, Arguments{"", env.NoFilter, false, true, false, []string{"cmd"}, nil}, nil},
-		{"help with command (3)", args{[]string{"-h", "cmd"}}, Arguments{"", env.NoFilter, false, true, false, []string{"cmd"}, nil}, nil},
+		{"help with command (1)", args{[]string{"help", "cmd"}}, Arguments{Help: true, Args: []string{"cmd"}}, nil},
+		{"help with command (2)", args{[]string{"--help", "cmd"}}, Arguments{Help: true, Args: []string{"cmd"}}, nil},
+		{"help with command (3)", args{[]string{"-h", "cmd"}}, Arguments{Help: true, Args: []string{"cmd"}}, nil},
 
-		{"help without command (1)", args{[]string{"help"}}, Arguments{"", env.NoFilter, false, true, false, []string{}, nil}, nil},
-		{"help without command (2)", args{[]string{"--help"}}, Arguments{"", env.NoFilter, false, true, false, []string{}, nil}, nil},
-		{"help without command (3)", args{[]string{"-h"}}, Arguments{"", env.NoFilter, false, true, false, []string{}, nil}, nil},
+		{"help without command (1)", args{[]string{"help"}}, Arguments{Help: true, Args: []string{}}, nil},
+		{"help without command (2)", args{[]string{"--help"}}, Arguments{Help: true, Args: []string{}}, nil},
+		{"help without command (3)", args{[]string{"-h"}}, Arguments{Help: true, Args: []string{}}, nil},
 
-		{"version with command (1)", args{[]string{"version", "cmd"}}, Arguments{"", env.NoFilter, false, false, true, []string{"cmd"}, nil}, nil},
-		{"version with command (2)", args{[]string{"--version", "cmd"}}, Arguments{"", env.NoFilter, false, false, true, []string{"cmd"}, nil}, nil},
-		{"version with command (3)", args{[]string{"-v", "cmd"}}, Arguments{"", env.NoFilter, false, false, true, []string{"cmd"}, nil}, nil},
+		{"version with command (1)", args{[]string{"version", "cmd"}}, Arguments{Version: true, Args: []string{"cmd"}}, nil},
+		{"version with command (2)", args{[]string{"--version", "cmd"}}, Arguments{Version: true, Args: []string{"cmd"}}, nil},
+		{"version with command (3)", args{[]string{"-v", "cmd"}}, Arguments{Version: true, Args: []string{"cmd"}}, nil},
 
-		{"version without command (1)", args{[]string{"version"}}, Arguments{"", env.NoFilter, false, false, true, []string{}, nil}, nil},
-		{"version without command (2)", args{[]string{"--version"}}, Arguments{"", env.NoFilter, false, false, true, []string{}, nil}, nil},
-		{"version without command (3)", args{[]string{"-v"}}, Arguments{"", env.NoFilter, false, false, true, []string{}, nil}, nil},
+		{"version without command (1)", args{[]string{"version"}}, Arguments{Version: true, Args: []string{}}, nil},
+		{"version without command (2)", args{[]string{"--version"}}, Arguments{Version: true, Args: []string{}}, nil},
+		{"version without command (3)", args{[]string{"-v"}}, Arguments{Version: true, Args: []string{}}, nil},
 
-		{"command with arguments", args{[]string{"cmd", "a1", "a2"}}, Arguments{"cmd", env.NoFilter, false, false, false, []string{"a1", "a2"}, nil}, nil},
+		{"command with arguments", args{[]string{"cmd", "a1", "a2"}}, Arguments{Command: "cmd", Args: []string{"a1", "a2"}}, nil},
 
-		{"command with help (1)", args{[]string{"cmd", "help", "a1"}}, Arguments{"cmd", env.NoFilter, false, false, false, []string{"help", "a1"}, nil}, nil},
-		{"command with help (2)", args{[]string{"cmd", "--help", "a1"}}, Arguments{"cmd", env.NoFilter, false, false, false, []string{"--help", "a1"}, nil}, nil},
-		{"command with help (3)", args{[]string{"cmd", "-h", "a1"}}, Arguments{"cmd", env.NoFilter, false, false, false, []string{"-h", "a1"}, nil}, nil},
+		{"command with help (1)", args{[]string{"cmd", "help", "a1"}}, Arguments{Command: "cmd", Args: []string{"help", "a1"}}, nil},
+		{"command with help (2)", args{[]string{"cmd", "--help", "a1"}}, Arguments{Command: "cmd", Args: []string{"--help", "a1"}}, nil},
+		{"command with help (3)", args{[]string{"cmd", "-h", "a1"}}, Arguments{Command: "cmd", Args: []string{"-h", "a1"}}, nil},
 
-		{"command with version (1)", args{[]string{"cmd", "version", "a1"}}, Arguments{"cmd", env.NoFilter, false, false, false, []string{"version", "a1"}, nil}, nil},
-		{"command with version (2)", args{[]string{"cmd", "--version", "a1"}}, Arguments{"cmd", env.NoFilter, false, false, false, []string{"--version", "a1"}, nil}, nil},
-		{"command with version (3)", args{[]string{"cmd", "-v", "a1"}}, Arguments{"cmd", env.NoFilter, false, false, false, []string{"-v", "a1"}, nil}, nil},
+		{"command with version (1)", args{[]string{"cmd", "version", "a1"}}, Arguments{Command: "cmd", Args: []string{"version", "a1"}}, nil},
+		{"command with version (2)", args{[]string{"cmd", "--version", "a1"}}, Arguments{Command: "cmd", Args: []string{"--version", "a1"}}, nil},
+		{"command with version (3)", args{[]string{"cmd", "-v", "a1"}}, Arguments{Command: "cmd", Args: []string{"-v", "a1"}}, nil},
 
 		{"only a for (1)", args{[]string{"for"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
 		{"only a for (2)", args{[]string{"--for"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
@@ -58,19 +58,19 @@ func TestArguments_Parse(t *testing.T) {
 		{"for without command (2)", args{[]string{"--for", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
 		{"for without command (3)", args{[]string{"-f", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
 
-		{"for with command (1)", args{[]string{"for", "match", "cmd"}}, Arguments{"cmd", env.NewFilter("match"), false, false, false, []string{}, nil}, nil},
-		{"for with command (2)", args{[]string{"--for", "match", "cmd"}}, Arguments{"cmd", env.NewFilter("match"), false, false, false, []string{}, nil}, nil},
-		{"for with command (3)", args{[]string{"-f", "match", "cmd"}}, Arguments{"cmd", env.NewFilter("match"), false, false, false, []string{}, nil}, nil},
+		{"for with command (1)", args{[]string{"for", "match", "cmd"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{}}, nil},
+		{"for with command (2)", args{[]string{"--for", "match", "cmd"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{}}, nil},
+		{"for with command (3)", args{[]string{"-f", "match", "cmd"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{}}, nil},
 
-		{"here with command (1)", args{[]string{"--here", "cmd"}}, Arguments{"cmd", env.NoFilter, true, false, false, []string{}, nil}, nil},
-		{"here with command (2)", args{[]string{"-H", "cmd"}}, Arguments{"cmd", env.NoFilter, true, false, false, []string{}, nil}, nil},
+		{"here with command (1)", args{[]string{"--here", "cmd"}}, Arguments{Command: "cmd", filterHere: true, Args: []string{}}, nil},
+		{"here with command (2)", args{[]string{"-H", "cmd"}}, Arguments{Command: "cmd", filterHere: true, Args: []string{}}, nil},
 
-		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, Arguments{"cmd", env.NewFilter("match"), false, false, false, []string{"a1", "a2"}, nil}, nil},
-		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, Arguments{"cmd", env.NewFilter("match"), false, false, false, []string{"a1", "a2"}, nil}, nil},
-		{"for with command and arguments (3)", args{[]string{"-f", "match", "cmd", "a1", "a2"}}, Arguments{"cmd", env.NewFilter("match"), false, false, false, []string{"a1", "a2"}, nil}, nil},
+		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
+		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
+		{"for with command and arguments (3)", args{[]string{"-f", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
 
-		{"here with command and arguments (1)", args{[]string{"--here", "cmd", "a1", "a2"}}, Arguments{"cmd", env.NoFilter, true, false, false, []string{"a1", "a2"}, nil}, nil},
-		{"here with command and arguments (2)", args{[]string{"-H", "cmd", "a1", "a2"}}, Arguments{"cmd", env.NoFilter, true, false, false, []string{"a1", "a2"}, nil}, nil},
+		{"here with command and arguments (1)", args{[]string{"--here", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", filterHere: true, Args: []string{"a1", "a2"}}, nil},
+		{"here with command and arguments (2)", args{[]string{"-H", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", filterHere: true, Args: []string{"a1", "a2"}}, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -233,26 +233,26 @@ func TestCommandArguments_checkFilterArgument(t *testing.T) {
 		{
 			"for not allowed, for not given",
 			Options{Environment: env.Requirement{AllowsFilter: false}},
-			Arguments{Command: "example", For: env.NoFilter},
+			Arguments{Command: "example"},
 			"",
 		},
 		{
 			"for not allowed, for given",
 			Options{Environment: env.Requirement{AllowsFilter: false}},
-			Arguments{Command: "example", For: env.NewFilter("pattern")},
+			Arguments{Command: "example", filterPatterns: []string{"pattern"}},
 			"Wrong number of arguments: 'example' takes no 'for' argument. ",
 		},
 
 		{
 			"for allowed, for not given",
 			Options{Environment: env.Requirement{AllowsFilter: true}},
-			Arguments{Command: "example", For: env.NoFilter},
+			Arguments{Command: "example", filterPatterns: nil},
 			"",
 		},
 		{
 			"for allowed, for given",
 			Options{Environment: env.Requirement{AllowsFilter: true}},
-			Arguments{Command: "example", For: env.NewFilter("pattern")},
+			Arguments{Command: "example", filterPatterns: []string{"pattern"}},
 			"",
 		},
 	}

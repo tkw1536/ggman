@@ -3,7 +3,6 @@ package program
 import (
 	"github.com/spf13/pflag"
 	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/util"
 )
 
@@ -13,8 +12,8 @@ import (
 type Arguments struct {
 	Command string
 
-	For        env.Filter
-	filterHere bool // TODO: Don't mes
+	filterPatterns []string
+	filterHere     bool
 
 	Help    bool
 	Version bool
@@ -70,7 +69,7 @@ func (args *Arguments) Parse(argv []string) error {
 		switch {
 		case args.Help || args.Version:
 			return nil
-		case !args.For.IsEmpty():
+		case len(args.filterPatterns) > 0:
 			return errParseArgsNeedTwoAfterFor
 		default:
 			return errParseArgsNeedOneArgument
@@ -104,7 +103,7 @@ func (args *Arguments) Parse(argv []string) error {
 		if len(args.Args) < 2 {
 			return errParseArgsNeedTwoAfterFor
 		}
-		args.For.Set(args.Args[0])
+		args.filterPatterns = append(args.filterPatterns, args.Args[0])
 		args.Command = args.Args[1]
 		args.Args = args.Args[2:]
 	}
@@ -127,7 +126,7 @@ func (args *Arguments) setflagsetGlobal() (fs *pflag.FlagSet) {
 	fs.BoolVarP(&args.Help, "help", "h", false, "Print this usage dialog and exit.")
 	fs.BoolVarP(&args.Version, "version", "v", false, "Print version message and exit.")
 
-	fs.VarP(&args.For, "for", "f", "Filter the list of repositories to apply command to by `filter`.")
+	fs.StringSliceVarP(&args.filterPatterns, "for", "f", nil, "Filter the list of repositories to apply command to by `filter`.")
 	fs.BoolVarP(&args.filterHere, "here", "H", false, "Filter the list of repositories to apply command to only contain the current repository. ")
 
 	return fs
@@ -272,6 +271,11 @@ var errParseNoFor = ggman.Error{
 	Message:  "Wrong number of arguments: '%s' takes no 'for' argument. ",
 }
 
+var errParseNoHere = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "Wrong number of arguments: '%s' takes no '--here' argument. ",
+}
+
 // checkFilterArgument checks that if a 'for' argument is not allowed it is not passed.
 // It expects args.For to be set appropriatly
 //
@@ -281,8 +285,12 @@ func (args CommandArguments) checkFilterArgument() error {
 		return nil
 	}
 
-	if !args.For.IsEmpty() {
+	if len(args.filterPatterns) > 0 {
 		return errParseNoFor.WithMessageF(args.Command)
+	}
+
+	if args.filterHere {
+		return errParseNoHere.WithMessageF(args.Command)
 	}
 
 	return nil

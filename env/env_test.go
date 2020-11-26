@@ -270,7 +270,7 @@ func TestEnv_ScanRepos(t *testing.T) {
 				Root: root,
 				Git:  git.NewGitFromPlumbing(nil, ""),
 
-				Filter: NewFilter(tt.Filter),
+				Filter: NewPatternFilter(tt.Filter),
 			}
 			got, err := env.ScanRepos(root)
 			wantErr := false

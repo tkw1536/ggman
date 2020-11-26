@@ -250,7 +250,9 @@ Alternatively, you can simply type `make install` from the source code to have i
 
 ## Changelog
 
-### 1.8.0 (Upcoming)
+### 1.7.1 (Upcoming)
+
+- rewrite `--here` and `--for` filter flags
 
 ### 1.7.0 (Released [Nov 22 2020](https://github.com/tkw1536/ggman/releases/tag/v1.7.0))
 

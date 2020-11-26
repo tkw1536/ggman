@@ -69,11 +69,11 @@ type Requirement struct {
 // If r.AllowsFilter is true, a filter may be passed via the filter argument.
 //
 // This function is untested.
-func NewEnv(r Requirement, vars Variables, workdir string, plumbing git.Plumbing, filter Filter) (Env, error) {
+func NewEnv(r Requirement, vars Variables, workdir string, plumbing git.Plumbing) (Env, error) {
 	env := &Env{
 		Git:     git.NewGitFromPlumbing(plumbing, vars.PATH),
 		Vars:    vars,
-		Filter:  filter,
+		Filter:  NoFilter,
 		Workdir: workdir,
 	}
 
@@ -307,8 +307,19 @@ func (env Env) ScanRepos(folder string) ([]string, error) {
 		}
 	}
 
+	// grab extra candidates from the filter
+	extraRoots := Candidates(env.Filter)
+	n := 0
+	for _, path := range extraRoots {
+		if env.Git.IsRepositoryQuick(path) {
+			extraRoots[n] = path
+			n++
+		}
+	}
+
 	return util.Scan(util.ScanOptions{
-		Root: folder,
+		Root:       folder,
+		ExtraRoots: extraRoots,
 
 		Filter: func(path string) (match, cont bool) {
 			if env.Git.IsRepositoryQuick(path) {

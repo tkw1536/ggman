@@ -191,7 +191,14 @@ func (f flagUsage) Description() string {
 //
 // This function has been adapted from flag.isZeroValue.
 // This function is untested.
-func (f flagUsage) isZeroValue() bool {
+func (f flagUsage) isZeroValue() (res bool) {
+	defer func() {
+		if recover() != nil {
+			// if we can't determine pretend we have the default value
+			// so that we can surpress it in the help dialog
+			res = true
+		}
+	}()
 	// Build a zero value of the flag's Value type, and see if the
 	// result of calling its String method equals the value passed in.
 	// This works unless the Value type is itself an interface type.

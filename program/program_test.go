@@ -228,7 +228,7 @@ func (p programFakeCommandT) Options(*pflag.FlagSet) Options {
 }
 func (programFakeCommandT) AfterParse() error { return nil }
 func (programFakeCommandT) Run(context Context) error {
-	context.Stdout.Write([]byte("Got filter: " + context.Filter.String()))
+	context.Stdout.Write([]byte("Got filter: " + strings.Join(context.filterPatterns, ",")))
 	context.Stdout.Write([]byte("\nGot arguments: " + strings.Join(context.Args, ",")))
 	context.Stdout.Write([]byte("\nwrite to stdout\n"))
 	context.Stderr.Write([]byte("write to stderr\n"))

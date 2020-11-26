@@ -140,11 +140,11 @@ func (p Program) Main(vars env.Variables, plumbing git.Plumbing, workdir string,
 	}
 
 	// create a new context and make an environment for it
-	context := Context{
+	context := &Context{
 		IOStream:         p.IOStream,
 		CommandArguments: *cmdargs,
 	}
-	if context.Env, err = env.NewEnv(cmdargs.options.Environment, vars, workdir, plumbing, cmdargs.For); err != nil {
+	if context.Env, err = env.NewEnv(cmdargs.options.Environment, vars, workdir, plumbing); err != nil {
 		return err
 	}
 
@@ -153,7 +153,7 @@ func (p Program) Main(vars env.Variables, plumbing git.Plumbing, workdir string,
 		return errInitContext.WithMessageF(err)
 	}
 
-	return command.Run(context)
+	return command.Run(*context)
 }
 
 const stringVersion = "ggman version %s, built %s"

@@ -104,7 +104,6 @@ func TestCommandLs(t *testing.T) {
 
 			"",
 		},
-
 		{
 			"list only current repository (gitlab.com hello world)",
 			glHelloWorld,

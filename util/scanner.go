@@ -15,6 +15,10 @@ type ScanOptions struct {
 	// Root is the root folder to scan
 	Root string
 
+	// ExtraRoots are extra root folders to scan on top of root.
+	// These may be nil.
+	ExtraRoots []string
+
 	// Filter is a caller-settable function that determines if a directory should be accepted.
 	// The filter function returns a pair of booleans match and bool.
 	// match indiciates that path should be returned in the array from Scan().
@@ -96,6 +100,12 @@ func (s *Scanner) Scan() ([]string, error) {
 	s.wg.Add(1)
 	go s.scan(s.Root)
 
+	// scan all the extra roots
+	s.wg.Add(len(s.ExtraRoots))
+	for _, root := range s.ExtraRoots {
+		go s.scan(root)
+	}
+
 	// start receiving results, sort them afterwards.
 	// one could sort while inserting, but as the order is random
 	// this would result in a lot more copy operations.
@@ -143,11 +153,11 @@ func (s *Scanner) scan(path string) {
 			}
 			return
 		}
+	}
 
-		// if we already recorded this folder, return.
-		if s.record.Record(path) {
-			return
-		}
+	// if we already recorded this folder, return.
+	if s.record.Record(path) {
+		return
 	}
 
 	// execute the filter and act on it
