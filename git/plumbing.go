@@ -239,7 +239,11 @@ func (gogit) IsRepositoryUnsafe(localPath string) bool {
 
 	// check that it exists and is a folder
 	s, err := os.Stat(gitPath)
-	return !os.IsNotExist(err) && s.Mode().IsDir()
+	isNotNotExist := !os.IsNotExist(err)
+	if err != nil && isNotNotExist {
+		return false
+	}
+	return isNotNotExist && s.Mode().IsDir()
 }
 
 func (gogit) GetHeadRef(clonePath string, repoObject interface{}) (string, error) {
