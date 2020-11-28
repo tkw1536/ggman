@@ -154,14 +154,27 @@ type TestingT interface {
 	Errorf(format string, args ...interface{})
 }
 
-// AssertOutput asserts that the standard error or output returned by Run() is equal to want.
-// If this is not the case, calls TestingT.Errorf().
+// AssertOutput asserts that the standard error or output returned by Run() is equal to one of wants.
+// If this is not the case, calls TestingT.Errorf() with an error message relating to the last want.
 //
 // For consistency across runs, strings of the form `${GGROOT a b c}` in want are resolved into an absolute path.
 // Furthermore when the character preceeding the $ is a '"', additionally escapes the string.
 //
 // Context should be aditional information to be prefixed for the error message.
-func (mock *MockEnv) AssertOutput(t TestingT, got, want, prefix string) {
+func (mock *MockEnv) AssertOutput(t TestingT, prefix, got string, wants ...string) {
+	var ok bool
+	var lastWant string
+	for _, want := range wants {
+		ok, lastWant = mock.isOutputSingle(got, want)
+		if ok {
+			return
+		}
+	}
+	t.Errorf("%s got = %q, want = %q", prefix, got, lastWant)
+}
+
+// isOutputSingle normalizes want and checks if got = want.
+func (mock *MockEnv) isOutputSingle(got, want string) (ok bool, normalizedWant string) {
 	want = regexGGROOT.ReplaceAllStringFunc(want, func(s string) string {
 		// extract the first character, actual characters, and the last character
 		first := string(s[0])
@@ -185,7 +198,5 @@ func (mock *MockEnv) AssertOutput(t TestingT, got, want, prefix string) {
 		}
 		return first + actual + last
 	})
-	if got != want {
-		t.Errorf("%s got = %q, want = %q", prefix, got, want)
-	}
+	return got == want, want
 }

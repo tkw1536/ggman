@@ -27,9 +27,9 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 		localRoot string
 	}
 	type args struct {
-		got    string
-		want   string
 		prefix string
+		got    string
+		wants  []string
 	}
 	tests := []struct {
 		name        string
@@ -37,16 +37,20 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 		args        args
 		wantMessage string
 	}{
-		{"no replacement equal", fields{util.ToOSPath("/root/")}, args{"example", "example", "logprefix"}, ""},
-		{"no replacement not equal", fields{util.ToOSPath("/root/")}, args{"example", "example2", "logprefix"}, "logprefix got = \"example\", want = \"example2\""},
+		{"no replacement equal", fields{util.ToOSPath("/root/")}, args{"logprefix", "example", []string{"example"}}, ""},
+		{"no replacement not equal", fields{util.ToOSPath("/root/")}, args{"logprefix", "example", []string{"example2"}}, "logprefix got = \"example\", want = \"example2\""},
 
-		{"replace only ggroot ok", fields{util.ToOSPath("/root/")}, args{"prefix " + util.ToOSPath("/root") + " suffix", "prefix ${GGROOT} suffix", "logprefix"}, ""},
-		{"replace only ggroot not ok", fields{util.ToOSPath("/root/")}, args{"prefix " + util.ToOSPath("/root") + " suffix", "prefix ${GGROOT}/sub suffix", "logprefix"}, fmt.Sprintf("logprefix got = %q, want = %q", "prefix "+util.ToOSPath("/root")+" suffix", "prefix "+util.ToOSPath("/root")+"/sub suffix")},
+		{"replace only ggroot ok", fields{util.ToOSPath("/root/")}, args{"logprefix", "prefix " + util.ToOSPath("/root") + " suffix", []string{"prefix ${GGROOT} suffix"}}, ""},
+		{"replace only ggroot not ok", fields{util.ToOSPath("/root/")}, args{"logprefix", "prefix " + util.ToOSPath("/root") + " suffix", []string{"prefix ${GGROOT}/sub suffix"}}, fmt.Sprintf("logprefix got = %q, want = %q", "prefix "+util.ToOSPath("/root")+" suffix", "prefix "+util.ToOSPath("/root")+"/sub suffix")},
 
-		{"replace full path ok", fields{util.ToOSPath("/root/")}, args{"prefix " + util.ToOSPath("/root/a/b") + " suffix", "prefix ${GGROOT a b} suffix", "logprefix"}, ""},
-		{"replace full path not ok", fields{util.ToOSPath("/root/")}, args{"prefix " + util.ToOSPath("/root") + " suffix", "prefix ${GGROOT a b} suffix", "logprefix"}, fmt.Sprintf("logprefix got = %q, want = %q", "prefix "+util.ToOSPath("/root")+" suffix", "prefix "+util.ToOSPath("/root/a/b")+" suffix")},
+		{"replace full path ok", fields{util.ToOSPath("/root/")}, args{"logprefix", "prefix " + util.ToOSPath("/root/a/b") + " suffix", []string{"prefix ${GGROOT a b} suffix"}}, ""},
+		{"replace full path not ok", fields{util.ToOSPath("/root/")}, args{"logprefix", "prefix " + util.ToOSPath("/root") + " suffix", []string{"prefix ${GGROOT a b} suffix"}}, fmt.Sprintf("logprefix got = %q, want = %q", "prefix "+util.ToOSPath("/root")+" suffix", "prefix "+util.ToOSPath("/root/a/b")+" suffix")},
 
-		{"escape path with quotes", fields{util.ToOSPath("/root/")}, args{fmt.Sprintf("%q", util.ToOSPath("/root")), "\"${GGROOT}\"", "logprefix"}, ""},
+		{"escape path with quotes", fields{util.ToOSPath("/root/")}, args{"logprefix", fmt.Sprintf("%q", util.ToOSPath("/root")), []string{"\"${GGROOT}\""}}, ""},
+
+		{"equal to first want is ok", fields{util.ToOSPath("/root/")}, args{"logprefix", "first", []string{"first", "last"}}, ""},
+		{"equal to last want is ok", fields{util.ToOSPath("/root/")}, args{"logprefix", "last", []string{"first", "last"}}, ""},
+		{"not equal to any wants shows last error", fields{util.ToOSPath("/root/")}, args{"logprefix", "neither", []string{"first error", "${GGROOT last}"}}, fmt.Sprintf("logprefix got = %q, want = %q", "neither", util.ToOSPath("/root/last"))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -55,7 +59,7 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 			}
 
 			var r recordingT
-			mock.AssertOutput(&r, tt.args.got, tt.args.want, tt.args.prefix)
+			mock.AssertOutput(&r, tt.args.prefix, tt.args.got, tt.args.wants...)
 
 			if tt.wantMessage != r.message {
 				t.Errorf("mock.AssertOutput() message = %q, want = %q", r.message, tt.wantMessage)

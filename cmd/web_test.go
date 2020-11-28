@@ -124,8 +124,8 @@ func TestCommandURL(t *testing.T) {
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
-			mock.AssertOutput(t, stdout, tt.wantStdout, "Stdout")
-			mock.AssertOutput(t, stderr, tt.wantStderr, "Stderr")
+			mock.AssertOutput(t, "Stdout", stdout, tt.wantStdout)
+			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
 	}
 }
