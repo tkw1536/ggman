@@ -138,7 +138,11 @@ func (mock *MockEnv) Run(command program.Command, workdir string, stdin string, 
 	fakeggman.Register(program.CloneCommand(command))
 
 	// run the code
-	err := ggman.AsError(fakeggman.Main(mock.vars, mock.plumbing, workdir, argv))
+	err := ggman.AsError(fakeggman.Main(env.EnvironmentParameters{
+		Variables: mock.vars,
+		Plumbing:  mock.plumbing,
+		Workdir:   workdir,
+	}, argv))
 	return uint8(err.ExitCode), stdoutBuffer.String(), stderrBuffer.String()
 }
 

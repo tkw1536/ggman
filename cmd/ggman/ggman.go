@@ -100,7 +100,11 @@ func main() {
 		pgrm.Register(c)
 	}
 
-	err := ggman.AsError(pgrm.Main(env.ReadVariables(), nil, "", os.Args[1:]))
+	err := ggman.AsError(pgrm.Main(env.EnvironmentParameters{
+		Variables: env.ReadVariables(),
+		Plumbing:  nil,
+		Workdir:   "",
+	}, os.Args[1:]))
 	err.Return()
 }
 

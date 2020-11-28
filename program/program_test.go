@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/testutil"
 )
 
@@ -192,7 +193,11 @@ func TestProgram_Main(t *testing.T) {
 			program.Register(fake)
 
 			// run the program
-			ret := ggman.AsError(program.Main(tt.variables, nil, "", tt.args))
+			ret := ggman.AsError(program.Main(env.EnvironmentParameters{
+				Variables: tt.variables,
+				Plumbing:  git.NewPlumbing(),
+				Workdir:   "",
+			}, tt.args))
 
 			// check all the error values
 			gotCode := uint8(ret.ExitCode)

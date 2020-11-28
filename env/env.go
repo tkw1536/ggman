@@ -44,6 +44,13 @@ type Env struct {
 	CanFile CanFile
 }
 
+// EnvironmentParameters represent additional parameters to create a new environment.
+type EnvironmentParameters struct {
+	Variables
+	Workdir  string
+	Plumbing git.Plumbing
+}
+
 // Requirement represents a set of requirements on the Environment.
 type Requirement struct {
 	// Does the environment require a root directory?
@@ -69,12 +76,12 @@ type Requirement struct {
 // If r.AllowsFilter is true, a filter may be passed via the filter argument.
 //
 // This function is untested.
-func NewEnv(r Requirement, vars Variables, workdir string, plumbing git.Plumbing) (Env, error) {
+func NewEnv(r Requirement, params EnvironmentParameters) (Env, error) {
 	env := &Env{
-		Git:     git.NewGitFromPlumbing(plumbing, vars.PATH),
-		Vars:    vars,
+		Git:     git.NewGitFromPlumbing(params.Plumbing, params.PATH),
+		Vars:    params.Variables,
 		Filter:  NoFilter,
-		Workdir: workdir,
+		Workdir: params.Workdir,
 	}
 
 	if r.NeedsRoot || r.AllowsFilter { // AllowsFilter implies NeedsRoot
