@@ -316,6 +316,7 @@ func (env Env) ScanRepos(folder string) ([]string, error) {
 			n++
 		}
 	}
+	extraRoots = extraRoots[:n]
 
 	return util.Scan(util.ScanOptions{
 		Root:       folder,
