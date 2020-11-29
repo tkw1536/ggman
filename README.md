@@ -5,23 +5,113 @@
 A golang tool that can manage all your git repositories. 
 Originally a rewrite of [GitManager](https://github.com/tkw1536/GitManager), but has diverged. 
 
+## Why ggman?
+
+When you only have a couple of git repositories that you work on it is perfectly feasible to manage them by using `git clone`, `git pull` and friends. 
+However once the number of repositories grows beyond a small number this can become tedious:
+
+- It is hard to find which folder a repository has been cloned to
+- Getting an overview of what is cloned and what is not is hard
+- It's not easily possible to perform actions on more than one repos at once, e.g. `git pull`
+
+This is the problem `ggman` is designed to solve. 
+It allows one to:
+
+- Maintain and expand a local directory structure of multiple repositories
+- Run actions (such as `git clone`, `git pull`) on groups of repositories
+
+
+## Setting up and using 'ggman'
+
+Setting up ggman consists of two steps:
+
+1. Getting the 'ggman' binary
+2. Configuring the installation
+
+### getting the `ggman` binary
+
+To get `ggman` you have three options:
+
+1. Build it yourself
+To build `ggman` yourself, you need [`go`](https://golang.org) 1.9 or newer along with `make` installed on your machine. 
+After cloning this repository, you can then simply type `make` and executables will be generated inside the `dist/` directory. 
+
+2. Download a pre-built binary. 
+You can download a pre-built binary from the [releases page](https://github.com/tkw1536/ggman/releases/latest) on GitHub. 
+This page includes releases for Linux, Mac OS X and Windows. 
+Note that older binaries were compressed with [`upx`](https://upx.github.io) in order to decrease executable size. 
+
+After obtaining the binary (through either of the two means), simply place it in your `$PATH`. 
+Alternatively, you can simply type `make install` from the source code to have it installed directly. 
+`ggman` does not depend on any external software (although having `git` in `$PATH` allows for passing through arguments to `clone`). 
+
+### configuring `ggman`
+
+ggman is easy to configure. 
+
+It manages all git repositories inside a given root directory, and automatically sets up new repositories relative to the URLs they are cloned from. 
+This root folder defaults to `~/Projects` but can be customized using the `$GGROOT` environment variable. 
+
+Once the GGROOT environment variable is set up, ggman is ready to be used. 
+
+### first steps
+
+To validate that the configuration is correct, you can list all repositories that ggman detects.
+To do this type:
+
+```
+ggman ls
+```
+
+If you want to find a specific installed repository you can provide a `--for` argument.
+For example:
+
+```
+ggman --for https://github.com/tkw1536/ggman ls
+```
+
+will print the location of a particular repository.
+
+To clone a new repository into the root directory, you can use the `ggman clone`.
+For example:
+
+```
+ggman clone https://github.com/tkw1536/ggman
+```
+
+This will clone the repository https://github.com/tkw1536/ggman to the folder `$GGROOT/tkw1536/ggman` using ssh keys. 
+
+If you want to move all existing repositories into the standardized structure you can use:
+
+```
+ggman relocate
+```
+
+If you want to only see what would be moved where you can instead use
+
+```
+ggman relocate --simulate
+```
+
+A more thorough documentation on the commands above and how the URL to path mapping works can be found in the thorough documentation below. 
+
 ## the `ggman` command
 
-The `ggman` command is implemented in golang and can be compiled using the standard golang tools. 
+The `ggman` command is implemented in golang and can be compiled using standard golang tools. 
 In addition, a `Makefile` is provided. 
 
 The command is split into several sub-commands, which are described below. 
-`ggman` has the following general exit behaviour:
+`ggman` has the following general exit behavior:
 
-| Exit Code          | Description                                                         |
-| ------------------ | ------------------------------------------------------------------- |
-| 0                  | Everything went ok                                                  |
-| 1                  | Command Parsing went ok, but a subcommand-specific error occured    |
-| 2                  | The user asked for an unknown subcommand                            |
-| 3                  | Command-independent argument parsing failed, e.g. an invalid 'for'  |
-| 4                  | Command-dependent argument parsing failed                           |
-| 5                  | Invalid configuration                                               |
-| 6                  | Unable to parse a repository name                                   |
+| Exit Code          | Description                                                           |
+| ------------------ | --------------------------------------------------------------------- |
+| 0                  | Everything went ok                                                    |
+| 1                  | Command Parsing went ok, but a subcommand-specific error occurred     |
+| 2                  | The user asked for an unknown subcommand                              |
+| 3                  | Command-independent argument parsing failed, e.g. an invalid '--for'  |
+| 4                  | Command-dependent argument parsing failed                             |
+| 5                  | Invalid configuration                                                 |
+| 6                  | Unable to parse a repository name                                     |
 
 
 ### 'ggman root' and 'ggman where'
@@ -52,7 +142,7 @@ Examples for supported patterns can be found in this table:
 
 | Pattern            | Examples                                                            |
 | ------------------ | ------------------------------------------------------------------- |
-| `world`            | `git@github.com:hello/world.git`, `https://github.com/hello/world`  |
+| `world`            | `git@github.com:hello/world.git`, `https://github.com/hello/world`  |*
 | `hello/*`          | `git@github.com:hello/earth.git`, `git@github.com:hello/mars.git`   |
 | `hello/m*`         | `git@github.com:hello/mars.git`, `git@github.com:hello/mercury.git` |
 | `github.com/*/*`   | `git@github.com:hello/world.git`, `git@github.com:bye/world.git`    |
@@ -216,8 +306,8 @@ It takes a single argument (a branch name), and finds all repositories that cont
 
 ### Useful aliases
 
-Sometimes, it is desireable to be able to cd into a specific directory. 
-For this purpose the following alias can be set up.
+In addition to ggman certain aliases can be very useful. 
+
 ```bash
 # ggcd allows 'cd'-ing into a directory given a repository name
 # e.g ggcd github.com/hello/world will cd into the directory where the
@@ -231,26 +321,11 @@ ggcode () {
 }
 ```
 
-## getting `ggman`
-
-To get `ggman` you have three options:
-
-1. Build it yourself
-To build `ggman` yourself, you need [`go`](https://golang.org) 1.9 or newer along with `make` installed on your machine. 
-After cloning this repository, you can then simply type `make` and executables will be generated inside the `dist/` directory. 
-
-2. Download a pre-built binary. 
-You can download a pre-built binary from the [releases page](https://github.com/tkw1536/ggman/releases/latest) on GitHub. 
-This page includes releases for Linux, Mac OS X and Windows. 
-Note that older binaries were compressed with [`upx`](https://upx.github.io) in order to decrease executable size. 
-
-After obtaining the binary (through either of the two means), simply place it in your `$PATH`. 
-Alternatively, you can simply type `make install` from the source code to have it installed directly. 
-`ggman` does not depend on any external software (although having `git` in `$PATH` allows for passing through arguments to `clone`). 
-
 ## Changelog
 
 ### 1.8.0 (Upcoming)
+
+- `--for` now matches remote URL instead of clone path
 
 ### 1.7.1 (Released [Nov 27 2020](https://github.com/tkw1536/ggman/releases/tag/v1.7.1))
 
