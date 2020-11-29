@@ -98,7 +98,7 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository, hash plu
 	fakeRemotePath := filepath.Join(mock.remoteRoot, "remote"+fmt.Sprint(mock.remoteCounter))
 
 	// create a repository
-	repo = testutil.NewTestRepoAt(fakeRemotePath)
+	repo = testutil.NewTestRepoAt(fakeRemotePath, "")
 	_, hash = testutil.CommitTestFiles(repo, map[string]string{"fake.txt": remotes[0]})
 
 	mock.plumbing.URLMap[remotes[0]] = fakeRemotePath

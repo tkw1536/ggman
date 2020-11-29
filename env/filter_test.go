@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/testutil"
 	"github.com/tkw1536/ggman/util"
 )
@@ -13,12 +14,12 @@ func setupFilterTest() (cleanup func(), root, exampleClonePath, otherClonePath s
 	root, cleanup = testutil.TempDir()
 
 	exampleClonePath = filepath.Join(root, "example")
-	if testutil.NewTestRepoAt(exampleClonePath) == nil {
+	if testutil.NewTestRepoAt(exampleClonePath, "") == nil {
 		panic("failed to create test repo")
 	}
 
 	otherClonePath = filepath.Join(root, "other")
-	if testutil.NewTestRepoAt(otherClonePath) == nil {
+	if testutil.NewTestRepoAt(otherClonePath, "") == nil {
 		panic("failed to create test repo")
 	}
 
@@ -30,7 +31,7 @@ func Test_emptyFilter_Matches(t *testing.T) {
 	defer cleanup()
 
 	type args struct {
-		root      string
+		env       Env
 		clonePath string
 	}
 	tests := []struct {
@@ -40,19 +41,19 @@ func Test_emptyFilter_Matches(t *testing.T) {
 	}{
 		{
 			"empty filter matches clone path",
-			args{root: root, clonePath: exampleClonePath},
+			args{env: Env{Root: root}, clonePath: exampleClonePath},
 			true,
 		},
 		{
 			"empty filter matches other clone path",
-			args{root: root, clonePath: otherClonePath},
+			args{env: Env{Root: root}, clonePath: otherClonePath},
 			true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			e := emptyFilter{}
-			if got := e.Matches(tt.args.root, tt.args.clonePath); got != tt.want {
+			if got := e.Matches(tt.args.env, tt.args.clonePath); got != tt.want {
 				t.Errorf("emptyFilter.Matches() = %v, want %v", got, tt.want)
 			}
 		})
@@ -61,7 +62,7 @@ func Test_emptyFilter_Matches(t *testing.T) {
 
 type testFilter struct{}
 
-func (testFilter) Matches(root, clonePath string) bool { panic("never reached") }
+func (testFilter) Matches(env Env, clonePath string) bool { panic("never reached") }
 
 type testFilterWithCandidates struct {
 	testFilter
@@ -107,7 +108,7 @@ func TestPathFilter_Matches(t *testing.T) {
 		Paths []string
 	}
 	type args struct {
-		root      string
+		env       Env
 		clonePath string
 	}
 
@@ -123,7 +124,7 @@ func TestPathFilter_Matches(t *testing.T) {
 				Paths: []string{exampleClonePath, otherClonePath},
 			},
 			args{
-				root,
+				Env{Root: root},
 				root,
 			},
 			false,
@@ -134,7 +135,7 @@ func TestPathFilter_Matches(t *testing.T) {
 				Paths: []string{exampleClonePath, otherClonePath},
 			},
 			args{
-				root,
+				Env{Root: root},
 				"/outside/",
 			},
 			false,
@@ -145,7 +146,7 @@ func TestPathFilter_Matches(t *testing.T) {
 				Paths: []string{exampleClonePath, otherClonePath},
 			},
 			args{
-				root,
+				Env{Root: root},
 				exampleClonePath,
 			},
 			true,
@@ -156,7 +157,7 @@ func TestPathFilter_Matches(t *testing.T) {
 				Paths: []string{exampleClonePath, otherClonePath},
 			},
 			args{
-				root,
+				Env{Root: root},
 				otherClonePath,
 			},
 			true,
@@ -167,7 +168,7 @@ func TestPathFilter_Matches(t *testing.T) {
 			pf := PathFilter{
 				Paths: tt.fields.Paths,
 			}
-			if got := pf.Matches(tt.args.root, tt.args.clonePath); got != tt.want {
+			if got := pf.Matches(tt.args.env, tt.args.clonePath); got != tt.want {
 				t.Errorf("PathFilter.Matches() = %v, want %v", got, tt.want)
 			}
 		})
@@ -298,8 +299,28 @@ func TestPatternFilter_String(t *testing.T) {
 }
 
 func TestPatternFilter_Matches(t *testing.T) {
+	root, cleanup := testutil.TempDir()
+	defer cleanup()
+
+	abc := filepath.Join(root, "a", "b", "c")
+	abcdef := filepath.Join(root, "a", "b", "c", "d", "e", "f")
+
+	if testutil.NewTestRepoAt(abc, "/a/b/c") == nil {
+		panic("NewTestRepoAt() returned nil")
+	}
+	if testutil.NewTestRepoAt(abcdef, "/a/b/c/d/e/f") == nil {
+		panic("NewTestRepoAt() returned nil")
+	}
+
+	other, cleanup := testutil.TempDir()
+	defer cleanup()
+
+	otherabc := filepath.Join(other, "a", "b", "c")
+	if testutil.NewTestRepoAt(otherabc, "/a/b/c") == nil {
+		panic("NewTestRepoAt() returned nil")
+	}
+
 	type args struct {
-		root      string
 		clonePath string
 	}
 	tests := []struct {
@@ -309,28 +330,34 @@ func TestPatternFilter_Matches(t *testing.T) {
 		want         bool
 	}{
 		// matching the empty pattern
-		{"EmptyPattern", "", args{"/root/", "/root/"}, true},
+		{"EmptyPattern", "", args{abc}, true},
 
 		// matching one-component parts of a/b/c
-		{"oneComponentStart", "a", args{"/root/", "/root/a/b/c"}, true},
-		{"oneComponentStart outside root", "a", args{"/root/", "/other/a/b/c"}, false},
-		{"oneComponentMiddle", "b", args{"/root/", "/root/a/b/c"}, true},
-		{"oneComponentEnd", "c", args{"/root/", "/root/a/b/c"}, true},
-		{"oneComponentNot", "d", args{"/root/", "/root/a/b/c"}, false},
+		{"oneComponentStart", "a", args{abc}, true},
+		{"oneComponentStart outside root", "a", args{otherabc}, true},
+		{"oneComponentMiddle", "b", args{abc}, true},
+		{"oneComponentEnd", "c", args{abc}, true},
+		{"oneComponentNot", "d", args{abc}, false},
 
 		// matching constant sub-paths
-		{"twoComponentsConst", "b/c", args{"/root/", "/root/a/b/c/d/e/f"}, true},
-		{"noTwoComponentsConst", "f/g", args{"/root/", "/root/a/b/c/d/e/f"}, false},
+		{"twoComponentsConst", "b/c", args{abcdef}, true},
+		{"noTwoComponentsConst", "f/g", args{abcdef}, false},
 
 		// variable sub-paths
-		{"variableSubPathPositive", "b/*/d", args{"/root/", "/root/a/b/c/d/e/f"}, true},
-		{"variableSubPathNegative", "b/*/c", args{"/root/", "/root/a/b/c/d/e/f"}, false},
+		{"variableSubPathPositive", "b/*/d", args{abcdef}, true},
+		{"variableSubPathNegative", "b/*/c", args{abcdef}, false},
 	}
 	for _, tt := range tests {
 		var pat PatternFilter
 		t.Run(tt.name, func(t *testing.T) {
 			pat.Set(tt.patternValue)
-			if got := pat.Matches(util.ToOSPath(tt.args.root), util.ToOSPath(tt.args.clonePath)); got != tt.want {
+			if got := pat.Matches(
+				Env{
+					Root: root,
+					Git:  git.NewGitFromPlumbing(nil, ""),
+				},
+				util.ToOSPath(tt.args.clonePath),
+			); got != tt.want {
 				t.Errorf("PatternFilter().Matches() = %v, want %v", got, tt.want)
 			}
 		})
@@ -451,7 +478,10 @@ func TestDisjunctionFilter_Matches(t *testing.T) {
 			or := DisjunctionFilter{
 				Clauses: tt.fields.Clauses,
 			}
-			if got := or.Matches(util.ToOSPath(tt.args.root), util.ToOSPath(tt.args.clonePath)); got != tt.want {
+			if got := or.Matches(
+				Env{Root: util.ToOSPath(tt.args.root)},
+				util.ToOSPath(tt.args.clonePath),
+			); got != tt.want {
 				t.Errorf("DisjunctionFilter.Matches() = %v, want %v", got, tt.want)
 			}
 		})

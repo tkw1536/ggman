@@ -331,7 +331,7 @@ func (env Env) ScanRepos(folder string) ([]string, error) {
 
 		Filter: func(path string) (match, cont bool) {
 			if env.Git.IsRepositoryQuick(path) {
-				return env.Filter.Matches(env.Root, path), false // never continue even if a repository does not match
+				return env.Filter.Matches(env, path), false // never continue even if a repository does not match
 			}
 			return false, true
 		},

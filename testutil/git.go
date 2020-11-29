@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
@@ -27,7 +28,7 @@ func NewTestRepo() (clonePath string, repo *git.Repository, cleanup func()) {
 	clonePath, cleanup = TempDir()
 
 	// then actually do a git PlainInit
-	repo = NewTestRepoAt(clonePath)
+	repo = NewTestRepoAt(clonePath, "")
 	if repo == nil {
 		cleanup()
 		panic("NewTestRepoAt(): Repository not created")
@@ -37,13 +38,21 @@ func NewTestRepo() (clonePath string, repo *git.Repository, cleanup func()) {
 }
 
 // NewTestRepoAt creates a new repository at the provided path.
+// When remote is not nil, creates an origin remote pointing to remote.
+//
 // When an error occurs, returns nil.
 //
-// This function is untested.
-func NewTestRepoAt(clonePath string) (repo *git.Repository) {
+// The 'remote' part of this function is untested
+func NewTestRepoAt(clonePath, remote string) (repo *git.Repository) {
 	repo, err := git.PlainInit(clonePath, false)
 	if err != nil {
 		return nil
+	}
+	if remote != "" {
+		repo.CreateRemote(&config.RemoteConfig{
+			Name: "origin",
+			URLs: []string{remote},
+		})
 	}
 	return repo
 }

@@ -146,7 +146,7 @@ func TestEnv_At(t *testing.T) {
 	if err := os.MkdirAll(repo, os.ModePerm); err != nil {
 		panic(err)
 	}
-	if testutil.NewTestRepoAt(repo) == nil {
+	if testutil.NewTestRepoAt(repo, "") == nil {
 		panic("Failed to create test repository")
 	}
 
@@ -200,7 +200,7 @@ func TestEnv_ScanRepos(t *testing.T) {
 		if err != nil {
 			panic(err)
 		}
-		if testutil.NewTestRepoAt(pth) == nil {
+		if testutil.NewTestRepoAt(pth, s) == nil {
 			panic("NewTestRepoAt() returned nil")
 		}
 	}

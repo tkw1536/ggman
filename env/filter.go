@@ -2,7 +2,6 @@ package env
 
 import (
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/tkw1536/ggman/util"
@@ -16,8 +15,7 @@ import (
 // Filter may also optionally implement FilterWithCandidates.
 type Filter interface {
 	// Matches checks if a repository at clonePath matches this filter.
-	// Root indicates the root of the environment.
-	Matches(root, clonePath string) bool
+	Matches(env Env, clonePath string) bool
 }
 
 // NoFilter is a special filter that matches every directory
@@ -25,7 +23,7 @@ var NoFilter Filter = emptyFilter{}
 
 type emptyFilter struct{}
 
-func (emptyFilter) Matches(root, clonePath string) bool {
+func (emptyFilter) Matches(env Env, clonePath string) bool {
 	return true
 }
 
@@ -60,7 +58,7 @@ type PathFilter struct {
 
 // Matches checks if a repository at clonePath matches this filter.
 // Root indicates the root of all repositories.
-func (pf PathFilter) Matches(root, clonePath string) bool {
+func (pf PathFilter) Matches(env Env, clonePath string) bool {
 	return util.SliceContainsAny(pf.Paths, clonePath)
 }
 
@@ -100,13 +98,12 @@ var directoryUp string = ".." + string(os.PathSeparator)
 
 // Matches checks if this filter matches the repository at clonePath.
 // The caller may assume that there is a repository at clonePath.
-func (pat PatternFilter) Matches(root, clonePath string) bool {
-
-	relpath, err := filepath.Rel(root, clonePath)
-	if err != nil || strings.HasPrefix(relpath, directoryUp) {
+func (pat PatternFilter) Matches(env Env, clonePath string) bool {
+	remote, err := env.Git.GetRemote(clonePath)
+	if err != nil {
 		return false
 	}
-	return pat.pattern.Match(relpath)
+	return pat.pattern.Match(remote)
 }
 
 // MatchesURL checks if this filter matches a url
@@ -121,9 +118,9 @@ type DisjunctionFilter struct {
 }
 
 // Matches checks if this filter matches any of the filters that were joined.
-func (or DisjunctionFilter) Matches(root, clonePath string) bool {
+func (or DisjunctionFilter) Matches(env Env, clonePath string) bool {
 	for _, f := range or.Clauses {
-		if f.Matches(root, clonePath) {
+		if f.Matches(env, clonePath) {
 			return true
 		}
 	}
