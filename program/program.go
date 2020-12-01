@@ -3,6 +3,7 @@ package program
 import (
 	"fmt"
 	"reflect"
+	"runtime"
 
 	"github.com/spf13/pflag"
 
@@ -153,11 +154,11 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 	return command.Run(*context)
 }
 
-const stringVersion = "ggman version %s, built %s"
+const stringVersion = "ggman version %s, built %s, using %s"
 
 // printVersion prints version information for this program
 func (p Program) printVersion() {
-	p.StdoutWriteWrap(fmt.Sprintf(stringVersion, constants.BuildVersion, constants.BuildTime))
+	p.StdoutWriteWrap(fmt.Sprintf(stringVersion, constants.BuildVersion, constants.BuildTime, runtime.Version()))
 }
 
 // Register registers a new command with this program.

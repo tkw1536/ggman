@@ -2,6 +2,7 @@ package program
 
 import (
 	"bytes"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -65,7 +66,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "display version",
 			args:       []string{"--version"},
-			wantStdout: "ggman version v0.0.0-unknown, built 1970-01-01 00:00:00 +0000 UTC\n",
+			wantStdout: "ggman version v0.0.0-unknown, built 1970-01-01 00:00:00 +0000 UTC, using\n" + runtime.Version() + "\n",
 			wantCode:   0,
 		},
 
