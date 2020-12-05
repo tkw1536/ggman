@@ -329,7 +329,7 @@ func (env Env) ScanRepos(folder string) ([]string, error) {
 		Root:       folder,
 		ExtraRoots: extraRoots,
 
-		Filter: func(path string) (match, cont bool) {
+		Visit: func(path string, context util.ScanVisitContext) (match, cont bool) {
 			if env.Git.IsRepositoryQuick(path) {
 				return env.Filter.Matches(env, path), false // never continue even if a repository does not match
 			}

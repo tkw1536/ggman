@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/tkw1536/ggman/testutil"
@@ -97,8 +96,8 @@ func TestScan(t *testing.T) {
 			ScanOptions{
 				Root:        base,
 				FollowLinks: false,
-				Filter: func(path string) (match, cont bool) {
-					return strings.Count(trimPath(path), string(filepath.Separator)) == 2, true
+				Visit: func(path string, context ScanVisitContext) (match, cont bool) {
+					return context.Depth == 3, true
 				},
 			},
 			[]string{
@@ -121,7 +120,7 @@ func TestScan(t *testing.T) {
 			ScanOptions{
 				Root:        base,
 				FollowLinks: false,
-				Filter: func(path string) (match, cont bool) {
+				Visit: func(path string, context ScanVisitContext) (match, cont bool) {
 					return true, trimPath(path) != ToOSPath("a/ab")
 				},
 			},

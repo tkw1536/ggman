@@ -19,11 +19,15 @@ type ScanOptions struct {
 	// These may be nil.
 	ExtraRoots []string
 
-	// Filter is a caller-settable function that determines if a directory should be accepted.
-	// The filter function returns a pair of booleans match and bool.
+	// Visit is a caller-settable function that is called once for each directory that is being scanned.
+	// It determines function returns a pair of booleans match and bool.
+	//
 	// match indiciates that path should be returned in the array from Scan().
 	// cont indicates if Scan() should continue scanning recursively.
-	Filter func(path string) (match, cont bool)
+	//
+	// Visit may be nil.
+	// In such a case, it is assumed to return the pair (true, true) for every invocation.
+	Visit func(path string, context ScanVisitContext) (match, cont bool)
 
 	// When FollowLinks is set, the scanner will follow symbolic links and detect cycles.
 	FollowLinks bool
@@ -38,20 +42,44 @@ type ScanOptions struct {
 	BufferSize int
 }
 
-// Scan creates a new Scanner and call the Scan method.
+// ScanVisitContext represents the context of the Visit function
+type ScanVisitContext struct {
+	// Root is the root this scan started from
+	Root string
+
+	// Depth determines the depth this scan was started from
+	Depth int
+}
+
+// next returns a new ScanVisitContext that can be used for the next level of a scan
+func (context ScanVisitContext) next() (next ScanVisitContext) {
+	next.Root = context.Root
+	next.Depth = context.Depth + 1
+	return
+}
+
+// Scan creates a new Scanner, calls the Scan method, and returns a pair of results and error.
 // This function is a convenience alternative to:
 //
 //  scanner := &Scanner{ScanOptions: options}
-//  scanner.Scan()
+//  err := scanner.Scan()
+//  results := scanner.Results()
 func Scan(options ScanOptions) ([]string, error) {
 	scanner := &Scanner{ScanOptions: options}
-	return scanner.Scan()
+
+	// we cannot directly return here
+	// Results() MUST be called after Scan()
+	err := scanner.Scan()
+	results := scanner.Results()
+
+	return results, err
 }
 
 // Scanner is an object that can recursively scan a directory for subdirectories
 // and return those matching a filter.
 //
 // Each Scanner may be used only once.
+// Scanner is not safe for access by multiple goroutines.
 type Scanner struct {
 	ScanOptions
 
@@ -65,22 +93,23 @@ type Scanner struct {
 	errChan    chan error
 
 	doneChan chan struct{}
-	results  []string
+
+	resultsSorted bool
+	results       []string
 }
 
-// Scan scans the directory tree and returns all directories for which the match value of Filter returns true.
-// They are returned in alphabetical order.
+// Scan scans the directory tree.
 //
 // When an error occurs, it continues blocking until all scanning routines have finished and returns an error.
 // Each scanner should only be used once.
-func (s *Scanner) Scan() ([]string, error) {
+func (s *Scanner) Scan() error {
 	if s.used {
 		panic("Scanner.Scan(): Attempted reuse")
 	}
 	s.used = true
 
-	if s.Filter == nil {
-		s.Filter = func(path string) (bool, bool) { return true, true }
+	if s.Visit == nil {
+		s.Visit = func(path string, context ScanVisitContext) (bool, bool) { return true, true }
 	}
 
 	// create a channel for results and the repos themselves
@@ -98,22 +127,25 @@ func (s *Scanner) Scan() ([]string, error) {
 
 	s.wg = sync.WaitGroup{}
 	s.wg.Add(1)
-	go s.scan(s.Root)
+	go s.scan(s.Root, ScanVisitContext{
+		Root:  s.Root,
+		Depth: 0,
+	})
 
 	// scan all the extra roots
 	s.wg.Add(len(s.ExtraRoots))
 	for _, root := range s.ExtraRoots {
-		go s.scan(root)
+		go s.scan(root, ScanVisitContext{
+			Root:  root,
+			Depth: 0,
+		})
 	}
 
-	// start receiving results, sort them afterwards.
-	// one could sort while inserting, but as the order is random
-	// this would result in a lot more copy operations.
+	// start receiving results, and storing results
 	go func() {
 		for r := range s.resultChan {
 			s.results = append(s.results, r)
 		}
-		sort.Strings(s.results)
 		s.doneChan <- struct{}{}
 	}()
 
@@ -126,12 +158,25 @@ func (s *Scanner) Scan() ([]string, error) {
 	<-s.doneChan
 
 	// return all the found repositories and any error
-	return s.results, <-s.errChan
+	return <-s.errChan
+}
+
+// Results returns all directories for which the match value of Visit function returns true.
+// Directories are returned in sorted order.
+//
+// Results expects the Scan() function to have returned, but performs no checks that this is actually the case.
+// When the Scan() function has not returned, the return value of this function is not defined.
+func (s *Scanner) Results() []string {
+	if !s.resultsSorted {
+		sort.Strings(s.results)
+		s.resultsSorted = true
+	}
+	return s.results
 }
 
 // scan performs a recursive scan of path
 // one should do s.wg.Add(1) before each call of scan.
-func (s *Scanner) scan(path string) {
+func (s *Scanner) scan(path string, context ScanVisitContext) {
 
 	// aquire the semaphore
 	if s.semaphore != nil {
@@ -161,7 +206,7 @@ func (s *Scanner) scan(path string) {
 	}
 
 	// execute the filter and act on it
-	match, cont := s.Filter(path)
+	match, cont := s.Visit(path, context)
 	if match {
 		s.resultChan <- path
 	}
@@ -178,6 +223,9 @@ func (s *Scanner) scan(path string) {
 		}
 		return
 	}
+
+	// find the next context to visit
+	nextContext := context.next()
 
 	// iterate over all the files in this folder
 	// having this parallel just adds extra overhead, so we do not do this
@@ -202,7 +250,7 @@ func (s *Scanner) scan(path string) {
 
 		// scan the folder recursively
 		s.wg.Add(1)
-		go s.scan(cpath)
+		go s.scan(cpath, nextContext)
 	}
 }
 
