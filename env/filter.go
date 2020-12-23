@@ -2,6 +2,7 @@ package env
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/tkw1536/ggman/util"
@@ -99,10 +100,29 @@ var directoryUp string = ".." + string(os.PathSeparator)
 // Matches checks if this filter matches the repository at clonePath.
 // The caller may assume that there is a repository at clonePath.
 func (pat PatternFilter) Matches(env Env, clonePath string) bool {
+	// find the remote url to use
 	remote, err := env.Git.GetRemote(clonePath)
 	if err != nil {
 		return false
 	}
+
+	// if there is no remote url (because the repo has been cleanly "init"ed)
+	// we use the relative path to the root directory to match.
+	if remote == "" {
+		root, err := env.absRoot()
+		if err != nil { // root not resolved
+			return false
+		}
+		actualClonePath, err := filepath.Abs(clonePath)
+		if err != nil { // clonepath not resolved
+			return false
+		}
+		remote, err = filepath.Rel(root, actualClonePath)
+		if err != nil { // relative path not resolved
+			return false
+		}
+	}
+
 	return pat.pattern.Match(remote)
 }
 
