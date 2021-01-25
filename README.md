@@ -327,6 +327,7 @@ ggcode () {
 
 - include go version when calling `ggman version`
 - improve `util/record.go` implementation
+- update copyright year
 
 ### 1.7.2 (Released [Nov 29 2020](https://github.com/tkw1536/ggman/releases/tag/v1.7.2))
 

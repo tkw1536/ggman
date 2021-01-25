@@ -47,7 +47,7 @@ Furthermore, this executable may include code from the following projects:
 
 const stringLicenseText = `MIT License
 
-Copyright (c) 2018-20 Tom Wiesing
+Copyright (c) 2018-21 Tom Wiesing
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
