@@ -326,6 +326,7 @@ ggcode () {
 ### 1.8.0 (Upcoming)
 
 - include go version when calling `ggman version`
+- improve `util/record.go` implementation
 
 ### 1.7.2 (Released [Nov 29 2020](https://github.com/tkw1536/ggman/releases/tag/v1.7.2))
 
