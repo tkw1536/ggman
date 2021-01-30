@@ -327,6 +327,7 @@ ggcode () {
 
 - add `force-repo-here` flag to `ggman web` and `ggman url` to force a repository even when there is none
 - include go version when calling `ggman version`
+- use `go 1.15` in tests
 - improve `util/record.go` implementation
 - update copyright year
 
