@@ -34,3 +34,11 @@ func ToOSPaths(paths []string) []string {
 	}
 	return paths
 }
+
+// pathUpSegment is a segment that indiciates that a path should go up
+var pathUpSegment = ".." + string(os.PathSeparator)
+
+// PathGoesUp checks if path is a path that goes up at least one directory.
+func PathGoesUp(path string) bool {
+	return path == ".." || strings.HasPrefix(ToOSPath(path), pathUpSegment)
+}

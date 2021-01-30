@@ -18,6 +18,9 @@ func TestCommandURL(t *testing.T) {
 	subClonePath := filepath.Join(clonePath, "sub")
 	os.MkdirAll(subClonePath, os.ModePerm)
 
+	nonRepoPath := filepath.Join(clonePath, "..", "..", "example.com", "other")
+	os.MkdirAll(nonRepoPath, os.ModePerm)
+
 	tests := []struct {
 		name    string
 		workdir string
@@ -33,6 +36,15 @@ func TestCommandURL(t *testing.T) {
 			[]string{"url"},
 			0,
 			"https://github.com/hello/world\n",
+			"",
+		},
+
+		{
+			"Open url at faked root",
+			nonRepoPath,
+			[]string{"url", "--force-repo-here"},
+			0,
+			"https://example.com/other\n",
 			"",
 		},
 
@@ -82,11 +94,29 @@ func TestCommandURL(t *testing.T) {
 		},
 
 		{
+			"Open url at faked root with tree",
+			nonRepoPath,
+			[]string{"url", "--force-repo-here", "--tree"},
+			0,
+			"https://example.com/other\n",
+			"",
+		},
+
+		{
 			"Open url with branch at root",
 			clonePath,
 			[]string{"url", "--branch"},
 			0,
 			"https://github.com/hello/world/tree/master\n",
+			"",
+		},
+
+		{
+			"Open url at faked root with branch",
+			nonRepoPath,
+			[]string{"url", "--force-repo-here", "--branch"},
+			0,
+			"https://example.com/other\n",
 			"",
 		},
 

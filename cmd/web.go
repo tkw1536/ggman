@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/util"
 
 	"github.com/pkg/browser"
 )
@@ -22,6 +24,10 @@ import (
 // To determine the url it uses the CANSPEC `https://^/$`, which may not work with all git hosts.
 // For instance when the url of the repository git@github.com:tkw1536/ggman.git, this will open the url https://github.com/tkw1536/ggman in a browser.
 //
+//  --force-repo-here
+// Instead of looking for a repository, always pretend there is one in the current directory.
+// If the current directory is outside of the ggman root, this will cause an error.
+// Use the path relative to the 'ggman root' as the URL to the repository.
 //  --tree
 // This optional argument appends the string `/tree/$BRANCH/$PATH` to the url being opened, where $BRANCH is currently checked out branch and $PATH is the relative path from the repository root to the current folder.
 // On common Git Hosts, such as GitHub and GitLab, this shows a page of the current folder on the current branch.
@@ -67,9 +73,10 @@ func (url) Name() string {
 type urlweb struct {
 	openInstead bool
 
-	Branch       bool
-	Tree         bool
-	BaseAsPrefix bool
+	ForceRepoHere bool
+	Branch        bool
+	Tree          bool
+	BaseAsPrefix  bool
 }
 
 // WebBuiltInBases is a map of built-in bases for the url and web commands
@@ -107,6 +114,7 @@ func FmtWebBuiltInBaseNames() string {
 var stringWebBaseUsage = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s. "
 
 func (uw *urlweb) Options(flagset *pflag.FlagSet) program.Options {
+	flagset.BoolVarP(&uw.ForceRepoHere, "force-repo-here", "f", uw.ForceRepoHere, "Pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url. ")
 	flagset.BoolVarP(&uw.Tree, "tree", "t", uw.Tree, "If provided, additionally use the HEAD reference and relative path to the root of the git worktree. ")
 	flagset.BoolVarP(&uw.Branch, "branch", "b", uw.Branch, "If provided, include the HEAD reference in the resolved URL. ")
 	flagset.BoolVarP(&uw.BaseAsPrefix, "prefix", "p", uw.BaseAsPrefix, "Treat the base argument as a prefix, instead of the hostname. ")
@@ -132,20 +140,16 @@ var errOutsideRepository = ggman.Error{
 	Message:  "Not inside a ggman-controlled repository. ",
 }
 
+var errNoRelativeRepository = ggman.Error{
+	ExitCode: ggman.ExitInvalidRepo,
+	Message:  "Unable to use '--relative': Not inside GGROOT",
+}
+
 func (uw urlweb) Run(context program.Context) error {
-	root, relative, err := context.At(".")
+	// get the remote url of the current repository
+	root, remote, relative, err := uw.getRemoteURL(context)
 	if err != nil {
 		return err
-	}
-
-	if relative == "." {
-		relative = ""
-	}
-
-	// get the remote
-	remote, e := context.Git.GetRemote(root)
-	if e != nil {
-		return errOutsideRepository
 	}
 
 	// parse it as a repo url
@@ -176,9 +180,9 @@ func (uw urlweb) Run(context program.Context) error {
 	// get the web url
 	weburl := url.Canonical("^/$")
 
-	if uw.Tree || uw.Branch {
-		ref, e := context.Git.GetHeadRef(root)
-		if e != nil {
+	if root != "" && (uw.Tree || uw.Branch) {
+		ref, err := context.Git.GetHeadRef(root)
+		if err != nil {
 			return errOutsideRepository
 		}
 
@@ -197,4 +201,51 @@ func (uw urlweb) Run(context program.Context) error {
 	}
 
 	return nil
+}
+
+// getRemoteURL gets the remote url of current repository in the context
+func (uw urlweb) getRemoteURL(context program.Context) (root string, remote string, relative string, err error) {
+
+	if uw.ForceRepoHere { // don't use a repository, instead fake one!
+		return uw.getRemoteURLFake(context)
+	}
+
+	return uw.getRemoteURLReal(context)
+}
+
+func (uw urlweb) getRemoteURLReal(context program.Context) (root string, remote string, relative string, err error) {
+	// find the repository at the current location
+	root, relative, err = context.At(".")
+	if err != nil {
+		return "", "", "", err
+	}
+
+	if relative == "." {
+		relative = ""
+	}
+
+	// get the remote
+	remote, err = context.Git.GetRemote(root)
+	if err != nil {
+		return "", "", "", errOutsideRepository
+	}
+
+	return
+}
+
+func (uw urlweb) getRemoteURLFake(context program.Context) (root string, remote string, relative string, err error) {
+	// get the absolute path to the current workdir
+	workdir, err := context.Abs("")
+	if err != nil {
+		return "", "", "", err
+	}
+
+	// determine the relative path to the root directory
+	relpath, err := filepath.Rel(context.Root, workdir)
+	if err != nil || util.PathGoesUp(relpath) {
+		return "", "", "", errNoRelativeRepository
+	}
+
+	// turn it into a fake url by prepending a protocol
+	return "", "file://" + relpath, "", nil
 }
