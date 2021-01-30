@@ -323,7 +323,9 @@ ggcode () {
 
 ## Changelog
 
-### 1.8.0 (Upcoming)
+### 1.9.0 (Upcoming)
+
+### 1.8.0 (Released [Jan 31 2020](https://github.com/tkw1536/ggman/releases/tag/v1.8.0))
 
 - add `force-repo-here` flag to `ggman web` and `ggman url` to force a repository even when there is none
 - include go version when calling `ggman version`
