@@ -36,7 +36,7 @@ func ToOSPaths(paths []string) []string {
 }
 
 // pathUpSegment is a segment that indiciates that a path should go up
-var pathUpSegment = ".." + string(os.PathSeparator)
+var pathUpSegment = ".." + pathSeperator
 
 // PathGoesUp checks if path is a path that goes up at least one directory.
 func PathGoesUp(path string) bool {

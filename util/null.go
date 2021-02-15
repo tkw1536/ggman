@@ -2,20 +2,16 @@ package util
 
 import "io"
 
-// NullStream is an interface that implements io.Reader and io.Writer as no-ops.
-type NullStream struct{}
+// NullStream is an io.ReadWriteCloser.
+//
+// Reads from it return 0 bytes and return io.EOF.
+// Writes and Closes succeed without doing anything.
+//
+// See also ioutil.Discard.
+var NullStream io.ReadWriteCloser = nullStream{}
 
-// Read is a no-op that always returns 0, io.EOF.
-func (NullStream) Read(bytes []byte) (int, error) {
-	return 0, io.EOF
-}
+type nullStream struct{}
 
-// Write is a no-op that always returns len(bytes), nil.
-func (NullStream) Write(bytes []byte) (int, error) {
-	return len(bytes), nil
-}
-
-// Close is a no-op that always returns nil.
-func (NullStream) Close() error {
-	return nil
-}
+func (nullStream) Read(bytes []byte) (int, error)  { return 0, io.EOF }
+func (nullStream) Write(bytes []byte) (int, error) { return len(bytes), nil }
+func (nullStream) Close() error                    { return nil }

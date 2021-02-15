@@ -59,13 +59,13 @@ func NewEnvIOStream() IOStream {
 // It furthermore wraps output as set by wrap.
 func NewIOStream(Stdout, Stderr io.Writer, Stdin io.Reader, wrap int) IOStream {
 	if Stdout == nil {
-		Stdout = util.NullStream{}
+		Stdout = util.NullStream
 	}
 	if Stderr == nil {
-		Stderr = util.NullStream{}
+		Stderr = util.NullStream
 	}
 	if Stdin == nil {
-		Stdin = util.NullStream{}
+		Stdin = util.NullStream
 	}
 	if wrap == 0 {
 		wrap = ioDefaultWrap
