@@ -1,4 +1,5 @@
-package util
+// Package text contains utilities for processing strings
+package text
 
 import (
 	"sort"

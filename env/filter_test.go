@@ -6,8 +6,9 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/git"
+	"github.com/tkw1536/ggman/internal/path"
+	"github.com/tkw1536/ggman/internal/pattern"
 	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/ggman/internal/util"
 )
 
 func setupFilterTest() (cleanup func(), root, exampleClonePath, otherClonePath string) {
@@ -231,7 +232,7 @@ func TestNewPatternFilter(t *testing.T) {
 			args{"a/b"},
 			PatternFilter{
 				value:   "a/b",
-				pattern: util.NewSplitGlobPattern("a/b", splitter),
+				pattern: pattern.NewSplitGlobPattern("a/b", splitter),
 			},
 		},
 		{
@@ -239,7 +240,7 @@ func TestNewPatternFilter(t *testing.T) {
 			args{""},
 			PatternFilter{
 				value:   "",
-				pattern: util.NewSplitGlobPattern("", splitter),
+				pattern: pattern.NewSplitGlobPattern("", splitter),
 			},
 		},
 	}
@@ -261,7 +262,7 @@ func TestNewPatternFilter(t *testing.T) {
 func TestPatternFilter_String(t *testing.T) {
 	type fields struct {
 		value   string
-		pattern util.SplitPattern
+		pattern pattern.SplitPattern
 	}
 	tests := []struct {
 		name   string
@@ -272,7 +273,7 @@ func TestPatternFilter_String(t *testing.T) {
 			"empty pattern",
 			fields{
 				value:   "",
-				pattern: util.SplitPattern{},
+				pattern: pattern.SplitPattern{},
 			},
 			"",
 		},
@@ -280,7 +281,7 @@ func TestPatternFilter_String(t *testing.T) {
 			"a/b pattern",
 			fields{
 				value:   "a/b",
-				pattern: util.SplitPattern{},
+				pattern: pattern.SplitPattern{},
 			},
 			"a/b",
 		},
@@ -356,7 +357,7 @@ func TestPatternFilter_Matches(t *testing.T) {
 					Root: root,
 					Git:  git.NewGitFromPlumbing(nil, ""),
 				},
-				util.ToOSPath(tt.args.clonePath),
+				path.ToOSPath(tt.args.clonePath),
 			); got != tt.want {
 				t.Errorf("PatternFilter().Matches() = %v, want %v", got, tt.want)
 			}
@@ -432,8 +433,8 @@ func TestDisjunctionFilter_Matches(t *testing.T) {
 			"two pathfilters match first path",
 			fields{
 				Clauses: []Filter{
-					PathFilter{[]string{util.ToOSPath("/root/matcha")}},
-					PathFilter{[]string{util.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{path.ToOSPath("/root/matcha")}},
+					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
 				},
 			},
 			args{
@@ -447,8 +448,8 @@ func TestDisjunctionFilter_Matches(t *testing.T) {
 			"two pathfilters match second path",
 			fields{
 				Clauses: []Filter{
-					PathFilter{[]string{util.ToOSPath("/root/matcha")}},
-					PathFilter{[]string{util.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{path.ToOSPath("/root/matcha")}},
+					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
 				},
 			},
 			args{
@@ -462,8 +463,8 @@ func TestDisjunctionFilter_Matches(t *testing.T) {
 			"two pathfilters do not match third path",
 			fields{
 				Clauses: []Filter{
-					PathFilter{[]string{util.ToOSPath("/root/matcha")}},
-					PathFilter{[]string{util.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{path.ToOSPath("/root/matcha")}},
+					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
 				},
 			},
 			args{
@@ -479,8 +480,8 @@ func TestDisjunctionFilter_Matches(t *testing.T) {
 				Clauses: tt.fields.Clauses,
 			}
 			if got := or.Matches(
-				Env{Root: util.ToOSPath(tt.args.root)},
-				util.ToOSPath(tt.args.clonePath),
+				Env{Root: path.ToOSPath(tt.args.root)},
+				path.ToOSPath(tt.args.clonePath),
 			); got != tt.want {
 				t.Errorf("DisjunctionFilter.Matches() = %v, want %v", got, tt.want)
 			}
@@ -509,11 +510,11 @@ func TestDisjunctionFilter_Candidates(t *testing.T) {
 			"two candidates get returned",
 			fields{
 				Clauses: []Filter{
-					PathFilter{[]string{util.ToOSPath("/root/matcha")}},
-					PathFilter{[]string{util.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{path.ToOSPath("/root/matcha")}},
+					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
 				},
 			},
-			util.ToOSPaths([]string{
+			path.ToOSPaths([]string{
 				"/root/matcha",
 				"/root/matchb",
 			}),
@@ -523,12 +524,12 @@ func TestDisjunctionFilter_Candidates(t *testing.T) {
 			"duplicate candidates get returned only once",
 			fields{
 				Clauses: []Filter{
-					PathFilter{[]string{util.ToOSPath("/root/matcha")}},
-					PathFilter{[]string{util.ToOSPath("/root/matchb")}},
-					PathFilter{[]string{util.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{path.ToOSPath("/root/matcha")}},
+					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
 				},
 			},
-			util.ToOSPaths([]string{
+			path.ToOSPaths([]string{
 				"/root/matcha",
 				"/root/matchb",
 			}),

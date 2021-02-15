@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/ggman/internal/util"
+	"github.com/tkw1536/ggman/internal/scanner"
 )
 
 // Env represents an environment to be used by ggman.
@@ -325,11 +325,11 @@ func (env Env) ScanRepos(folder string) ([]string, error) {
 	}
 	extraRoots = extraRoots[:n]
 
-	return util.Scan(util.ScanOptions{
+	return scanner.Scan(scanner.Options{
 		Root:       folder,
 		ExtraRoots: extraRoots,
 
-		Visit: func(path string, context util.ScanVisitContext) (match, cont bool) {
+		Visit: func(path string, context scanner.VisitContext) (match, cont bool) {
 			if env.Git.IsRepositoryQuick(path) {
 				return env.Filter.Matches(env, path), false // never continue even if a repository does not match
 			}

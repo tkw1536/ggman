@@ -10,7 +10,7 @@ import (
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/internal/util"
+	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/program"
 
 	"github.com/pkg/browser"
@@ -242,7 +242,7 @@ func (uw urlweb) getRemoteURLFake(context program.Context) (root string, remote 
 
 	// determine the relative path to the root directory
 	relpath, err := filepath.Rel(context.Root, workdir)
-	if err != nil || util.PathGoesUp(relpath) {
+	if err != nil || path.GoesUp(relpath) {
 		return "", "", "", errNoRelativeRepository
 	}
 

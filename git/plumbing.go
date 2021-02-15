@@ -11,7 +11,7 @@ import (
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/internal/util"
+	"github.com/tkw1536/ggman/internal/text"
 )
 
 // Plumbing is an interface that represents a working internal implementation of git.
@@ -396,7 +396,7 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject interface{}, name string
 	remotes := cfg.Remotes[remote.Config().Name]
 
 	// if they haven't changed, we can return immediatly
-	if util.SliceEquals(remotes.URLs, urls) {
+	if text.SliceEquals(remotes.URLs, urls) {
 		return nil
 	}
 

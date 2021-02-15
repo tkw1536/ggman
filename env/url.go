@@ -4,7 +4,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/tkw1536/ggman/internal/util"
+	"github.com/tkw1536/ggman/internal/text"
+	"github.com/tkw1536/ggman/internal/url"
 )
 
 // URL represents a URL to a single git repository.
@@ -51,8 +52,8 @@ func ParseURL(s string) (repo URL) {
 	// so we store it in a temporary variable called 'oldS'
 
 	// Trim off a leading scheme (as seperated by '://') and (if it is valid) store it.
-	scheme, rest := util.SplitBefore(s, "://")
-	if util.IsValidURLScheme(scheme) {
+	scheme, rest := text.SplitBefore(s, "://")
+	if url.IsValidURLScheme(scheme) {
 		repo.Scheme = scheme
 		s = rest
 	}
@@ -62,8 +63,8 @@ func ParseURL(s string) (repo URL) {
 	// However most URLs will not have an '@' sign, so we can save allocating an extra variable and the function call.
 	if strings.ContainsRune(s, '@') {
 		var auth string
-		auth, s = util.SplitBefore(s, "@")
-		repo.User, repo.Password = util.SplitAfter(auth, ":")
+		auth, s = text.SplitBefore(s, "@")
+		repo.User, repo.Password = text.SplitAfter(auth, ":")
 	}
 
 	// Finally, we cherck if the remainder contains a ':'.
@@ -71,14 +72,14 @@ func ParseURL(s string) (repo URL) {
 	// The second form is only allowed if we have some kind of scheme.
 	// If there is no ':', we can straightforwardly split after the first '/'
 	if strings.ContainsRune(s, ':') {
-		repo.HostName, s = util.SplitBefore(s, ":")
+		repo.HostName, s = text.SplitBefore(s, ":")
 
 		// if we have a scheme, then we have to parse everything after ':' as a port.
 		// This only works if the port is valid.
 		if repo.Scheme != "" {
 			var err error
-			port, rest := util.SplitAfter(s, "/")
-			if repo.Port, err = util.ParsePort(port); err == nil {
+			port, rest := text.SplitAfter(s, "/")
+			if repo.Port, err = url.ParsePort(port); err == nil {
 				s = rest
 			}
 		}
@@ -87,7 +88,7 @@ func ParseURL(s string) (repo URL) {
 		return
 	}
 
-	repo.HostName, repo.Path = util.SplitAfter(s, "/")
+	repo.HostName, repo.Path = text.SplitAfter(s, "/")
 	return
 }
 
@@ -100,7 +101,7 @@ func (url URL) Components() []string {
 
 	// First split the path into components split by '/'.
 	// and remove a '.git' from the last part.
-	parts := util.RemoveEmpty(strings.Split(url.Path, "/"))
+	parts := text.RemoveEmpty(strings.Split(url.Path, "/"))
 	lastPart := len(parts) - 1
 	if lastPart >= 0 {
 		parts[lastPart] = strings.TrimSuffix(parts[lastPart], ".git")
@@ -133,7 +134,7 @@ func (url URL) Canonical(cspec string) (canonical string) {
 	components := url.Components()
 
 	// split into prefix and suffix
-	prefix, suffix := util.SplitAfter(cspec, "$")
+	prefix, suffix := text.SplitAfter(cspec, "$")
 
 	prefix = specReplace.ReplaceAllStringFunc(prefix, func(s string) string {
 		// if everything is empty, return the string as is

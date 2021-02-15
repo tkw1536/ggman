@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/git"
+	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/ggman/internal/util"
 )
 
 func TestEnv_LoadDefaultRoot(t *testing.T) {
@@ -279,7 +279,7 @@ func TestEnv_ScanRepos(t *testing.T) {
 				return
 			}
 			trimAll(got)
-			util.ToOSPaths(tt.want)
+			path.ToOSPaths(tt.want)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Env.ScanRepos() = %v, want %v", got, tt.want)
 			}

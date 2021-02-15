@@ -1,4 +1,5 @@
-package util
+// Package pattern provides Pattern
+package pattern
 
 import (
 	"strings"

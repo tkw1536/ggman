@@ -5,7 +5,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/tkw1536/ggman/internal/util"
+	"github.com/tkw1536/ggman/internal/stream"
+	"github.com/tkw1536/ggman/internal/text"
 )
 
 // IOStream represents a set of input and output streams commonly associated to a process.
@@ -59,13 +60,13 @@ func NewEnvIOStream() IOStream {
 // It furthermore wraps output as set by wrap.
 func NewIOStream(Stdout, Stderr io.Writer, Stdin io.Reader, wrap int) IOStream {
 	if Stdout == nil {
-		Stdout = util.NullStream
+		Stdout = stream.Null
 	}
 	if Stderr == nil {
-		Stderr = util.NullStream
+		Stderr = stream.Null
 	}
 	if Stdin == nil {
-		Stdin = util.NullStream
+		Stdin = stream.Null
 	}
 	if wrap == 0 {
 		wrap = ioDefaultWrap
@@ -87,7 +88,7 @@ func NewNilIOStream() IOStream {
 //  io.Stdout.Write([]byte(s + "\n"))
 // but wrapped at a reasonable length
 func (io IOStream) StdoutWriteWrap(s string) (int, error) {
-	message := util.WrapStringsPrefix(s, io.wrap)
+	message := text.WrapStringsPrefix(s, io.wrap)
 	return io.Stdout.Write([]byte(message + "\n"))
 }
 
@@ -95,7 +96,7 @@ func (io IOStream) StdoutWriteWrap(s string) (int, error) {
 //  io.Stdout.Write([]byte(s + "\n"))
 // but wrapped at length Wrap.
 func (io IOStream) StderrWriteWrap(s string) (int, error) {
-	message := util.WrapStringsPrefix(s, io.wrap)
+	message := text.WrapStringsPrefix(s, io.wrap)
 	return io.Stderr.Write([]byte(message + "\n"))
 }
 

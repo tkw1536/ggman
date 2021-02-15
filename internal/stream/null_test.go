@@ -1,4 +1,4 @@
-package util
+package stream
 
 import (
 	"io"
@@ -20,7 +20,7 @@ func TestNullStream_Read(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NullStream.Read(tt.args.bytes)
+			got, err := Null.Read(tt.args.bytes)
 			if (err == io.EOF) != tt.wantEOF {
 				t.Errorf("NullStream.Read() error = %v, wantEOF %v", err, tt.wantEOF)
 				return
@@ -47,7 +47,7 @@ func TestNullStream_Write(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NullStream.Write(tt.args.bytes)
+			got, err := Null.Write(tt.args.bytes)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NullStream.Write() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -68,7 +68,7 @@ func TestNullStream_Close(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := NullStream.Close(); (err != nil) != tt.wantErr {
+			if err := Null.Close(); (err != nil) != tt.wantErr {
 				t.Errorf("NullStream.Close() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

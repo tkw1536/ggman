@@ -1,4 +1,5 @@
-package util
+// Package url provides utilities for URL parsing
+package url
 
 import (
 	"errors"

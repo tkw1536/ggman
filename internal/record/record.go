@@ -1,4 +1,5 @@
-package util
+// Package record provides Record
+package record
 
 import (
 	"sync"

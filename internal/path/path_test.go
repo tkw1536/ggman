@@ -1,4 +1,4 @@
-package util
+package path
 
 import (
 	"testing"
@@ -24,7 +24,7 @@ func TestToOSPath(t *testing.T) {
 	}
 }
 
-func TestPathGoesUp(t *testing.T) {
+func TestGoesUp(t *testing.T) {
 	tests := []struct {
 		path string
 		want bool
@@ -37,7 +37,7 @@ func TestPathGoesUp(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.path, func(t *testing.T) {
-			if got := PathGoesUp(tt.path); got != tt.want {
+			if got := GoesUp(tt.path); got != tt.want {
 				t.Errorf("PathGoesUp() = %v, want %v", got, tt.want)
 			}
 		})

@@ -5,7 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/tkw1536/ggman/internal/util"
+	"github.com/tkw1536/ggman/internal/pattern"
+	"github.com/tkw1536/ggman/internal/text"
 )
 
 // Filter is a predicate that matches repositories inside an environment.
@@ -60,7 +61,7 @@ type PathFilter struct {
 // Matches checks if a repository at clonePath matches this filter.
 // Root indicates the root of all repositories.
 func (pf PathFilter) Matches(env Env, clonePath string) bool {
-	return util.SliceContainsAny(pf.Paths, clonePath)
+	return text.SliceContainsAny(pf.Paths, clonePath)
 }
 
 // Candidates returns a list of folders that should be scanned regardless of their location.
@@ -78,7 +79,7 @@ func NewPatternFilter(value string) (pat PatternFilter) {
 // PatternFilter implements FilterValue
 type PatternFilter struct {
 	value   string
-	pattern util.SplitPattern
+	pattern pattern.SplitPattern
 }
 
 func (pat PatternFilter) String() string {
@@ -90,7 +91,7 @@ func (pat PatternFilter) String() string {
 // This function is untested because NewPatternFilter() is tested.
 func (pat *PatternFilter) Set(value string) {
 	pat.value = value
-	pat.pattern = util.NewSplitGlobPattern(value, func(s string) []string {
+	pat.pattern = pattern.NewSplitGlobPattern(value, func(s string) []string {
 		return ParseURL(s).Components()
 	})
 }
@@ -157,5 +158,5 @@ func (or DisjunctionFilter) Candidates() []string {
 	}
 
 	// remove duplicates from the result
-	return util.RemoveDuplicates(candidates)
+	return text.RemoveDuplicates(candidates)
 }

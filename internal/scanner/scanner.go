@@ -1,4 +1,5 @@
-package util
+// Package scanner provides Scan.
+package scanner
 
 import (
 	"io/ioutil"
@@ -6,12 +7,14 @@ import (
 	"path/filepath"
 	"sort"
 	"sync"
+	"sync/atomic"
 
 	"github.com/pkg/errors"
+	"github.com/tkw1536/ggman/internal/record"
 )
 
-// ScanOptions are options for a Scanner.
-type ScanOptions struct {
+// Options are options for a Scanner.
+type Options struct {
 	// Root is the root folder to scan
 	Root string
 
@@ -27,7 +30,7 @@ type ScanOptions struct {
 	//
 	// Visit may be nil.
 	// In such a case, it is assumed to return the pair (true, true) for every invocation.
-	Visit func(path string, context ScanVisitContext) (match, cont bool)
+	Visit func(path string, context VisitContext) (match, cont bool)
 
 	// When FollowLinks is set, the scanner will follow symbolic links and detect cycles.
 	FollowLinks bool
@@ -42,8 +45,8 @@ type ScanOptions struct {
 	BufferSize int
 }
 
-// ScanVisitContext represents the context of the Visit function
-type ScanVisitContext struct {
+// VisitContext represents the context of the Visit function
+type VisitContext struct {
 	// Root is the root this scan started from
 	Root string
 
@@ -52,7 +55,7 @@ type ScanVisitContext struct {
 }
 
 // next returns a new ScanVisitContext that can be used for the next level of a scan
-func (context ScanVisitContext) next() (next ScanVisitContext) {
+func (context VisitContext) next() (next VisitContext) {
 	next.Root = context.Root
 	next.Depth = context.Depth + 1
 	return
@@ -64,8 +67,8 @@ func (context ScanVisitContext) next() (next ScanVisitContext) {
 //  scanner := &Scanner{ScanOptions: options}
 //  err := scanner.Scan()
 //  results := scanner.Results()
-func Scan(options ScanOptions) ([]string, error) {
-	scanner := &Scanner{ScanOptions: options}
+func Scan(options Options) ([]string, error) {
+	scanner := &Scanner{Options: options}
 
 	// we cannot directly return here
 	// Results() MUST be called after Scan()
@@ -81,10 +84,11 @@ func Scan(options ScanOptions) ([]string, error) {
 // Each Scanner may be used only once.
 // Scanner is not safe for access by multiple goroutines.
 type Scanner struct {
-	ScanOptions
+	used uint32 // 0 => not used, 1 => used; first to guarantee alignment
 
-	used   bool
-	record Record
+	Options
+
+	record record.Record
 
 	semaphore chan struct{}
 	wg        sync.WaitGroup
@@ -103,13 +107,12 @@ type Scanner struct {
 // When an error occurs, it continues blocking until all scanning routines have finished and returns an error.
 // Each scanner should only be used once.
 func (s *Scanner) Scan() error {
-	if s.used {
+	if !atomic.CompareAndSwapUint32(&s.used, 0, 1) {
 		panic("Scanner.Scan(): Attempted reuse")
 	}
-	s.used = true
 
 	if s.Visit == nil {
-		s.Visit = func(path string, context ScanVisitContext) (bool, bool) { return true, true }
+		s.Visit = func(path string, context VisitContext) (bool, bool) { return true, true }
 	}
 
 	// create a channel for results and the repos themselves
@@ -127,7 +130,7 @@ func (s *Scanner) Scan() error {
 
 	s.wg = sync.WaitGroup{}
 	s.wg.Add(1)
-	go s.scan(s.Root, ScanVisitContext{
+	go s.scan(s.Root, VisitContext{
 		Root:  s.Root,
 		Depth: 0,
 	})
@@ -135,7 +138,7 @@ func (s *Scanner) Scan() error {
 	// scan all the extra roots
 	s.wg.Add(len(s.ExtraRoots))
 	for _, root := range s.ExtraRoots {
-		go s.scan(root, ScanVisitContext{
+		go s.scan(root, VisitContext{
 			Root:  root,
 			Depth: 0,
 		})
@@ -176,7 +179,7 @@ func (s *Scanner) Results() []string {
 
 // scan performs a recursive scan of path
 // one should do s.wg.Add(1) before each call of scan.
-func (s *Scanner) scan(path string, context ScanVisitContext) {
+func (s *Scanner) scan(path string, context VisitContext) {
 
 	// aquire the semaphore
 	if s.semaphore != nil {

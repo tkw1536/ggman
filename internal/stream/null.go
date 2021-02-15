@@ -1,14 +1,15 @@
-package util
+// Package stream provides NullStream
+package stream
 
 import "io"
 
-// NullStream is an io.ReadWriteCloser.
+// Null is an io.ReadWriteCloser.
 //
-// Reads from it return 0 bytes and return io.EOF.
+// Reads from it return 0 bytes and io.EOF.
 // Writes and Closes succeed without doing anything.
 //
 // See also ioutil.Discard.
-var NullStream io.ReadWriteCloser = nullStream{}
+var Null io.ReadWriteCloser = nullStream{}
 
 type nullStream struct{}
 

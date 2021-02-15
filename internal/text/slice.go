@@ -1,4 +1,4 @@
-package util
+package text
 
 // SliceContainsAny returns true if at least one needle is contained in haystack.
 // Otherwise returns false.

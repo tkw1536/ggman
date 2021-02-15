@@ -1,4 +1,4 @@
-package util
+package text
 
 import (
 	"strings"
@@ -97,7 +97,7 @@ func WrapLinePrefix(line string, length int) []string {
 	return lines
 }
 
-// WrapStringPrefix is like WrapStringPrefix except that it first splits the input into newline seperated strings.
+// WrapStringPrefix is like WrapLinePrefix except that it first splits the input into newline seperated strings.
 // It then treats each line seperatly.
 func WrapStringPrefix(s string, length int) (lines []string) {
 	for _, line := range strings.Split(strings.Replace(s, "\r\n", "\n", -1), "\n") {

@@ -1,4 +1,4 @@
-package util
+package scanner
 
 import (
 	"io/ioutil"
@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
 )
 
@@ -61,14 +62,14 @@ func TestScan(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		options ScanOptions
+		options Options
 		want    []string
 		wantErr bool
 	}{
 		{
 			"scan /",
 
-			ScanOptions{
+			Options{
 				Root:        base,
 				FollowLinks: false,
 			},
@@ -93,10 +94,10 @@ func TestScan(t *testing.T) {
 		{
 			"scan /, accept only three-triples",
 
-			ScanOptions{
+			Options{
 				Root:        base,
 				FollowLinks: false,
-				Visit: func(path string, context ScanVisitContext) (match, cont bool) {
+				Visit: func(path string, context VisitContext) (match, cont bool) {
 					return context.Depth == 3, true
 				},
 			},
@@ -117,11 +118,11 @@ func TestScan(t *testing.T) {
 		{
 			"scan /, stop inside '/ab'",
 
-			ScanOptions{
+			Options{
 				Root:        base,
 				FollowLinks: false,
-				Visit: func(path string, context ScanVisitContext) (match, cont bool) {
-					return true, trimPath(path) != ToOSPath("a/ab")
+				Visit: func(pth string, context VisitContext) (match, cont bool) {
+					return true, trimPath(pth) != path.ToOSPath("a/ab")
 				},
 			},
 			[]string{
@@ -142,7 +143,7 @@ func TestScan(t *testing.T) {
 		{
 			"scan a/aa, don't follow symlinks",
 
-			ScanOptions{
+			Options{
 				Root:        filepath.Join(base, "a", "aa"),
 				ExtraRoots:  []string{filepath.Join(base, "a", "ac")},
 				FollowLinks: false,
@@ -162,7 +163,7 @@ func TestScan(t *testing.T) {
 		{
 			"scan a/aa and extra roots, don't follow links",
 
-			ScanOptions{
+			Options{
 				Root:        filepath.Join(base, "a", "aa"),
 				FollowLinks: false,
 			},
@@ -177,7 +178,7 @@ func TestScan(t *testing.T) {
 		{
 			"scan a/aa, follow symlinks", // a/aa/linked links to the root
 
-			ScanOptions{
+			Options{
 				Root:        filepath.Join(base, "a", "aa"),
 				FollowLinks: true,
 			},
@@ -204,7 +205,7 @@ func TestScan(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := Scan(tt.options)
 			trimAll(got)
-			ToOSPaths(tt.want)
+			path.ToOSPaths(tt.want)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Scan() error = %v, wantErr %v", err, tt.wantErr)
 				return
