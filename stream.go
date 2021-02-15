@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/tkw1536/ggman/util"
+	"github.com/tkw1536/ggman/internal/util"
 )
 
 // IOStream represents a set of input and output streams commonly associated to a process.

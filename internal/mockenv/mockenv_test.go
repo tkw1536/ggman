@@ -8,8 +8,8 @@ import (
 
 	"github.com/spf13/pflag"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/internal/util"
 	"github.com/tkw1536/ggman/program"
-	"github.com/tkw1536/ggman/util"
 )
 
 // recordingT records a message passed to Errorf()

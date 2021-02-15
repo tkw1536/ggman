@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/tkw1536/ggman/testutil/mockenv"
+	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
 func TestCommandLink(t *testing.T) {

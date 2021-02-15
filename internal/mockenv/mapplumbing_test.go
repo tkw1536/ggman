@@ -8,7 +8,7 @@ import (
 	"github.com/go-git/go-git/v5/config"
 	"github.com/tkw1536/ggman"
 	gggit "github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/ggman/testutil"
+	"github.com/tkw1536/ggman/internal/testutil"
 )
 
 func TestMappedPlumbing_Forward(t *testing.T) {

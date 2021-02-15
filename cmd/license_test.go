@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/constants/legal"
-	"github.com/tkw1536/ggman/testutil/mockenv"
+	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
 func TestCommandLicense(t *testing.T) {

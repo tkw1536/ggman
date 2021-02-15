@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
-	"github.com/tkw1536/ggman/testutil/mockenv"
+	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
 func TestCommandFindBranch(t *testing.T) {

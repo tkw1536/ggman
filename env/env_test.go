@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/ggman/testutil"
-	"github.com/tkw1536/ggman/util"
+	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/internal/util"
 )
 
 func TestEnv_LoadDefaultRoot(t *testing.T) {

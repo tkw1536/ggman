@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/ggman/util"
+	"github.com/tkw1536/ggman/internal/util"
 )
 
 // Env represents an environment to be used by ggman.

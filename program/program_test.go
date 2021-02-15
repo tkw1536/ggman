@@ -10,7 +10,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/ggman/testutil"
+	"github.com/tkw1536/ggman/internal/testutil"
 )
 
 func TestProgram_Main(t *testing.T) {

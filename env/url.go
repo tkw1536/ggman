@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/tkw1536/ggman/util"
+	"github.com/tkw1536/ggman/internal/util"
 )
 
 // URL represents a URL to a single git repository.

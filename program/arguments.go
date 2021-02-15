@@ -3,7 +3,7 @@ package program
 import (
 	"github.com/spf13/pflag"
 	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/util"
+	"github.com/tkw1536/ggman/internal/util"
 )
 
 // Arguments represent a set of partially parsed arguments for an invocation of the 'ggman' program.

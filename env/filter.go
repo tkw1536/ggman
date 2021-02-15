@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/tkw1536/ggman/util"
+	"github.com/tkw1536/ggman/internal/util"
 )
 
 // Filter is a predicate that matches repositories inside an environment.

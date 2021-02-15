@@ -14,8 +14,8 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	gggit "github.com/tkw1536/ggman/git"
+	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/ggman/program"
-	"github.com/tkw1536/ggman/testutil"
 )
 
 // MockEnv represents a new environment that can be used for testing ggman commands.

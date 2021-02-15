@@ -11,7 +11,7 @@ import (
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/util"
+	"github.com/tkw1536/ggman/internal/util"
 )
 
 // Plumbing is an interface that represents a working internal implementation of git.

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tkw1536/ggman/testutil/mockenv"
+	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
 func TestCommandHere(t *testing.T) {

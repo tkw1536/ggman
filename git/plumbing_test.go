@@ -8,7 +8,7 @@ import (
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/testutil"
+	"github.com/tkw1536/ggman/internal/testutil"
 )
 
 func Test_gogit_IsRepository(t *testing.T) {

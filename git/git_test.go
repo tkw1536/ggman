@@ -17,7 +17,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tkw1536/ggman/testutil"
+	"github.com/tkw1536/ggman/internal/testutil"
 )
 
 func TestNewGitFromPlumbing(t *testing.T) {

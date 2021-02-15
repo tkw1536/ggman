@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tkw1536/ggman/testutil"
+	"github.com/tkw1536/ggman/internal/testutil"
 )
 
 func TestScan(t *testing.T) {

@@ -10,8 +10,8 @@ import (
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/internal/util"
 	"github.com/tkw1536/ggman/program"
-	"github.com/tkw1536/ggman/util"
 
 	"github.com/pkg/browser"
 )

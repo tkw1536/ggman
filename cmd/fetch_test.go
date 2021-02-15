@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/tkw1536/ggman/testutil"
-	"github.com/tkw1536/ggman/testutil/mockenv"
+	"github.com/tkw1536/ggman/internal/mockenv"
+	"github.com/tkw1536/ggman/internal/testutil"
 )
 
 func TestCommandFetch(t *testing.T) {
