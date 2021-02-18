@@ -215,9 +215,12 @@ var errNotResolved = ggman.Error{
 	Message:  "Unable to resolve repository %q",
 }
 
-// Abs returns the absolute path to path.
+// Abs returns the absolute path to path, unless it is already absolute.
 // path is resolved relative to the working directory of this environment.
 func (env Env) Abs(path string) (string, error) {
+	if filepath.IsAbs(path) {
+		return path, nil
+	}
 	return filepath.Abs(filepath.Join(env.Workdir, path))
 }
 
@@ -237,6 +240,7 @@ const atMaxIterCount = 1000
 // If that is not the case, calls panic().
 // If no repository is found, returns an error of type Error.
 func (env Env) At(p string) (repo, worktree string, err error) {
+	// Changes here should be reflected in AtRoot().
 	root, err := env.absRoot()
 	if err != nil {
 		panic("Env.At(): Root not resolved")
@@ -269,6 +273,28 @@ func (env Env) At(p string) (repo, worktree string, err error) {
 	}
 
 	return
+}
+
+// AtRoot checks if the path p represents the root of a repository.
+// If p is a relative path, it will be resolved relative to the current directory.
+//
+// When true it returns the absolute path to p, and no error.
+// When false, returns the empty string and no error.
+// When something goes wrong, returns an error.
+func (env Env) AtRoot(p string) (repo string, err error) {
+	// This function could check if At(p) returns workdir = "."
+	// but that would create additional disk I/O!
+
+	path, err := env.Abs(p)
+	if err != nil {
+		return "", errNotResolved.WithMessageF(p)
+	}
+
+	if !env.Git.IsRepository(path) {
+		return "", nil
+	}
+
+	return path, nil
 }
 
 // Canonical returns the canonical version of the URL url.

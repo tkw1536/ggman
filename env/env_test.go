@@ -189,6 +189,55 @@ func TestEnv_At(t *testing.T) {
 	}
 }
 
+func TestEnv_AtRoot(t *testing.T) {
+	root, cleanup := testutil.TempDir()
+	defer cleanup()
+
+	// group/repo contains a repository
+	group := filepath.Join(root, "group")
+	repo := filepath.Join(group, "repo")
+	if err := os.MkdirAll(repo, os.ModePerm); err != nil {
+		panic(err)
+	}
+	if testutil.NewTestRepoAt(repo, "") == nil {
+		panic("Failed to create test repository")
+	}
+
+	// sub is a path inside the repository
+	sub := filepath.Join(repo, "sub")
+	if err := os.MkdirAll(sub, os.ModePerm); err != nil {
+		panic(err)
+	}
+
+	tests := []struct {
+		name     string
+		path     string
+		wantRepo string
+		wantErr  bool
+	}{
+		{"no repository root at root", root, "", false},
+		{"no repository root in group root", group, "", false},
+		{"repository root in repo", repo, repo, false},
+		{"no repository root in repo/sub", "", "", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			env := Env{
+				Git:  git.NewGitFromPlumbing(nil, ""),
+				Root: root,
+			}
+			gotRepo, err := env.AtRoot(tt.path)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Env.AtRoot() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotRepo != tt.wantRepo {
+				t.Errorf("Env.AtRoot() gotRepo = %v, want %v", gotRepo, tt.wantRepo)
+			}
+		})
+	}
+}
+
 func TestEnv_ScanRepos(t *testing.T) {
 	root, cleanup := testutil.TempDir()
 	defer cleanup()

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/mockenv"
@@ -19,6 +20,8 @@ func TestCommandLs(t *testing.T) {
 	mock.Register("https://gitlab.com/hello/world.git")
 	glHelloWorld := mock.Install("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
+	glHelloDir := filepath.Join(glHelloWorld, "..")
+
 	tests := []struct {
 		name    string
 		workdir string
@@ -28,6 +31,7 @@ func TestCommandLs(t *testing.T) {
 		wantStdout string
 		wantStderr string
 	}{
+
 		{
 			"list all repositories",
 			"",
@@ -108,6 +112,26 @@ func TestCommandLs(t *testing.T) {
 			"list only current repository (gitlab.com hello world)",
 			glHelloWorld,
 			[]string{"--here", "ls"},
+
+			0,
+			"${GGROOT gitlab.com hello world}\n",
+
+			"",
+		},
+		{
+			"list an absolute path",
+			serverRepo,
+			[]string{"--for", ghHelloWorld, "ls"},
+
+			0,
+			"${GGROOT github.com hello world}\n",
+
+			"",
+		},
+		{
+			"list a relative path",
+			glHelloDir,
+			[]string{"--for", filepath.Join(".", "world"), "ls"},
 
 			0,
 			"${GGROOT gitlab.com hello world}\n",

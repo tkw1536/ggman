@@ -20,6 +20,14 @@ func (c *Context) init() error {
 	// generate pattern filters for the "--for" arguments
 	clauses := make([]env.Filter, len(c.filterPatterns))
 	for i, pat := range c.filterPatterns {
+
+		// check if 'pat' represents the root of a repository
+		if repo, err := c.AtRoot(pat); err == nil && repo != "" {
+			clauses[i] = env.PathFilter{Paths: []string{repo}}
+			continue
+		}
+
+		// create a normal pattern filter
 		clauses[i] = env.NewPatternFilter(pat)
 	}
 

@@ -149,6 +149,7 @@ Examples for supported patterns can be found in this table:
 | `github.com/hello` | `git@github.com:hello/world.git`, `git@github.com:hello/mars.git`   |
 
 Note that the `--for` argument also works for exact repository urls, e.g. `ggman --for 'https://github.com/tkw1536/GitManager' ls`. 
+`--for` also works with absolute or relative filepaths to locally installed repositories. 
 
 In addition to the `--for` argument, the `--here` argument also works.
 It is a shortcut that is equivalent to calling `--for` with the remote of the repository located in the current working directory. 
@@ -325,6 +326,8 @@ ggcode () {
 
 ### 1.9.0 (Upcoming)
 
+- `--for` now also matches filepaths
+- add a new utility method to cleanup repeated code
 - move `util` and `testutil` packages into new `internal` subpackage
 
 ### 1.8.0 (Released [Jan 31 2020](https://github.com/tkw1536/ggman/releases/tag/v1.8.0))
