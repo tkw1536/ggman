@@ -45,6 +45,8 @@ type URL struct {
 //
 // For windows compatibility, '\\' is replaced by '/' in the input string.
 func ParseURL(s string) (repo URL) {
+	// Any changes made here should also be made in ComponentsOf.
+
 	s = strings.ReplaceAll(s, "\\", "/") // windows
 
 	// we sometimes have to restore 's' to what it was before
@@ -98,6 +100,7 @@ func ParseURL(s string) (repo URL) {
 // Empty components are ignored.
 // Furthermore a username 'git' as well as a trailing suffix of '.git' are ignored as well.
 func (url URL) Components() []string {
+	// Any changes made here should also be made in ComponentsOf.
 
 	// First split the path into components split by '/'.
 	// and remove a '.git' from the last part.
@@ -174,4 +177,10 @@ func (url URL) CanonicalWith(lines CanFile) (canonical string) {
 	}
 
 	return
+}
+
+// ComponentsOf returns the components of the URL in s.
+// It is a convenience wrapper for ParseURL(s).Components().
+func ComponentsOf(s string) []string {
+	return ParseURL(s).Components()
 }

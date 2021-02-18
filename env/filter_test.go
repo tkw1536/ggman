@@ -216,9 +216,6 @@ func TestPathFilter_Candidates(t *testing.T) {
 }
 
 func TestNewPatternFilter(t *testing.T) {
-	splitter := func(s string) []string {
-		return ParseURL(s).Components()
-	}
 	type args struct {
 		value string
 	}
@@ -232,7 +229,7 @@ func TestNewPatternFilter(t *testing.T) {
 			args{"a/b"},
 			PatternFilter{
 				value:   "a/b",
-				pattern: pattern.NewSplitGlobPattern("a/b", splitter),
+				pattern: pattern.NewSplitGlobPattern("a/b", ComponentsOf),
 			},
 		},
 		{
@@ -240,7 +237,7 @@ func TestNewPatternFilter(t *testing.T) {
 			args{""},
 			PatternFilter{
 				value:   "",
-				pattern: pattern.NewSplitGlobPattern("", splitter),
+				pattern: pattern.NewSplitGlobPattern("", ComponentsOf),
 			},
 		},
 	}

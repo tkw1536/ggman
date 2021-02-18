@@ -91,9 +91,7 @@ func (pat PatternFilter) String() string {
 // This function is untested because NewPatternFilter() is tested.
 func (pat *PatternFilter) Set(value string) {
 	pat.value = value
-	pat.pattern = pattern.NewSplitGlobPattern(value, func(s string) []string {
-		return ParseURL(s).Components()
-	})
+	pat.pattern = pattern.NewSplitGlobPattern(value, ComponentsOf)
 }
 
 var directoryUp string = ".." + string(os.PathSeparator)

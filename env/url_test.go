@@ -181,6 +181,29 @@ func BenchmarkURL_Components(b *testing.B) {
 	}
 }
 
+func TestComponentsOf(t *testing.T) {
+	tests := []struct {
+		s    string
+		want []string
+	}{
+		{"ssh://host.xz/path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
+		{"ssh://user@host.xz/path/to/repo.git/", []string{"host.xz", "user", "path", "to", "repo"}},
+		{"ssh://host.xz:1234/path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
+		{"ssh://user@host.xz:1234/path/to/repo.git/", []string{"host.xz", "user", "path", "to", "repo"}},
+		{"git://host.xz/path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
+		{"git://host.xz:1234/path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
+		{"host.xz:path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
+		{"user@host.xz:path/to/repo.git/", []string{"host.xz", "user", "path", "to", "repo"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.s, func(t *testing.T) {
+			if got := ComponentsOf(tt.s); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ComponentsOf() = %#v, want %#v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestRepoURI_Canonical(t *testing.T) {
 	type fields struct {
 		Scheme   string
