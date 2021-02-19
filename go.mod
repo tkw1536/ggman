@@ -1,6 +1,6 @@
 module github.com/tkw1536/ggman
 
-go 1.12
+go 1.16
 
 require (
 	github.com/Microsoft/go-winio v0.4.16 // indirect
@@ -15,5 +15,5 @@ require (
 	github.com/xanzy/ssh-agent v0.3.0 // indirect
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
-	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c // indirect
+	golang.org/x/sys v0.0.0-20210218155724-8ebf48af031b // indirect
 )

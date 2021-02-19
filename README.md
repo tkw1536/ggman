@@ -41,7 +41,7 @@ Afterwards simply place it somewhere in your `$PATH`.
 #### Install from Source
 
 If you do not trust pre-built binaries you can build `ggman` from source. 
-You need [`go`](https://golang.org) along with `make` installed on your machine. This project is tested on go `1.15`, older releasees may or may not work. 
+You need [`go`](https://golang.org) along with `make` installed on your machine. This project is tested on go `1.16`, older releasees may or may not work. 
 
 After cloning this repository, you can then simply type `make` and executables will be generated inside the `dist/` directory. 
 
@@ -332,6 +332,7 @@ ggcode () {
 
 ### 1.9.0 (Upcoming)
 
+- move to go `1.16`
 - `--for` now also matches filepaths
 - add a new utility method to cleanup repeated code
 - move `util` and `testutil` packages into new `internal` subpackage
