@@ -30,20 +30,26 @@ Setting up ggman consists of two steps:
 
 ### getting the `ggman` binary
 
-To get `ggman` you have three options:
+There are two primary options for getting and installing ggman. 
 
-1. Build it yourself
-To build `ggman` yourself, you need [`go`](https://golang.org) 1.9 or newer along with `make` installed on your machine. 
-After cloning this repository, you can then simply type `make` and executables will be generated inside the `dist/` directory. 
 
-2. Download a pre-built binary. 
+#### Download a pre-built binary. 
 You can download a pre-built binary from the [releases page](https://github.com/tkw1536/ggman/releases/latest) on GitHub. 
 This page includes releases for Linux, Mac OS X and Windows. 
-Note that older binaries were compressed with [`upx`](https://upx.github.io) in order to decrease executable size. 
+Afterwards simply place it somewhere in your `$PATH`.
 
-After obtaining the binary (through either of the two means), simply place it in your `$PATH`. 
-Alternatively, you can simply type `make install` from the source code to have it installed directly. 
-`ggman` does not depend on any external software (although having `git` in `$PATH` allows for passing through arguments to `clone`). 
+#### Install from Source
+
+If you do not trust pre-built binaries you can build `ggman` from source. 
+You need [`go`](https://golang.org) along with `make` installed on your machine. This project is tested on go `1.15`, older releasees may or may not work. 
+
+After cloning this repository, you can then simply type `make` and executables will be generated inside the `dist/` directory. 
+
+You can then either manually place them in your `$PATH`, or type `make install` to have it installed directly. 
+
+#### Optional Dependencies
+
+The compiled `ggman` binary does not depend on any external software. Nonetheless, having`git` in `$PATH` allows for more efficient operations in some cases. 
 
 ### configuring `ggman`
 
@@ -52,7 +58,7 @@ ggman is easy to configure.
 It manages all git repositories inside a given root directory, and automatically sets up new repositories relative to the URLs they are cloned from. 
 This root folder defaults to `~/Projects` but can be customized using the `$GGROOT` environment variable. 
 
-Once the GGROOT environment variable is set up, ggman is ready to be used. 
+Once the GGROOT environment variable is set, ggman is ready to be used. 
 
 ### first steps
 
@@ -72,14 +78,14 @@ ggman --for https://github.com/tkw1536/ggman ls
 
 will print the location of a particular repository.
 
-To clone a new repository into the root directory, you can use the `ggman clone`.
+To clone a new repository into the root directory, you can use the `ggman clone` command.
 For example:
 
 ```
 ggman clone https://github.com/tkw1536/ggman
 ```
 
-This will clone the repository https://github.com/tkw1536/ggman to the folder `$GGROOT/tkw1536/ggman` using ssh keys. 
+This will clone the repository https://github.com/tkw1536/ggman to the folder `$GGROOT/github.com/tkw1536/ggman` using ssh keys. 
 
 If you want to move all existing repositories into the standardized structure you can use:
 
