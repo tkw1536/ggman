@@ -330,14 +330,16 @@ ggcode () {
 
 ## Changelog
 
-### 1.9.0 (Upcoming)
+### 1.10.0 (Upcoming)
+
+### 1.9.0 (Released [Feb 21 2021](https://github.com/tkw1536/ggman/releases/tag/v1.9.0))
 
 - move to go `1.16`
 - `--for` now also matches filepaths
 - add a new utility method to cleanup repeated code
 - move `util` and `testutil` packages into new `internal` subpackage
 
-### 1.8.0 (Released [Jan 31 2020](https://github.com/tkw1536/ggman/releases/tag/v1.8.0))
+### 1.8.0 (Released [Jan 31 2021](https://github.com/tkw1536/ggman/releases/tag/v1.8.0))
 
 - add `force-repo-here` flag to `ggman web` and `ggman url` to force a repository even when there is none
 - include go version when calling `ggman version`
