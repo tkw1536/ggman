@@ -12,7 +12,6 @@
 package git
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -36,10 +35,10 @@ func TestNewGitFromPlumbing(t *testing.T) {
 		t.Errorf("NewGitFromPlumbing(): Expected *gogit")
 	}
 
-	if err := ioutil.WriteFile(filepath.Join(dir, "git"), nil, os.ModePerm&0x111); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "git"), nil, os.ModePerm&0x111); err != nil {
 		panic(err)
 	}
-	if err := ioutil.WriteFile(filepath.Join(dir, "git.exe"), nil, os.ModePerm&0x111); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "git.exe"), nil, os.ModePerm&0x111); err != nil {
 		panic(err)
 	}
 

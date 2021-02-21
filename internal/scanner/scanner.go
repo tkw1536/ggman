@@ -2,7 +2,6 @@
 package scanner
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -218,7 +217,7 @@ func (s *Scanner) scan(path string, context VisitContext) {
 	}
 
 	// list all the files and folders in this directory
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		select {
 		case s.errChan <- err:

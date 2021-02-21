@@ -8,7 +8,7 @@ import "io"
 // Reads from it return 0 bytes and io.EOF.
 // Writes and Closes succeed without doing anything.
 //
-// See also ioutil.Discard.
+// See also io.Discard.
 var Null io.ReadWriteCloser = nullStream{}
 
 type nullStream struct{}

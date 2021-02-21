@@ -1,7 +1,6 @@
 package testutil
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -16,9 +15,9 @@ import (
 //  defer cleanup()
 //
 func TempDir() (path string, cleanup func()) {
-	// This function is more or less a thin wrapper around ioutil.TempDir.
+	// This function is more or less a thin wrapper around os.MkdirTemp.
 	// The reason it exists is because it saves a lot of boilerplate, like checking err != nil.
-	path, err := ioutil.TempDir("", "")
+	path, err := os.MkdirTemp("", "")
 	if err != nil {
 		panic(err)
 	}

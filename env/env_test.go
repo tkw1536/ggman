@@ -1,7 +1,6 @@
 package env
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -77,7 +76,7 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 	// ddir is a directory with a '.ggman' file
 	ddir, cleanup := testutil.TempDir()
 	ggmanfile := filepath.Join(ddir, ".ggman")
-	ioutil.WriteFile(ggmanfile, []byte(canLineContent), os.ModePerm)
+	os.WriteFile(ggmanfile, []byte(canLineContent), os.ModePerm)
 	defer cleanup()
 
 	tests := []struct {

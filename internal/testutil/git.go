@@ -1,7 +1,6 @@
 package testutil
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"time"
@@ -90,7 +89,7 @@ func CommitTestFiles(repo *git.Repository, files map[string]string) (*git.Worktr
 
 	// write each file to disk and add it to the staging area
 	for file, content := range files {
-		if err := ioutil.WriteFile(path.Join(root, file), []byte(content), os.ModePerm); err != nil {
+		if err := os.WriteFile(path.Join(root, file), []byte(content), os.ModePerm); err != nil {
 			panic(err)
 		}
 		if _, err := worktree.Add(file); err != nil {

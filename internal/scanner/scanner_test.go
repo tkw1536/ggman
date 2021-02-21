@@ -1,7 +1,6 @@
 package scanner
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -229,7 +228,7 @@ func Test_IsDirectory(t *testing.T) {
 
 	// make a file
 	file := filepath.Join(dir, "file")
-	if err := ioutil.WriteFile(file, nil, os.ModePerm); err != nil {
+	if err := os.WriteFile(file, nil, os.ModePerm); err != nil {
 		panic(err)
 	}
 
