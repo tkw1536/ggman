@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"reflect"
 	"runtime"
+	"sort"
 
-	"github.com/spf13/pflag"
-
+	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/internal/usagefmt"
 )
 
 // Program represents an executable program with a list of subcommands.
@@ -20,7 +21,27 @@ type Program struct {
 	commands map[string]Command
 }
 
+// Commands returns a list of known commands
+func (p Program) Commands() []string {
+	commands := make([]string, 0, len(p.commands))
+	for cmd := range p.commands {
+		commands = append(commands, cmd)
+	}
+	sort.Strings(commands)
+	return commands
+}
+
+// FmtCommands returns a human readable string describing the commands.
+// See also Commands.
+func (p Program) FmtCommands() string {
+	return usagefmt.FmtCommands(p.Commands())
+}
+
 // Command represents a single command to be parsed.
+//
+// A command may contain state representing different flags.
+// Flag parsing is implemented using the "github.com/jessevdk/go-flags" package.
+// A Command implementation that is not a pointer to a struct is assumed to be flagless.
 //
 // Typically command contains state that represents the parsed options.
 // This would prevent a single value of type command to run multiple times.
@@ -34,8 +55,8 @@ type Command interface {
 	// Name returns the name of this command
 	Name() string
 
-	// Options returns the options of this command and adds appropriate flags to the flagset
-	Options(flagset *pflag.FlagSet) Options
+	// Options returns the options of this command
+	Options() Options
 
 	// AfterParse is called after arguments have been parsed, but before the command is being run.
 	// It is intended to perform any additional error checking on arguments, and return an error if needed.
@@ -46,6 +67,20 @@ type Command interface {
 	// This function should assume that flagset.Parse() has been called.
 	// The error returned should be either nil or of type ggman.Error
 	Run(context Context) error
+}
+
+// makeFlagsParser creates a new flags parser for data.
+// When data is nil or not a pointer to a struct, returns an empty parser.
+//
+// This function is untested.
+func makeFlagsParser(data interface{}, options flags.Options) *flags.Parser {
+	var actual interface{} = data
+	if ptrval := reflect.ValueOf(actual); data == nil || ptrval.Type().Kind() != reflect.Ptr {
+		// not a pointer to struct
+		actual = &struct{}{}
+	}
+
+	return flags.NewParser(actual, options)
 }
 
 // CloneCommand returns a new Command that behaves exactly like Command,
@@ -73,7 +108,12 @@ func CloneCommand(command Command) (cmd Command) {
 type Options struct {
 	Environment env.Requirement
 
+	// when true, parse unknown flags into the args array
+	// when false, raise an error on unknown flags
+	SkipUnknownFlags bool
+
 	// minimum and maximum number of arguments
+	// set to (0, -1) for unlimited arguments
 	MinArgs int
 	MaxArgs int
 
@@ -111,7 +151,7 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 	// handle special cases
 	switch {
 	case args.Help:
-		p.StdoutWriteWrap(p.Usage(args.flagsetGlobal))
+		p.StdoutWriteWrap(p.UsagePage().String())
 		return nil
 	case args.Version:
 		p.printVersion()
@@ -121,7 +161,7 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 	// load the command if we have it
 	command, hasCommand := p.commands[args.Command]
 	if !hasCommand {
-		return errProgramUnknownCommand.WithMessageF(p.knownCommandsString())
+		return errProgramUnknownCommand.WithMessageF(p.FmtCommands())
 	}
 
 	// parse the command arguments
@@ -133,7 +173,7 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 	// special cases of arguments
 	switch {
 	case cmdargs.Help:
-		p.StdoutWriteWrap(cmdargs.options.Usage(args.Command, cmdargs.flagsetCommand))
+		p.StdoutWriteWrap(cmdargs.UsagePage().String())
 		return nil
 	}
 

@@ -2,11 +2,11 @@ package program
 
 import (
 	"bytes"
+	"reflect"
 	"runtime"
 	"strings"
 	"testing"
 
-	"github.com/spf13/pflag"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/git"
@@ -45,21 +45,21 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "unknown general args",
 			args:       []string{"--this-flag-doesnt-exist", "--", "fake"},
-			wantStderr: "Unable to parse arguments: unknown flag: --this-flag-doesnt-exist\n",
+			wantStderr: "Unable to parse arguments: unknown flag `this-flag-doesnt-exist'\n",
 			wantCode:   3,
 		},
 
 		{
 			name:       "display help",
 			args:       []string{"--help"},
-			wantStdout: "ggman version v0.0.0-unknown\n\nUsage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\n   -h, --help\n       Print this usage dialog and exit.\n\n   -v, --version\n       Print version message and exit.\n\n   -f, --for filter\n       Filter the list of repositories to apply command to by filter.\n\n   -H, --here\n       Filter the list of repositories to apply command to only contain the\n       current repository.\n\n   COMMAND [ARGS...]\n       Command to call. One of 'fake'. See individual commands for more help.\n\nggman is licensed under the terms of the MIT License. Use 'ggman license' to\nview licensing information.\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License. Use 'ggman license' to\nview licensing information.\n\n   -h, --help\n      Print general help message and exit. \n\n   -v, --version\n      Print version message and exit. \n\n   -f, --for filter\n      Filter the list of repositories to apply command to by filter. \n\n   -H, --here\n      Filter the list of repositories to apply command to only contain the\n      current repository.\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
 			wantCode:   0,
 		},
 
 		{
 			name:       "display help, don't run command",
 			args:       []string{"--help", "fake", "whatever"},
-			wantStdout: "ggman version v0.0.0-unknown\n\nUsage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\n   -h, --help\n       Print this usage dialog and exit.\n\n   -v, --version\n       Print version message and exit.\n\n   -f, --for filter\n       Filter the list of repositories to apply command to by filter.\n\n   -H, --here\n       Filter the list of repositories to apply command to only contain the\n       current repository.\n\n   COMMAND [ARGS...]\n       Command to call. One of 'fake'. See individual commands for more help.\n\nggman is licensed under the terms of the MIT License. Use 'ggman license' to\nview licensing information.\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License. Use 'ggman license' to\nview licensing information.\n\n   -h, --help\n      Print general help message and exit. \n\n   -v, --version\n      Print version message and exit. \n\n   -f, --for filter\n      Filter the list of repositories to apply command to by filter. \n\n   -H, --here\n      Filter the list of repositories to apply command to only contain the\n      current repository.\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
 			wantCode:   0,
 		},
 
@@ -73,21 +73,14 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "command help",
 			args:       []string{"fake", "--help"},
-			wantStdout: "Usage: ggman [global arguments] [--] fake [--help|-h]\n\n   -h, --help\n       Print this usage message and exit.\n\n   global arguments\n       Global arguments for ggman. See ggman --help for more information.\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] fake [--stdout|-o message]\n[--stderr|-e message]\n\nGlobal Arguments:\n\n   -h, --help\n      Print general help message and exit. \n\n   -v, --version\n      Print version message and exit. \n\nCommand Arguments:\n\n   -o, --stdout message\n       (default write to stdout)\n\n   -e, --stderr message\n       (default write to stderr)\n",
 			wantCode:   0,
 		},
 
 		{
 			name:       "command help",
 			args:       []string{"--", "fake", "--help"},
-			wantStdout: "Usage: ggman [global arguments] [--] fake [--help|-h]\n\n   -h, --help\n       Print this usage message and exit.\n\n   global arguments\n       Global arguments for ggman. See ggman --help for more information.\n",
-			wantCode:   0,
-		},
-
-		{
-			name:       "",
-			args:       []string{"--", "fake", "--help"},
-			wantStdout: "Usage: ggman [global arguments] [--] fake [--help|-h]\n\n   -h, --help\n       Print this usage message and exit.\n\n   global arguments\n       Global arguments for ggman. See ggman --help for more information.\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] fake [--stdout|-o message]\n[--stderr|-e message]\n\nGlobal Arguments:\n\n   -h, --help\n      Print general help message and exit. \n\n   -v, --version\n      Print version message and exit. \n\nCommand Arguments:\n\n   -o, --stdout message\n       (default write to stdout)\n\n   -e, --stderr message\n       (default write to stderr)\n",
 			wantCode:   0,
 		},
 
@@ -97,6 +90,26 @@ func TestProgram_Main(t *testing.T) {
 			options:    Options{MinArgs: 1, MaxArgs: 2},
 			wantStderr: "Wrong number of arguments: 'fake' takes between 1 and 2 arguments. \n",
 			wantCode:   4,
+		},
+
+		{
+			name:       "'fake' with unknown argument (not allowed)",
+			args:       []string{"fake", "--argument-not-declared"},
+			options:    Options{MinArgs: 0, MaxArgs: -1},
+			variables:  env.Variables{GGROOT: root},
+			wantStdout: "",
+			wantStderr: "Error parsing flags: unknown flag `argument-not-declared'\n",
+			wantCode:   4,
+		},
+
+		{
+			name:       "'fake' with unknown argument (allowed)",
+			args:       []string{"fake", "--argument-not-declared"},
+			options:    Options{MinArgs: 0, MaxArgs: -1, SkipUnknownFlags: true},
+			variables:  env.Variables{GGROOT: root},
+			wantStdout: "Got filter: \nGot arguments: --argument-not-declared\nwrite to stdout\n",
+			wantStderr: "write to stderr\n",
+			wantCode:   0,
 		},
 
 		{
@@ -167,6 +180,56 @@ func TestProgram_Main(t *testing.T) {
 		},
 
 		{
+			name:       "'fake' with non-global here argument",
+			args:       []string{"--", "fake", "--here"},
+			options:    Options{MinArgs: 0, MaxArgs: -1, SkipUnknownFlags: true},
+			variables:  env.Variables{GGROOT: root},
+			wantStdout: "Got filter: \nGot arguments: --here\nwrite to stdout\n",
+			wantStderr: "write to stderr\n",
+			wantCode:   0,
+		},
+
+		{
+			name:       "'fake' with parsed short argument",
+			args:       []string{"fake", "-o", "message"},
+			options:    Options{MinArgs: 0, MaxArgs: -1, SkipUnknownFlags: true},
+			variables:  env.Variables{GGROOT: root},
+			wantStdout: "Got filter: \nGot arguments: \nmessage\n",
+			wantStderr: "write to stderr\n",
+			wantCode:   0,
+		},
+
+		{
+			name:       "'fake' with non-parsed short argument",
+			args:       []string{"fake", "--", "--s", "message"},
+			options:    Options{MinArgs: 0, MaxArgs: -1, SkipUnknownFlags: true},
+			variables:  env.Variables{GGROOT: root},
+			wantStdout: "Got filter: \nGot arguments: --s,message\nwrite to stdout\n",
+			wantStderr: "write to stderr\n",
+			wantCode:   0,
+		},
+
+		{
+			name:       "'fake' with parsed long argument",
+			args:       []string{"fake", "--stdout", "message"},
+			options:    Options{MinArgs: 0, MaxArgs: -1, SkipUnknownFlags: true},
+			variables:  env.Variables{GGROOT: root},
+			wantStdout: "Got filter: \nGot arguments: \nmessage\n",
+			wantStderr: "write to stderr\n",
+			wantCode:   0,
+		},
+
+		{
+			name:       "'fake' with non-parsed long argument",
+			args:       []string{"fake", "--", "--stdout", "message"},
+			options:    Options{MinArgs: 0, MaxArgs: -1, SkipUnknownFlags: true},
+			variables:  env.Variables{GGROOT: root},
+			wantStdout: "Got filter: \nGot arguments: --stdout,message\nwrite to stdout\n",
+			wantStderr: "write to stderr\n",
+			wantCode:   0,
+		},
+
+		{
 			name:       "'fake' with failure ",
 			args:       []string{"fake", "fail"},
 			options:    Options{MinArgs: 1, MaxArgs: 2},
@@ -178,7 +241,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'notexistent' command",
 			args:       []string{"notexistent"},
-			wantStderr: "Unknown command. Must be one of 'fake'. \n",
+			wantStderr: "Unknown command. Must be one of \"fake\". \n",
 			wantCode:   2,
 		},
 	}
@@ -189,7 +252,7 @@ func TestProgram_Main(t *testing.T) {
 			stderrBuffer.Reset()
 
 			// add a fake command
-			fake := &programFakeCommandT{name: "fake", options: tt.options}
+			fake := &echoCommand{name: "fake", options: tt.options}
 			program.commands = nil
 			program.Register(fake)
 
@@ -220,28 +283,58 @@ func TestProgram_Main(t *testing.T) {
 	}
 }
 
-// programFakeCommandT is a fake command that can be used for testing.
-type programFakeCommandT struct {
-	name    string
-	options Options
+// echoCommand is a fake command that can be used for testing.
+type echoCommand struct {
+	name      string
+	StdoutMsg string `short:"o" long:"stdout" value-name:"message" default:"write to stdout"`
+	StderrMsg string `short:"e" long:"stderr" value-name:"message" default:"write to stderr"`
+	options   Options
 }
 
-func (p programFakeCommandT) Name() string {
-	return p.name
+func (e echoCommand) Name() string {
+	return e.name
 }
-func (p programFakeCommandT) Options(*pflag.FlagSet) Options {
-	return p.options
+func (e echoCommand) Options() Options {
+	return e.options
 }
-func (programFakeCommandT) AfterParse() error { return nil }
-func (programFakeCommandT) Run(context Context) error {
-	context.Stdout.Write([]byte("Got filter: " + strings.Join(context.filterPatterns, ",")))
+func (e echoCommand) AfterParse() error { return nil }
+func (e echoCommand) Run(context Context) error {
+	context.Stdout.Write([]byte("Got filter: " + strings.Join(context.Filters, ",")))
 	context.Stdout.Write([]byte("\nGot arguments: " + strings.Join(context.Args, ",")))
-	context.Stdout.Write([]byte("\nwrite to stdout\n"))
-	context.Stderr.Write([]byte("write to stderr\n"))
+	context.Stdout.Write([]byte("\n" + e.StdoutMsg + "\n"))
+	context.Stderr.Write([]byte(e.StderrMsg + "\n"))
 
 	if len(context.Args) > 0 && context.Args[0] == "fail" {
 		return ggman.Error{ExitCode: ggman.ExitGeneric, Message: "Test Failure"}
 	}
 
 	return nil
+}
+
+func TestProgram_Commands(t *testing.T) {
+	var program Program
+	program.Register(fakeCommand("a"))
+	program.Register(fakeCommand("c"))
+	program.Register(fakeCommand("b"))
+
+	got := program.Commands()
+	want := []string{"a", "b", "c"}
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Program.Commands() = %v, want = %v", got, want)
+	}
+}
+
+func TestProgram_FmtCommands(t *testing.T) {
+	var program Program
+	program.Register(fakeCommand("a"))
+	program.Register(fakeCommand("c"))
+	program.Register(fakeCommand("b"))
+
+	got := program.FmtCommands()
+	want := `"a", "b", "c"`
+
+	if got != want {
+		t.Errorf("Program.FmtCommands() = %v, want = %v", got, want)
+	}
 }

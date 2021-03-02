@@ -1,7 +1,9 @@
 package program
 
 import (
-	"github.com/spf13/pflag"
+	"strings"
+
+	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/internal/text"
 )
@@ -10,21 +12,15 @@ import (
 //
 // These should be further parsed into CommandArguments using the appropriate Parse() method.
 type Arguments struct {
-	Command string
+	Help    bool `short:"h" long:"help" description:"Print general help message and exit. "`
+	Version bool `short:"v" long:"version" description:"Print version message and exit. "`
 
-	filterPatterns []string
-	filterHere     bool
+	Filters []string `short:"f" long:"for" value-name:"filter" description:"Filter the list of repositories to apply command to by filter. "`
+	Here    bool     `short:"H" long:"here" description:"Filter the list of repositories to apply command to only contain the current repository. "`
 
-	Help    bool
-	Version bool
-
-	Args []string // non-flag arguments
-
-	flagsetGlobal *pflag.FlagSet // flagset used for global argument parsing
+	Command string   // command to run
+	Args    []string // remaining arguments
 }
-
-const helpLiteralForm = "help"
-const versionLiteralForm = "version"
 
 var errParseArgsNeedOneArgument = ggman.Error{
 	ExitCode: ggman.ExitGeneralArguments,
@@ -41,35 +37,41 @@ var errParseArgsNeedTwoAfterFor = ggman.Error{
 	Message:  "Unable to parse arguments: At least two arguments needed after 'for' keyword. ",
 }
 
-const errForNeedsArgument = "flag needs an argument: --for"
-const errFNeedsArgument = "flag needs an argument: 'f' in -f"
+// parser returns a new parser for the arguments
+func (args *Arguments) parser() *flags.Parser {
+	return makeFlagsParser(args, flags.PassAfterNonOption|flags.PassDoubleDash)
+}
 
-// Parse parses arguments
+// Parse parses arguments.
 //
 // When parsing fails, returns an error of type Error.
 func (args *Arguments) Parse(argv []string) error {
+	// create a parser and parse the arguments
+	var err error
+	args.Args, err = args.parser().ParseArgs(argv)
 
-	// first parse arguments using the flagset
-	// and intercept special 'for' error messages.
-	fs := args.setflagsetGlobal()
-	if err := fs.Parse(argv); err != nil {
-		msg := err.Error()
-		switch msg {
-		case errForNeedsArgument, errFNeedsArgument:
-			return errParseArgsNeedTwoAfterFor
-		default:
-			return errParseArgsUnknownError.WithMessageF(msg)
+	if e, ok := err.(*flags.Error); ok {
+		switch e.Type {
+
+		// --for, -f was passed without an argument!
+		case flags.ErrExpectedArgument:
+			if names, ok := parseFlagNames(e); ok && text.SliceContainsAny(names, "f", "for") {
+				err = errParseArgsNeedTwoAfterFor
+			}
+
+		// encounted an unknown flag
+		case flags.ErrUnknownFlag:
+			err = errParseArgsUnknownError.WithMessageF(e.Message)
 		}
 	}
 
 	// store the arguments we got and complain if there are none.
 	// If we had a 'for' argument though, we should raise an error.
-	args.Args = fs.Args()
 	if len(args.Args) == 0 {
 		switch {
 		case args.Help || args.Version:
 			return nil
-		case len(args.filterPatterns) > 0:
+		case len(args.Filters) > 0:
 			return errParseArgsNeedTwoAfterFor
 		default:
 			return errParseArgsNeedOneArgument
@@ -103,33 +105,39 @@ func (args *Arguments) Parse(argv []string) error {
 		if len(args.Args) < 2 {
 			return errParseArgsNeedTwoAfterFor
 		}
-		args.filterPatterns = append(args.filterPatterns, args.Args[0])
+		args.Filters = append(args.Filters, args.Args[0])
 		args.Command = args.Args[1]
 		args.Args = args.Args[2:]
 	}
 
-	return nil
+	return err
 }
 
-// setflagsetGlobal sets flagset to a new flagset for argument parsing
-func (args *Arguments) setflagsetGlobal() (fs *pflag.FlagSet) {
-	if args.flagsetGlobal != nil {
-		return args.flagsetGlobal
+var flagNameCutset = "/-"
+
+// parseFlagNames parses flag names between `' from a flags.Error
+func parseFlagNames(err *flags.Error) (names []string, ok bool) {
+
+	// find the `' delimiters
+	start := strings.IndexRune(err.Message, '`')
+	end := strings.IndexRune(err.Message, '\'')
+
+	// if they can't be found (or aren't in the right order)
+	if start == -1 || end == -1 || start >= end-1 {
+		return
 	}
-	defer func() { args.flagsetGlobal = fs }()
 
-	fs = pflag.NewFlagSet("ggman", pflag.ContinueOnError)
-	fs.Usage = func() {}      // don't print a usage message on error
-	fs.SetInterspersed(false) // stop at the first regular argument
-	fs.SortFlags = false      // flag's shouldn't be sorted
+	// extract the description of the flags
+	description := err.Message[start+1 : end]
+	ok = true
 
-	fs.BoolVarP(&args.Help, "help", "h", false, "Print this usage dialog and exit.")
-	fs.BoolVarP(&args.Version, "version", "v", false, "Print version message and exit.")
+	// trim off the names
+	names = strings.Split(description, ", ")
+	for i, name := range names {
+		names[i] = strings.TrimLeft(name, flagNameCutset)
+	}
 
-	fs.StringSliceVarP(&args.filterPatterns, "for", "f", nil, "Filter the list of repositories to apply command to by `filter`.")
-	fs.BoolVarP(&args.filterHere, "here", "H", false, "Filter the list of repositories to apply command to only contain the current repository. ")
-
-	return fs
+	return
 }
 
 // CommandArguments represent a parsed set of options for a specific subcommand
@@ -137,8 +145,8 @@ func (args *Arguments) setflagsetGlobal() (fs *pflag.FlagSet) {
 type CommandArguments struct {
 	Arguments // Arguments that were passed to the command globally
 
-	options        Options
-	flagsetCommand *pflag.FlagSet
+	parser  *flags.Parser
+	options Options
 }
 
 // Parse parses arguments from a set of parsed command arguments.
@@ -165,7 +173,7 @@ func (args *CommandArguments) Parse(command Command, arguments Arguments) error 
 		return err
 	}
 
-	if err := args.parseFlagset(); err != nil {
+	if err := args.parseFlags(); err != nil {
 		return err
 	}
 
@@ -178,10 +186,16 @@ func (args *CommandArguments) Parse(command Command, arguments Arguments) error 
 
 // prepare prepares this CommandArguments for parsing arguments for command
 func (args *CommandArguments) prepare(command Command, arguments Arguments) {
-	args.flagsetCommand = pflag.NewFlagSet("ggman "+args.Command, pflag.ContinueOnError)
-
-	args.options = command.Options(args.flagsetCommand)
+	// setup options and arguments!
+	args.options = command.Options()
 	args.Arguments = arguments
+
+	// make a flag parser
+	var options flags.Options = flags.PassDoubleDash | flags.HelpFlag
+	if args.options.SkipUnknownFlags {
+		options |= flags.IgnoreUnknown
+	}
+	args.parser = makeFlagsParser(command, options)
 }
 
 var errParseFlagSet = ggman.Error{
@@ -193,25 +207,20 @@ var errParseFlagSet = ggman.Error{
 // If the flagset has no defined flags (or is nil), immediatly returns nil
 //
 // When an error occurs, returns an error of type Error.
-func (args *CommandArguments) parseFlagset() (err error) {
-	if args.flagsetCommand == nil || !args.flagsetCommand.HasFlags() {
-		return nil
-	}
+func (args *CommandArguments) parseFlags() (err error) {
+	args.Args, err = args.parser.ParseArgs(args.Args)
 
-	args.flagsetCommand.Usage = func() {} // don't print any usage messages please
-
-	err = args.flagsetCommand.Parse(args.Args)
-	switch err {
-	case nil: /* do nothing */
-	case pflag.ErrHelp: /* help error, set the help flag but nothing else */
+	// catch the help error
+	if flagErr, ok := err.(*flags.Error); ok && flagErr.Type == flags.ErrHelp {
 		args.Help = true
 		err = nil
-	default:
+	}
+
+	// if an error occured, return it!
+	if err != nil {
 		err = errParseFlagSet.WithMessageF(err.Error())
 	}
 
-	// store back the parsed arguments
-	args.Args = args.flagsetCommand.Args()
 	return err
 }
 
@@ -285,11 +294,11 @@ func (args CommandArguments) checkFilterArgument() error {
 		return nil
 	}
 
-	if len(args.filterPatterns) > 0 {
+	if len(args.Filters) > 0 {
 		return errParseNoFor.WithMessageF(args.Command)
 	}
 
-	if args.filterHere {
+	if args.Here {
 		return errParseNoHere.WithMessageF(args.Command)
 	}
 

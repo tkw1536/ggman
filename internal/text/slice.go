@@ -28,3 +28,13 @@ func SliceEquals(first, second []string) bool {
 	}
 	return true
 }
+
+// SliceCopy returns a copy of the provided slice.
+func SliceCopy(slice []string) []string {
+	if slice == nil {
+		return nil
+	}
+	clone := make([]string, len(slice))
+	copy(clone, slice)
+	return clone
+}

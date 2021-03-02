@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"github.com/spf13/pflag"
-
 	"github.com/tkw1536/ggman/constants/legal"
 	"github.com/tkw1536/ggman/program"
 )
@@ -18,7 +16,7 @@ func (license) Name() string {
 	return "license"
 }
 
-func (license) Options(flagset *pflag.FlagSet) program.Options {
+func (license) Options() program.Options {
 	return program.Options{}
 }
 

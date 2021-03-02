@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"github.com/spf13/pflag"
-
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
 )
@@ -11,7 +9,7 @@ import (
 //
 // The 'ggman canon' command prints to standard output the canonical version of the URL passed as the first argument.
 // An optional second argument determines the CANSPEC to use for canonizing the URL.
-var Canon program.Command = canon{}
+var Canon program.Command = &canon{}
 
 type canon struct{}
 
@@ -19,7 +17,7 @@ func (canon) Name() string {
 	return "canon"
 }
 
-func (canon) Options(flagset *pflag.FlagSet) program.Options {
+func (canon) Options() program.Options {
 	return program.Options{
 		MinArgs: 1,
 		MaxArgs: 2,

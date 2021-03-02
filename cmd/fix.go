@@ -3,8 +3,6 @@ package cmd
 import (
 	"sync"
 
-	"github.com/spf13/pflag"
-
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
@@ -18,15 +16,14 @@ import (
 var Fix program.Command = &fix{}
 
 type fix struct {
-	Simulate bool
+	Simulate bool `short:"s" long:"simulate" description:"If set, only print what would be done. "`
 }
 
 func (fix) Name() string {
 	return "fix"
 }
 
-func (f *fix) Options(flagset *pflag.FlagSet) program.Options {
-	flagset.BoolVarP(&f.Simulate, "simulate", "s", f.Simulate, "If set, only print what would be done. ")
+func (f *fix) Options() program.Options {
 	return program.Options{
 		Environment: env.Requirement{
 			NeedsRoot:    true,

@@ -1,6 +1,9 @@
 package text
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestSliceContainsAny(t *testing.T) {
 	type args struct {
@@ -77,6 +80,27 @@ func TestSliceEquals(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := SliceEquals(tt.args.first, tt.args.second); got != tt.want {
 				t.Errorf("SliceEquals() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSliceCopy(t *testing.T) {
+	type args struct {
+		slice []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		{"empty slice", args{nil}, nil},
+		{"non-empty slice", args{[]string{"a", "b", "c"}}, []string{"a", "b", "c"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SliceCopy(tt.args.slice); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SliceCopy() = %v, want %v", got, tt.want)
 			}
 		})
 	}

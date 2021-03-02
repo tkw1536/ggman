@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"github.com/spf13/pflag"
-
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
 )
@@ -15,15 +13,14 @@ import (
 var Here program.Command = &here{}
 
 type here struct {
-	Tree bool
+	Tree bool `short:"t" long:"tree" description:"If provided, also print the current HEAD reference and relative path to the root of the git worktree. "`
 }
 
 func (here) Name() string {
 	return "here"
 }
 
-func (h *here) Options(flagset *pflag.FlagSet) program.Options {
-	flagset.BoolVarP(&h.Tree, "tree", "t", h.Tree, "If provided, also print the current HEAD reference and relative path to the root of the git worktree. ")
+func (h *here) Options() program.Options {
 	return program.Options{
 		Environment: env.Requirement{
 			NeedsRoot: true,

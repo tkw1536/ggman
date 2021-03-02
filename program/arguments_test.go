@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman/env"
 )
 
@@ -18,7 +19,6 @@ func TestArguments_Parse(t *testing.T) {
 		wantErr    error
 	}{
 		{"no arguments", args{[]string{}}, Arguments{}, errParseArgsNeedOneArgument},
-
 		{"command without arguments", args{[]string{"cmd"}}, Arguments{Command: "cmd", Args: []string{}}, nil},
 
 		{"help with command (1)", args{[]string{"help", "cmd"}}, Arguments{Help: true, Args: []string{"cmd"}}, nil},
@@ -46,7 +46,6 @@ func TestArguments_Parse(t *testing.T) {
 		{"command with version (1)", args{[]string{"cmd", "version", "a1"}}, Arguments{Command: "cmd", Args: []string{"version", "a1"}}, nil},
 		{"command with version (2)", args{[]string{"cmd", "--version", "a1"}}, Arguments{Command: "cmd", Args: []string{"--version", "a1"}}, nil},
 		{"command with version (3)", args{[]string{"cmd", "-v", "a1"}}, Arguments{Command: "cmd", Args: []string{"-v", "a1"}}, nil},
-
 		{"only a for (1)", args{[]string{"for"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
 		{"only a for (2)", args{[]string{"--for"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
 		{"only a for (3)", args{[]string{"-f"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
@@ -58,19 +57,19 @@ func TestArguments_Parse(t *testing.T) {
 		{"for without command (2)", args{[]string{"--for", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
 		{"for without command (3)", args{[]string{"-f", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
 
-		{"for with command (1)", args{[]string{"for", "match", "cmd"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{}}, nil},
-		{"for with command (2)", args{[]string{"--for", "match", "cmd"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{}}, nil},
-		{"for with command (3)", args{[]string{"-f", "match", "cmd"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{}}, nil},
+		{"for with command (1)", args{[]string{"for", "match", "cmd"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{}}, nil},
+		{"for with command (2)", args{[]string{"--for", "match", "cmd"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{}}, nil},
+		{"for with command (3)", args{[]string{"-f", "match", "cmd"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{}}, nil},
 
-		{"here with command (1)", args{[]string{"--here", "cmd"}}, Arguments{Command: "cmd", filterHere: true, Args: []string{}}, nil},
-		{"here with command (2)", args{[]string{"-H", "cmd"}}, Arguments{Command: "cmd", filterHere: true, Args: []string{}}, nil},
+		{"here with command (1)", args{[]string{"--here", "cmd"}}, Arguments{Command: "cmd", Here: true, Args: []string{}}, nil},
+		{"here with command (2)", args{[]string{"-H", "cmd"}}, Arguments{Command: "cmd", Here: true, Args: []string{}}, nil},
 
-		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
-		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
-		{"for with command and arguments (3)", args{[]string{"-f", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", filterPatterns: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
+		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
+		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
+		{"for with command and arguments (3)", args{[]string{"-f", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
 
-		{"here with command and arguments (1)", args{[]string{"--here", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", filterHere: true, Args: []string{"a1", "a2"}}, nil},
-		{"here with command and arguments (2)", args{[]string{"-H", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", filterHere: true, Args: []string{"a1", "a2"}}, nil},
+		{"here with command and arguments (1)", args{[]string{"--here", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Here: true, Args: []string{"a1", "a2"}}, nil},
+		{"here with command and arguments (2)", args{[]string{"-H", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Here: true, Args: []string{"a1", "a2"}}, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -79,16 +78,11 @@ func TestArguments_Parse(t *testing.T) {
 				t.Errorf("Arguments.Parse() error = %#v, wantErr %#v", err, tt.wantErr)
 			}
 
-			// when an error occured, we don't care about the returned value
-			// and the behaviour is unspecified
-			if tt.wantErr != nil {
+			if tt.wantErr != nil { // ignore checks when an error is returned; we don't care
 				return
 			}
-			// ignore flagset during comparison
-			args.flagsetGlobal = nil
-			tt.wantParsed.flagsetGlobal = nil
 
-			if !reflect.DeepEqual(args, &tt.wantParsed) {
+			if !reflect.DeepEqual(*args, tt.wantParsed) {
 				t.Errorf("Arguments.Parse() args = %#v, wantArgs %#v", args, &tt.wantParsed)
 			}
 		})
@@ -239,20 +233,20 @@ func TestCommandArguments_checkFilterArgument(t *testing.T) {
 		{
 			"for not allowed, for given",
 			Options{Environment: env.Requirement{AllowsFilter: false}},
-			Arguments{Command: "example", filterPatterns: []string{"pattern"}},
+			Arguments{Command: "example", Filters: []string{"pattern"}},
 			"Wrong number of arguments: 'example' takes no 'for' argument. ",
 		},
 
 		{
 			"for allowed, for not given",
 			Options{Environment: env.Requirement{AllowsFilter: true}},
-			Arguments{Command: "example", filterPatterns: nil},
+			Arguments{Command: "example", Filters: nil},
 			"",
 		},
 		{
 			"for allowed, for given",
 			Options{Environment: env.Requirement{AllowsFilter: true}},
-			Arguments{Command: "example", filterPatterns: []string{"pattern"}},
+			Arguments{Command: "example", Filters: []string{"pattern"}},
 			"",
 		},
 	}
@@ -269,6 +263,105 @@ func TestCommandArguments_checkFilterArgument(t *testing.T) {
 			}
 			if gotErr != tt.wantErr {
 				t.Errorf("CommandArguments.checkFilterArgument() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_parseFlagNames(t *testing.T) {
+	type args struct {
+		err *flags.Error
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantNames []string
+		wantOk    bool
+	}{
+		{
+			"unix flag message",
+			args{
+				&flags.Error{
+					Message: "expected argument for flag `-f, --for'",
+				},
+			},
+			[]string{"f", "for"},
+			true,
+		},
+		{
+			"windows flag message",
+			args{
+				&flags.Error{
+					Message: "expected argument for flag `/f, /for'",
+				},
+			},
+			[]string{"f", "for"},
+			true,
+		},
+
+		{
+			"no message",
+			args{
+				&flags.Error{
+					Message: "",
+				},
+			},
+			nil,
+			false,
+		},
+
+		{
+			"only beginning",
+			args{
+				&flags.Error{
+					Message: "expected argument for flag `-f, --for",
+				},
+			},
+			nil,
+			false,
+		},
+
+		{
+			"only end",
+			args{
+				&flags.Error{
+					Message: "expected argument for flag -f, --for'",
+				},
+			},
+			nil,
+			false,
+		},
+
+		{
+			"wrong order",
+			args{
+				&flags.Error{
+					Message: "expected argument for flag '-f, --for`",
+				},
+			},
+			nil,
+			false,
+		},
+
+		{
+			"empty flags",
+			args{
+				&flags.Error{
+					Message: "expected argument for flag `'",
+				},
+			},
+			nil,
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotNames, gotOk := parseFlagNames(tt.args.err)
+			if !reflect.DeepEqual(gotNames, tt.wantNames) {
+				t.Errorf("parseFlagNames() gotNames = %v, want %v", gotNames, tt.wantNames)
+			}
+			if gotOk != tt.wantOk {
+				t.Errorf("parseFlagNames() gotOk = %v, want %v", gotOk, tt.wantOk)
 			}
 		})
 	}

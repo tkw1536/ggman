@@ -6,8 +6,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/spf13/pflag"
-
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
@@ -73,10 +71,10 @@ func (url) Name() string {
 type urlweb struct {
 	openInstead bool
 
-	ForceRepoHere bool
-	Branch        bool
-	Tree          bool
-	BaseAsPrefix  bool
+	ForceRepoHere bool `short:"f" long:"force-repo-here" description:"Pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url. "`
+	Branch        bool `short:"b" long:"branch" description:"If provided, include the HEAD reference in the resolved URL. "`
+	Tree          bool `short:"t" long:"tree" description:"If provided, additionally use the HEAD reference and relative path to the root of the git worktree. "`
+	BaseAsPrefix  bool `short:"p" long:"prefix" description:"Treat the base argument as a prefix, instead of the hostname. "`
 }
 
 // WebBuiltInBases is a map of built-in bases for the url and web commands
@@ -113,11 +111,7 @@ func FmtWebBuiltInBaseNames() string {
 
 var stringWebBaseUsage = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s. "
 
-func (uw *urlweb) Options(flagset *pflag.FlagSet) program.Options {
-	flagset.BoolVarP(&uw.ForceRepoHere, "force-repo-here", "f", uw.ForceRepoHere, "Pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url. ")
-	flagset.BoolVarP(&uw.Tree, "tree", "t", uw.Tree, "If provided, additionally use the HEAD reference and relative path to the root of the git worktree. ")
-	flagset.BoolVarP(&uw.Branch, "branch", "b", uw.Branch, "If provided, include the HEAD reference in the resolved URL. ")
-	flagset.BoolVarP(&uw.BaseAsPrefix, "prefix", "p", uw.BaseAsPrefix, "Treat the base argument as a prefix, instead of the hostname. ")
+func (uw *urlweb) Options() program.Options {
 	return program.Options{
 		MinArgs: 0,
 		MaxArgs: 1,

@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/spf13/pflag"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/program"
@@ -73,7 +72,7 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 type mockEnvRunCommand struct{}
 
 func (mockEnvRunCommand) Name() string { return "fake" }
-func (mockEnvRunCommand) Options(flagset *pflag.FlagSet) program.Options {
+func (mockEnvRunCommand) Options() program.Options {
 	return program.Options{
 		MaxArgs: -1,
 		Environment: env.Requirement{

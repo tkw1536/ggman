@@ -4,8 +4,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/spf13/pflag"
-
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
@@ -17,15 +15,14 @@ import (
 var Relocate program.Command = &relocate{}
 
 type relocate struct {
-	Simulate bool
+	Simulate bool `short:"s" long:"simulate" description:"Instead of moving repositories, print unix-like commands to move repositories around"`
 }
 
 func (relocate) Name() string {
 	return "relocate"
 }
 
-func (r *relocate) Options(flagset *pflag.FlagSet) program.Options {
-	flagset.BoolVarP(&r.Simulate, "simulate", "s", false, "Instead of moving repositories, print unix-like commands to move repositories around")
+func (r *relocate) Options() program.Options {
 	return program.Options{
 		Environment: env.Requirement{
 			NeedsRoot:    true,

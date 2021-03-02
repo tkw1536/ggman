@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"github.com/spf13/pflag"
-
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
@@ -17,15 +15,14 @@ import (
 var Lsr program.Command = &lsr{}
 
 type lsr struct {
-	Canonical bool
+	Canonical bool `short:"c" long:"canonical" description:"If provided, print the canonical URLs to repositories. "`
 }
 
 func (lsr) Name() string {
 	return "lsr"
 }
 
-func (l *lsr) Options(flagset *pflag.FlagSet) program.Options {
-	flagset.BoolVarP(&l.Canonical, "canonical", "c", l.Canonical, "If provided, print the canonical URLs to repositories. ")
+func (l *lsr) Options() program.Options {
 	return program.Options{
 		Environment: env.Requirement{
 			AllowsFilter: true,

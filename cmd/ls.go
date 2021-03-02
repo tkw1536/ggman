@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"github.com/spf13/pflag"
-
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
@@ -17,15 +15,14 @@ import (
 var Ls program.Command = &ls{}
 
 type ls struct {
-	ExitCode bool
+	ExitCode bool `short:"e" long:"exit-code" description:"If provided, return exit code 1 if no repositories are found. "`
 }
 
 func (ls) Name() string {
 	return "ls"
 }
 
-func (l *ls) Options(flagset *pflag.FlagSet) program.Options {
-	flagset.BoolVarP(&l.ExitCode, "exit-code", "e", l.ExitCode, "If provided, return exit code 1 if no repositories are found. ")
+func (l *ls) Options() program.Options {
 	return program.Options{
 		Environment: env.Requirement{
 			AllowsFilter: true,

@@ -18,8 +18,8 @@ type Context struct {
 func (c *Context) init() error {
 
 	// generate pattern filters for the "--for" arguments
-	clauses := make([]env.Filter, len(c.filterPatterns))
-	for i, pat := range c.filterPatterns {
+	clauses := make([]env.Filter, len(c.Filters))
+	for i, pat := range c.Filters {
 
 		// check if 'pat' represents the root of a repository
 		if repo, err := c.AtRoot(pat); err == nil && repo != "" {
@@ -32,7 +32,7 @@ func (c *Context) init() error {
 	}
 
 	// generate a 'here' filter for the current repository
-	if c.filterHere {
+	if c.Here {
 		repo, _, err := c.At(".")
 		if err != nil {
 			return errors.Wrap(err, "Unable to find current repository")

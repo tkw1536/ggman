@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"github.com/spf13/pflag"
-
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/git"
@@ -24,8 +22,10 @@ func (clone) Name() string {
 	return "clone"
 }
 
-func (clone) Options(flagset *pflag.FlagSet) program.Options {
+func (clone) Options() program.Options {
 	return program.Options{
+		SkipUnknownFlags: true,
+
 		MinArgs: 1,
 		MaxArgs: -1,
 		Metavar: "ARG",
