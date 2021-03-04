@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/constants/legal"
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
@@ -27,7 +28,7 @@ func TestCommandLicense(t *testing.T) {
 			[]string{"license"},
 
 			0,
-			fmt.Sprintf(stringLicenseInfo, stringLicenseText, legal.Notices),
+			fmt.Sprintf(stringLicenseInfo, ggman.License, legal.Notices),
 			"",
 		},
 	}

@@ -8,3 +8,9 @@
 // The top-level ggman package is considered to be stand-alone, and (with the exception of 'util') does not directly depend on any of its' subpackages.
 // As such it can be safely used by any subpackage without cyclic imports.
 package ggman
+
+import _ "embed" // to include the license
+
+// License contains the terms the ggman program is licensed under.
+//go:embed LICENSE
+var License string
