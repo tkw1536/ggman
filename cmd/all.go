@@ -14,7 +14,7 @@ func All() <-chan program.Command {
 	cmds := make(chan program.Command)
 
 	go func() {
-		defer func() { close(cmds) }()
+		defer close(cmds)
 
 		cmds <- Root
 
