@@ -53,6 +53,8 @@ func (p Program) FmtCommands() string {
 // See also CloneCommand.
 type Command interface {
 	// BeforeRegister is called right before this command is registered with a program.
+	// In particular it is called before any other function on this command is called.
+	//
 	// It is never called more than once for a single instance of a command.
 	BeforeRegister()
 
@@ -209,5 +211,11 @@ func (p *Program) Register(c Command) {
 	}
 
 	c.BeforeRegister()
-	p.commands[c.Description().Name] = c
+	Name := c.Description().Name
+
+	if _, ok := p.commands[Name]; ok {
+		panic("Register(): Command already registered")
+	}
+
+	p.commands[Name] = c
 }
