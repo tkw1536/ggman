@@ -52,20 +52,23 @@ func (p Program) FmtCommands() string {
 // Otherwise the zero value of the element struct is expected to be ready to use.
 // See also CloneCommand.
 type Command interface {
-	// Name returns the name of this command
-	Name() string
+	// BeforeRegister is called right before this command is registered with a program.
+	// It is never called more than once for a single instance of a command.
+	BeforeRegister()
 
-	// Options returns the options of this command
-	Options() Options
+	// Description returns a description of this command.
+	// It may be called multiple times.
+	Description() Description
 
 	// AfterParse is called after arguments have been parsed, but before the command is being run.
-	// It is intended to perform any additional error checking on arguments, and return an error if needed.
-	// It is expected to return either nil or type Error.
+	// It may perform additional argument checking and should return an error if needed.
+	//
+	// It is called only once and must return either nil or an error of type Error.
 	AfterParse() error
 
 	// Run runs this command in the given context.
-	// This function should assume that flagset.Parse() has been called.
-	// The error returned should be either nil or of type ggman.Error
+	//
+	// It is called only once and must return either nil or an error of type Error.
 	Run(context Context) error
 }
 
@@ -104,27 +107,21 @@ func CloneCommand(command Command) (cmd Command) {
 	return cmd
 }
 
-// Options represent the options for a specific command
-type Options struct {
-	Environment env.Requirement
+// Description represents the description of a command
+type Description struct {
+	Name        string // name this command can be invoked under
+	Description string // human readable description of the command
 
-	// Description of the command for help page purposes
-	Description string
+	Environment env.Requirement // environment requirements for this command
 
-	// when true, parse unknown flags into the args array
-	// when false, raise an error on unknown flags
-	SkipUnknownFlags bool
+	SkipUnknownOptions bool // do not complain about unkown options and add the to positionals instead
 
-	// minimum and maximum number of arguments
-	// set to (0, -1) for unlimited arguments
-	MinArgs int
-	MaxArgs int
+	// description of the positional arguments this command takes in addition to the regular option parsing.
 
-	// the name of the metavar to use for the usage string
-	Metavar string
-
-	// Description of the argument
-	UsageDescription string
+	PosArgName        string // used only in help page, defaults to "ARGUMENT"
+	PosArgDescription string // used only in help page, human readable
+	PosArgsMin        int    // minimum number of positional arguments taken >= 0
+	PosArgsMax        int    // maximal number of positional arguments taken, set to -1 for unlimited arguments
 }
 
 var errProgramUnknownCommand = ggman.Error{
@@ -185,7 +182,7 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 		IOStream:         p.IOStream,
 		CommandArguments: *cmdargs,
 	}
-	if context.Env, err = env.NewEnv(cmdargs.options.Environment, params); err != nil {
+	if context.Env, err = env.NewEnv(cmdargs.description.Environment, params); err != nil {
 		return err
 	}
 
@@ -211,5 +208,6 @@ func (p *Program) Register(c Command) {
 		p.commands = make(map[string]Command)
 	}
 
-	p.commands[c.Name()] = c
+	c.BeforeRegister()
+	p.commands[c.Description().Name] = c
 }

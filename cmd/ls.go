@@ -18,12 +18,11 @@ type ls struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"Return exit code 1 if no repositories are found"`
 }
 
-func (ls) Name() string {
-	return "ls"
-}
+func (ls) BeforeRegister() {}
 
-func (l *ls) Options() program.Options {
-	return program.Options{
+func (l *ls) Description() program.Description {
+	return program.Description{
+		Name:        "ls",
 		Description: "List local paths to all locally cloned repositories. ",
 
 		Environment: env.Requirement{

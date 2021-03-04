@@ -18,21 +18,20 @@ var Clone program.Command = clone{}
 
 type clone struct{}
 
-func (clone) Name() string {
-	return "clone"
-}
+func (clone) BeforeRegister() {}
 
-func (clone) Options() program.Options {
-	return program.Options{
+func (clone) Description() program.Description {
+	return program.Description{
+		Name:        "clone",
 		Description: "Clone a repository into a path described by 'ggman where'",
 
-		SkipUnknownFlags: true,
+		SkipUnknownOptions: true,
 
-		MinArgs: 1,
-		MaxArgs: -1,
-		Metavar: "ARG",
+		PosArgsMin: 1,
+		PosArgsMax: -1,
+		PosArgName: "ARG",
 
-		UsageDescription: "URL of repository and arguments to pass to 'git clone'",
+		PosArgDescription: "URL of repository and arguments to pass to 'git clone'",
 
 		Environment: env.Requirement{
 			NeedsRoot:    true,

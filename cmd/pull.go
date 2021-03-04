@@ -16,12 +16,11 @@ var Pull program.Command = pull{}
 
 type pull struct{}
 
-func (pull) Name() string {
-	return "pull"
-}
+func (pull) BeforeRegister() {}
 
-func (pull) Options() program.Options {
-	return program.Options{
+func (pull) Description() program.Description {
+	return program.Description{
+		Name:        "pull",
 		Description: "Run 'git pull' on locally cloned repositories",
 
 		Environment: env.Requirement{

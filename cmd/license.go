@@ -13,12 +13,11 @@ var License program.Command = license{}
 
 type license struct{}
 
-func (license) Name() string {
-	return "license"
-}
+func (license) BeforeRegister() {}
 
-func (license) Options() program.Options {
-	return program.Options{
+func (license) Description() program.Description {
+	return program.Description{
+		Name:        "license",
 		Description: "Print license information about ggman and exit. ",
 	}
 }

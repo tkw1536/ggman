@@ -89,11 +89,11 @@ func TestArguments_Parse(t *testing.T) {
 	}
 }
 
-func TestCommandArguments_checkArgumentCount(t *testing.T) {
+func TestCommandArguments_checkPositionalCount(t *testing.T) {
 	tests := []struct {
 		name string
 
-		options   Options
+		options   Description
 		arguments Arguments
 
 		wantErr string
@@ -101,7 +101,7 @@ func TestCommandArguments_checkArgumentCount(t *testing.T) {
 		// taking 0 args
 		{
 			"no arguments",
-			Options{MinArgs: 0, MaxArgs: 0},
+			Description{PosArgsMin: 0, PosArgsMax: 0},
 			Arguments{Command: "example", Args: []string{}},
 			"",
 		},
@@ -109,19 +109,19 @@ func TestCommandArguments_checkArgumentCount(t *testing.T) {
 		// taking 1 arg
 		{
 			"one argument, too few",
-			Options{MinArgs: 1, MaxArgs: 1},
+			Description{PosArgsMin: 1, PosArgsMax: 1},
 			Arguments{Command: "example", Args: []string{}},
 			"Wrong number of arguments: 'example' takes exactly 1 argument(s). ",
 		},
 		{
 			"one argument, exactly enough",
-			Options{MinArgs: 1, MaxArgs: 1},
+			Description{PosArgsMin: 1, PosArgsMax: 1},
 			Arguments{Command: "example", Args: []string{"world"}},
 			"",
 		},
 		{
 			"one argument, too many",
-			Options{MinArgs: 1, MaxArgs: 1},
+			Description{PosArgsMin: 1, PosArgsMax: 1},
 			Arguments{Command: "example", Args: []string{"hello", "world"}},
 			"Wrong number of arguments: 'example' takes exactly 1 argument(s). ",
 		},
@@ -129,25 +129,25 @@ func TestCommandArguments_checkArgumentCount(t *testing.T) {
 		// taking 1 or 2 args
 		{
 			"1-2 arguments, too few",
-			Options{MinArgs: 1, MaxArgs: 2},
+			Description{PosArgsMin: 1, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{}},
 			"Wrong number of arguments: 'example' takes between 1 and 2 arguments. ",
 		},
 		{
 			"1-2 arguments, enough",
-			Options{MinArgs: 1, MaxArgs: 2},
+			Description{PosArgsMin: 1, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"world"}},
 			"",
 		},
 		{
 			"1-2 arguments, enough (2)",
-			Options{MinArgs: 1, MaxArgs: 2},
+			Description{PosArgsMin: 1, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"hello", "world"}},
 			"",
 		},
 		{
 			"1-2 arguments, too many",
-			Options{MinArgs: 1, MaxArgs: 2},
+			Description{PosArgsMin: 1, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"hello", "world", "you"}},
 			"Wrong number of arguments: 'example' takes between 1 and 2 arguments. ",
 		},
@@ -155,25 +155,25 @@ func TestCommandArguments_checkArgumentCount(t *testing.T) {
 		// taking 2 args
 		{
 			"two arguments, too few",
-			Options{MinArgs: 2, MaxArgs: 2},
+			Description{PosArgsMin: 2, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{}},
 			"Wrong number of arguments: 'example' takes exactly 2 argument(s). ",
 		},
 		{
 			"two arguments, too few (2)",
-			Options{MinArgs: 2, MaxArgs: 2},
+			Description{PosArgsMin: 2, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"world"}},
 			"Wrong number of arguments: 'example' takes exactly 2 argument(s). ",
 		},
 		{
 			"two arguments, enough",
-			Options{MinArgs: 2, MaxArgs: 2},
+			Description{PosArgsMin: 2, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"hello", "world"}},
 			"",
 		},
 		{
 			"two arguments, too many",
-			Options{MinArgs: 2, MaxArgs: 2},
+			Description{PosArgsMin: 2, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"hello", "world", "you"}},
 			"Wrong number of arguments: 'example' takes exactly 2 argument(s). ",
 		},
@@ -181,19 +181,19 @@ func TestCommandArguments_checkArgumentCount(t *testing.T) {
 		// at least one argument
 		{
 			"at least 1 arguments, not enough",
-			Options{MinArgs: 1, MaxArgs: -1},
+			Description{PosArgsMin: 1, PosArgsMax: -1},
 			Arguments{Command: "example", Args: []string{}},
 			"Wrong number of arguments: 'example' takes at least 1 argument(s). ",
 		},
 		{
 			"at least 1 arguments, enough",
-			Options{MinArgs: 1, MaxArgs: -1},
+			Description{PosArgsMin: 1, PosArgsMax: -1},
 			Arguments{Command: "example", Args: []string{"hello"}},
 			"",
 		},
 		{
 			"at least 1 arguments, enough (2)",
-			Options{MinArgs: 1, MaxArgs: -1},
+			Description{PosArgsMin: 1, PosArgsMax: -1},
 			Arguments{Command: "example", Args: []string{"hello", "cruel", "world"}},
 			"",
 		},
@@ -201,16 +201,16 @@ func TestCommandArguments_checkArgumentCount(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			args := &CommandArguments{
-				options:   tt.options,
-				Arguments: tt.arguments,
+				description: tt.options,
+				Arguments:   tt.arguments,
 			}
-			err := args.checkArgumentCount()
+			err := args.checkPositionalCount()
 			gotErr := ""
 			if err != nil {
 				gotErr = err.Error()
 			}
 			if gotErr != tt.wantErr {
-				t.Errorf("CommandArguments.checkArgumentCount() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("CommandArguments.checkPositionalCount() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
@@ -219,33 +219,33 @@ func TestCommandArguments_checkArgumentCount(t *testing.T) {
 func TestCommandArguments_checkFilterArgument(t *testing.T) {
 	tests := []struct {
 		name      string
-		options   Options
+		options   Description
 		arguments Arguments
 
 		wantErr string
 	}{
 		{
 			"for not allowed, for not given",
-			Options{Environment: env.Requirement{AllowsFilter: false}},
+			Description{Environment: env.Requirement{AllowsFilter: false}},
 			Arguments{Command: "example"},
 			"",
 		},
 		{
 			"for not allowed, for given",
-			Options{Environment: env.Requirement{AllowsFilter: false}},
+			Description{Environment: env.Requirement{AllowsFilter: false}},
 			Arguments{Command: "example", Filters: []string{"pattern"}},
 			"Wrong number of arguments: 'example' takes no 'for' argument. ",
 		},
 
 		{
 			"for allowed, for not given",
-			Options{Environment: env.Requirement{AllowsFilter: true}},
+			Description{Environment: env.Requirement{AllowsFilter: true}},
 			Arguments{Command: "example", Filters: nil},
 			"",
 		},
 		{
 			"for allowed, for given",
-			Options{Environment: env.Requirement{AllowsFilter: true}},
+			Description{Environment: env.Requirement{AllowsFilter: true}},
 			Arguments{Command: "example", Filters: []string{"pattern"}},
 			"",
 		},
@@ -253,8 +253,8 @@ func TestCommandArguments_checkFilterArgument(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			args := CommandArguments{
-				options:   tt.options,
-				Arguments: tt.arguments,
+				description: tt.options,
+				Arguments:   tt.arguments,
 			}
 			err := args.checkFilterArgument()
 			gotErr := ""

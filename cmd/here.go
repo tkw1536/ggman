@@ -16,12 +16,11 @@ type here struct {
 	Tree bool `short:"t" long:"tree" description:"Also print the current HEAD reference and relative path to the root of the git worktree"`
 }
 
-func (here) Name() string {
-	return "here"
-}
+func (here) BeforeRegister() {}
 
-func (h *here) Options() program.Options {
-	return program.Options{
+func (h *here) Description() program.Description {
+	return program.Description{
+		Name:        "here",
 		Description: "Print the root path to the repository in the current repository. ",
 
 		Environment: env.Requirement{

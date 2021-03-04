@@ -18,12 +18,11 @@ type relocate struct {
 	Simulate bool `short:"s" long:"simulate" description:"Only print unix-like commands to move repositories around"`
 }
 
-func (relocate) Name() string {
-	return "relocate"
-}
+func (relocate) BeforeRegister() {}
 
-func (r *relocate) Options() program.Options {
-	return program.Options{
+func (r *relocate) Description() program.Description {
+	return program.Description{
+		Name:        "relocate",
 		Description: "Move locally cloned repositories into locations as per 'ggman where'. ",
 
 		Environment: env.Requirement{

@@ -18,20 +18,19 @@ type findBranch struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"Exit with Status Code 1 when no repositories with provided branch exist"`
 }
 
-func (findBranch) Name() string {
-	return "find-branch"
-}
+func (findBranch) BeforeRegister() {}
 
-func (f *findBranch) Options() program.Options {
-	return program.Options{
+func (f *findBranch) Description() program.Description {
+	return program.Description{
+		Name:        "find-branch",
 		Description: "List repositories containing a specific branch",
 
-		MinArgs: 1,
-		MaxArgs: 1,
+		PosArgsMin: 1,
+		PosArgsMax: 1,
 
-		Metavar: "BRANCH",
+		PosArgName: "BRANCH",
 
-		UsageDescription: "Name of branch to find",
+		PosArgDescription: "Name of branch to find",
 
 		Environment: env.Requirement{
 			NeedsRoot: true,

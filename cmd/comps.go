@@ -12,20 +12,19 @@ var Comps program.Command = comps{}
 
 type comps struct{}
 
-func (comps) Name() string {
-	return "comps"
-}
+func (comps) BeforeRegister() {}
 
-func (comps) Options() program.Options {
-	return program.Options{
+func (comps) Description() program.Description {
+	return program.Description{
+		Name:        "comps",
 		Description: "Print the components of a URL",
 
-		MinArgs: 1,
-		MaxArgs: 1,
+		PosArgsMin: 1,
+		PosArgsMax: 1,
 
-		Metavar: "URL",
+		PosArgName: "URL",
 
-		UsageDescription: "URL to use",
+		PosArgDescription: "URL to use",
 	}
 }
 

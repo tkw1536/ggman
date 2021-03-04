@@ -30,7 +30,7 @@ func (p Program) UsagePage() usagefmt.Page {
 
 // UsagePage generates a help page about this ggman subcommand
 func (cmdargs CommandArguments) UsagePage() usagefmt.Page {
-	opt := cmdargs.options
+	opt := cmdargs.description
 
 	return usagefmt.Page{
 		MainName: "ggman",
@@ -41,16 +41,16 @@ func (cmdargs CommandArguments) UsagePage() usagefmt.Page {
 		SubName: cmdargs.Arguments.Command,
 		SubOpts: usagefmt.MakeOpts(cmdargs.parser),
 
-		MetaName: opt.Metavar,
-		MetaMin:  opt.MinArgs,
-		MetaMax:  opt.MaxArgs,
+		MetaName: opt.PosArgName,
+		MetaMin:  opt.PosArgsMin,
+		MetaMax:  opt.PosArgsMax,
 
-		Usage: opt.UsageDescription,
+		Usage: opt.PosArgDescription,
 	}
 }
 
 // GetMainOpts returns a list of global options provided
-func GetMainOpts(opt *Options) (opts []usagefmt.Opt) {
+func GetMainOpts(opt *Description) (opts []usagefmt.Opt) {
 
 	// generate the main options by parsing the fake 'Arguments' struct.
 	// return immediatly if global options only were requested

@@ -19,12 +19,11 @@ type fix struct {
 	Simulate bool `short:"s" long:"simulate" description:"Do not perform any canonicalization. Only print what would be done"`
 }
 
-func (fix) Name() string {
-	return "fix"
-}
+func (fix) BeforeRegister() {}
 
-func (f *fix) Options() program.Options {
-	return program.Options{
+func (f *fix) Description() program.Description {
+	return program.Description{
+		Name:        "fix",
 		Description: "Canonicalizes remote URLs for cloned repositories. ",
 		Environment: env.Requirement{
 			NeedsRoot:    true,

@@ -13,12 +13,11 @@ var Fetch program.Command = fetch{}
 
 type fetch struct{}
 
-func (fetch) Name() string {
-	return "fetch"
-}
+func (fetch) BeforeRegister() {}
 
-func (fetch) Options() program.Options {
-	return program.Options{
+func (fetch) Description() program.Description {
+	return program.Description{
+		Name:        "fetch",
 		Description: "Run 'git fetch --all' on locally cloned repositories",
 
 		Environment: env.Requirement{

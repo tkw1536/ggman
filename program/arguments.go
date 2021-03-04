@@ -145,8 +145,8 @@ func parseFlagNames(err *flags.Error) (names []string, ok bool) {
 type CommandArguments struct {
 	Arguments // Arguments that were passed to the command globally
 
-	parser  *flags.Parser
-	options Options
+	parser      *flags.Parser
+	description Description
 }
 
 // Parse parses arguments from a set of parsed command arguments.
@@ -177,7 +177,7 @@ func (args *CommandArguments) Parse(command Command, arguments Arguments) error 
 		return err
 	}
 
-	if err := args.checkArgumentCount(); err != nil {
+	if err := args.checkPositionalCount(); err != nil {
 		return err
 	}
 
@@ -187,12 +187,12 @@ func (args *CommandArguments) Parse(command Command, arguments Arguments) error 
 // prepare prepares this CommandArguments for parsing arguments for command
 func (args *CommandArguments) prepare(command Command, arguments Arguments) {
 	// setup options and arguments!
-	args.options = command.Options()
+	args.description = command.Description()
 	args.Arguments = arguments
 
 	// make a flag parser
 	var options flags.Options = flags.PassDoubleDash | flags.HelpFlag
-	if args.options.SkipUnknownFlags {
+	if args.description.SkipUnknownOptions {
 		options |= flags.IgnoreUnknown
 	}
 	args.parser = makeFlagsParser(command, options)
@@ -244,13 +244,13 @@ var errParseTakesBetweenArguments = ggman.Error{
 	Message:  "Wrong number of arguments: '%s' takes between %d and %d arguments. ",
 }
 
-// checkArgumentCount checks that the correct number of arguments was passed to this command.
+// checkPositionalCount checks that the correct number of arguments was passed to this command.
 // This function implicitly assumes that Options, Arguments and Argv are set appropriatly.
 // When the wrong number of arguments is passed, returns an error of type Error.
-func (args CommandArguments) checkArgumentCount() error {
+func (args CommandArguments) checkPositionalCount() error {
 
-	min := args.options.MinArgs
-	max := args.options.MaxArgs
+	min := args.description.PosArgsMin
+	max := args.description.PosArgsMax
 
 	argc := len(args.Args)
 
@@ -290,7 +290,7 @@ var errParseNoHere = ggman.Error{
 //
 // If the check fails, returns an error of type Error.
 func (args CommandArguments) checkFilterArgument() error {
-	if args.options.Environment.AllowsFilter {
+	if args.description.Environment.AllowsFilter {
 		return nil
 	}
 

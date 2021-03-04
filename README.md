@@ -332,9 +332,10 @@ ggcode () {
 
 ### 1.10.0 (Upcoming)
 
+- use `github.com/jessevdk/go-flags` to allow unknown options in argument parsing
 - rewrite and extend help page generator
 - embed license info using `go:embed`
-- use `github.com/jessevdk/go-flags` to allow unknown options in argument parsing
+- internal code improvements to `program` struct
 
 ### 1.9.0 (Released [Feb 21 2021](https://github.com/tkw1536/ggman/releases/tag/v1.9.0))
 

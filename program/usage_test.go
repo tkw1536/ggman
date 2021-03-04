@@ -25,10 +25,10 @@ type fakeCommand string
 
 var _ Command = (fakeCommand)("")
 
-func (u fakeCommand) Name() string    { return string(u) }
-func (fakeCommand) Options() Options  { panic("usageFakeCommandT: not implemented") }
-func (fakeCommand) AfterParse() error { panic("usageFakeCommandT: not implemented") }
-func (fakeCommand) Run(Context) error { panic("usageFakeCommandT: not implemented") }
+func (fakeCommand) BeforeRegister()            {}
+func (f fakeCommand) Description() Description { return Description{Name: string(f)} }
+func (fakeCommand) AfterParse() error          { panic("fakeCommand: not implemented") }
+func (fakeCommand) Run(Context) error          { panic("fakeCommand: not implemented") }
 
 func TestCommandArguments_UsagePage(t *testing.T) {
 
@@ -105,13 +105,13 @@ func TestCommandArguments_UsagePage(t *testing.T) {
 
 				parser: parser,
 
-				options: Options{
-					Description:      tt.fields.Description,
-					Environment:      tt.fields.Environment,
-					MinArgs:          tt.fields.MinArgs,
-					MaxArgs:          tt.fields.MaxArgs,
-					Metavar:          tt.fields.Metavar,
-					UsageDescription: tt.fields.UsageDescription,
+				description: Description{
+					Description:       tt.fields.Description,
+					Environment:       tt.fields.Environment,
+					PosArgsMin:        tt.fields.MinArgs,
+					PosArgsMax:        tt.fields.MaxArgs,
+					PosArgName:        tt.fields.Metavar,
+					PosArgDescription: tt.fields.UsageDescription,
 				},
 			}
 			if gotUsage := args.UsagePage().String(); gotUsage != tt.wantUsage {

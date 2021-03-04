@@ -13,18 +13,17 @@ var Canon program.Command = &canon{}
 
 type canon struct{}
 
-func (canon) Name() string {
-	return "canon"
-}
+func (canon) BeforeRegister() {}
 
-func (canon) Options() program.Options {
-	return program.Options{
+func (canon) Description() program.Description {
+	return program.Description{
+		Name:        "canon",
 		Description: "Print the canonical version of a URL",
 
-		MinArgs: 1,
-		MaxArgs: 2,
+		PosArgsMin: 1,
+		PosArgsMax: 2,
 
-		UsageDescription: "URL and optional CANSPEC of repository",
+		PosArgDescription: "URL and optional CANSPEC of repository",
 	}
 }
 

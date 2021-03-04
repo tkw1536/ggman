@@ -13,12 +13,11 @@ var Root program.Command = root{}
 
 type root struct{}
 
-func (root) Name() string {
-	return "root"
-}
+func (root) BeforeRegister() {}
 
-func (root) Options() program.Options {
-	return program.Options{
+func (root) Description() program.Description {
+	return program.Description{
+		Name:        "root",
 		Description: "Print the ggman root folder. ",
 
 		Environment: env.Requirement{

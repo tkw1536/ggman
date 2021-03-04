@@ -71,10 +71,12 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 // mockEnvRunCommand
 type mockEnvRunCommand struct{}
 
-func (mockEnvRunCommand) Name() string { return "fake" }
-func (mockEnvRunCommand) Options() program.Options {
-	return program.Options{
-		MaxArgs: -1,
+func (mockEnvRunCommand) BeforeRegister() {}
+
+func (mockEnvRunCommand) Description() program.Description {
+	return program.Description{
+		Name:       "fake",
+		PosArgsMax: -1,
 		Environment: env.Requirement{
 			NeedsRoot: true,
 		},

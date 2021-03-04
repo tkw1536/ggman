@@ -39,21 +39,12 @@ import (
 //  --prefix
 // When provided, instead of replacing the hostname with the base, prefix it with the base instead.
 // This flag is ignored when no base is provided, or a built-in base is used.
-var Web program.Command = &web{
-	urlweb: urlweb{
-		openInstead: true,
-	},
-}
+var Web program.Command = &web{}
 
 type web struct{ urlweb }
 
-func (w web) Run(context program.Context) error {
-	w.urlweb.openInstead = true
-	return w.urlweb.Run(context)
-}
-
-func (web) Name() string {
-	return "web"
+func (w *web) BeforeRegister() {
+	w.urlweb.isWebCommand = true
 }
 
 // URL is the 'ggman url' command.
@@ -61,19 +52,14 @@ func (web) Name() string {
 // The ggman url command behaves exactly like the ggman web command, except that instead of opening the URL in a webbrowser it prints it to standard output.
 var URL program.Command = &url{}
 
-func (u url) Run(context program.Context) error {
-	u.urlweb.openInstead = false
-	return u.urlweb.Run(context)
-}
-
 type url struct{ urlweb }
 
-func (url) Name() string {
-	return "url"
+func (u *url) BeforeRegister() {
+	u.urlweb.isWebCommand = false
 }
 
 type urlweb struct {
-	openInstead bool
+	isWebCommand bool // if true, execute the web command; else the url command
 
 	ForceRepoHere bool `short:"f" long:"force-repo-here" description:"Pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url"`
 	Branch        bool `short:"b" long:"branch" description:"If provided, include the HEAD reference in the resolved URL"`
@@ -115,22 +101,31 @@ func FmtWebBuiltInBaseNames() string {
 
 var stringWebBaseUsage = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s"
 
-func (uw *urlweb) Options() program.Options {
+func (uw *urlweb) Description() program.Description {
+
+	var Name string
+	if uw.isWebCommand {
+		Name = "web"
+	} else {
+		Name = "url"
+	}
+
 	var Description string
-	if uw.openInstead {
+	if uw.isWebCommand {
 		Description = "Open the URL of this repository in a web browser"
 	} else {
 		Description = "Print the URL to this repository for opening a web browser"
 	}
 
-	return program.Options{
+	return program.Description{
+		Name:        Name,
 		Description: Description,
 
-		MinArgs: 0,
-		MaxArgs: 1,
-		Metavar: "BASE",
+		PosArgsMin: 0,
+		PosArgsMax: 1,
+		PosArgName: "BASE",
 
-		UsageDescription: fmt.Sprintf(stringWebBaseUsage, urlwebBuiltinBaseNames),
+		PosArgDescription: fmt.Sprintf(stringWebBaseUsage, urlwebBuiltinBaseNames),
 
 		Environment: env.Requirement{
 			NeedsRoot: true,
@@ -201,7 +196,7 @@ func (uw urlweb) Run(context program.Context) error {
 	}
 
 	// print or open the url
-	if uw.openInstead {
+	if uw.isWebCommand {
 		browser.OpenURL(weburl) // TODO: This breaks test isolation and is very hard to test.
 	} else {
 		context.Println(weburl)

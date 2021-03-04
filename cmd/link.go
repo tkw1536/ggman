@@ -16,20 +16,19 @@ var Link program.Command = link{}
 
 type link struct{}
 
-func (link) Name() string {
-	return "link"
-}
+func (link) BeforeRegister() {}
 
-func (link) Options() program.Options {
-	return program.Options{
+func (link) Description() program.Description {
+	return program.Description{
+		Name:        "link",
 		Description: "Symlink a repository into the local repository structure. ",
 
-		MinArgs: 1,
-		MaxArgs: 1,
+		PosArgsMin: 1,
+		PosArgsMax: 1,
 
-		Metavar: "PATH",
+		PosArgName: "PATH",
 
-		UsageDescription: "Path of repository to symlink",
+		PosArgDescription: "Path of repository to symlink",
 
 		Environment: env.Requirement{
 			NeedsRoot: true,

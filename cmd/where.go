@@ -16,20 +16,19 @@ var Where program.Command = where{}
 
 type where struct{}
 
-func (where) Name() string {
-	return "where"
-}
+func (where) BeforeRegister() {}
 
-func (where) Options() program.Options {
-	return program.Options{
+func (where) Description() program.Description {
+	return program.Description{
+		Name:        "where",
 		Description: "Print the location where a repository would be cloned to",
 
-		MinArgs: 1,
-		MaxArgs: 1,
+		PosArgsMin: 1,
+		PosArgsMax: 1,
 
-		Metavar: "URL",
+		PosArgName: "URL",
 
-		UsageDescription: "Remote repository URL to use",
+		PosArgDescription: "Remote repository URL to use",
 
 		Environment: env.Requirement{
 			NeedsRoot: true,

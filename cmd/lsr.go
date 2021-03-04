@@ -18,12 +18,11 @@ type lsr struct {
 	Canonical bool `short:"c" long:"canonical" description:"Print canonicalized URLs"`
 }
 
-func (lsr) Name() string {
-	return "lsr"
-}
+func (lsr) BeforeRegister() {}
 
-func (l *lsr) Options() program.Options {
-	return program.Options{
+func (l *lsr) Description() program.Description {
+	return program.Description{
+		Name:        "lsr",
 		Description: "List remote URLs to all locally cloned repositories. ",
 
 		Environment: env.Requirement{
