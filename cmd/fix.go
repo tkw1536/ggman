@@ -16,7 +16,7 @@ import (
 var Fix program.Command = &fix{}
 
 type fix struct {
-	Simulate bool `short:"s" long:"simulate" description:"If set, only print what would be done. "`
+	Simulate bool `short:"s" long:"simulate" description:"Do not perform any canonicalization. Only print what would be done"`
 }
 
 func (fix) Name() string {
@@ -25,6 +25,7 @@ func (fix) Name() string {
 
 func (f *fix) Options() program.Options {
 	return program.Options{
+		Description: "Canonicalizes remote URLs for cloned repositories. ",
 		Environment: env.Requirement{
 			NeedsRoot:    true,
 			NeedsCanFile: true,

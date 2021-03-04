@@ -22,12 +22,14 @@ func (where) Name() string {
 
 func (where) Options() program.Options {
 	return program.Options{
+		Description: "Print the location where a repository would be cloned to",
+
 		MinArgs: 1,
 		MaxArgs: 1,
 
-		Metavar: "REPO",
+		Metavar: "URL",
 
-		UsageDescription: "Repository URI to find location of. ",
+		UsageDescription: "Remote repository URL to use",
 
 		Environment: env.Requirement{
 			NeedsRoot: true,

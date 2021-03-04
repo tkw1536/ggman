@@ -11,11 +11,11 @@ import (
 
 // Relocate is the 'ggman relocate' command.
 //
-// Relocate moves all repositories to the location where they should be moved to if they had been cloned with 'ggman clone.
+// Relocate moves all repositories to the location where they should be moved to if they had been cloned with 'ggman clone'.
 var Relocate program.Command = &relocate{}
 
 type relocate struct {
-	Simulate bool `short:"s" long:"simulate" description:"Instead of moving repositories, print unix-like commands to move repositories around"`
+	Simulate bool `short:"s" long:"simulate" description:"Only print unix-like commands to move repositories around"`
 }
 
 func (relocate) Name() string {
@@ -24,6 +24,8 @@ func (relocate) Name() string {
 
 func (r *relocate) Options() program.Options {
 	return program.Options{
+		Description: "Move locally cloned repositories into locations as per 'ggman where'. ",
+
 		Environment: env.Requirement{
 			NeedsRoot:    true,
 			NeedsCanFile: true,

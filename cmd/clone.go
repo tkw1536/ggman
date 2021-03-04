@@ -24,6 +24,8 @@ func (clone) Name() string {
 
 func (clone) Options() program.Options {
 	return program.Options{
+		Description: "Clone a repository into a path described by 'ggman where'",
+
 		SkipUnknownFlags: true,
 
 		MinArgs: 1,

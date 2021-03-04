@@ -22,6 +22,8 @@ func (pull) Name() string {
 
 func (pull) Options() program.Options {
 	return program.Options{
+		Description: "Run 'git pull' on locally cloned repositories",
+
 		Environment: env.Requirement{
 			AllowsFilter: true,
 			NeedsRoot:    true,

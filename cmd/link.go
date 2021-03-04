@@ -22,12 +22,14 @@ func (link) Name() string {
 
 func (link) Options() program.Options {
 	return program.Options{
+		Description: "Symlink a repository into the local repository structure. ",
+
 		MinArgs: 1,
 		MaxArgs: 1,
 
 		Metavar: "PATH",
 
-		UsageDescription: "Path of repository to symlink. ",
+		UsageDescription: "Path of repository to symlink",
 
 		Environment: env.Requirement{
 			NeedsRoot: true,

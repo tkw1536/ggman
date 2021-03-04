@@ -332,7 +332,7 @@ ggcode () {
 
 ### 1.10.0 (Upcoming)
 
-- rewrite help page generator 
+- rewrite and extend help page generator
 - use `github.com/jessevdk/go-flags` to allow unknown options in argument parsing
 
 ### 1.9.0 (Released [Feb 21 2021](https://github.com/tkw1536/ggman/releases/tag/v1.9.0))

@@ -8,7 +8,7 @@ import (
 
 // Fetch is the 'ggman fetch' command.
 //
-// 'ggman fetch' is the equivalent of running 'git fetch --all' on all locally installed repositories.
+// 'ggman fetch' is the equivalent of running 'git fetch --all' on all locally cloned repositories.
 var Fetch program.Command = fetch{}
 
 type fetch struct{}
@@ -19,6 +19,8 @@ func (fetch) Name() string {
 
 func (fetch) Options() program.Options {
 	return program.Options{
+		Description: "Run 'git fetch --all' on locally cloned repositories",
+
 		Environment: env.Requirement{
 			AllowsFilter: true,
 			NeedsRoot:    true,

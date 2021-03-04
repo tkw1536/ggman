@@ -19,6 +19,8 @@ func (root) Name() string {
 
 func (root) Options() program.Options {
 	return program.Options{
+		Description: "Print the ggman root folder. ",
+
 		Environment: env.Requirement{
 			NeedsRoot: true,
 		},

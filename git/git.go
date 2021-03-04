@@ -95,7 +95,7 @@ type Git interface {
 	// May return other error types for other errors.
 	UpdateRemotes(clonePath string, updateFunc func(url, name string) (newURL string, err error)) error
 
-	// ContainsBranch checks if the repository at clonePath contains a branch with the provided branch.
+	// ContainsBranch checks if the repository at clonePath contains a branch with the provided name.
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.

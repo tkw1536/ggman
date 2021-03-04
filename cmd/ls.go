@@ -8,14 +8,14 @@ import (
 
 // Ls is the 'ggman ls' command.
 //
-// When called, the ggman ls command prints a list of paths to all locally installed repositories to standard output.
+// When called, the ggman ls command prints a list of paths to all locally cloned repositories to standard output.
 // The directories will be listed in dictionary order.
 //   --exit-code
 // When provided, exit with code 1 if no repositories are found.
 var Ls program.Command = &ls{}
 
 type ls struct {
-	ExitCode bool `short:"e" long:"exit-code" description:"If provided, return exit code 1 if no repositories are found. "`
+	ExitCode bool `short:"e" long:"exit-code" description:"Return exit code 1 if no repositories are found"`
 }
 
 func (ls) Name() string {
@@ -24,6 +24,8 @@ func (ls) Name() string {
 
 func (l *ls) Options() program.Options {
 	return program.Options{
+		Description: "List local paths to all locally cloned repositories. ",
+
 		Environment: env.Requirement{
 			AllowsFilter: true,
 			NeedsRoot:    true,

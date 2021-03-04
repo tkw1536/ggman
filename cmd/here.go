@@ -13,7 +13,7 @@ import (
 var Here program.Command = &here{}
 
 type here struct {
-	Tree bool `short:"t" long:"tree" description:"If provided, also print the current HEAD reference and relative path to the root of the git worktree. "`
+	Tree bool `short:"t" long:"tree" description:"Also print the current HEAD reference and relative path to the root of the git worktree"`
 }
 
 func (here) Name() string {
@@ -22,6 +22,8 @@ func (here) Name() string {
 
 func (h *here) Options() program.Options {
 	return program.Options{
+		Description: "Print the root path to the repository in the current repository. ",
+
 		Environment: env.Requirement{
 			NeedsRoot: true,
 		},

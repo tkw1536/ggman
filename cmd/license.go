@@ -17,7 +17,9 @@ func (license) Name() string {
 }
 
 func (license) Options() program.Options {
-	return program.Options{}
+	return program.Options{
+		Description: "Print license information about ggman and exit. ",
+	}
 }
 
 func (license) AfterParse() error {

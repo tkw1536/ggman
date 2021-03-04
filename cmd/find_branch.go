@@ -15,7 +15,7 @@ import (
 var FindBranch program.Command = &findBranch{}
 
 type findBranch struct {
-	ExitCode bool `short:"e" long:"exit-code" description:"Exit with Code 1 when no repositories with provided branch exist. "`
+	ExitCode bool `short:"e" long:"exit-code" description:"Exit with Status Code 1 when no repositories with provided branch exist"`
 }
 
 func (findBranch) Name() string {
@@ -24,12 +24,14 @@ func (findBranch) Name() string {
 
 func (f *findBranch) Options() program.Options {
 	return program.Options{
+		Description: "List repositories containing a specific branch",
+
 		MinArgs: 1,
 		MaxArgs: 1,
 
 		Metavar: "BRANCH",
 
-		UsageDescription: "Name of branch to find in repositories. ",
+		UsageDescription: "Name of branch to find",
 
 		Environment: env.Requirement{
 			NeedsRoot: true,

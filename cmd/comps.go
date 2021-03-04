@@ -18,12 +18,14 @@ func (comps) Name() string {
 
 func (comps) Options() program.Options {
 	return program.Options{
+		Description: "Print the components of a URL",
+
 		MinArgs: 1,
 		MaxArgs: 1,
 
-		Metavar: "URI",
+		Metavar: "URL",
 
-		UsageDescription: "Repository URI to print components of. ",
+		UsageDescription: "URL to use",
 	}
 }
 

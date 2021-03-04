@@ -19,10 +19,12 @@ func (canon) Name() string {
 
 func (canon) Options() program.Options {
 	return program.Options{
+		Description: "Print the canonical version of a URL",
+
 		MinArgs: 1,
 		MaxArgs: 2,
 
-		UsageDescription: "The URL of which to get the canonical location and an optional CANSPEC. ",
+		UsageDescription: "URL and optional CANSPEC of repository",
 	}
 }
 

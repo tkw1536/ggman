@@ -8,14 +8,14 @@ import (
 
 // Lsr is the 'ggman lsr' command.
 //
-// When called, the ggman ls command prints a list of remotes of all locally installed repositories to standard output.
+// When called, the ggman ls command prints a list of remotes of all locally cloned repositories to standard output.
 // The remotes will be listed in dictionary order of their local installation paths.
 //  --canonical
 // When provided, instead of printing the urls directly, prints the canonical remotes of all repositories
 var Lsr program.Command = &lsr{}
 
 type lsr struct {
-	Canonical bool `short:"c" long:"canonical" description:"If provided, print the canonical URLs to repositories. "`
+	Canonical bool `short:"c" long:"canonical" description:"Print canonicalized URLs"`
 }
 
 func (lsr) Name() string {
@@ -24,6 +24,8 @@ func (lsr) Name() string {
 
 func (l *lsr) Options() program.Options {
 	return program.Options{
+		Description: "List remote URLs to all locally cloned repositories. ",
+
 		Environment: env.Requirement{
 			AllowsFilter: true,
 			NeedsRoot:    true,

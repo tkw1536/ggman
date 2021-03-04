@@ -52,14 +52,14 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "display help",
 			args:       []string{"--help"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License. Use 'ggman license' to\nview licensing information.\n\n   -h, --help\n      Print general help message and exit. \n\n   -v, --version\n      Print version message and exit. \n\n   -f, --for filter\n      Filter the list of repositories to apply command to by filter. \n\n   -H, --here\n      Filter the list of repositories to apply command to only contain the\n      current repository.\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information. \n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain the\n      repository in the current directory\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
 			wantCode:   0,
 		},
 
 		{
 			name:       "display help, don't run command",
 			args:       []string{"--help", "fake", "whatever"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License. Use 'ggman license' to\nview licensing information.\n\n   -h, --help\n      Print general help message and exit. \n\n   -v, --version\n      Print version message and exit. \n\n   -f, --for filter\n      Filter the list of repositories to apply command to by filter. \n\n   -H, --here\n      Filter the list of repositories to apply command to only contain the\n      current repository.\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information. \n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain the\n      repository in the current directory\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
 			wantCode:   0,
 		},
 
@@ -73,14 +73,14 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "command help",
 			args:       []string{"fake", "--help"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] fake [--stdout|-o message]\n[--stderr|-e message]\n\nGlobal Arguments:\n\n   -h, --help\n      Print general help message and exit. \n\n   -v, --version\n      Print version message and exit. \n\nCommand Arguments:\n\n   -o, --stdout message\n       (default write to stdout)\n\n   -e, --stderr message\n       (default write to stderr)\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] fake [--stdout|-o message]\n[--stderr|-e message]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -o, --stdout message\n       (default write to stdout)\n\n   -e, --stderr message\n       (default write to stderr)\n",
 			wantCode:   0,
 		},
 
 		{
 			name:       "command help",
 			args:       []string{"--", "fake", "--help"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] fake [--stdout|-o message]\n[--stderr|-e message]\n\nGlobal Arguments:\n\n   -h, --help\n      Print general help message and exit. \n\n   -v, --version\n      Print version message and exit. \n\nCommand Arguments:\n\n   -o, --stdout message\n       (default write to stdout)\n\n   -e, --stderr message\n       (default write to stderr)\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] fake [--stdout|-o message]\n[--stderr|-e message]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -o, --stdout message\n       (default write to stdout)\n\n   -e, --stderr message\n       (default write to stderr)\n",
 			wantCode:   0,
 		},
 

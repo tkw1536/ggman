@@ -108,6 +108,9 @@ func CloneCommand(command Command) (cmd Command) {
 type Options struct {
 	Environment env.Requirement
 
+	// Description of the command for help page purposes
+	Description string
+
 	// when true, parse unknown flags into the args array
 	// when false, raise an error on unknown flags
 	SkipUnknownFlags bool

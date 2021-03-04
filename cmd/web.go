@@ -39,7 +39,11 @@ import (
 //  --prefix
 // When provided, instead of replacing the hostname with the base, prefix it with the base instead.
 // This flag is ignored when no base is provided, or a built-in base is used.
-var Web program.Command = &web{}
+var Web program.Command = &web{
+	urlweb: urlweb{
+		openInstead: true,
+	},
+}
 
 type web struct{ urlweb }
 
@@ -71,10 +75,10 @@ func (url) Name() string {
 type urlweb struct {
 	openInstead bool
 
-	ForceRepoHere bool `short:"f" long:"force-repo-here" description:"Pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url. "`
-	Branch        bool `short:"b" long:"branch" description:"If provided, include the HEAD reference in the resolved URL. "`
-	Tree          bool `short:"t" long:"tree" description:"If provided, additionally use the HEAD reference and relative path to the root of the git worktree. "`
-	BaseAsPrefix  bool `short:"p" long:"prefix" description:"Treat the base argument as a prefix, instead of the hostname. "`
+	ForceRepoHere bool `short:"f" long:"force-repo-here" description:"Pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url"`
+	Branch        bool `short:"b" long:"branch" description:"If provided, include the HEAD reference in the resolved URL"`
+	Tree          bool `short:"t" long:"tree" description:"If provided, additionally use the HEAD reference and relative path to the root of the git worktree"`
+	BaseAsPrefix  bool `short:"p" long:"prefix" description:"Treat the base argument as a prefix, instead of the hostname"`
 }
 
 // WebBuiltInBases is a map of built-in bases for the url and web commands
@@ -109,10 +113,19 @@ func FmtWebBuiltInBaseNames() string {
 	return strings.Join(bases, ", ")
 }
 
-var stringWebBaseUsage = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s. "
+var stringWebBaseUsage = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s"
 
 func (uw *urlweb) Options() program.Options {
+	var Description string
+	if uw.openInstead {
+		Description = "Open the URL of this repository in a web browser"
+	} else {
+		Description = "Print the URL to this repository for opening a web browser"
+	}
+
 	return program.Options{
+		Description: Description,
+
 		MinArgs: 0,
 		MaxArgs: 1,
 		Metavar: "BASE",

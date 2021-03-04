@@ -12,11 +12,11 @@ import (
 //
 // These should be further parsed into CommandArguments using the appropriate Parse() method.
 type Arguments struct {
-	Help    bool `short:"h" long:"help" description:"Print general help message and exit. "`
-	Version bool `short:"v" long:"version" description:"Print version message and exit. "`
+	Help    bool `short:"h" long:"help" description:"Print a help message and exit"`
+	Version bool `short:"v" long:"version" description:"Print a version message and exit"`
 
-	Filters []string `short:"f" long:"for" value-name:"filter" description:"Filter the list of repositories to apply command to by filter. "`
-	Here    bool     `short:"H" long:"here" description:"Filter the list of repositories to apply command to only contain the current repository. "`
+	Filters []string `short:"f" long:"for" value-name:"filter" description:"Filter list of repositories to apply COMMAND to by filter. Filter can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url"`
+	Here    bool     `short:"H" long:"here" description:"Filter the list of repositories to apply COMMAND to only contain the repository in the current directory"`
 
 	Command string   // command to run
 	Args    []string // remaining arguments
