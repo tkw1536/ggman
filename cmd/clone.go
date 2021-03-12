@@ -14,13 +14,15 @@ import (
 // It optionally takes any argument that would be passed to the normal invocation of a git command.
 //
 // When 'git' is not available on the system ggman is running on, additional arguments may not be supported.
-var Clone program.Command = clone{}
+var Clone program.Command = &clone{}
 
-type clone struct{}
+type clone struct {
+	Force bool `short:"f" long:"force" description:"Don't complain when a repository already exists in the target directory"`
+}
 
-func (clone) BeforeRegister() {}
+func (*clone) BeforeRegister() {}
 
-func (clone) Description() program.Description {
+func (*clone) Description() program.Description {
 	return program.Description{
 		Name:        "clone",
 		Description: "Clone a repository into a path described by 'ggman where'",
@@ -40,7 +42,7 @@ func (clone) Description() program.Description {
 	}
 }
 
-func (clone) AfterParse() error {
+func (*clone) AfterParse() error {
 	return nil
 }
 
@@ -58,7 +60,7 @@ var errCloneOther = ggman.Error{
 	ExitCode: ggman.ExitGeneric,
 }
 
-func (clone) Run(context program.Context) error {
+func (c *clone) Run(context program.Context) error {
 	// find the remote
 	remote := context.URLV(0)
 	remoteURI := context.Canonical(remote)
@@ -70,6 +72,10 @@ func (clone) Run(context program.Context) error {
 	case nil:
 		return nil
 	case git.ErrCloneAlreadyExists:
+		if c.Force {
+			context.Println("Clone already exists in target location, done.")
+			return nil
+		}
 		return errCloneAlreadyExists
 	case git.ErrArgumentsUnsupported:
 		return errCloneNoArguments

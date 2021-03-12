@@ -332,6 +332,7 @@ ggcode () {
 
 ### 1.10.0 (Upcoming)
 
+- add `--force` flag to `ggman clone` to ignore errors when a cloned repository already exists.
 - use `github.com/jessevdk/go-flags` to allow unknown options in argument parsing
 - rewrite and extend help page generator
 - embed license info using `go:embed`

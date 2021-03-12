@@ -40,6 +40,16 @@ func TestCommandClone(t *testing.T) {
 			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\n",
 			"Unable to clone repository: Another git repository already exists in target\nlocation.\n",
 		},
+
+		{
+			"clone existing repository (with force)",
+			"",
+			[]string{"clone", "--force", "https://github.com/hello/world.git"},
+
+			0,
+			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\nClone already exists in target location, done.\n",
+			"",
+		},
 	}
 
 	for _, tt := range tests {
