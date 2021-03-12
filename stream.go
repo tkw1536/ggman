@@ -122,8 +122,7 @@ func (io IOStream) Die(err error) error {
 		e = errDieUnknown.WithMessageF(ee)
 	}
 
-	// print the error message to standard error in a wrapped way.
-	// TODO: Do we need this wrapping for error messages?
+	// print the error message to standard error in a wrapped way
 	if message := e.Error(); message != "" {
 		io.StderrWriteWrap(message)
 	}

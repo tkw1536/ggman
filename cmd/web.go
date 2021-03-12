@@ -188,7 +188,6 @@ func (uw urlweb) Run(context program.Context) error {
 			return errOutsideRepository
 		}
 
-		// TODO: do we want to replace the HEAD branch with something more useful?
 		weburl += "/tree/" + ref
 		if uw.Tree {
 			weburl += "/" + relative
@@ -197,7 +196,7 @@ func (uw urlweb) Run(context program.Context) error {
 
 	// print or open the url
 	if uw.isWebCommand {
-		browser.OpenURL(weburl) // TODO: This breaks test isolation and is very hard to test.
+		browser.OpenURL(weburl)
 	} else {
 		context.Println(weburl)
 	}

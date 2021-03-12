@@ -364,6 +364,6 @@ func (env Env) ScanRepos(folder string) ([]string, error) {
 
 		BufferSize:  reposBufferSize,
 		MaxParallel: reposMaxParallelScan,
-		FollowLinks: false, // TODO: Make this configurable
+		FollowLinks: true,
 	})
 }

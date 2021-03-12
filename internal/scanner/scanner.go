@@ -46,11 +46,8 @@ type Options struct {
 
 // VisitContext represents the context of the Visit function
 type VisitContext struct {
-	// Root is the root this scan started from
-	Root string
-
-	// Depth determines the depth this scan was started from
-	Depth int
+	Root  string // Root folder the current scan originated from. One of Options.Root, Options.ExtraRoots
+	Depth int    // Depth the current scan has reached
 }
 
 // next returns a new ScanVisitContext that can be used for the next level of a scan
