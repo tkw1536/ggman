@@ -48,9 +48,10 @@ func RemoveEmpty(s []string) []string {
 
 	t := s[:0]
 	for _, v := range s {
-		if v != "" {
-			t = append(t, v)
+		if v == "" {
+			continue
 		}
+		t = append(t, v)
 	}
 	return t
 }
