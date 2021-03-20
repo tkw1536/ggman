@@ -330,7 +330,10 @@ ggcode () {
 
 ## Changelog
 
-### 1.10.0 (Upcoming)
+### 1.11.0 (Upcoming)
+
+
+### 1.10.0 (Released [Mar 20 2021](https://github.com/tkw1536/ggman/releases/tag/v1.10.0))
 
 - add `--force` flag to `ggman clone` to ignore errors when a cloned repository already exists.
 - use `github.com/jessevdk/go-flags` to allow unknown options in argument parsing
