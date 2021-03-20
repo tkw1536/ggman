@@ -336,7 +336,7 @@ ggcode () {
 - use `github.com/jessevdk/go-flags` to allow unknown options in argument parsing
 - rewrite and extend help page generator
 - embed license info using `go:embed`
-- internal code improvements to `program` struct
+- internal code improvements to `program` struct and text wrapping
 - remove TODOs that are no longer required
 
 ### 1.9.0 (Released [Feb 21 2021](https://github.com/tkw1536/ggman/releases/tag/v1.9.0))

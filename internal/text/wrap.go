@@ -1,113 +1,210 @@
 package text
 
 import (
+	"bufio"
+	"io"
 	"strings"
+	"sync"
 	"unicode"
 )
 
-// WrapLine wraps a line by splitting it into multiple lines, with each at most length length.
-// This furthermore condenses any sequence of whitespace characters (as defined by unicode.IsSpace) into a single space character.
-// If a single non-whitespace containing substring is longer than length, it will be on it's own line.
-// When length is <= 0, a single line is returned.
-func WrapLine(line string, length int) []string {
+var newLine = []byte("\n")
 
-	// We first use strings.Fields to split the input into a set of space-seperated words.
-	// We now work only with this, and not the input line.
-	words := strings.Fields(line)
+// Wrapper provides methods to write hard-wrapped lines to Writer.
+type Wrapper struct {
+	Writer io.Writer
+	Length int
+}
 
-	// invalid values of length: return a single line
-	if length <= 0 {
-		return []string{strings.Join(words, " ")}
+// WriteLine writes a wrapped line to the output
+func (w Wrapper) WriteLine(line string) (int, error) {
+	return w.write("", line)
+}
+
+// WritePrefix writes a line with a prefix
+func (w Wrapper) WritePrefix(prefix, line string) (int, error) {
+	w.Length -= len(prefix)
+	if w.Length < 0 {
+		w.Length = 1
+	}
+	return w.write(prefix, line)
+}
+
+// WriteIndent determines the largest space-only prefix of line, and uses it to call WriteLinePrefix().
+func (w Wrapper) WriteIndent(line string) (int, error) {
+	length := strings.IndexFunc(line, func(r rune) bool { return !unicode.IsSpace(r) })
+	if length == -1 {
+		length = len(line)
+	}
+	return w.WritePrefix(line[:length], line[length:])
+}
+
+// WriteString splits s into lines, and then passes each line into WriteIndent.
+// It also inserts newlines in between each line passed to WriteIndent.
+func (w Wrapper) WriteString(s string) (n int, err error) {
+	scanner := bufio.NewScanner(strings.NewReader(s))
+
+	// write the first line
+	if scanner.Scan() {
+		n, err = w.WriteIndent(scanner.Text())
+		if err != nil {
+			return
+		}
 	}
 
-	// allocate an array of lines, worst case: 1 word per line
-	lines := make([]string, 0, len(words))
+	// write subsequent lines followed by newlines
+	for scanner.Scan() {
+		w.Writer.Write(newLine)
+		m, err := w.WriteIndent(scanner.Text())
+		n += m
+		if err != nil {
+			return n, err
+		}
+	}
+
+	return n, nil
+}
+
+// write implements WriteLine and WriteLinePrefix.
+// It writes line, wrapped at w.Length, to the output.
+// Each line is prefixed by prefix.
+func (w Wrapper) write(prefix, line string) (n int, err error) {
+	// split the line into words!
+	words := strings.Fields(line)
+	if w.Length <= 0 {
+		n, err = io.WriteString(w.Writer, prefix)
+		if err != nil {
+			return
+		}
+
+		m, err := Join(w.Writer, words, " ")
+		n += m
+		return n, err
+	}
+
+	// when there are no words, only write the prefix!
+	if len(words) == 0 {
+		return io.WriteString(w.Writer, prefix)
+	}
+
 	for len(words) > 0 {
-		var currentLine string
+		// find the word count and length of the current line!
 
-		for len(words) > 0 {
+		// always pick the first word!
+		ll := len(words[0]) // current length
+		wc := 1             // word count
 
-			// take the first word from the array
-			// and if neccessary, add a space before it.
-			thisWord := words[0]
-			if currentLine != "" {
-				thisWord = " " + thisWord
-			}
-
-			// if the current word does not fit the line and the currentLine is not empty
-			// this line is full
-			if len(currentLine)+len(thisWord) >= length && currentLine != "" {
+		// keep picking words while there is space left in the line
+		for ; len(words) > wc; wc++ {
+			ll += len(words[wc]) + 1
+			if ll >= w.Length {
 				break
 			}
-
-			// add this word to the current line
-			currentLine += thisWord
-			words = words[1:]
 		}
 
-		lines = append(lines, currentLine)
-	}
+		// if there are words left, then we need to write a newline
+		// so we want to allocate space for that too
+		if len(words) > wc {
+			ll++
+		}
+		Grow(w.Writer, ll+len(prefix))
 
-	return lines
-}
+		m, err := io.WriteString(w.Writer, prefix)
+		n += m
+		if err != nil {
+			return n, err
+		}
 
-// WrapLinePrefix is like WrapLine, except that it preserves any prefix of whitespace at the beginning of line
-// and prefixes it to every returned line. The wrapping length passed to WrapLine will be length - len(leading whitespace), or 1, whichever is bigger.
-// If line only contains whitespace, the return value will contain only the input line.
-func WrapLinePrefix(line string, length int) []string {
+		// io.WriteString(w.Writer, strings.Join(" ", words[:wc]))
+		m, err = io.WriteString(w.Writer, words[0])
+		n += m
+		if err != nil {
+			return n, err
+		}
+		for _, word := range words[1:wc] {
+			m, err = io.WriteString(w.Writer, " ")
+			n += m
+			if err != nil {
+				return n, err
+			}
 
-	// if line is already very short, then we can return it directly
-	// and don't need to do any computation.
-	if len(line) <= length {
-		return []string{line}
-	}
+			m, err = io.WriteString(w.Writer, word)
+			n += m
+			if err != nil {
+				return n, err
+			}
+		}
 
-	// trim off the whitespace prefix from the string
-	// by repeatedly checking if a rune is a space character
-	var prefix string
-	trimmedPrefix := false
-	for i, r := range line {
-		if !unicode.IsSpace(r) {
-			trimmedPrefix = true
-			prefix = line[:i]
-			line = line[i:]
-			break
+		// write a newline if there are still words left!
+		words = words[wc:]
+		if len(words) > 0 {
+			m, err = w.Writer.Write(newLine)
+			n += m
+			if err != nil {
+				return n, err
+			}
 		}
 	}
 
-	// if we did not trim the prefix, then the string is all whitespace
-	// so the prefix is everything and the line is empty.
-	if !trimmedPrefix {
-		prefix = line
-		line = ""
-	}
-
-	// compute the new length by subtracting the length of prefix.
-	// Make sure that it is at least 1, so that we actually do some wrapping.
-	length -= len(prefix)
-	if length < 1 {
-		length = 1
-	}
-
-	// finally call WrapLine and prefix every line with the prefix
-	lines := WrapLine(line, length)
-	for i := range lines {
-		lines[i] = prefix + lines[i]
-	}
-	return lines
+	return n, nil
 }
 
-// WrapStringPrefix is like WrapLinePrefix except that it first splits the input into newline seperated strings.
-// It then treats each line seperatly.
-func WrapStringPrefix(s string, length int) (lines []string) {
-	for _, line := range strings.Split(strings.Replace(s, "\r\n", "\n", -1), "\n") {
-		lines = append(lines, WrapLinePrefix(line, length)...)
-	}
-
-	return
+// Grow is anything that can grow its' internal buffer
+type Grower interface {
+	Grow(length int)
 }
 
-// WrapStringsPrefix is like WrapStringPrefix except that it joins all resulting lines into a single string seperated by newlines.
-func WrapStringsPrefix(s string, length int) string {
-	return strings.Join(WrapStringPrefix(s, length), "\n")
+// Grow calls w.Grow() when w implements Grower.
+func Grow(w io.Writer, n int) {
+	grower, canGrow := w.(Grower)
+	if !canGrow {
+		return
+	}
+	grower.Grow(n)
+}
+
+var wrapperPool = &sync.Pool{
+	New: func() interface{} {
+		return new(Wrapper)
+	},
+}
+
+// WriteString is a convenience method that creates a new wrapper and calls WriteString(s) on it.
+//
+// This method is untested because Wrapper.WriteString is tested.
+func WriteString(writer io.Writer, length int, s string) (int, error) {
+	wrapper := wrapperPool.Get().(*Wrapper)
+	wrapper.Writer = writer
+	wrapper.Length = length
+
+	// avoid leaking writer
+	defer func() {
+		wrapper.Writer = nil
+		wrapperPool.Put(wrapper)
+	}()
+
+	return wrapper.WriteString(s)
+}
+
+var builderPool = &sync.Pool{
+	New: func() interface{} {
+		return new(strings.Builder)
+	},
+}
+
+// WrapString is a convenience method that creates a new Wrapper, writes s to it, and then returns the written data.
+// When s has a trailing newline, also adds a trailing newline to the return value.
+//
+// This method is untested because Wrapper.WriteString is tested.
+func WrapString(length int, s string) string {
+	builder := builderPool.Get().(*strings.Builder)
+	builder.Reset()
+	defer builderPool.Put(builder)
+
+	WriteString(builder, length, s)
+	if strings.HasSuffix(s, "\n") {
+		builder.Write(newLine)
+	}
+
+	return builder.String()
 }

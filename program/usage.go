@@ -17,7 +17,7 @@ import (
 func (p Program) UsagePage() usagefmt.Page {
 	text := "ggman manages local git repositories.\n\n"
 	text += fmt.Sprintf("ggman version %s\n", constants.BuildVersion)
-	text += "ggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information. "
+	text += "ggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information."
 
 	return usagefmt.Page{
 		MainName:    "ggman",

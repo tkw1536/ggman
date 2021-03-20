@@ -24,7 +24,7 @@ type Arguments struct {
 
 var errParseArgsNeedOneArgument = ggman.Error{
 	ExitCode: ggman.ExitGeneralArguments,
-	Message:  "Unable to parse arguments: Need at least one argument. Use `ggman license` to view licensing information. ",
+	Message:  "Unable to parse arguments: Need at least one argument. Use `ggman license` to view licensing information.",
 }
 
 var errParseArgsUnknownError = ggman.Error{

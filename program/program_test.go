@@ -11,6 +11,7 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/internal/text"
 )
 
 func TestProgram_Main(t *testing.T) {
@@ -23,13 +24,18 @@ func TestProgram_Main(t *testing.T) {
 
 	// create a dummy program
 	var program Program
-	program.IOStream = ggman.NewIOStream(&stdoutBuffer, &stderrBuffer, nil, 80)
+	wrapLength := 80
+	program.IOStream = ggman.NewIOStream(&stdoutBuffer, &stderrBuffer, nil, wrapLength)
 
 	tests := []struct {
 		name      string
 		args      []string
 		options   Description
 		variables env.Variables
+
+		// wrap the "want" variables automatically?
+		wrapError bool
+		wrapOut   bool
 
 		wantStdout string
 		wantStderr string
@@ -52,14 +58,14 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "display help",
 			args:       []string{"--help"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information. \n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain the\n      repository in the current directory\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain the\n      repository in the current directory\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
 			wantCode:   0,
 		},
 
 		{
 			name:       "display help, don't run command",
 			args:       []string{"--help", "fake", "whatever"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information. \n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain the\n      repository in the current directory\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter] [--here|-H] [--]\nCOMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain the\n      repository in the current directory\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
 			wantCode:   0,
 		},
 
@@ -67,6 +73,7 @@ func TestProgram_Main(t *testing.T) {
 			name:       "display version",
 			args:       []string{"--version"},
 			wantStdout: "ggman version v0.0.0-unknown, built 1970-01-01 00:00:00 +0000 UTC, using " + runtime.Version() + "\n",
+			wrapOut:    true,
 			wantCode:   0,
 		},
 
@@ -88,7 +95,7 @@ func TestProgram_Main(t *testing.T) {
 			name:       "not enough arguments for fake",
 			args:       []string{"fake"},
 			options:    Description{PosArgsMin: 1, PosArgsMax: 2},
-			wantStderr: "Wrong number of arguments: 'fake' takes between 1 and 2 arguments. \n",
+			wantStderr: "Wrong number of arguments: 'fake' takes between 1 and 2 arguments.\n",
 			wantCode:   4,
 		},
 
@@ -132,7 +139,7 @@ func TestProgram_Main(t *testing.T) {
 			name:       "'fake' with needsRoot, but no root",
 			args:       []string{"fake", "hello", "world"},
 			options:    Description{Environment: env.Requirement{NeedsRoot: true}, PosArgsMin: 1, PosArgsMax: 2},
-			wantStderr: "Unable to find GGROOT directory. \n",
+			wantStderr: "Unable to find GGROOT directory.\n",
 			wantCode:   5,
 		},
 		{
@@ -148,14 +155,14 @@ func TestProgram_Main(t *testing.T) {
 			name:       "'fake' with filter but not allowed",
 			args:       []string{"--for", "example", "fake", "hello", "world"},
 			options:    Description{PosArgsMin: 1, PosArgsMax: 2},
-			wantStderr: "Wrong number of arguments: 'fake' takes no 'for' argument. \n",
+			wantStderr: "Wrong number of arguments: 'fake' takes no 'for' argument.\n",
 			wantCode:   4,
 		},
 		{
 			name:       "'fake' with filter but no root",
 			args:       []string{"--for", "example", "fake", "hello", "world"},
 			options:    Description{Environment: env.Requirement{AllowsFilter: true}, PosArgsMin: 1, PosArgsMax: 2},
-			wantStderr: "Unable to find GGROOT directory. \n",
+			wantStderr: "Unable to find GGROOT directory.\n",
 			wantCode:   5,
 		},
 
@@ -241,7 +248,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'notexistent' command",
 			args:       []string{"notexistent"},
-			wantStderr: "Unknown command. Must be one of \"fake\". \n",
+			wantStderr: "Unknown command. Must be one of \"fake\".\n",
 			wantCode:   2,
 		},
 	}
@@ -272,8 +279,18 @@ func TestProgram_Main(t *testing.T) {
 				t.Errorf("Program.Main() code = %v, wantCode %v", gotCode, tt.wantCode)
 			}
 
+			// wrap if requested
+			if tt.wrapOut {
+				tt.wantStdout = text.WrapString(wrapLength, tt.wantStdout)
+			}
+
 			if gotStdout != tt.wantStdout {
 				t.Errorf("Program.Main() stdout = %q, wantStdout %q", gotStdout, tt.wantStdout)
+			}
+
+			// wrap if requested
+			if tt.wrapError {
+				tt.wantStderr = text.WrapString(wrapLength, tt.wantStderr)
 			}
 
 			if gotStderr != tt.wantStderr {

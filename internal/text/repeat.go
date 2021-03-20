@@ -1,31 +1,34 @@
 package text
 
-import "strings"
+import (
+	"io"
+	"strings"
+)
 
-// Join writes the elements of elem into builder, seperated by sep.
+// Join writes the elements of elem into writer, seperated by sep.
 // Returns the number of runes written and a nil error.
 //
-// It is like strings.Join, but writes into a builder instead of allocating a new one.
-func Join(builder *strings.Builder, elems []string, sep string) (n int, err error) {
+// It is like strings.Join, but writes into a writer instead of allocating a strings.Builder.
+func Join(writer io.Writer, elems []string, sep string) (n int, err error) {
 	// this function has been adapted from strings.Join
 
 	switch len(elems) {
 	case 0:
 		return
 	case 1:
-		return builder.WriteString(elems[0])
+		return io.WriteString(writer, elems[0])
 	}
 
 	n = len(sep) * (len(elems) - 1)
 	for i := 0; i < len(elems); i++ {
 		n += len(elems[i])
 	}
-	builder.Grow(n)
+	Grow(writer, n)
 
-	builder.WriteString(elems[0])
+	io.WriteString(writer, elems[0])
 	for _, s := range elems[1:] {
-		builder.WriteString(sep)
-		builder.WriteString(s)
+		io.WriteString(writer, sep)
+		io.WriteString(writer, s)
 	}
 
 	return
@@ -75,7 +78,6 @@ func Repeat(builder *strings.Builder, s string, count int) (n int, err error) {
 	builder.WriteString(s)
 
 	// as opposed to strings.Repeat, we need to take care of an offset
-
 	for l := len(s); l < n; l = builder.Len() - off {
 		if l <= n/2 {
 			builder.WriteString(builder.String()[off:])

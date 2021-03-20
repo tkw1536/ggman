@@ -84,20 +84,32 @@ func NewNilIOStream() IOStream {
 	return NewIOStream(nil, nil, nil, 0)
 }
 
+var newLine = []byte("\n")
+
 // StdoutWriteWrap is like
 //  io.Stdout.Write([]byte(s + "\n"))
 // but wrapped at a reasonable length
 func (io IOStream) StdoutWriteWrap(s string) (int, error) {
-	message := text.WrapStringsPrefix(s, io.wrap)
-	return io.Stdout.Write([]byte(message + "\n"))
+	n, err := text.WriteString(io.Stdout, io.wrap, s)
+	if err != nil {
+		return n, err
+	}
+	m, err := io.Stdout.Write(newLine)
+	n += m
+	return n, err
 }
 
 // StderrWriteWrap is like
 //  io.Stdout.Write([]byte(s + "\n"))
 // but wrapped at length Wrap.
 func (io IOStream) StderrWriteWrap(s string) (int, error) {
-	message := text.WrapStringsPrefix(s, io.wrap)
-	return io.Stderr.Write([]byte(message + "\n"))
+	n, err := text.WriteString(io.Stderr, io.wrap, s)
+	if err != nil {
+		return n, err
+	}
+	m, err := io.Stderr.Write(newLine)
+	n += m
+	return n, err
 }
 
 var errDieUnknown = Error{
