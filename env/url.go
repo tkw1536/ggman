@@ -124,7 +124,7 @@ func (url URL) Components() []string {
 	return append(components, parts...)
 }
 
-var specReplace = regexp.MustCompile("[\\^\\%]")
+var specReplace = regexp.MustCompile(`[\^\%]`)
 
 // Canonical returns the canonical version of this URI given a canonical specification
 // the canonical specification can contain any character, except for three special ones
