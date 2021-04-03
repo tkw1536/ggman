@@ -72,9 +72,6 @@ type testFilterWithCandidates struct {
 func (testFilterWithCandidates) Candidates() []string { return []string{"a", "b", "c"} }
 
 func TestCandidates(t *testing.T) {
-	type fields struct {
-		Paths []string
-	}
 	tests := []struct {
 		name   string
 		filter Filter

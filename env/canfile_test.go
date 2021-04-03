@@ -6,10 +6,6 @@ import (
 )
 
 func TestCanLine_Unmarshal(t *testing.T) {
-	type fields struct {
-		Pattern   string
-		Canonical string
-	}
 	type args struct {
 		s string
 	}

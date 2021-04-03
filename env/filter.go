@@ -96,8 +96,6 @@ func (pat *PatternFilter) Set(value string) {
 	pat.pattern = pattern.NewSplitGlobPattern(value, ComponentsOf, pat.fuzzy)
 }
 
-var directoryUp string = ".." + string(os.PathSeparator)
-
 // Matches checks if this filter matches the repository at clonePath.
 // The caller may assume that there is a repository at clonePath.
 func (pat PatternFilter) Matches(env Env, clonePath string) bool {
