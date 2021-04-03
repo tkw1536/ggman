@@ -12,7 +12,7 @@ func TestCommandFindBranch(t *testing.T) {
 	mock, cleanup := mockenv.NewMockEnv()
 	defer cleanup()
 
-	repo, _ := mock.Register("https://github.com/hello/world.git")
+	mock.Register("https://github.com/hello/world.git")
 
 	// with branch 'branch'
 	clonePath := mock.Install("https://github.com/hello/world.git", "github.com", "hello", "world")
