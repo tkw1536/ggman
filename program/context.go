@@ -28,7 +28,7 @@ func (c *Context) init() error {
 		}
 
 		// create a normal pattern filter
-		clauses[i] = env.NewPatternFilter(pat)
+		clauses[i] = env.NewPatternFilter(pat, false) // TODO: Make fuzzyness optional
 	}
 
 	// generate a 'here' filter for the current repository

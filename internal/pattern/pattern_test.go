@@ -8,20 +8,25 @@ import (
 
 func TestNewGlobPattern(t *testing.T) {
 	type args struct {
-		s string
+		s     string
+		fuzzy bool
 	}
 	tests := []struct {
 		name string
 		args args
 		want Pattern
 	}{
-		{"empty pattern", args{""}, AnyStringPattern{}},
-		{"constant pattern", args{"hello world"}, EqualityFoldPattern("hello world")},
-		{"glob pattern", args{"a*b"}, GlobPattern("a*b")},
+		{"empty non-fuzzy pattern", args{"", false}, AnyStringPattern{}},
+		{"constant non-fuzzy pattern", args{"hello world", false}, EqualityFoldPattern("hello world")},
+		{"glob non-fuzzy pattern", args{"a*b", false}, GlobPattern("a*b")},
+
+		{"empty fuzzy pattern", args{"", true}, AnyStringPattern{}},
+		{"constant fuzzy pattern", args{"hello world", true}, FuzzyFoldPattern("hello world")},
+		{"glob fuzzy pattern", args{"a*b", true}, GlobPattern("a*b")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewGlobPattern(tt.args.s); !reflect.DeepEqual(got, tt.want) {
+			if got := NewGlobPattern(tt.args.s, tt.args.fuzzy); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewGlobPattern() = %v, want %v", got, tt.want)
 			}
 		})
@@ -104,6 +109,60 @@ func TestEqualityFoldPattern_Match(t *testing.T) {
 	}
 }
 
+func TestFuzzyFoldPattern_Match(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name string
+		p    FuzzyFoldPattern
+		args args
+		want bool
+	}{
+		{
+			"pattern matches exactly",
+			FuzzyFoldPattern("test"),
+			args{"test"},
+			true,
+		},
+
+		{
+			"pattern matches case",
+			FuzzyFoldPattern("test"),
+			args{"tEsT"},
+			true,
+		},
+
+		{
+			"pattern matches fuzzy",
+			FuzzyFoldPattern("tst"),
+			args{"test"},
+			true,
+		},
+
+		{
+			"pattern matches fuzzy case",
+			FuzzyFoldPattern("TsT"),
+			args{"TeSt"},
+			true,
+		},
+
+		{
+			"pattern does not match",
+			FuzzyFoldPattern("test"),
+			args{"not-match"},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.p.Match(tt.args.s); got != tt.want {
+				t.Errorf("FuzzyFoldPattern.Match() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestGlobPattern_Match(t *testing.T) {
 	type args struct {
 		s string
@@ -148,6 +207,7 @@ func TestNewSplitGlobPattern(t *testing.T) {
 	type args struct {
 		pattern  string
 		splitter func(string) []string
+		fuzzy    bool
 	}
 
 	simpleSplitter := func(s string) []string {
@@ -160,8 +220,8 @@ func TestNewSplitGlobPattern(t *testing.T) {
 		want SplitPattern
 	}{
 		{
-			"simple spliter",
-			args{"a;a*b;;", simpleSplitter},
+			"simple non-fuzzy spliter",
+			args{"a;a*b;;", simpleSplitter, false},
 			SplitPattern{
 				Split: simpleSplitter,
 				Patterns: []Pattern{
@@ -172,10 +232,24 @@ func TestNewSplitGlobPattern(t *testing.T) {
 				},
 			},
 		},
+
+		{
+			"simple fuzzy spliter",
+			args{"a;a*b;;", simpleSplitter, true},
+			SplitPattern{
+				Split: simpleSplitter,
+				Patterns: []Pattern{
+					FuzzyFoldPattern("a"),
+					GlobPattern("a*b"),
+					AnyStringPattern{},
+					AnyStringPattern{},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := NewSplitGlobPattern(tt.args.pattern, tt.args.splitter)
+			got := NewSplitGlobPattern(tt.args.pattern, tt.args.splitter, tt.args.fuzzy)
 
 			gotPointer := reflect.ValueOf(got.Split).Pointer()
 			wantPointer := reflect.ValueOf(tt.want.Split).Pointer()

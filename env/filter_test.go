@@ -218,6 +218,7 @@ func TestPathFilter_Candidates(t *testing.T) {
 func TestNewPatternFilter(t *testing.T) {
 	type args struct {
 		value string
+		fuzzy bool
 	}
 	tests := []struct {
 		name    string
@@ -225,25 +226,44 @@ func TestNewPatternFilter(t *testing.T) {
 		wantPat PatternFilter
 	}{
 		{
-			"a/b",
-			args{"a/b"},
+			"a/b (non-fuzzy)",
+			args{"a/b", false},
 			PatternFilter{
 				value:   "a/b",
-				pattern: pattern.NewSplitGlobPattern("a/b", ComponentsOf),
+				pattern: pattern.NewSplitGlobPattern("a/b", ComponentsOf, false),
 			},
 		},
 		{
-			"",
-			args{""},
+			"'' (non-fuzzy)",
+			args{"", false},
 			PatternFilter{
 				value:   "",
-				pattern: pattern.NewSplitGlobPattern("", ComponentsOf),
+				pattern: pattern.NewSplitGlobPattern("", ComponentsOf, false),
+			},
+		},
+
+		{
+			"a/b (fuzzy)",
+			args{"a/b", true},
+			PatternFilter{
+				value:   "a/b",
+				fuzzy:   true,
+				pattern: pattern.NewSplitGlobPattern("a/b", ComponentsOf, true),
+			},
+		},
+		{
+			"'' (fuzzy)",
+			args{"", true},
+			PatternFilter{
+				value:   "",
+				fuzzy:   true,
+				pattern: pattern.NewSplitGlobPattern("", ComponentsOf, true),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotPat := NewPatternFilter(tt.args.value)
+			gotPat := NewPatternFilter(tt.args.value, tt.args.fuzzy)
 
 			// .Split cannot be compared with reflect
 			gotPat.pattern.Split = nil

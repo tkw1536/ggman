@@ -70,7 +70,8 @@ func (pf PathFilter) Candidates() []string {
 }
 
 // NewPatternFilter returns a new pattern filter with the appropriate value
-func NewPatternFilter(value string) (pat PatternFilter) {
+func NewPatternFilter(value string, fuzzy bool) (pat PatternFilter) {
+	pat.fuzzy = fuzzy
 	pat.Set(value)
 	return
 }
@@ -79,6 +80,7 @@ func NewPatternFilter(value string) (pat PatternFilter) {
 // PatternFilter implements FilterValue
 type PatternFilter struct {
 	value   string
+	fuzzy   bool
 	pattern pattern.SplitPattern
 }
 
@@ -91,7 +93,7 @@ func (pat PatternFilter) String() string {
 // This function is untested because NewPatternFilter() is tested.
 func (pat *PatternFilter) Set(value string) {
 	pat.value = value
-	pat.pattern = pattern.NewSplitGlobPattern(value, ComponentsOf)
+	pat.pattern = pattern.NewSplitGlobPattern(value, ComponentsOf, pat.fuzzy)
 }
 
 var directoryUp string = ".." + string(os.PathSeparator)

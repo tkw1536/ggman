@@ -332,6 +332,7 @@ ggcode () {
 
 ### 1.11.0 (Upcoming)
 
+- internal support for fuzzy matching of repository paths
 - `ggman ls`: add `--one` argument to list at most one repository
 - `ggman clone`: complain when trying to clone a local path
 
