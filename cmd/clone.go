@@ -9,7 +9,7 @@ import (
 
 // Clone is the 'ggman clone' command.
 //
-// Clone clones the repository in the firsty argument into the path described to by 'ggman where'.
+// Clone clones the remote repository in the first argument into the path described to by 'ggman where'.
 // It canonizes the url before cloning it.
 // It optionally takes any argument that would be passed to the normal invocation of a git command.
 //
@@ -46,6 +46,11 @@ func (*clone) AfterParse() error {
 	return nil
 }
 
+var errCloneInvalidURI = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "Invalid remote URI %q: Invalid scheme, not a remote path. ",
+}
+
 var errCloneAlreadyExists = ggman.Error{
 	ExitCode: ggman.ExitGeneric,
 	Message:  "Unable to clone repository: Another git repository already exists in target location. ",
@@ -61,8 +66,12 @@ var errCloneOther = ggman.Error{
 }
 
 func (c *clone) Run(context program.Context) error {
-	// find the remote
+	// find the remote url, check that it is not a local!
 	remote := context.URLV(0)
+	if remote.Scheme == "" {
+		return errCloneInvalidURI.WithMessageF(context.Args[0])
+	}
+
 	remoteURI := context.Canonical(remote)
 	clonePath := context.Local(remote)
 

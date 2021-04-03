@@ -21,6 +21,7 @@ func TestCommandClone(t *testing.T) {
 		wantStdout string
 		wantStderr string
 	}{
+
 		{
 			"clone repository that doesn't exist yet",
 			"",
@@ -49,6 +50,26 @@ func TestCommandClone(t *testing.T) {
 			0,
 			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\nClone already exists in target location, done.\n",
 			"",
+		},
+
+		{
+			"clone relative path",
+			"",
+			[]string{"clone", "./example"},
+
+			4,
+			"",
+			"Invalid remote URI \"./example\": Invalid scheme, not a remote path.\n",
+		},
+
+		{
+			"clone relative path (2)",
+			"",
+			[]string{"clone", "/some/example/path"},
+
+			4,
+			"",
+			"Invalid remote URI \"/some/example/path\": Invalid scheme, not a remote path.\n",
 		},
 	}
 

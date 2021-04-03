@@ -332,6 +332,7 @@ ggcode () {
 
 ### 1.11.0 (Upcoming)
 
+- `ggman clone`: complain when trying to clone a local path
 
 ### 1.10.0 (Released [Mar 20 2021](https://github.com/tkw1536/ggman/releases/tag/v1.10.0))
 
