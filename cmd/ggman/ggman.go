@@ -23,6 +23,10 @@
 //
 // Apply FILTER to list of repositories. See Environment section below.
 //
+//  --no-fuzzy-filter, -n
+//
+// Disable fuzzy filter matching. See Environment section below.
+//
 // See the Arguments type of the github.com/tkw1536/ggman/program package for more details of package argument parsing.
 //
 // Subcommands and their Arguments
@@ -46,6 +50,7 @@
 // Any subcommand that iterates over local repositories will recursively find all repositories inside the 'GGROOT' directory.
 // In some scenarios it is desired to filter the local list of repositories, e.g. applying only to those inside a specific namespace.
 // This can be achieved using the '--for' flag, which will match to any component of the url.
+// This matching is fuzzy by default, by the fuzzyness can be disabled by passing the '--no-fuzzy-filter' flag.
 // The '--for' flag also matches (relative or absolute) filesystem paths, as well as full clone URLs.
 // Furthermore the '--here' flag can also be used to match the repository in the current working directory.
 //

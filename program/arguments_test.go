@@ -238,6 +238,13 @@ func TestCommandArguments_checkFilterArgument(t *testing.T) {
 		},
 
 		{
+			"fuzzy not allowed, fuzzy given",
+			Description{Environment: env.Requirement{AllowsFilter: false}},
+			Arguments{Command: "example", NoFuzzyFilter: true, Filters: nil},
+			"Wrong number of arguments: 'example' takes no '--no-fuzzy-filter' argument. ",
+		},
+
+		{
 			"for allowed, for not given",
 			Description{Environment: env.Requirement{AllowsFilter: true}},
 			Arguments{Command: "example", Filters: nil},

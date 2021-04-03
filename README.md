@@ -160,6 +160,11 @@ Note that the `--for` argument also works for exact repository urls, e.g. `ggman
 In addition to the `--for` argument, the `--here` argument also works.
 It is a shortcut that is equivalent to calling `--for` with the remote of the repository located in the current working directory. 
 
+In addition, the `--for` argument by default uses a fuzzy matching algorithm.
+For example, the pattern `wrld` will also match a repository called `world`.
+Fuzzy matching only works for patterns that do not contain a special glob characters (`*` and friends).
+It is also possible to turn off fuzzy matching entirely by passing the `--no-fuzzy-filter` / `-n` argument.
+
 ### 'ggman comps' and 'ggman canon'
 
 On `github.com` and multiple other providers, it is usually possible to clone repositories via multiple urls. 
@@ -332,7 +337,7 @@ ggcode () {
 
 ### 1.11.0 (Upcoming)
 
-- internal support for fuzzy matching of repository paths
+- add fuzzy matching support for repository patterns (can be disabled using `--no-fuzzy-filter`) 
 - `ggman ls`: add `--one` argument to list at most one repository
 - `ggman clone`: complain when trying to clone a local path
 

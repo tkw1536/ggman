@@ -77,6 +77,28 @@ func TestCommandLs(t *testing.T) {
 		},
 
 		{
+			"list repositories fuzzy",
+			"",
+			[]string{"--for", "wrld", "ls"},
+
+			0,
+			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n",
+
+			"",
+		},
+
+		{
+			"list repositories non-fuzzy",
+			"",
+			[]string{"--no-fuzzy-filter", "--for", "wrld", "ls"},
+
+			0,
+			"",
+
+			"",
+		},
+
+		{
 			"list non-existing repositories",
 			"",
 			[]string{"--for", "does/not/exist", "ls"},

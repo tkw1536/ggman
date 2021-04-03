@@ -15,8 +15,9 @@ type Arguments struct {
 	Help    bool `short:"h" long:"help" description:"Print a help message and exit"`
 	Version bool `short:"v" long:"version" description:"Print a version message and exit"`
 
-	Filters []string `short:"f" long:"for" value-name:"filter" description:"Filter list of repositories to apply COMMAND to by filter. Filter can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url"`
-	Here    bool     `short:"H" long:"here" description:"Filter the list of repositories to apply COMMAND to only contain the repository in the current directory"`
+	Filters       []string `short:"f" long:"for" value-name:"filter" description:"Filter list of repositories to apply COMMAND to by filter. Filter can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url"`
+	NoFuzzyFilter bool     `short:"n" long:"no-fuzzy-filter" description:"Disable fuzzy matching for filters"`
+	Here          bool     `short:"H" long:"here" description:"Filter the list of repositories to apply COMMAND to only contain the repository in the current directory"`
 
 	Command string   // command to run
 	Args    []string // remaining arguments
@@ -285,6 +286,11 @@ var errParseNoHere = ggman.Error{
 	Message:  "Wrong number of arguments: '%s' takes no '--here' argument. ",
 }
 
+var errParseNoFuzzy = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "Wrong number of arguments: '%s' takes no '--no-fuzzy-filter' argument. ",
+}
+
 // checkFilterArgument checks that if a 'for' argument is not allowed it is not passed.
 // It expects args.For to be set appropriatly
 //
@@ -300,6 +306,10 @@ func (args CommandArguments) checkFilterArgument() error {
 
 	if args.Here {
 		return errParseNoHere.WithMessageF(args.Command)
+	}
+
+	if args.NoFuzzyFilter {
+		return errParseNoFuzzy.WithMessageF(args.Command)
 	}
 
 	return nil
