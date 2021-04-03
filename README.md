@@ -320,7 +320,7 @@ In addition to ggman certain aliases can be very useful.
 # e.g ggcd github.com/hello/world will cd into the directory where the
 # 'github.com/hello/world' repository is checked out. 
 ggcd () {
-	ggman -f $1 ls --exit-code && cd $(ggman -f $1 ls --exit-code 2>&1)
+	ggman -f $1 ls --exit-code --one && cd $(ggman -f $1 ls --exit-code 2>&1)
 }
 # ggcode is like ggcd, except it opens an editor (here vscode) instead of cding. 
 ggcode () {
@@ -332,6 +332,7 @@ ggcode () {
 
 ### 1.11.0 (Upcoming)
 
+- `ggman ls`: add `--one` argument to list at most one repository
 - `ggman clone`: complain when trying to clone a local path
 
 ### 1.10.0 (Released [Mar 20 2021](https://github.com/tkw1536/ggman/releases/tag/v1.10.0))

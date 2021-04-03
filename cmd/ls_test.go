@@ -55,6 +55,17 @@ func TestCommandLs(t *testing.T) {
 		},
 
 		{
+			"list all repositories with one",
+			"",
+			[]string{"ls", "--one"},
+
+			0,
+			"${GGROOT github.com hello world}\n",
+
+			"",
+		},
+
+		{
 			"list only hello/world repositories",
 			"",
 			[]string{"--for", "hello/world", "ls"},

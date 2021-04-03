@@ -12,13 +12,16 @@ import (
 // The directories will be listed in dictionary order.
 //   --exit-code
 // When provided, exit with code 1 if no repositories are found.
+//   --one
+// List at most one repository
 var Ls program.Command = &ls{}
 
 type ls struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"Return exit code 1 if no repositories are found"`
+	One      bool `short:"o" long:"one" description:"List at most one repository, for use in shell scripts"`
 }
 
-func (ls) BeforeRegister() {}
+func (*ls) BeforeRegister() {}
 
 func (l *ls) Description() program.Description {
 	return program.Description{
@@ -32,7 +35,7 @@ func (l *ls) Description() program.Description {
 	}
 }
 
-func (ls) AfterParse() error {
+func (*ls) AfterParse() error {
 	return nil
 }
 
@@ -40,8 +43,11 @@ var errLSExitFlag = ggman.Error{
 	ExitCode: ggman.ExitGeneric,
 }
 
-func (l ls) Run(context program.Context) error {
+func (l *ls) Run(context program.Context) error {
 	repos := context.Repos()
+	if l.One && len(repos) > 0 {
+		repos = repos[:1]
+	}
 	for _, repo := range repos {
 		context.Println(repo)
 	}
