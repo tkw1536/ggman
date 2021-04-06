@@ -19,7 +19,7 @@ type fix struct {
 	Simulate bool `short:"s" long:"simulate" description:"Do not perform any canonicalization. Only print what would be done"`
 }
 
-func (fix) BeforeRegister() {}
+func (fix) BeforeRegister(program *program.Program) {}
 
 func (f *fix) Description() program.Description {
 	return program.Description{

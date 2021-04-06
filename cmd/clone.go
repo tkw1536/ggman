@@ -20,7 +20,7 @@ type clone struct {
 	Force bool `short:"f" long:"force" description:"Don't complain when a repository already exists in the target directory"`
 }
 
-func (*clone) BeforeRegister() {}
+func (*clone) BeforeRegister(program *program.Program) {}
 
 func (*clone) Description() program.Description {
 	return program.Description{

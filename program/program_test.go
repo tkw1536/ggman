@@ -308,7 +308,7 @@ type echoCommand struct {
 	description Description
 }
 
-func (e echoCommand) BeforeRegister() {}
+func (e echoCommand) BeforeRegister(program *Program) {}
 func (e echoCommand) Description() Description {
 	e.description.Name = e.name
 	return e.description

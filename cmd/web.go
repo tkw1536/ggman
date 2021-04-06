@@ -43,7 +43,7 @@ var Web program.Command = &web{}
 
 type web struct{ urlweb }
 
-func (w *web) BeforeRegister() {
+func (w *web) BeforeRegister(program *program.Program) {
 	w.urlweb.isWebCommand = true
 }
 
@@ -54,7 +54,7 @@ var URL program.Command = &url{}
 
 type url struct{ urlweb }
 
-func (u *url) BeforeRegister() {
+func (u *url) BeforeRegister(program *program.Program) {
 	u.urlweb.isWebCommand = false
 }
 

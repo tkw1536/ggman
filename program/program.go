@@ -56,7 +56,7 @@ type Command interface {
 	// In particular it is called before any other function on this command is called.
 	//
 	// It is never called more than once for a single instance of a command.
-	BeforeRegister()
+	BeforeRegister(program *Program)
 
 	// Description returns a description of this command.
 	// It may be called multiple times.
@@ -210,7 +210,7 @@ func (p *Program) Register(c Command) {
 		p.commands = make(map[string]Command)
 	}
 
-	c.BeforeRegister()
+	c.BeforeRegister(p)
 	Name := c.Description().Name
 
 	if _, ok := p.commands[Name]; ok {

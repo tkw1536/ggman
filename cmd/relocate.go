@@ -18,7 +18,7 @@ type relocate struct {
 	Simulate bool `short:"s" long:"simulate" description:"Only print unix-like commands to move repositories around"`
 }
 
-func (relocate) BeforeRegister() {}
+func (relocate) BeforeRegister(program *program.Program) {}
 
 func (r *relocate) Description() program.Description {
 	return program.Description{

@@ -13,7 +13,7 @@ var Fetch program.Command = fetch{}
 
 type fetch struct{}
 
-func (fetch) BeforeRegister() {}
+func (fetch) BeforeRegister(program *program.Program) {}
 
 func (fetch) Description() program.Description {
 	return program.Description{

@@ -18,7 +18,7 @@ type lsr struct {
 	Canonical bool `short:"c" long:"canonical" description:"Print canonicalized URLs"`
 }
 
-func (lsr) BeforeRegister() {}
+func (lsr) BeforeRegister(program *program.Program) {}
 
 func (l *lsr) Description() program.Description {
 	return program.Description{

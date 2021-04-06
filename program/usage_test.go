@@ -25,10 +25,10 @@ type fakeCommand string
 
 var _ Command = (fakeCommand)("")
 
-func (fakeCommand) BeforeRegister()            {}
-func (f fakeCommand) Description() Description { return Description{Name: string(f)} }
-func (fakeCommand) AfterParse() error          { panic("fakeCommand: not implemented") }
-func (fakeCommand) Run(Context) error          { panic("fakeCommand: not implemented") }
+func (fakeCommand) BeforeRegister(program *Program) {}
+func (f fakeCommand) Description() Description      { return Description{Name: string(f)} }
+func (fakeCommand) AfterParse() error               { panic("fakeCommand: not implemented") }
+func (fakeCommand) Run(Context) error               { panic("fakeCommand: not implemented") }
 
 func TestCommandArguments_UsagePage(t *testing.T) {
 

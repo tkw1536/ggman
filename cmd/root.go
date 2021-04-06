@@ -13,7 +13,7 @@ var Root program.Command = root{}
 
 type root struct{}
 
-func (root) BeforeRegister() {}
+func (root) BeforeRegister(program *program.Program) {}
 
 func (root) Description() program.Description {
 	return program.Description{

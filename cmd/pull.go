@@ -16,7 +16,7 @@ var Pull program.Command = pull{}
 
 type pull struct{}
 
-func (pull) BeforeRegister() {}
+func (pull) BeforeRegister(program *program.Program) {}
 
 func (pull) Description() program.Description {
 	return program.Description{

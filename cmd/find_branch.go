@@ -18,7 +18,7 @@ type findBranch struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"Exit with Status Code 1 when no repositories with provided branch exist"`
 }
 
-func (findBranch) BeforeRegister() {}
+func (findBranch) BeforeRegister(program *program.Program) {}
 
 func (f *findBranch) Description() program.Description {
 	return program.Description{

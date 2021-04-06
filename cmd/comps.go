@@ -12,7 +12,7 @@ var Comps program.Command = comps{}
 
 type comps struct{}
 
-func (comps) BeforeRegister() {}
+func (comps) BeforeRegister(program *program.Program) {}
 
 func (comps) Description() program.Description {
 	return program.Description{

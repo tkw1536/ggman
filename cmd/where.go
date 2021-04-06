@@ -16,7 +16,7 @@ var Where program.Command = where{}
 
 type where struct{}
 
-func (where) BeforeRegister() {}
+func (where) BeforeRegister(program *program.Program) {}
 
 func (where) Description() program.Description {
 	return program.Description{

@@ -16,7 +16,7 @@ type here struct {
 	Tree bool `short:"t" long:"tree" description:"Also print the current HEAD reference and relative path to the root of the git worktree"`
 }
 
-func (here) BeforeRegister() {}
+func (here) BeforeRegister(program *program.Program) {}
 
 func (h *here) Description() program.Description {
 	return program.Description{

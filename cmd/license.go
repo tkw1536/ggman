@@ -13,7 +13,7 @@ var License program.Command = license{}
 
 type license struct{}
 
-func (license) BeforeRegister() {}
+func (license) BeforeRegister(program *program.Program) {}
 
 func (license) Description() program.Description {
 	return program.Description{

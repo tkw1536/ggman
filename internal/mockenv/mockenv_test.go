@@ -71,7 +71,7 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 // mockEnvRunCommand
 type mockEnvRunCommand struct{}
 
-func (mockEnvRunCommand) BeforeRegister() {}
+func (mockEnvRunCommand) BeforeRegister(program *program.Program) {}
 
 func (mockEnvRunCommand) Description() program.Description {
 	return program.Description{

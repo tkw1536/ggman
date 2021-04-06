@@ -16,7 +16,7 @@ var Link program.Command = link{}
 
 type link struct{}
 
-func (link) BeforeRegister() {}
+func (link) BeforeRegister(program *program.Program) {}
 
 func (link) Description() program.Description {
 	return program.Description{

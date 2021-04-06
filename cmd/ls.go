@@ -21,7 +21,7 @@ type ls struct {
 	One      bool `short:"o" long:"one" description:"List at most one repository, for use in shell scripts"`
 }
 
-func (*ls) BeforeRegister() {}
+func (*ls) BeforeRegister(program *program.Program) {}
 
 func (l *ls) Description() program.Description {
 	return program.Description{

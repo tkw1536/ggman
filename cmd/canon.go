@@ -13,7 +13,7 @@ var Canon program.Command = &canon{}
 
 type canon struct{}
 
-func (canon) BeforeRegister() {}
+func (canon) BeforeRegister(program *program.Program) {}
 
 func (canon) Description() program.Description {
 	return program.Description{
