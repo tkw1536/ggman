@@ -337,6 +337,7 @@ ggcode () {
 
 ### 1.11.0 (Upcoming)
 
+- add `--clone` and `--reclone` flag to `ggman url`
 - add fuzzy matching support for repository patterns (can be disabled using `--no-fuzzy-filter`) 
 - `ggman ls`: add `--one` argument to list at most one repository
 - `ggman clone`: complain when trying to clone a local path

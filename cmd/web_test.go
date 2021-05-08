@@ -12,8 +12,8 @@ func TestCommandURL(t *testing.T) {
 	mock, cleanup := mockenv.NewMockEnv()
 	defer cleanup()
 
-	mock.Register("https://github.com/hello/world.git")
-	clonePath := mock.Install("https://github.com/hello/world.git", "hello", "world")
+	mock.Register("git@github.com/hello/world.git")
+	clonePath := mock.Install("git@github.com/hello/world.git", "hello", "world")
 
 	subClonePath := filepath.Join(clonePath, "sub")
 	os.MkdirAll(subClonePath, os.ModePerm)
@@ -36,6 +36,24 @@ func TestCommandURL(t *testing.T) {
 			[]string{"url"},
 			0,
 			"https://github.com/hello/world\n",
+			"",
+		},
+
+		{
+			"Print clone url at root",
+			clonePath,
+			[]string{"url", "--clone"},
+			0,
+			"git clone https://github.com/hello/world.git\n",
+			"",
+		},
+
+		{
+			"Print reclone url at root",
+			clonePath,
+			[]string{"url", "--reclone"},
+			0,
+			"git clone git@github.com/hello/world.git\n",
 			"",
 		},
 
@@ -94,6 +112,24 @@ func TestCommandURL(t *testing.T) {
 		},
 
 		{
+			"Do not print clone url with tree at root",
+			clonePath,
+			[]string{"url", "--clone", "--tree"},
+			4,
+			"",
+			"ggman url does not support clone and tree arguments at the same time\n",
+		},
+
+		{
+			"Do not print reclone url with tree at root",
+			clonePath,
+			[]string{"url", "--reclone", "--tree"},
+			4,
+			"",
+			"ggman url does not support reclone and tree arguments at the same time\n",
+		},
+
+		{
 			"Open url at faked root with tree",
 			nonRepoPath,
 			[]string{"url", "--force-repo-here", "--tree"},
@@ -108,6 +144,24 @@ func TestCommandURL(t *testing.T) {
 			[]string{"url", "--branch"},
 			0,
 			"https://github.com/hello/world/tree/master\n",
+			"",
+		},
+
+		{
+			"Print clone url with branch at root",
+			clonePath,
+			[]string{"url", "--clone", "--branch"},
+			0,
+			"git clone https://github.com/hello/world.git --branch master\n",
+			"",
+		},
+
+		{
+			"Print reclone url with branch at root",
+			clonePath,
+			[]string{"url", "--reclone", "--branch"},
+			0,
+			"git clone git@github.com/hello/world.git --branch master\n",
 			"",
 		},
 
@@ -130,6 +184,24 @@ func TestCommandURL(t *testing.T) {
 		},
 
 		{
+			"Print clone url at subpath",
+			subClonePath,
+			[]string{"url", "--clone"},
+			0,
+			"git clone https://github.com/hello/world.git\n",
+			"",
+		},
+
+		{
+			"Print reclone url at subpath",
+			subClonePath,
+			[]string{"url", "--reclone"},
+			0,
+			"git clone git@github.com/hello/world.git\n",
+			"",
+		},
+
+		{
 			"Open url with tree at subpath",
 			subClonePath,
 			[]string{"url", "--tree"},
@@ -144,6 +216,24 @@ func TestCommandURL(t *testing.T) {
 			[]string{"url", "--branch"},
 			0,
 			"https://github.com/hello/world/tree/master\n",
+			"",
+		},
+
+		{
+			"Print clone url with branch at subpath",
+			subClonePath,
+			[]string{"url", "--clone", "--branch"},
+			0,
+			"git clone https://github.com/hello/world.git --branch master\n",
+			"",
+		},
+
+		{
+			"Print reclone url with branch at subpath",
+			subClonePath,
+			[]string{"url", "--reclone", "--branch"},
+			0,
+			"git clone git@github.com/hello/world.git --branch master\n",
 			"",
 		},
 	}

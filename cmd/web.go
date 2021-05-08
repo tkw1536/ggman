@@ -39,6 +39,14 @@ import (
 //  --prefix
 // When provided, instead of replacing the hostname with the base, prefix it with the base instead.
 // This flag is ignored when no base is provided, or a built-in base is used.
+//
+// --clone
+// When provided, instead of printing only the URL, print a 'git clone' command invocation that can be used by an anonymous user to clone the current repository.
+// The clone url will always append '.git' to the web url, which may not work with every server.
+// Only compatible with the '--branch' flag, but not '--tree', '--prefix', and 'BASE'.
+//
+// --reclone
+// Like the --clone flag, but instead of using a normalized url, use the exact one found in the current repository.
 var Web program.Command = &web{}
 
 type web struct{ urlweb }
@@ -65,6 +73,8 @@ type urlweb struct {
 	Branch        bool `short:"b" long:"branch" description:"If provided, include the HEAD reference in the resolved URL"`
 	Tree          bool `short:"t" long:"tree" description:"If provided, additionally use the HEAD reference and relative path to the root of the git worktree"`
 	BaseAsPrefix  bool `short:"p" long:"prefix" description:"Treat the base argument as a prefix, instead of the hostname"`
+	Clone         bool `short:"c" long:"clone" description:"If provided to the url command, print a 'git clone' command that can be used to clone the current repository"`
+	ReClone       bool `short:"r" long:"reclone" description:"Like clone, but uses the current remote url as opposed to the https one"`
 }
 
 // WebBuiltInBases is a map of built-in bases for the url and web commands
@@ -133,7 +143,29 @@ func (uw *urlweb) Description() program.Description {
 	}
 }
 
-func (urlweb) AfterParse() error {
+func (uw *urlweb) AfterParse() error {
+
+	var cloneFlag string
+	if uw.Clone {
+		cloneFlag = "clone"
+	} else {
+		cloneFlag = "reclone"
+	}
+
+	isClone := uw.Clone || uw.ReClone
+
+	if uw.isWebCommand && isClone {
+		return errWebFlagUnsupported.WithMessageF(cloneFlag)
+	}
+
+	if isClone && uw.Tree {
+		return errURLCloneAndUnsupported.WithMessageF(cloneFlag, "tree")
+	}
+
+	if isClone && uw.BaseAsPrefix {
+		return errURLCloneAndUnsupported.WithMessageF(cloneFlag, "prefix")
+	}
+
 	return nil
 }
 
@@ -147,6 +179,16 @@ var errNoRelativeRepository = ggman.Error{
 	Message:  "Unable to use '--relative': Not inside GGROOT",
 }
 
+var errWebFlagUnsupported = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "ggman web does not support the %s flag. ",
+}
+
+var errURLCloneAndUnsupported = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "ggman url does not support %s and %s arguments at the same time",
+}
+
 func (uw urlweb) Run(context program.Context) error {
 	// get the remote url of the current repository
 	root, remote, relative, err := uw.getRemoteURL(context)
@@ -154,33 +196,42 @@ func (uw urlweb) Run(context program.Context) error {
 		return err
 	}
 
-	// parse it as a repo url
-	url := env.ParseURL(remote)
+	var weburl string
+	if !uw.ReClone {
+		// parse it as a repo url
+		url := env.ParseURL(remote)
 
-	// set the base host
-	base := "https://" + url.HostName
+		// set the base host
+		base := "https://" + url.HostName
 
-	// if we have a base argument, we need to use it
-	if len(context.Args) > 0 {
-		base = context.Args[0]
+		// if we have a base argument, we need to use it
+		if len(context.Args) > 0 {
+			base = context.Args[0]
 
-		// lookup in builtins
-		if builtIn, ok := WebBuiltInBases[base]; ok {
-			base = builtIn.URL
-			uw.BaseAsPrefix = builtIn.IncludeHost
+			// lookup in builtins
+			if builtIn, ok := WebBuiltInBases[base]; ok {
+				base = builtIn.URL
+				uw.BaseAsPrefix = builtIn.IncludeHost
+			}
+
+			// if we want to use the base as a prefix, add back the hostname
+			if uw.BaseAsPrefix {
+				base += url.HostName
+			}
 		}
 
-		// if we want to use the base as a prefix, add back the hostname
-		if uw.BaseAsPrefix {
-			base += url.HostName
+		// set the hostname to the base
+		url.HostName = base
+
+		// get the web url
+		canspec := "^/$"
+		if uw.Clone {
+			canspec = "git clone ^/$.git"
 		}
+		weburl = url.Canonical(canspec)
+	} else {
+		weburl = "git clone " + remote
 	}
-
-	// set the hostname to the base
-	url.HostName = base
-
-	// get the web url
-	weburl := url.Canonical("^/$")
 
 	if root != "" && (uw.Tree || uw.Branch) {
 		ref, err := context.Git.GetHeadRef(root)
@@ -188,9 +239,13 @@ func (uw urlweb) Run(context program.Context) error {
 			return errOutsideRepository
 		}
 
-		weburl += "/tree/" + ref
-		if uw.Tree {
-			weburl += "/" + relative
+		if !(uw.Clone || uw.ReClone) {
+			weburl += "/tree/" + ref
+			if uw.Tree {
+				weburl += "/" + relative
+			}
+		} else {
+			weburl += " --branch " + ref
 		}
 	}
 
