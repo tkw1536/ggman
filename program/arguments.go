@@ -182,6 +182,10 @@ func (args *CommandArguments) Parse(command Command, arguments Arguments) error 
 		return err
 	}
 
+	if err := command.AfterParse(); err != nil {
+		return err
+	}
+
 	return nil
 }
 

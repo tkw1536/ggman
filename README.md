@@ -340,6 +340,7 @@ ggcode () {
 - add fuzzy matching support for repository patterns (can be disabled using `--no-fuzzy-filter`) 
 - `ggman ls`: add `--one` argument to list at most one repository
 - `ggman clone`: complain when trying to clone a local path
+- internal code improvements and bugfixes
 
 ### 1.10.0 (Released [Mar 20 2021](https://github.com/tkw1536/ggman/releases/tag/v1.10.0))
 
