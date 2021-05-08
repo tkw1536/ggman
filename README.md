@@ -335,7 +335,9 @@ ggcode () {
 
 ## Changelog
 
-### 1.11.0 (Upcoming)
+### 1.12.0 (Upcoming)
+
+### 1.11.0 (Released [May 8 2021](https://github.com/tkw1536/ggman/releases/tag/v1.11.0))
 
 - add `--clone` and `--reclone` flag to `ggman url`
 - add fuzzy matching support for repository patterns (can be disabled using `--no-fuzzy-filter`) 
