@@ -79,12 +79,11 @@ func Repeat(builder *strings.Builder, s string, count int) (n int, err error) {
 
 	// as opposed to strings.Repeat, we need to take care of an offset
 	for l := len(s); l < n; l = builder.Len() - off {
-		if l <= n/2 {
-			builder.WriteString(builder.String()[off:])
-		} else {
+		if l > n/2 {
 			builder.WriteString(builder.String()[off : n-l+off])
 			break
 		}
+		builder.WriteString(builder.String()[off:])
 	}
 
 	return
