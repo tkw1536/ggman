@@ -339,6 +339,7 @@ ggcode () {
 
 ### 1.11.1 (Upcoming)
 
+- use `go1.17` for building and tests
 - improved checking for local urls when running `ggman clone`
 - minor internal improvements
 
