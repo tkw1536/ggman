@@ -337,7 +337,7 @@ ggcode () {
 
 ### 1.12.0 (Upcoming)
 
-### 1.11.1 (Upcoming)
+### 1.11.1 (Released [Sep 20 2021](https://github.com/tkw1536/ggman/releases/tag/v1.11.1))
 
 - use `go1.17` for building and tests
 - improved checking for local urls when running `ggman clone`
