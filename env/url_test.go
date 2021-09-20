@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestParseRepoURL(t *testing.T) {
+func TestParseURL(t *testing.T) {
 	type args struct {
 		s string
 	}
@@ -60,6 +60,31 @@ func TestParseRepoURL(t *testing.T) {
 			args{"user@host.xz:path/to/repo.git/"},
 			URL{"", "user", "", "host.xz", 0, "path/to/repo.git/"},
 		},
+
+		// local paths
+		{
+			"localFile",
+			args{"file:///path/to/somewhere"},
+			URL{"file", "", "", "", 0, "path/to/somewhere"},
+		},
+
+		{
+			"localPath",
+			args{"/path/to/somewhere"},
+			URL{"", "", "", "", 0, "path/to/somewhere"},
+		},
+
+		{
+			"localRelPath",
+			args{"../some/relative/path"},
+			URL{"", "", "", "..", 0, "some/relative/path"},
+		},
+
+		{
+			"localRelPath2",
+			args{"./some/relative/path"},
+			URL{"", "", "", ".", 0, "some/relative/path"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -81,6 +106,92 @@ func Benchmark_ParseRepoURL(b *testing.B) {
 		ParseURL("git://host.xz:1234/path/to/repo.git/")
 		ParseURL("host.xz:path/to/repo.git/")
 		ParseURL("user@host.xz:path/to/repo.git/")
+	}
+}
+
+func TestURL_IsLocal(t *testing.T) {
+	tests := []struct {
+		name string
+		url  URL
+		want bool
+	}{
+		{
+			"ssh",
+			URL{"ssh", "", "", "host.xz", 0, "path/to/repo.git/"},
+			false,
+		},
+		{
+			"sshUser",
+			URL{"ssh", "user", "", "host.xz", 0, "path/to/repo.git/"},
+			false,
+		},
+		{
+			"sshPort",
+			URL{"ssh", "", "", "host.xz", 1234, "path/to/repo.git/"},
+			false,
+		},
+		{
+			"sshUserPort",
+			URL{"ssh", "user", "", "host.xz", 1234, "path/to/repo.git/"},
+			false,
+		},
+
+		// git://host.xz[:port]/path/to/repo.git/
+		{
+			"git",
+			URL{"git", "", "", "host.xz", 0, "path/to/repo.git/"},
+			false,
+		},
+
+		{
+			"gitPort",
+			URL{"git", "", "", "host.xz", 1234, "path/to/repo.git/"},
+			false,
+		},
+
+		//  [user@]host.xz:path/to/repo.git/
+		{
+			"noProto",
+			URL{"", "", "", "host.xz", 0, "path/to/repo.git/"},
+			false,
+		},
+		{
+			"noProtoUser",
+			URL{"", "user", "", "host.xz", 0, "path/to/repo.git/"},
+			false,
+		},
+
+		// local paths
+		{
+			"localFile",
+			URL{"file", "", "", "", 0, "path/to/somewhere"},
+			true,
+		},
+
+		{
+			"localPath",
+			URL{"", "", "", "", 0, "path/to/somewhere"},
+			true,
+		},
+
+		{
+			"localRelPath",
+			URL{"", "", "", "..", 0, "some/relative/path"},
+			true,
+		},
+
+		{
+			"localRelPath2",
+			URL{"", "", "", ".", 0, "some/relative/path"},
+			true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.url.IsLocal(); got != tt.want {
+				t.Errorf("URL.IsLocal() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
 

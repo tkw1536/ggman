@@ -337,6 +337,11 @@ ggcode () {
 
 ### 1.12.0 (Upcoming)
 
+### 1.11.1 (Upcoming)
+
+- improved checking for local urls when running `ggman clone`
+- minor internal improvements
+
 ### 1.11.0 (Released [May 8 2021](https://github.com/tkw1536/ggman/releases/tag/v1.11.0))
 
 - add `--clone` and `--reclone` flag to `ggman url`

@@ -94,6 +94,12 @@ func ParseURL(s string) (repo URL) {
 	return
 }
 
+// IsLocal checks if this URL looks like a local URL.
+// A URL is considered local if it uses the "file" scheme, or the scheme is empty and the hostname is one of ".", ".." or "".
+func (url URL) IsLocal() bool {
+	return url.Scheme == "file" || (url.Scheme == "" && (url.HostName == "." || url.HostName == ".." || url.HostName == ""))
+}
+
 // Components gets the components of a URL
 //
 // Components of the URL are the hostname, the username and components of the path.

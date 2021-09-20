@@ -68,7 +68,7 @@ var errCloneOther = ggman.Error{
 func (c *clone) Run(context program.Context) error {
 	// find the remote url, check that it is not a local!
 	remote := context.URLV(0)
-	if remote.Scheme == "" {
+	if remote.IsLocal() {
 		return errCloneInvalidURI.WithMessageF(context.Args[0])
 	}
 
