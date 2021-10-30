@@ -1,6 +1,8 @@
 package git
 
 import (
+	"os"
+	"path"
 	"reflect"
 	"testing"
 
@@ -621,6 +623,51 @@ func Test_gogit_ContainsBranch(t *testing.T) {
 			}
 			if gotContains != tt.wantContains {
 				t.Errorf("gogit.ContainsBranch() = %v, want %v", gotContains, tt.wantContains)
+			}
+		})
+	}
+}
+
+func Test_gogit_IsDirty(t *testing.T) {
+	var gg gogit
+
+	// In this test we have a dirty and a clean repository
+	cleanClone, _, cleanup := testutil.NewTestRepo()
+	defer cleanup()
+
+	dirtyClone, _, cleanup := testutil.NewTestRepo()
+	defer cleanup()
+	if err := os.WriteFile(path.Join(dirtyClone, "example"), []byte{}, os.ModePerm); err != nil {
+		panic(err)
+	}
+
+	type args struct {
+		clonePath string
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantDirty bool
+		wantErr   bool
+	}{
+		{"clean repo is not dirty", args{clonePath: cleanClone}, false, false},
+		{"dirty repo is dirty", args{clonePath: dirtyClone}, true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
+			if !isRepo {
+				panic("IsRepository() failed")
+			}
+
+			gotDirty, err := gg.IsDirty(tt.args.clonePath, ggRepoObject)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("gogit.IsDirty() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotDirty != tt.wantDirty {
+				t.Errorf("gogit.IsDirty() = %v, want %v", gotDirty, tt.wantDirty)
 			}
 		})
 	}

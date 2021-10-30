@@ -100,6 +100,12 @@ type Git interface {
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
 	ContainsBranch(clonePath, branch string) (exists bool, err error)
+
+	// IsDirty checks if the repository at clonePath contains uncommitted changes.
+	//
+	// If there is no repository at clonePath returns ErrNotARepository.
+	// May return other error types for other errors.
+	IsDirty(clonePath string) (exists bool, err error)
 }
 
 // NewGitFromPlumbing creates a new Git wrapping a specific Plumbing.
@@ -283,4 +289,16 @@ func (impl *dfltGitWrapper) ContainsBranch(clonePath, branch string) (exists boo
 	}
 
 	return impl.git.ContainsBranch(clonePath, repoObject, branch)
+}
+
+func (impl *dfltGitWrapper) IsDirty(clonePath string) (dirty bool, err error) {
+	impl.ensureInit()
+
+	// check that the given folder is actually a repository
+	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	if !isRepo {
+		return false, ErrNotARepository
+	}
+
+	return impl.git.IsDirty(clonePath, repoObject)
 }
