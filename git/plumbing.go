@@ -223,6 +223,22 @@ func (gg gitgit) Clone(stream ggman.IOStream, remoteURI, clonePath string, extra
 	return err
 }
 
+func (gg gitgit) IsDirty(clonePath string, cache interface{}) (dirty bool, err error) {
+	cmd := exec.Command(gg.gitPath, "diff", "--quiet")
+	cmd.Dir = clonePath
+
+	// run the underlying command
+	err = cmd.Run()
+	if exitError, isExitError := err.(*exec.ExitError); isExitError {
+		// code 1: it is dirty
+		if exitError.ExitCode() == 1 {
+			return true, nil
+		}
+		err = ExitError{error: err, Code: exitError.ExitCode()}
+	}
+	return false, err
+}
+
 //
 // gogit
 //
