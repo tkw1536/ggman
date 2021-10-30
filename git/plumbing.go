@@ -122,6 +122,12 @@ type Plumbing interface {
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
 	ContainsBranch(clonePath string, cache interface{}, branch string) (contains bool, err error)
+
+	// IsDirty checks if the repository at clonePath contains uncommitted changes.
+	//
+	// This function will only be called if IsRepository(clonePath) returns true.
+	// The second parameter passed will be the returned value from IsRepository().
+	IsDirty(clonePath string, cache interface{}) (dirty bool, err error)
 }
 
 // NewPlumbing returns an implementation of a plumbing that has no external dependencies.
@@ -490,6 +496,26 @@ func (gogit) ContainsBranch(clonePath string, cache interface{}, branch string) 
 	default:
 		return false, errors.Wrap(err, "Unable to read branch")
 	}
+}
+
+func (gogit) IsDirty(clonePath string, cache interface{}) (dirty bool, err error) {
+	// get the repository
+	r := cache.(*git.Repository)
+
+	// get the worktree
+	wt, err := r.Worktree()
+	if err != nil {
+		return false, errors.Wrap(err, "Unable to get worktree")
+	}
+
+	// check the status
+	status, err := wt.Status()
+	if err != nil {
+		return false, errors.Wrap(err, "Unable to get status")
+	}
+
+	// return if it is dirty!
+	return !status.IsClean(), nil
 }
 
 func ignoreErrUpToDate(stream ggman.IOStream, err error) error {
