@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -19,6 +20,11 @@ func TestCommandLs(t *testing.T) {
 
 	mock.Register("https://gitlab.com/hello/world.git")
 	glHelloWorld := mock.Install("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+
+	// make glHelloWorldDirty
+	if err := os.WriteFile(filepath.Join(glHelloWorld, "dirty"), []byte{}, os.ModePerm); err != nil {
+		panic(err)
+	}
 
 	glHelloDir := filepath.Join(glHelloWorld, "..")
 
@@ -39,6 +45,39 @@ func TestCommandLs(t *testing.T) {
 
 			0,
 			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+
+			"",
+		},
+
+		{
+			"list dirty and clean repositories",
+			"",
+			[]string{"--dirty", "--clean", "ls"},
+
+			0,
+			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+
+			"",
+		},
+
+		{
+			"list dirty repositories only",
+			"",
+			[]string{"--dirty", "ls"},
+
+			0,
+			"${GGROOT gitlab.com hello world}\n",
+
+			"",
+		},
+
+		{
+			"list clean repositories only",
+			"",
+			[]string{"--clean", "ls"},
+
+			0,
+			"${GGROOT github.com hello world}\n${GGROOT server.com user repo}\n",
 
 			"",
 		},
@@ -72,6 +111,17 @@ func TestCommandLs(t *testing.T) {
 
 			0,
 			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n",
+
+			"",
+		},
+
+		{
+			"list only clean hello/world repositories",
+			"",
+			[]string{"--for", "hello/world", "--clean", "ls"},
+
+			0,
+			"${GGROOT github.com hello world}\n",
 
 			"",
 		},

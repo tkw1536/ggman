@@ -19,6 +19,9 @@ type Arguments struct {
 	NoFuzzyFilter bool     `short:"n" long:"no-fuzzy-filter" description:"Disable fuzzy matching for filters"`
 	Here          bool     `short:"H" long:"here" description:"Filter the list of repositories to apply COMMAND to only contain the repository in the current directory"`
 
+	Dirty bool `short:"d" long:"dirty" description:"List only repositories with uncommited changes"`
+	Clean bool `short:"c" long:"clean" description:"List only repositories without uncommited changes"`
+
 	Command string   // command to run
 	Args    []string // remaining arguments
 }
@@ -280,19 +283,9 @@ func (args CommandArguments) checkPositionalCount() error {
 	return nil
 }
 
-var errParseNoFor = ggman.Error{
+var errTakesNoArgument = ggman.Error{
 	ExitCode: ggman.ExitCommandArguments,
-	Message:  "Wrong number of arguments: '%s' takes no 'for' argument. ",
-}
-
-var errParseNoHere = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
-	Message:  "Wrong number of arguments: '%s' takes no '--here' argument. ",
-}
-
-var errParseNoFuzzy = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
-	Message:  "Wrong number of arguments: '%s' takes no '--no-fuzzy-filter' argument. ",
+	Message:  "Wrong number of arguments: '%s' takes no '%s' argument. ",
 }
 
 // checkFilterArgument checks that if a 'for' argument is not allowed it is not passed.
@@ -305,15 +298,23 @@ func (args CommandArguments) checkFilterArgument() error {
 	}
 
 	if len(args.Filters) > 0 {
-		return errParseNoFor.WithMessageF(args.Command)
+		return errTakesNoArgument.WithMessageF(args.Command, "for")
 	}
 
 	if args.Here {
-		return errParseNoHere.WithMessageF(args.Command)
+		return errTakesNoArgument.WithMessageF(args.Command, "--here")
 	}
 
 	if args.NoFuzzyFilter {
-		return errParseNoFuzzy.WithMessageF(args.Command)
+		return errTakesNoArgument.WithMessageF(args.Command, "--no-fuzzy-filter")
+	}
+
+	if args.Dirty {
+		return errTakesNoArgument.WithMessageF(args.Command, "--dirty")
+	}
+
+	if args.Clean {
+		return errTakesNoArgument.WithMessageF(args.Command, "--clean")
 	}
 
 	return nil

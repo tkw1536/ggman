@@ -64,6 +64,11 @@ func TestArguments_Parse(t *testing.T) {
 		{"here with command (1)", args{[]string{"--here", "cmd"}}, Arguments{Command: "cmd", Here: true, Args: []string{}}, nil},
 		{"here with command (2)", args{[]string{"-H", "cmd"}}, Arguments{Command: "cmd", Here: true, Args: []string{}}, nil},
 
+		{"dirty with command (1)", args{[]string{"--dirty", "cmd"}}, Arguments{Command: "cmd", Dirty: true, Args: []string{}}, nil},
+		{"dirty with command (2)", args{[]string{"-d", "cmd"}}, Arguments{Command: "cmd", Dirty: true, Args: []string{}}, nil},
+		{"clean with command (1)", args{[]string{"--clean", "cmd"}}, Arguments{Command: "cmd", Clean: true, Args: []string{}}, nil},
+		{"clean with command (2)", args{[]string{"-c", "cmd"}}, Arguments{Command: "cmd", Clean: true, Args: []string{}}, nil},
+
 		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
 		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
 		{"for with command and arguments (3)", args{[]string{"-f", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
