@@ -19,7 +19,7 @@
 //
 // Instead of running a subcommand, print version information to STDOUT and exit.
 //
-//  --for filter, -f filter, --here, -H
+//  --for filter, -f filter, --here, -H, --dirty, -d, --clean, -c
 //
 // Apply FILTER to list of repositories. See Environment section below.
 //
@@ -52,7 +52,9 @@
 // This can be achieved using the '--for' flag, which will match to any component of the url.
 // This matching is fuzzy by default, by the fuzzyness can be disabled by passing the '--no-fuzzy-filter' flag.
 // The '--for' flag also matches (relative or absolute) filesystem paths, as well as full clone URLs.
+//
 // Furthermore the '--here' flag can also be used to match the repository in the current working directory.
+// The '--dirty' and '--clean' flags can be used to only match repositories that have a dirty or clean working directory.
 //
 // On 'github.com' and multiple other providers, it is usually possible to clone repositories via multiple urls.
 // For example, the repository at https://github.com/hello/world can be cloned using both

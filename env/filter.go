@@ -158,3 +158,37 @@ func (or DisjunctionFilter) Candidates() []string {
 	// remove duplicates from the result
 	return text.RemoveDuplicates(candidates)
 }
+
+// TODO: Do we need tests for this?
+
+// StatusFilter filters all elements in Filter by if they are clean or dirty
+type StatusFilter struct {
+	Filter
+
+	Clean bool
+	Dirty bool
+}
+
+func (sf StatusFilter) Candidates() []string {
+	return Candidates(sf.Filter)
+}
+
+func (sf StatusFilter) Matches(env Env, clonePath string) bool {
+	// first filter by the filter itself
+	if !sf.Filter.Matches(env, clonePath) {
+		return false
+	}
+	// if both or neither are included, this is quick to determine.
+	if sf.Dirty == sf.Clean {
+		return sf.Dirty
+	}
+
+	// check if the repo itself is dirty
+	dirty, err := env.Git.IsDirty(clonePath)
+	if err != nil {
+		return false
+	}
+
+	// and ensure that it matches the dirty state!
+	return dirty == sf.Dirty
+}

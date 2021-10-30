@@ -15,8 +15,14 @@ type Context struct {
 }
 
 // init initializes this context by setting up the environment according to the arguments
-func (c *Context) init() error {
+func (c *Context) init() (err error) {
+	c.Filter, err = c.makeFilter()
+	return
+}
 
+// makeFilter creates a new filter for this context.
+// It should only be used during initialization.
+func (c Context) makeFilter() (env.Filter, error) {
 	// generate pattern filters for the "--for" arguments
 	clauses := make([]env.Filter, len(c.Filters))
 	for i, pat := range c.Filters {
@@ -35,17 +41,29 @@ func (c *Context) init() error {
 	if c.Here {
 		repo, _, err := c.At(".")
 		if err != nil {
-			return errors.Wrap(err, "Unable to find current repository")
+			return nil, errors.Wrap(err, "Unable to find current repository")
 		}
 
 		clauses = append(clauses, env.PathFilter{Paths: []string{repo}})
 	}
 
 	// only set the filter when we actually have something to filter by
-	if len(clauses) != 0 {
-		c.Filter = env.DisjunctionFilter{Clauses: clauses}
+	var dj env.Filter = env.DisjunctionFilter{Clauses: clauses}
+	if len(clauses) == 0 {
+		dj = env.NoFilter
 	}
-	return nil
+
+	// add a status filter if requested
+	if c.Dirty || c.Clean {
+		dj = env.StatusFilter{
+			Filter: dj,
+
+			Dirty: c.Dirty,
+			Clean: c.Clean,
+		}
+	}
+
+	return dj, nil
 }
 
 // URLV returns the ith argument, parsed as a URL.
