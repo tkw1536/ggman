@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 
 	git "github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/internal/text"
 )
@@ -117,6 +118,12 @@ type Plumbing interface {
 	// The second parameter passed will be the returned value from IsRepository().
 	Pull(stream ggman.IOStream, clonePath string, cache interface{}) (err error)
 
+	// GetBranches gets the names of all branches contained in the repository at clonePath.
+	//
+	// This function will only be called if IsRepository(clonePath) returns true.
+	// The second parameter passed will be the returned value from IsRepository().
+	GetBranches(clonePath string, cache interface{}) (branches []string, err error)
+
 	// ContainsBranch checks if the repository at clonePath contains a branch with the provided branch.
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
@@ -128,6 +135,12 @@ type Plumbing interface {
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
 	IsDirty(clonePath string, cache interface{}) (dirty bool, err error)
+
+	// IsSync checks if the repository at clonePath does not have branches synced with their upstream.
+	//
+	// This function will only be called if IsRepository(clonePath) returns true.
+	// The second parameter passed will be the returned value from IsRepository().
+	IsSync(clonePath string, cache interface{}) (dirty bool, err error)
 }
 
 // NewPlumbing returns an implementation of a plumbing that has no external dependencies.
@@ -499,6 +512,34 @@ func (gogit) Pull(stream ggman.IOStream, clonePath string, cache interface{}) (e
 	return
 }
 
+func ignoreErrUpToDate(stream ggman.IOStream, err error) error {
+	if err == git.NoErrAlreadyUpToDate {
+		stream.StdoutWriteWrap(err.Error())
+		err = nil
+	}
+	return err
+}
+
+func (gogit) GetBranches(clonePath string, cache interface{}) (branches []string, err error) {
+	// get the repository
+	r := cache.(*git.Repository)
+
+	// list the branches
+	branchRefs, err := r.Branches()
+	if err != nil {
+		return nil, errors.Wrap(err, "Unable to get branches")
+	}
+	defer branchRefs.Close()
+
+	// get their names
+	branchRefs.ForEach(func(bref *plumbing.Reference) error {
+		branches = append(branches, string(bref.Name().Short()))
+		return nil
+	})
+
+	return
+}
+
 func (gogit) ContainsBranch(clonePath string, cache interface{}, branch string) (contains bool, err error) {
 	// get the repository
 	r := cache.(*git.Repository)
@@ -534,10 +575,62 @@ func (gogit) IsDirty(clonePath string, cache interface{}) (dirty bool, err error
 	return !status.IsClean(), nil
 }
 
-func ignoreErrUpToDate(stream ggman.IOStream, err error) error {
-	if err == git.NoErrAlreadyUpToDate {
-		stream.StdoutWriteWrap(err.Error())
-		err = nil
+func (gg gogit) IsSync(clonePath string, cache interface{}) (sync bool, err error) {
+	r := cache.(*git.Repository)
+
+	// get all the branches
+	branches, err := gg.GetBranches(clonePath, cache)
+	if err != nil {
+		return false, errors.Wrap(err, "unable to get branch names")
 	}
-	return err
+
+	// check that all the upstream branches are synced!
+	for _, b := range branches {
+		src, dst, err := getTrackingRefs(r, b)
+		if err == ErrNoUpstream {
+			continue // there is no upstream, that is ok!
+		}
+		if err != nil {
+			return false, errors.Wrap(err, "Unable to get tracking refs")
+		}
+		srcRef, err := r.ResolveRevision(plumbing.Revision(src))
+		if err != nil {
+			return false, errors.Wrap(err, "Unable to resolve src revision")
+		}
+		dstRef, err := r.ResolveRevision(plumbing.Revision(dst))
+		if err != nil {
+			return false, errors.Wrap(err, "Unable to resolve dst revision")
+		}
+		if srcRef.String() != dstRef.String() {
+			return false, nil
+		}
+	}
+	return true, nil
+}
+
+var ErrNoUpstream = errors.New("no corresponding upstream to track")
+
+// getTrackingRefs returns the src and dst upstream tracking refs for the provided branch.
+// When the branch, or the upstream tracking refs do not exist, returns ErrNoUpstream.
+func getTrackingRefs(repo *git.Repository, branch string) (src, dst plumbing.ReferenceName, err error) {
+	br, err := repo.Branch(branch)
+	if err == git.ErrBranchNotFound {
+		return "", "", ErrNoUpstream
+	}
+	if err != nil {
+		return "", "", errors.Wrap(err, "Unable to resolve branch")
+	}
+	if br.Remote == "" {
+		return "", "", ErrNoUpstream
+	}
+	remote, err := repo.Remote(br.Remote)
+	if err != nil {
+		return "", "", errors.Wrap(err, "Unable to resolve remote")
+	}
+	for _, spec := range remote.Config().Fetch {
+		if spec.Match(br.Merge) {
+			return br.Merge, spec.Dst(br.Merge), nil
+		}
+	}
+	return "", "", ErrNoUpstream
 }

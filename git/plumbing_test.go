@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
 	"reflect"
+	"sort"
 	"testing"
 
 	git "github.com/go-git/go-git/v5"
@@ -585,6 +586,66 @@ func Test_gogit_Pull(t *testing.T) {
 	})
 }
 
+func Test_gogit_GetBranches(t *testing.T) {
+	var gg gogit
+
+	// In this test we only have a single repository.
+	// We create two branches 'branchA' and 'branchB'
+	clone, repo, cleanup := testutil.NewTestRepo()
+	defer cleanup()
+
+	wt, _ := testutil.CommitTestFiles(repo, nil)
+
+	if err := wt.Checkout(&git.CheckoutOptions{
+		Branch: plumbing.NewBranchReferenceName("branchA"),
+		Create: true,
+	}); err != nil {
+		panic(err)
+	}
+
+	if err := wt.Checkout(&git.CheckoutOptions{
+		Branch: plumbing.NewBranchReferenceName("branchB"),
+		Create: true,
+	}); err != nil {
+		panic(err)
+	}
+
+	type args struct {
+		clonePath string
+	}
+	tests := []struct {
+		name         string
+		args         args
+		wantBranches []string
+		wantErr      bool
+	}{
+		{"list all branches", args{clone}, []string{"branchA", "branchB", "master"}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
+			if !isRepo {
+				panic("IsRepository() failed")
+			}
+
+			gotBranches, err := gg.GetBranches(tt.args.clonePath, ggRepoObject)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("gogit.GetBranches() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			// sort for testcases
+			sort.Strings(gotBranches)
+			sort.Strings(tt.wantBranches)
+
+			if !reflect.DeepEqual(gotBranches, tt.wantBranches) {
+				t.Errorf("gogit.GetBranches() = %v, want %v", gotBranches, tt.wantBranches)
+			}
+		})
+	}
+}
+
 func Test_gogit_ContainsBranch(t *testing.T) {
 	var gg gogit
 
@@ -668,6 +729,85 @@ func Test_gogit_IsDirty(t *testing.T) {
 			}
 			if gotDirty != tt.wantDirty {
 				t.Errorf("gogit.IsDirty() = %v, want %v", gotDirty, tt.wantDirty)
+			}
+		})
+	}
+}
+
+func Test_gogit_IsSync(t *testing.T) {
+	var gg gogit
+
+	// an upstream repository (has upstream itself)
+	upstream, upstreamRepo, cleanup := testutil.NewTestRepo()
+	_, h1 := testutil.CommitTestFiles(upstreamRepo, nil)
+	testutil.CommitTestFiles(upstreamRepo, map[string]string{"dummy.txt": "I am an updated dummy file. "})
+	defer cleanup()
+
+	// a downstream clone that is one commit behind!
+	downstreamBehind, cleanup := testutil.TempDir()
+	defer cleanup()
+	behindRepo, err := git.PlainClone(downstreamBehind, false, &git.CloneOptions{
+		URL: upstream,
+	})
+	if err != nil {
+		panic(err)
+	}
+	wt, err := behindRepo.Worktree()
+	if err != nil {
+		panic(err)
+	}
+	if err := wt.Reset(&git.ResetOptions{
+		Mode:   git.HardReset,
+		Commit: h1,
+	}); err != nil {
+		panic(err)
+	}
+
+	// a downstream repository that is in sync
+	downstreamOK, cleanup := testutil.TempDir()
+	defer cleanup()
+	if _, err := git.PlainClone(downstreamOK, false, &git.CloneOptions{URL: upstream}); err != nil {
+		panic(err)
+	}
+
+	// a downstream clone that is behind
+	downstreamAhead, cleanup := testutil.TempDir()
+	defer cleanup()
+	aheadRepo, err := git.PlainClone(downstreamAhead, false, &git.CloneOptions{URL: upstream})
+	if err != nil {
+		panic(err)
+	}
+	testutil.CommitTestFiles(aheadRepo, map[string]string{"dummy.txt": "I am a third dummy file. "})
+
+	type args struct {
+		clonePath string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantSync bool
+		wantErr  bool
+	}{
+		{"upstream repo is synced", args{clonePath: upstream}, true, false},
+		{"cloned repo that is behind is not synced", args{clonePath: downstreamBehind}, false, false},
+		{"cloned repo that is ahead is not synced", args{clonePath: downstreamAhead}, false, false},
+		{"cloned repo that is in sync is synced", args{clonePath: downstreamOK}, true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
+			if !isRepo {
+				panic("IsRepository() failed")
+			}
+
+			gotSync, err := gg.IsSync(tt.args.clonePath, ggRepoObject)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("gogit.IsSync() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotSync != tt.wantSync {
+				t.Errorf("gogit.IsSync() = %v, want %v", gotSync, tt.wantSync)
 			}
 		})
 	}

@@ -95,6 +95,12 @@ type Git interface {
 	// May return other error types for other errors.
 	UpdateRemotes(clonePath string, updateFunc func(url, name string) (newURL string, err error)) error
 
+	// GetBranches gets the names of all branches contained in the repository at clonePath.
+	//
+	// If there is no repository at clonePath returns ErrNotARepository.
+	// May return other error types for other errors.
+	GetBranches(clonePath string) (branches []string, err error)
+
 	// ContainsBranch checks if the repository at clonePath contains a branch with the provided name.
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
@@ -105,7 +111,13 @@ type Git interface {
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	IsDirty(clonePath string) (exists bool, err error)
+	IsDirty(clonePath string) (dirty bool, err error)
+
+	// IsSync checks if the repository at clonePath contains branches that are not yet synced with their upstream.
+	//
+	// If there is no repository at clonePath returns ErrNotARepository.
+	// May return other error types for other errors.
+	IsSync(clonePath string) (sycned bool, err error)
 }
 
 // NewGitFromPlumbing creates a new Git wrapping a specific Plumbing.
@@ -279,6 +291,18 @@ func (impl *dfltGitWrapper) UpdateRemotes(clonePath string, updateFunc func(url,
 	return
 }
 
+func (impl *dfltGitWrapper) GetBranches(clonePath string) (branches []string, err error) {
+	impl.ensureInit()
+
+	// check that the given folder is actually a repository
+	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	if !isRepo {
+		return nil, ErrNotARepository
+	}
+
+	return impl.git.GetBranches(clonePath, repoObject)
+}
+
 func (impl *dfltGitWrapper) ContainsBranch(clonePath, branch string) (exists bool, err error) {
 	impl.ensureInit()
 
@@ -301,4 +325,16 @@ func (impl *dfltGitWrapper) IsDirty(clonePath string) (dirty bool, err error) {
 	}
 
 	return impl.git.IsDirty(clonePath, repoObject)
+}
+
+func (impl *dfltGitWrapper) IsSync(clonePath string) (dirty bool, err error) {
+	impl.ensureInit()
+
+	// check that the given folder is actually a repository
+	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	if !isRepo {
+		return false, ErrNotARepository
+	}
+
+	return impl.git.IsSync(clonePath, repoObject)
 }
