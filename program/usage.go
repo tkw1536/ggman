@@ -62,7 +62,7 @@ func GetMainOpts(opt *Description) (opts []usagefmt.Opt) {
 	// local options were requested, so we need to exclude depending on the configuration.
 	skipLongNames := make([]string, 0, 3)
 	if !opt.Environment.AllowsFilter {
-		skipLongNames = append(skipLongNames, "for", "here", "no-fuzzy-filter", "dirty", "clean")
+		skipLongNames = append(skipLongNames, "for", "here", "no-fuzzy-filter", "dirty", "clean", "synced", "unsynced")
 	}
 
 	// filter the provided arguments!

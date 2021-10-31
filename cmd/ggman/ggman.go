@@ -55,6 +55,7 @@
 //
 // Furthermore the '--here' flag can also be used to match the repository in the current working directory.
 // The '--dirty' and '--clean' flags can be used to only match repositories that have a dirty or clean working directory.
+// The '--synced' and '--unsynced' flags can be used to only match repositories that are or are not synced with the remote.
 //
 // On 'github.com' and multiple other providers, it is usually possible to clone repositories via multiple urls.
 // For example, the repository at https://github.com/hello/world can be cloned using both

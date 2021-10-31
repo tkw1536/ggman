@@ -63,6 +63,15 @@ func (c Context) makeFilter() (env.Filter, error) {
 		}
 	}
 
+	if c.Synced || c.UnSynced {
+		dj = env.StatusFilter{
+			Filter: dj,
+
+			Synced:   c.Synced,
+			UnSynced: c.UnSynced,
+		}
+	}
+
 	return dj, nil
 }
 
