@@ -165,9 +165,8 @@ func (or DisjunctionFilter) Candidates() []string {
 type WorktreeFilter struct {
 	Filter
 
-	// Clean and Dirty determine if
-	Clean bool
-	Dirty bool
+	// Clean and Dirty determine if clean and dirty repositories (respectively) are included
+	Clean, Dirty bool
 }
 
 // Candidates implements CandidateFilter
@@ -176,22 +175,49 @@ func (sf WorktreeFilter) Candidates() []string {
 }
 
 func (sf WorktreeFilter) Matches(env Env, clonePath string) bool {
-	// first filter by the filter itself
-	if !sf.Filter.Matches(env, clonePath) {
-		return false
-	}
-	// if both dirty and clean ones are included
-	// then the result is a constant true or false
-	if sf.Dirty == sf.Clean {
-		return sf.Dirty
-	}
+	return FilterPredicate(sf.Filter, func() bool {
+		dirty, err := env.Git.IsDirty(clonePath)
+		return err == nil && dirty
+	}, sf.Dirty, sf.Clean, env, clonePath)
+}
 
-	// check if the repo itself is dirty
-	dirty, err := env.Git.IsDirty(clonePath)
-	if err != nil {
-		return false
-	}
+type StatusFilter struct {
+	Filter
 
-	// and ensure that it matches the dirty state!
-	return dirty == sf.Dirty
+	Synced, UnSynced bool
+}
+
+func (sf StatusFilter) Candidates() []string {
+	return Candidates(sf.Filter)
+}
+
+func (sf StatusFilter) Matches(env Env, clonePath string) bool {
+	return FilterPredicate(sf.Filter, func() bool {
+		dirty, err := env.Git.IsSync(clonePath)
+		return err == nil && dirty
+	}, sf.Synced, sf.UnSynced, env, clonePath)
+}
+
+// FilterPredicate checks if the provided Filter matches the given predicate
+func FilterPredicate(filter Filter, predicate func() bool, includeTrue bool, includeFalse bool, env Env, clonePath string) bool {
+	switch {
+	// neither is included => return fals eimmediatly
+	case !includeTrue && !includeFalse:
+		return false
+
+	// all other cases need to pass the filter!
+	case !filter.Matches(env, clonePath):
+		return false
+
+	// both are included => we need to do any further checking!
+	case includeTrue && includeFalse:
+		return true
+
+	// exactly one is included
+	case includeTrue:
+		return predicate()
+	case includeFalse:
+		return !predicate()
+	}
+	panic("never reached")
 }

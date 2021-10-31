@@ -338,6 +338,7 @@ ggcode () {
 ### 1.12.0 (Upcoming)
 
 - add `--dirty` and `--clean` filter arguments
+- add `--synced` and `--unsynced` filter arguments
 
 ### 1.11.1 (Released [Sep 20 2021](https://github.com/tkw1536/ggman/releases/tag/v1.11.1))
 

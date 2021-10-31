@@ -22,6 +22,9 @@ type Arguments struct {
 	Dirty bool `short:"d" long:"dirty" description:"List only repositories with uncommited changes"`
 	Clean bool `short:"c" long:"clean" description:"List only repositories without uncommited changes"`
 
+	Synced   bool `short:"s" long:"synced" description:"List only repositories which are up-to-date with remote"`
+	UnSynced bool `short:"u" long:"unsynced" description:"List only repositories not up-to-date with remote"`
+
 	Command string   // command to run
 	Args    []string // remaining arguments
 }
@@ -315,6 +318,14 @@ func (args CommandArguments) checkFilterArgument() error {
 
 	if args.Clean {
 		return errTakesNoArgument.WithMessageF(args.Command, "--clean")
+	}
+
+	if args.Synced {
+		return errTakesNoArgument.WithMessageF(args.Command, "--synced")
+	}
+
+	if args.UnSynced {
+		return errTakesNoArgument.WithMessageF(args.Command, "--unsynced")
 	}
 
 	return nil
