@@ -161,24 +161,27 @@ func (or DisjunctionFilter) Candidates() []string {
 
 // TODO: Do we need tests for this?
 
-// StatusFilter filters all elements in Filter by if they are clean or dirty
-type StatusFilter struct {
+// WorktreeFilter filters further filters an underlying filter by if the worktree status is clean or dirty.
+type WorktreeFilter struct {
 	Filter
 
+	// Clean and Dirty determine if
 	Clean bool
 	Dirty bool
 }
 
-func (sf StatusFilter) Candidates() []string {
+// Candidates implements CandidateFilter
+func (sf WorktreeFilter) Candidates() []string {
 	return Candidates(sf.Filter)
 }
 
-func (sf StatusFilter) Matches(env Env, clonePath string) bool {
+func (sf WorktreeFilter) Matches(env Env, clonePath string) bool {
 	// first filter by the filter itself
 	if !sf.Filter.Matches(env, clonePath) {
 		return false
 	}
-	// if both or neither are included, this is quick to determine.
+	// if both dirty and clean ones are included
+	// then the result is a constant true or false
 	if sf.Dirty == sf.Clean {
 		return sf.Dirty
 	}
