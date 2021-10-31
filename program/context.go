@@ -72,6 +72,15 @@ func (c Context) makeFilter() (env.Filter, error) {
 		}
 	}
 
+	if c.Tarnished || c.Pristine {
+		dj = env.TarnishFilter{
+			Filter: dj,
+
+			Tarnished: c.Tarnished,
+			Pristine:  c.Pristine,
+		}
+	}
+
 	return dj, nil
 }
 
