@@ -53,9 +53,9 @@ func (c Context) makeFilter() (env.Filter, error) {
 		dj = env.NoFilter
 	}
 
-	// add a status filter if requested
+	// add a WorktreeFilter filter if requested
 	if c.Dirty || c.Clean {
-		dj = env.StatusFilter{
+		dj = env.WorktreeFilter{
 			Filter: dj,
 
 			Dirty: c.Dirty,
