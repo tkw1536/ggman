@@ -25,6 +25,9 @@ type Arguments struct {
 	Synced   bool `short:"s" long:"synced" description:"List only repositories which are up-to-date with remote"`
 	UnSynced bool `short:"u" long:"unsynced" description:"List only repositories not up-to-date with remote"`
 
+	Tarnished bool `short:"t" long:"tarnished" description:"List only repositories which are dirty or unsynced"`
+	Pristine  bool `short:"p" long:"pristine" description:"List only repositories which are clean and synced"`
+
 	Command string   // command to run
 	Args    []string // remaining arguments
 }

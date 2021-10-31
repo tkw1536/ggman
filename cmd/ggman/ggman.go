@@ -19,7 +19,8 @@
 //
 // Instead of running a subcommand, print version information to STDOUT and exit.
 //
-//  --for filter, -f filter, --here, -H, --dirty, -d, --clean, -c
+//  --for filter, -f filter, --here, -H, --dirty, -d, --clean, -c,
+//  --synced, -s, --unsynced, -u, --pristine, -p, --tarnished, -t
 //
 // Apply FILTER to list of repositories. See Environment section below.
 //
@@ -56,6 +57,9 @@
 // Furthermore the '--here' flag can also be used to match the repository in the current working directory.
 // The '--dirty' and '--clean' flags can be used to only match repositories that have a dirty or clean working directory.
 // The '--synced' and '--unsynced' flags can be used to only match repositories that are or are not synced with the remote.
+//
+// The '--pristine' filter can be used to only match pristine repositories: Those are clean and have all changes synced.
+// '--tarnished' can be used to match all non-pristine repositories.
 //
 // On 'github.com' and multiple other providers, it is usually possible to clone repositories via multiple urls.
 // For example, the repository at https://github.com/hello/world can be cloned using both
