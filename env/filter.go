@@ -187,8 +187,6 @@ type StatusFilter struct {
 	Synced, UnSynced bool
 }
 
-// TODO: Test global StatusFilter arguments!
-
 func (sf StatusFilter) Candidates() []string {
 	return Candidates(sf.Filter)
 }
@@ -230,8 +228,6 @@ func (tf TarnishFilter) Matches(env Env, clonePath string) bool {
 		return !synced
 	}, tf.Tarnished, tf.Pristine, env, clonePath)
 }
-
-// TODO: Test global TouchFilter arguments!
 
 // FilterPredicate checks if the provided Filter matches the given predicate
 func FilterPredicate(filter Filter, predicate func() bool, includeTrue bool, includeFalse bool, env Env, clonePath string) bool {
