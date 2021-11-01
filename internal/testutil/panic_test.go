@@ -1,33 +1,36 @@
 package testutil
 
 import (
-	"reflect"
-	"testing"
+	"fmt"
 )
 
-func TestDoesPanic(t *testing.T) {
-	type args struct {
-		f func()
-	}
-	tests := []struct {
-		name          string
-		args          args
-		wantPaniced   bool
-		wantRecovered interface{}
-	}{
-		{"not panicing f", args{func() {}}, false, nil},
-		{"panicing with message", args{func() { panic("message") }}, true, "message"},
-		{"panicing with nil", args{func() { panic(nil) }}, true, nil},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotPaniced, gotRecovered := DoesPanic(tt.args.f)
-			if gotPaniced != tt.wantPaniced {
-				t.Errorf("DoesPanic() gotPaniced = %v, want %v", gotPaniced, tt.wantPaniced)
-			}
-			if !reflect.DeepEqual(gotRecovered, tt.wantRecovered) {
-				t.Errorf("DoesPanic() gotRecovered = %v, want %v", gotRecovered, tt.wantRecovered)
-			}
-		})
-	}
+// DoesPanic behavior for a panicing function
+func ExampleDoesPanic_panic() {
+	didPanic, recovered := DoesPanic(func() {
+		panic("some error message")
+	})
+	fmt.Printf("didPanic = %t\n", didPanic)
+	fmt.Printf("recover() = %v\n", recovered)
+	// Output: didPanic = true
+	// recover() = some error message
+}
+
+// DoesPanic behavior for a function that calls panic(nil)
+func ExampleDoesPanic_nil() {
+	didPanic, recovered := DoesPanic(func() {
+		panic(nil)
+	})
+	fmt.Printf("didPanic = %t\n", didPanic)
+	fmt.Printf("recover() = %v\n", recovered)
+	// Output: didPanic = true
+	// recover() = <nil>
+}
+
+// DoesPanic behavior for a function that does not panic
+func ExampleDoesPanic_normal() {
+	didPanic, _ := DoesPanic(func() {
+		/* do something */
+	})
+	fmt.Printf("didPanic = %t\n", didPanic)
+	// Output: didPanic = false
 }
