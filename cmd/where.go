@@ -41,7 +41,10 @@ func (where) AfterParse() error {
 }
 
 func (where) Run(context program.Context) error {
-	localPath := context.Local(context.URLV(0))
+	localPath, err := context.Local(context.URLV(0))
+	if err != nil {
+		return err
+	}
 	context.Println(localPath)
 	return nil
 }

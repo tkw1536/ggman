@@ -130,6 +130,23 @@ For example, when `ggman` clones a repository `https://github.com/hello/world.gi
 This works not only for `github.com` urls, but for any kind of url. 
 To see where a repository would be cloned to (but not actually cloning it), use `ggman where <REPO>`. 
 
+As of `ggman 1.12`, this translation of URLs into paths takes existing paths into account.
+In particular, it re-uses existing sub-paths if they differ from the requested path only by casing.
+
+For example, say the directory `$GGROOT/github.com/hello` exist and the user requests to clone `https://github.com/HELLO/world.git`.
+Before 1.12, this clone would end up in `$GGROOT/github.com/HELLO/world`, resulting in two directories `$GGROOT/github.com/HELLO` and `$GGROOT/github.com/hello`. 
+After 1.12, this clone will end up in `$GGROOT/github.com/hello/world`.
+While this means placing of repositories needs to touch the disk (and check for existing directories), it results in less directory clutter.
+
+By default, the first matching directory (in alphanumerical order) is used as opposed to creating a new one.
+If a directory with the exact name exists, this is prefered over a case-insensitive match.
+
+This normalization behavior can be controlled using the `GGNORM` environment variable.
+It has three values:
+- `smart` (use first matching path, prefer exact matches, default behavior);
+- `fold` (fold paths, but do not prefer exact matches); and
+- `none` (always use exact paths, legacy behavior)
+
 ### 'ggman ls'
 
 While creating this folder structure when cloning new repositories, `ggman` can run operation on any other folder structure contained within the `GGROOT` directory. 
@@ -337,6 +354,7 @@ ggcode () {
 
 ### 1.12.0 (Upcoming)
 
+- add `GGNORM` variable: when placing repositories locally, take casing of existing paths into account
 - add `--dirty` and `--clean` filter arguments
 - add `--synced` and `--unsynced` filter arguments
 - add `--tarnished` and `--pristine` filter arguments

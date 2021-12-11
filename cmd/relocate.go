@@ -54,7 +54,10 @@ func (r relocate) Run(context program.Context) error {
 		if err != nil || remote == "" { // ignore remotes that don't exist
 			continue
 		}
-		shouldPath := context.Local(env.ParseURL(remote))
+		shouldPath, err := context.Local(env.ParseURL(remote))
+		if err != nil {
+			return err
+		}
 
 		// if it is the same, don't move it
 		if gotPath == shouldPath {

@@ -108,27 +108,61 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 	}
 }
 
-func TestEnv_Local(t *testing.T) {
+func TestEnv_Local_Exact(t *testing.T) {
 	root, cleanup := testutil.TempDir()
 	defer cleanup()
 
+	// make the 'HELLO' directory, to ensure that it already exists
+	os.MkdirAll(filepath.Join(root, "server.com", "HELLO"), os.ModePerm|os.ModeDir)
+
 	tests := []struct {
-		name string
-		want string
+		name   string
+		GGNORM string
+		want   string
 	}{
-		{"git@github.com/user/repo", filepath.Join(root, "github.com", "user", "repo")},
-		{"https://github.com/user/repo", filepath.Join(root, "github.com", "user", "repo")},
-		{"ssh://git@github.com/hello/world", filepath.Join(root, "github.com", "hello", "world")},
-		{"user@server.com:repo", filepath.Join(root, "server.com", "user", "repo")},
-		{"ssh://user@server.com:1234/repo", filepath.Join(root, "server.com", "user", "repo")},
+		// smart
+		{"git@github.com/user/repo", "smart", filepath.Join(root, "github.com", "user", "repo")},
+		{"https://github.com/user/repo", "smart", filepath.Join(root, "github.com", "user", "repo")},
+		{"ssh://git@github.com/hello/world", "smart", filepath.Join(root, "github.com", "hello", "world")},
+		{"user@server.com:repo", "smart", filepath.Join(root, "server.com", "user", "repo")},
+		{"ssh://user@server.com:1234/repo", "smart", filepath.Join(root, "server.com", "user", "repo")},
+
+		{"ssh://server.com/hello/world", "smart", filepath.Join(root, "server.com", "HELLO", "world")}, // using existing case
+
+		// exact
+		{"git@github.com/user/repo", "exact", filepath.Join(root, "github.com", "user", "repo")},
+		{"https://github.com/user/repo", "exact", filepath.Join(root, "github.com", "user", "repo")},
+		{"ssh://git@github.com/hello/world", "exact", filepath.Join(root, "github.com", "hello", "world")},
+		{"user@server.com:repo", "exact", filepath.Join(root, "server.com", "user", "repo")},
+		{"ssh://user@server.com:1234/repo", "exact", filepath.Join(root, "server.com", "user", "repo")},
+
+		{"ssh://server.com/hello/world", "exact", filepath.Join(root, "server.com", "hello", "world")}, // don't use existing case
+
+		// fold
+		{"git@github.com/user/repo", "fold", filepath.Join(root, "github.com", "user", "repo")},
+		{"https://github.com/user/repo", "fold", filepath.Join(root, "github.com", "user", "repo")},
+		{"ssh://git@github.com/hello/world", "fold", filepath.Join(root, "github.com", "hello", "world")},
+		{"user@server.com:repo", "fold", filepath.Join(root, "server.com", "user", "repo")},
+		{"ssh://user@server.com:1234/repo", "fold", filepath.Join(root, "server.com", "user", "repo")},
+
+		{"ssh://server.com/hello/world", "fold", filepath.Join(root, "server.com", "HELLO", "world")}, // using existing case
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			env := Env{
 				Root: root,
+				Vars: Variables{
+					GGNORM: tt.GGNORM,
+				},
 			}
 
-			if got := env.Local(ParseURL(tt.name)); got != tt.want {
+			got, gotErr := env.Local(ParseURL(tt.name))
+
+			if gotErr != nil {
+				t.Errorf("Env.Local() err = %v, want err = nil", gotErr)
+			}
+
+			if got != tt.want {
 				t.Errorf("Env.Local() = %v, want %v", got, tt.want)
 			}
 		})
@@ -330,6 +364,31 @@ func TestEnv_ScanRepos(t *testing.T) {
 			path.ToOSPaths(tt.want)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Env.ScanRepos() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestEnv_Normalization(t *testing.T) {
+	tests := []struct {
+		GGNORM string
+		want   path.Normalization
+	}{
+		{"fold", path.FoldNorm},
+		{"smart", path.FoldPreferExactNorm},
+		{"exact", path.NoNorm},
+		{"", path.FoldPreferExactNorm},
+		{"this-norm-doesnt-exist", path.FoldPreferExactNorm},
+	}
+	for _, tt := range tests {
+		t.Run(tt.GGNORM, func(t *testing.T) {
+			env := Env{
+				Vars: Variables{
+					GGNORM: tt.GGNORM,
+				},
+			}
+			if got := env.Normalization(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Env.Normalization() = %v, want %v", got, tt.want)
 			}
 		})
 	}

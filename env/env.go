@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/git"
+	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/scanner"
 )
 
@@ -42,6 +43,18 @@ type Env struct {
 	// CanFile is the CanFile used to canonicalize repositories.
 	// See the Canonical() method.
 	CanFile CanFile
+}
+
+// Normalization returns the path Normalization used by this environment
+func (env Env) Normalization() path.Normalization {
+	switch strings.ToLower(env.Vars.GGNORM) {
+	case "exact":
+		return path.NoNorm
+	case "fold":
+		return path.FoldNorm
+	default:
+		return path.FoldPreferExactNorm
+	}
 }
 
 // EnvironmentParameters represent additional parameters to create a new environment.
@@ -194,15 +207,26 @@ func (env *Env) LoadDefaultCANFILE() error {
 	return nil
 }
 
-// Local is the localpath to the repository pointed to by URL
-func (env Env) Local(url URL) string {
+var errUnableDir = ggman.Error{
+	ExitCode: ggman.ExitInvalidRepo,
+	Message:  "Unable to read directory %s",
+}
+
+// Local returns the path that a repository named URL should be cloned to.
+// Normalization of paths is controlled by the norm parameter
+//
+// The error returned is either nil or of type Error.
+func (env Env) Local(url URL) (string, error) {
 	root, err := env.absRoot()
 	if err != nil {
 		panic("Env.Local(): Root not resolved")
 	}
 
-	path := append([]string{root}, url.Components()...)
-	return filepath.Join(path...)
+	path, err := path.JoinNormalized(env.Normalization(), root, url.Components()...)
+	if err != nil {
+		return "", errUnableDir.WithMessageF(err)
+	}
+	return path, nil
 }
 
 var errInvalidRoot = ggman.Error{

@@ -1,4 +1,4 @@
-// Package path provides ToOSPath
+// Package path provides path-based utility functions
 package path
 
 import (
@@ -7,12 +7,13 @@ import (
 	"strings"
 )
 
-var pathSeperator = string(filepath.Separator)
+const pathSeperator = string(filepath.Separator)
 
 // defaultVolumePrefix is a prefix to use for the default volume
 var defaultVolumePrefix = filepath.VolumeName(os.TempDir())
 
 // ToOSPath turns a path that is seperated via "/"s into a path seperated by the current os-seperator.
+// ToOSPath should only be used during testing.
 //
 // When path starts with "/", the default volume is prefixed on windows.
 // The default volume is defined as the volume the temporary directory resides on.

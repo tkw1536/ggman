@@ -75,7 +75,10 @@ func (link) Run(context program.Context) error {
 	}
 
 	// find the target path
-	to := context.Local(env.ParseURL(r))
+	to, err := context.Local(env.ParseURL(r))
+	if err != nil {
+		return err
+	}
 	parentTo := filepath.Dir(to)
 
 	// if it's the same path, we throw an error

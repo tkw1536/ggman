@@ -48,6 +48,14 @@
 // For example, when 'ggman' clones a repository 'https://github.com/hello/world.git', this would automatically end up in 'GGROOT/github.com/hello/world'.
 // This behavior is not limited to 'github.com' urls, but instead works for any git remote url.
 //
+// As of ggman 1.12, this translation of URLs into paths takes existing paths into account.
+// In particular, it re-uses existing sub-paths if they differ from the requested path only by casing.
+// By default, the first matching directory is used as opposed to creating a new one.
+// If a directory with the exact name exists, this is prefered over a case-insensitive match.
+//
+// This normalization behavior can be controlled using the 'GGNORM' environment variable.
+// It has three values: 'smart' (default behavior), 'fold' (fold paths, but do not prefer exact matches) and 'none' (always use exact paths, legacy behavior).
+//
 // Any subcommand that iterates over local repositories will recursively find all repositories inside the 'GGROOT' directory.
 // In some scenarios it is desired to filter the local list of repositories, e.g. applying only to those inside a specific namespace.
 // This can be achieved using the '--for' flag, which will match to any component of the url.

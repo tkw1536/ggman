@@ -73,7 +73,10 @@ func (c *clone) Run(context program.Context) error {
 	}
 
 	remoteURI := context.Canonical(remote)
-	clonePath := context.Local(remote)
+	clonePath, err := context.Local(remote)
+	if err != nil {
+		return err
+	}
 
 	// do the clone command!
 	context.Printf("Cloning %q into %q ...\n", remoteURI, clonePath)

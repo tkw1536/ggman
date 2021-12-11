@@ -24,6 +24,9 @@ type Variables struct {
 
 	// CANFILE is the value of the 'GGMAN_CANFILE' environment variable
 	CANFILE string
+
+	// GGNORM is the value of the 'GGNORM' environment variable
+	GGNORM string
 }
 
 // ReadVariables reads a new variables instances from the environment
@@ -32,5 +35,6 @@ func ReadVariables() (v Variables) {
 	v.CANFILE = os.Getenv("GGMAN_CANFILE")
 	v.GGROOT = os.Getenv("GGROOT")
 	v.PATH = os.Getenv("PATH")
+	v.GGNORM = os.Getenv("GGNORM")
 	return
 }
