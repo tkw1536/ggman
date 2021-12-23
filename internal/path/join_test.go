@@ -136,7 +136,6 @@ func TestJoinNormalized(t *testing.T) {
 }
 
 func TestJoinNormalized_both(t *testing.T) {
-
 	if !testutil.CaseSensitive(t) {
 		t.Skipf("Filesystem is case-insensitive")
 	}
