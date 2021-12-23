@@ -1,6 +1,8 @@
 package path
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -63,7 +65,7 @@ func joinFold(preferExact bool, base string, elem ...string) (string, error) {
 			switch {
 			case err == nil:
 				elem = comp
-			case os.IsNotExist(err):
+			case errors.Is(err, fs.ErrNotExist):
 				exists = false
 			default: /* err != nil */
 				return "", err

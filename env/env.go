@@ -1,6 +1,7 @@
 package env
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -189,7 +190,7 @@ func (env *Env) LoadDefaultCANFILE() error {
 		f, err := os.Open(file)
 		switch {
 		case err == nil: // do nothing
-		case os.IsNotExist(err):
+		case errors.Is(err, fs.ErrNotExist):
 			continue
 		default:
 			return errors.Wrapf(err, "Unable to open CANFILE %q", file)

@@ -1,6 +1,8 @@
 package testutil
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
@@ -22,7 +24,7 @@ func CaseSensitive(t *testing.T) bool {
 	err := os.Mkdir(upper, os.ModeDir|os.ModePerm)
 
 	switch {
-	case os.IsExist(err):
+	case errors.Is(err, fs.ErrExist):
 		return false // directory already exists!
 	case err == nil:
 		return true // both were created ok

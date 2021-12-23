@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 
@@ -87,7 +89,7 @@ func (link) Run(context program.Context) error {
 	}
 
 	// make sure it doesn't exist
-	if _, e := os.Stat(to); !os.IsNotExist(e) {
+	if _, e := os.Stat(to); !errors.Is(e, fs.ErrNotExist) {
 		return errLinkAlreadyExists
 	}
 

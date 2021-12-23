@@ -1,6 +1,7 @@
 package git
 
 import (
+	"io/fs"
 	"os"
 	"os/exec"
 	"path"
@@ -274,7 +275,7 @@ func (gogit) IsRepositoryUnsafe(localPath string) bool {
 
 	// check that it exists and is a folder
 	s, err := os.Stat(gitPath)
-	isNotNotExist := !os.IsNotExist(err)
+	isNotNotExist := !errors.Is(err, fs.ErrNotExist)
 	if err != nil && isNotNotExist {
 		return false
 	}

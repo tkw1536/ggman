@@ -2,6 +2,7 @@
 package scanner
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -272,7 +273,7 @@ func IsDirectory(path string, includeLinks bool) (bool, error) {
 	}
 
 	switch {
-	case os.IsNotExist(err):
+	case errors.Is(err, fs.ErrNotExist):
 		return false, nil
 	case err != nil:
 		return false, errors.Wrap(err, "Stat failed")
