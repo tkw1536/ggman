@@ -7,8 +7,7 @@ import (
 )
 
 func TestCommandRelocate(t *testing.T) {
-	mock, cleanup := mockenv.NewMockEnv()
-	defer cleanup()
+	mock := mockenv.NewMockEnv(t)
 
 	mock.Register("https://github.com/right/directory.git")
 	mock.Install("https://github.com/right/directory.git", "github.com", "right", "directory")

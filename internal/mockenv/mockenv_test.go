@@ -94,8 +94,7 @@ func (mockEnvRunCommand) Run(context program.Context) error {
 }
 
 func TestMockEnv_Run(t *testing.T) {
-	mock, cleanup := NewMockEnv()
-	defer cleanup()
+	mock := NewMockEnv(t)
 
 	// create a fake repository and install it into the mock
 	repo := "https://server.com:repo"

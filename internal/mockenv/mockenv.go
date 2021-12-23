@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"testing"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -33,11 +34,8 @@ type MockEnv struct {
 }
 
 // NewMockEnv creates a new MockEnv for testing ggman programs.
-// It also returns a cleanup function, and should be called as follows:
-//  mock, cleanup = NewMockEnv()
-//  defer cleanup()
-func NewMockEnv() (*MockEnv, func()) {
-	root, cleanup := testutil.TempDir()
+func NewMockEnv(t *testing.T) *MockEnv {
+	root := testutil.TempDirAbs(t)
 
 	local := filepath.Join(root, "local")
 	if err := os.Mkdir(local, os.ModePerm); err != nil {
@@ -62,7 +60,7 @@ func NewMockEnv() (*MockEnv, func()) {
 			PATH:   "",
 			GGROOT: local,
 		},
-	}, cleanup
+	}
 }
 
 func (mock MockEnv) resolve(path ...string) string {

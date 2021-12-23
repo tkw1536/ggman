@@ -3,6 +3,7 @@ package testutil
 import (
 	"os"
 	"path"
+	"testing"
 	"time"
 
 	"github.com/go-git/go-git/v5"
@@ -11,25 +12,18 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
-// NewTestRepo creates a new (empty) repository at the provided path
+// NewTestRepo creates a new (empty) repository for testing purposes.
 // clonePath is the path where the repository is located on disk.
 // repo is a reference to the created repository.
-// cleanup is a function that removes the repository from disk.
 // If something goes wrong, the function calls panic()
-//
-// This function is intended to be called like:
-//   clonePath, repo, cleanup := NewTestRepo()
-//   defer cleanup()
-//
-func NewTestRepo() (clonePath string, repo *git.Repository, cleanup func()) {
+func NewTestRepo(t *testing.T) (clonePath string, repo *git.Repository) {
 
 	// first create a new temporary directory to put the git repository in
-	clonePath, cleanup = TempDir()
+	clonePath = TempDirAbs(t)
 
 	// then actually do a git PlainInit
 	repo = NewTestRepoAt(clonePath, "")
 	if repo == nil {
-		cleanup()
 		panic("NewTestRepoAt(): Repository not created")
 	}
 

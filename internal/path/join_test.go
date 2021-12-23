@@ -11,7 +11,7 @@ import (
 func TestJoinNormalized(t *testing.T) {
 
 	// create subdirectory for testing
-	root := t.TempDir()
+	root := testutil.TempDirAbs(t)
 	exactD := filepath.Join(root, "exact")
 	os.Mkdir(exactD, os.ModePerm|os.ModeDir)
 
@@ -141,7 +141,7 @@ func TestJoinNormalized_both(t *testing.T) {
 	}
 
 	// create subdirectory for testing
-	root := t.TempDir()
+	root := testutil.TempDirAbs(t)
 
 	lcBothD := filepath.Join(root, "both")
 	os.Mkdir(lcBothD, os.ModePerm|os.ModeDir)

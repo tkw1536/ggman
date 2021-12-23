@@ -15,8 +15,7 @@ import (
 )
 
 func TestProgram_Main(t *testing.T) {
-	root, cleanup := testutil.TempDir()
-	defer cleanup()
+	root := testutil.TempDirAbs(t)
 
 	// create buffers for input and output
 	var stdoutBuffer bytes.Buffer

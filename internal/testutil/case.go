@@ -10,7 +10,7 @@ import (
 //
 // This function is untested due to unpredictability of runtime environment.
 func CaseSensitive(t *testing.T) bool {
-	temp := t.TempDir()
+	temp := TempDirAbs(t)
 
 	// create lower case
 	lower := filepath.Join(temp, "test")

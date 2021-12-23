@@ -22,8 +22,7 @@ import (
 func TestNewGitFromPlumbing(t *testing.T) {
 
 	// create a temporary file
-	dir, cleanup := testutil.TempDir()
-	defer cleanup()
+	dir := testutil.TempDirAbs(t)
 
 	// no path => use a gogit
 	if _, isgogit := NewGitFromPlumbing(nil, "").Plumbing().(*gogit); !isgogit {

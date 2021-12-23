@@ -7,8 +7,7 @@ import (
 )
 
 func TestCommandFix(t *testing.T) {
-	mock, cleanup := mockenv.NewMockEnv()
-	defer cleanup()
+	mock := mockenv.NewMockEnv(t)
 
 	mock.Register("https://github.com/hello/world.git", "git@github.com:hello/world.git")
 	mock.Install("https://github.com/hello/world.git", "github.com", "hello", "world")

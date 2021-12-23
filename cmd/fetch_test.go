@@ -9,8 +9,7 @@ import (
 )
 
 func TestCommandFetch(t *testing.T) {
-	mock, cleanup := mockenv.NewMockEnv()
-	defer cleanup()
+	mock := mockenv.NewMockEnv(t)
 
 	// install git repo and make an extra commit
 	repo, _ := mock.Register("https://github.com/hello/world.git")

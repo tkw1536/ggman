@@ -7,8 +7,7 @@ import (
 )
 
 func TestCommandCanon(t *testing.T) {
-	mock, cleanup := mockenv.NewMockEnv()
-	defer cleanup()
+	mock := mockenv.NewMockEnv(t)
 
 	tests := []struct {
 		name    string

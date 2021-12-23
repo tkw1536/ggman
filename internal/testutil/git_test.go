@@ -8,8 +8,7 @@ import (
 )
 
 func TestNewTestRepo(t *testing.T) {
-	dir, repo, cleanup := NewTestRepo()
-	defer cleanup()
+	dir, repo := NewTestRepo(t)
 
 	if s, err := os.Stat(dir); err != nil || !s.IsDir() {
 		t.Errorf("NewTestRepo(): Directory was not created. ")
@@ -22,16 +21,10 @@ func TestNewTestRepo(t *testing.T) {
 	if _, err := git.PlainOpen(dir); err != nil {
 		t.Errorf("NewTestRepo(): Repository was not created. ")
 	}
-
-	cleanup()
-	if _, err := os.Stat(dir); !os.IsNotExist(err) {
-		t.Errorf("NewTestRepo(): Cleanup did not remove directory")
-	}
 }
 
 func TestCommitTestFiles(t *testing.T) {
-	_, repo, cleanup := NewTestRepo()
-	defer cleanup()
+	_, repo := NewTestRepo(t)
 
 	_, hash := CommitTestFiles(repo, nil)
 

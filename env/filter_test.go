@@ -11,8 +11,8 @@ import (
 	"github.com/tkw1536/ggman/internal/testutil"
 )
 
-func setupFilterTest() (cleanup func(), root, exampleClonePath, otherClonePath string) {
-	root, cleanup = testutil.TempDir()
+func setupFilterTest(t *testing.T) (root, exampleClonePath, otherClonePath string) {
+	root = testutil.TempDirAbs(t)
 
 	exampleClonePath = filepath.Join(root, "example")
 	if testutil.NewTestRepoAt(exampleClonePath, "") == nil {
@@ -24,12 +24,11 @@ func setupFilterTest() (cleanup func(), root, exampleClonePath, otherClonePath s
 		panic("failed to create test repo")
 	}
 
-	return cleanup, root, exampleClonePath, otherClonePath
+	return root, exampleClonePath, otherClonePath
 }
 
 func Test_emptyFilter_Matches(t *testing.T) {
-	cleanup, root, exampleClonePath, otherClonePath := setupFilterTest()
-	defer cleanup()
+	root, exampleClonePath, otherClonePath := setupFilterTest(t)
 
 	type args struct {
 		env       Env
@@ -98,9 +97,7 @@ func TestCandidates(t *testing.T) {
 }
 
 func TestPathFilter_Matches(t *testing.T) {
-
-	cleanup, root, exampleClonePath, otherClonePath := setupFilterTest()
-	defer cleanup()
+	root, exampleClonePath, otherClonePath := setupFilterTest(t)
 
 	type fields struct {
 		Paths []string
@@ -174,8 +171,7 @@ func TestPathFilter_Matches(t *testing.T) {
 }
 
 func TestPathFilter_Candidates(t *testing.T) {
-	cleanup, _, exampleClonePath, otherClonePath := setupFilterTest()
-	defer cleanup()
+	_, exampleClonePath, otherClonePath := setupFilterTest(t)
 
 	type fields struct {
 		Paths []string
@@ -314,8 +310,7 @@ func TestPatternFilter_String(t *testing.T) {
 }
 
 func TestPatternFilter_Matches(t *testing.T) {
-	root, cleanup := testutil.TempDir()
-	defer cleanup()
+	root := testutil.TempDirAbs(t)
 
 	abc := filepath.Join(root, "a", "b", "c")
 	abcdef := filepath.Join(root, "a", "b", "c", "d", "e", "f")
@@ -327,8 +322,7 @@ func TestPatternFilter_Matches(t *testing.T) {
 		panic("NewTestRepoAt() returned nil")
 	}
 
-	other, cleanup := testutil.TempDir()
-	defer cleanup()
+	other := testutil.TempDirAbs(t)
 
 	otherabc := filepath.Join(other, "a", "b", "c")
 	if testutil.NewTestRepoAt(otherabc, "/a/b/c") == nil {

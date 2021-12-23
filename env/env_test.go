@@ -14,21 +14,19 @@ import (
 func TestEnv_LoadDefaultRoot(t *testing.T) {
 
 	// nopdir does not have a 'Projects' subdirectory
-	nopdir, cleanup := testutil.TempDir()
+	nopdir := testutil.TempDirAbs(t)
 	pnopdir := filepath.Join(nopdir, "Projects")
-	defer cleanup()
 
 	// pdir has a 'Projects' subdirectory
-	pdir, cleanup := testutil.TempDir()
+	pdir := testutil.TempDirAbs(t)
 	ppdir := filepath.Join(pdir, "Projects")
-	defer cleanup()
+
 	if err := os.Mkdir(ppdir, os.ModePerm); err != nil {
 		panic(err)
 	}
 
 	// nodir doesn't exist
-	nodir, cleanup := testutil.TempDir()
-	cleanup()
+	nodir := filepath.Join(testutil.TempDirAbs(t), "noexist")
 
 	tests := []struct {
 		name     string
@@ -69,15 +67,13 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 	var sampleCanFile CanFile = []CanLine{{"", canLineContent}}
 
 	// edir is an empty directory without a canFile
-	edir, cleanup := testutil.TempDir()
+	edir := testutil.TempDirAbs(t)
 	noggmanfile := filepath.Join(edir, ".ggman")
-	defer cleanup()
 
 	// ddir is a directory with a '.ggman' file
-	ddir, cleanup := testutil.TempDir()
+	ddir := testutil.TempDirAbs(t)
 	ggmanfile := filepath.Join(ddir, ".ggman")
 	os.WriteFile(ggmanfile, []byte(canLineContent), os.ModePerm)
-	defer cleanup()
 
 	tests := []struct {
 		name        string
@@ -109,8 +105,7 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 }
 
 func TestEnv_Local_Exact(t *testing.T) {
-	root, cleanup := testutil.TempDir()
-	defer cleanup()
+	root := testutil.TempDirAbs(t)
 
 	// make the 'HELLO' directory, to ensure that it already exists
 	os.MkdirAll(filepath.Join(root, "server.com", "HELLO"), os.ModePerm|os.ModeDir)
@@ -170,8 +165,7 @@ func TestEnv_Local_Exact(t *testing.T) {
 }
 
 func TestEnv_At(t *testing.T) {
-	root, cleanup := testutil.TempDir()
-	defer cleanup()
+	root := testutil.TempDirAbs(t)
 
 	// group/repo contains a repository
 	group := filepath.Join(root, "group")
@@ -223,8 +217,7 @@ func TestEnv_At(t *testing.T) {
 }
 
 func TestEnv_AtRoot(t *testing.T) {
-	root, cleanup := testutil.TempDir()
-	defer cleanup()
+	root := testutil.TempDirAbs(t)
 
 	// group/repo contains a repository
 	group := filepath.Join(root, "group")
@@ -272,8 +265,7 @@ func TestEnv_AtRoot(t *testing.T) {
 }
 
 func TestEnv_ScanRepos(t *testing.T) {
-	root, cleanup := testutil.TempDir()
-	defer cleanup()
+	root := testutil.TempDirAbs(t)
 
 	// make a dir with parents and turn it into git
 	mkgit := func(s string) {

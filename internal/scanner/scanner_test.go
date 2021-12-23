@@ -11,9 +11,7 @@ import (
 )
 
 func TestScan(t *testing.T) {
-
-	base, cleanup := testutil.TempDir()
-	defer cleanup()
+	base := testutil.TempDirAbs(t)
 
 	// setup a directory structure for testing.
 	// Make mkdir and symlink utility methods for this.
@@ -217,8 +215,7 @@ func TestScan(t *testing.T) {
 }
 
 func Test_IsDirectory(t *testing.T) {
-	dir, cleanup := testutil.TempDir()
-	defer cleanup()
+	dir := testutil.TempDirAbs(t)
 
 	// make a symlink to a directory
 	dirlink := filepath.Join(dir, "dirlink")

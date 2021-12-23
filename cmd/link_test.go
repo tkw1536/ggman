@@ -8,8 +8,7 @@ import (
 )
 
 func TestCommandLink(t *testing.T) {
-	mock, cleanup := mockenv.NewMockEnv()
-	defer cleanup()
+	mock := mockenv.NewMockEnv(t)
 
 	mock.Register("https://github.com/hello/world.git")
 	externalRepo := mock.Install("https://github.com/hello/world.git", "..", "external")

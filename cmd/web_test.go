@@ -9,8 +9,7 @@ import (
 )
 
 func TestCommandURL(t *testing.T) {
-	mock, cleanup := mockenv.NewMockEnv()
-	defer cleanup()
+	mock := mockenv.NewMockEnv(t)
 
 	mock.Register("git@github.com/hello/world.git")
 	clonePath := mock.Install("git@github.com/hello/world.git", "hello", "world")

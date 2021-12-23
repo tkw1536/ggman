@@ -3,6 +3,7 @@ package git
 import (
 	"os"
 	"path"
+	"path/filepath"
 	"reflect"
 	"sort"
 	"testing"
@@ -24,16 +25,13 @@ func Test_gogit_IsRepository(t *testing.T) {
 	// Only in the first of these IsRepository() should return true on.
 
 	// make a folder with an empty repository
-	existingRepo, _, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	existingRepo, _ := testutil.NewTestRepo(t)
 
 	// make an empty folder
-	emptyFolder, cleanup := testutil.TempDir()
-	defer cleanup()
+	emptyFolder := testutil.TempDirAbs(t)
 
 	// create a new folder that is deleted
-	deletedFolder, cleanup := testutil.TempDir()
-	cleanup()
+	deletedFolder := filepath.Join(testutil.TempDirAbs(t), "noexist")
 
 	type args struct {
 		localPath string
@@ -68,16 +66,13 @@ func Test_gogit_IsRepositoryUnsafe(t *testing.T) {
 	// Only in the first of these IsRepositoryUnsafe() should return true on.
 
 	// make a folder with an empty repository
-	existingRepo, _, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	existingRepo, _ := testutil.NewTestRepo(t)
 
 	// make an empty folder
-	emptyFolder, cleanup := testutil.TempDir()
-	defer cleanup()
+	emptyFolder := testutil.TempDirAbs(t)
 
 	// create a new folder that is deleted
-	deletedFolder, cleanup := testutil.TempDir()
-	cleanup()
+	deletedFolder := filepath.Join(testutil.TempDirAbs(t), "noexist")
 
 	type args struct {
 		localPath string
@@ -110,12 +105,10 @@ func Test_gogit_GetHeadRef(t *testing.T) {
 	// - one with a checked out hash
 
 	// make an empty repository
-	emptyRepo, _, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	emptyRepo, _ := testutil.NewTestRepo(t)
 
 	// make a new repository and checkout a new branch 'test'
-	branchTestCheckout, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	branchTestCheckout, repo := testutil.NewTestRepo(t)
 	worktree, commit := testutil.CommitTestFiles(repo, nil)
 	if err := worktree.Checkout(&git.CheckoutOptions{
 		Hash:   commit,
@@ -126,8 +119,7 @@ func Test_gogit_GetHeadRef(t *testing.T) {
 	}
 
 	// make a new repository and checkout a hash
-	hashCheckout, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	hashCheckout, repo := testutil.NewTestRepo(t)
 	worktree, commit = testutil.CommitTestFiles(repo, nil)
 	if err := worktree.Checkout(&git.CheckoutOptions{
 		Hash: commit,
@@ -179,22 +171,19 @@ func Test_gogit_GetRemotes(t *testing.T) {
 	// GetRemotes() should return all of them.
 
 	// create an initial remote repository, and add a new bogus commit to it.
-	remote, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	remote, repo := testutil.NewTestRepo(t)
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
-	cloneA, cleanup := testutil.TempDir()
-	defer cleanup()
+	cloneA := testutil.TempDirAbs(t)
 	if _, err := git.PlainClone(cloneA, false, &git.CloneOptions{URL: remote}); err != nil {
 		panic(err)
 	}
 
 	// clone the 'cloneA' repository into 'cloneB'.
 	// This will create an origin remote pointing to 'cloneA'
-	cloneB, cleanup := testutil.TempDir()
-	defer cleanup()
+	cloneB := testutil.TempDirAbs(t)
 	repo, err := git.PlainClone(cloneB, false, &git.CloneOptions{URL: cloneA})
 	if err != nil {
 		panic(err)
@@ -258,22 +247,19 @@ func Test_gogit_GetCanonicalRemote(t *testing.T) {
 	// These should return 'remote' and 'cloneA' respectively.
 
 	// create an initial remote repository, and add a new bogus commit to it.
-	remote, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	remote, repo := testutil.NewTestRepo(t)
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
-	cloneA, cleanup := testutil.TempDir()
-	defer cleanup()
+	cloneA := testutil.TempDirAbs(t)
 	if _, err := git.PlainClone(cloneA, false, &git.CloneOptions{URL: remote}); err != nil {
 		panic(err)
 	}
 
 	// clone the 'cloneA' repository into 'cloneB'.
 	// This will create an origin remote pointing to 'cloneA'
-	cloneB, cleanup := testutil.TempDir()
-	defer cleanup()
+	cloneB := testutil.TempDirAbs(t)
 	repo, err := git.PlainClone(cloneB, false, &git.CloneOptions{URL: cloneA})
 	if err != nil {
 		panic(err)
@@ -342,13 +328,11 @@ func Test_gogit_SetRemoteURLs(t *testing.T) {
 	// This should succeed as long as the number of urls stays the same.
 
 	// create an initial remote repository, and add a new bogus commit to it.
-	remote, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	remote, repo := testutil.NewTestRepo(t)
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	// clone the remote repository into 'clone'
-	clone, cleanup := testutil.TempDir()
-	defer cleanup()
+	clone := testutil.TempDirAbs(t)
 	repo, err := git.PlainClone(clone, false, &git.CloneOptions{URL: remote})
 	if err != nil {
 		panic(err)
@@ -412,13 +396,11 @@ func Test_gogit_Clone(t *testing.T) {
 	var gg gogit
 
 	// create an initial remote repository, and add a new bogus commit to it.
-	remote, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	remote, repo := testutil.NewTestRepo(t)
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	t.Run("cloning a repository", func(t *testing.T) {
-		clone, cleanup := testutil.TempDir()
-		defer cleanup()
+		clone := testutil.TempDirAbs(t)
 
 		err := gg.Clone(ggman.NewNilIOStream(), remote, clone)
 		if err != nil {
@@ -431,8 +413,7 @@ func Test_gogit_Clone(t *testing.T) {
 	})
 
 	t.Run("cloning a repository with arguments is not supported", func(t *testing.T) {
-		clone, cleanup := testutil.TempDir()
-		defer cleanup()
+		clone := testutil.TempDirAbs(t)
 
 		err := gg.Clone(ggman.NewNilIOStream(), remote, clone, "--branch", "main")
 		if err != ErrArgumentsUnsupported {
@@ -454,21 +435,18 @@ func Test_gogit_Fetch(t *testing.T) {
 	// After fetching, the clone should become aware of both commits.
 
 	// create an initial upstream repository, and add a new bogus commit to it.
-	upstream, upstreamRepo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	upstream, upstreamRepo := testutil.NewTestRepo(t)
 	_, commitA := testutil.CommitTestFiles(upstreamRepo, map[string]string{"commita.txt": "Commit A"})
 
 	// clone upstream@commitA to the remote
-	remote, cleanup := testutil.TempDir()
-	defer cleanup()
+	remote := testutil.TempDirAbs(t)
 	remoteRepo, err := git.PlainClone(remote, false, &git.CloneOptions{URL: upstream})
 	if err != nil {
 		panic(err)
 	}
 
 	// clone remote to the local clone
-	clone, cleanup := testutil.TempDir()
-	defer cleanup()
+	clone := testutil.TempDirAbs(t)
 	cloneRepo, err := git.PlainClone(clone, false, &git.CloneOptions{URL: remote})
 	if err != nil {
 		panic(err)
@@ -541,13 +519,11 @@ func Test_gogit_Pull(t *testing.T) {
 	// after pulling clone should have updated to commitB.
 
 	// create the upstream repository
-	origin, originRepo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	origin, originRepo := testutil.NewTestRepo(t)
 	testutil.CommitTestFiles(originRepo, map[string]string{"commita.txt": "Commit A"})
 
 	// clone remote to the local clone
-	clone, cleanup := testutil.TempDir()
-	defer cleanup()
+	clone := testutil.TempDirAbs(t)
 	cloneRepo, err := git.PlainClone(clone, false, &git.CloneOptions{URL: origin})
 	if err != nil {
 		panic(err)
@@ -591,8 +567,7 @@ func Test_gogit_GetBranches(t *testing.T) {
 
 	// In this test we only have a single repository.
 	// We create two branches 'branchA' and 'branchB'
-	clone, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	clone, repo := testutil.NewTestRepo(t)
 
 	wt, _ := testutil.CommitTestFiles(repo, nil)
 
@@ -651,8 +626,7 @@ func Test_gogit_ContainsBranch(t *testing.T) {
 
 	// In this test we only have a single repository.
 	// We create two branches 'branchA' and 'branchB'
-	clone, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	clone, repo := testutil.NewTestRepo(t)
 	repo.CreateBranch(&config.Branch{Name: "branchA"})
 	repo.CreateBranch(&config.Branch{Name: "branchB"})
 
@@ -693,11 +667,9 @@ func Test_gogit_IsDirty(t *testing.T) {
 	var gg gogit
 
 	// In this test we have a dirty and a clean repository
-	cleanClone, _, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	cleanClone, _ := testutil.NewTestRepo(t)
 
-	dirtyClone, _, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	dirtyClone, _ := testutil.NewTestRepo(t)
 	if err := os.WriteFile(path.Join(dirtyClone, "example"), []byte{}, os.ModePerm); err != nil {
 		panic(err)
 	}
@@ -738,14 +710,12 @@ func Test_gogit_IsSync(t *testing.T) {
 	var gg gogit
 
 	// an upstream repository (has upstream itself)
-	upstream, upstreamRepo, cleanup := testutil.NewTestRepo()
+	upstream, upstreamRepo := testutil.NewTestRepo(t)
 	_, h1 := testutil.CommitTestFiles(upstreamRepo, nil)
 	testutil.CommitTestFiles(upstreamRepo, map[string]string{"dummy.txt": "I am an updated dummy file. "})
-	defer cleanup()
 
 	// a downstream clone that is one commit behind!
-	downstreamBehind, cleanup := testutil.TempDir()
-	defer cleanup()
+	downstreamBehind := testutil.TempDirAbs(t)
 	behindRepo, err := git.PlainClone(downstreamBehind, false, &git.CloneOptions{
 		URL: upstream,
 	})
@@ -764,15 +734,13 @@ func Test_gogit_IsSync(t *testing.T) {
 	}
 
 	// a downstream repository that is in sync
-	downstreamOK, cleanup := testutil.TempDir()
-	defer cleanup()
+	downstreamOK := testutil.TempDirAbs(t)
 	if _, err := git.PlainClone(downstreamOK, false, &git.CloneOptions{URL: upstream}); err != nil {
 		panic(err)
 	}
 
 	// a downstream clone that is behind
-	downstreamAhead, cleanup := testutil.TempDir()
-	defer cleanup()
+	downstreamAhead := testutil.TempDirAbs(t)
 	aheadRepo, err := git.PlainClone(downstreamAhead, false, &git.CloneOptions{URL: upstream})
 	if err != nil {
 		panic(err)

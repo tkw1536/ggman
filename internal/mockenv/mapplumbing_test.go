@@ -91,22 +91,19 @@ func Test_MappedPlumbing_GetRemotes(t *testing.T) {
 	// GetRemotes() should return the mapped remotes.
 
 	// create an initial remote repository, and add a new bogus commit to it.
-	remote, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	remote, repo := testutil.NewTestRepo(t)
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
-	cloneA, cleanup := testutil.TempDir()
-	defer cleanup()
+	cloneA := testutil.TempDirAbs(t)
 	if _, err := git.PlainClone(cloneA, false, &git.CloneOptions{URL: remote}); err != nil {
 		panic(err)
 	}
 
 	// clone the 'cloneA' repository into 'cloneB'.
 	// This will create an origin remote pointing to 'cloneA'
-	cloneB, cleanup := testutil.TempDir()
-	defer cleanup()
+	cloneB := testutil.TempDirAbs(t)
 	repo, err := git.PlainClone(cloneB, false, &git.CloneOptions{URL: cloneA})
 	if err != nil {
 		panic(err)
@@ -185,13 +182,11 @@ func Test_MappedPlumbing_SetRemoteURLs(t *testing.T) {
 	mp.URLMap["https://example2.com"] = "https://real.example2.com"
 
 	// create an initial remote repository, and add a new bogus commit to it.
-	remote, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	remote, repo := testutil.NewTestRepo(t)
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	// clone the remote repository into 'clone'
-	clone, cleanup := testutil.TempDir()
-	defer cleanup()
+	clone := testutil.TempDirAbs(t)
 	repo, err := git.PlainClone(clone, false, &git.CloneOptions{URL: remote})
 	if err != nil {
 		panic(err)
@@ -270,22 +265,19 @@ func Test_MappedPlumbing_GetCanonicalRemote(t *testing.T) {
 	// These should return the mapped versions of 'remote' and 'cloneA' respectively.
 
 	// create an initial remote repository, and add a new bogus commit to it.
-	remote, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	remote, repo := testutil.NewTestRepo(t)
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
-	cloneA, cleanup := testutil.TempDir()
-	defer cleanup()
+	cloneA := testutil.TempDirAbs(t)
 	if _, err := git.PlainClone(cloneA, false, &git.CloneOptions{URL: remote}); err != nil {
 		panic(err)
 	}
 
 	// clone the 'cloneA' repository into 'cloneB'.
 	// This will create an origin remote pointing to 'cloneA'
-	cloneB, cleanup := testutil.TempDir()
-	defer cleanup()
+	cloneB := testutil.TempDirAbs(t)
 	repo, err := git.PlainClone(cloneB, false, &git.CloneOptions{URL: cloneA})
 	if err != nil {
 		panic(err)
@@ -358,16 +350,14 @@ func Test_MappedPlumbing_Clone(t *testing.T) {
 	}
 
 	// create an initial remote repository, and add a new bogus commit to it.
-	remote, repo, cleanup := testutil.NewTestRepo()
-	defer cleanup()
+	remote, repo := testutil.NewTestRepo(t)
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	mappedRemote := "https://example.com/example.git"
 	mp.URLMap[mappedRemote] = remote
 
 	t.Run("cloning a repository", func(t *testing.T) {
-		clone, cleanup := testutil.TempDir()
-		defer cleanup()
+		clone := testutil.TempDirAbs(t)
 
 		err := mp.Clone(ggman.NewNilIOStream(), mappedRemote, clone)
 		if err != nil {
