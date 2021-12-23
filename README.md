@@ -352,7 +352,9 @@ ggcode () {
 
 ## Changelog
 
-### 1.12.0 (Upcoming)
+### 1.13.0 (Upcoming)
+
+### 1.12.0 (Released [Dec 23 2021](https://github.com/tkw1536/ggman/releases/tag/v1.12.0))
 
 - add `GGNORM` variable: when placing repositories locally, take casing of existing paths into account
 - add `--dirty` and `--clean` filter arguments
