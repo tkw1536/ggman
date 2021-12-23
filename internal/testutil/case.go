@@ -21,10 +21,10 @@ func CaseSensitive(t *testing.T) bool {
 	upper := filepath.Join(temp, "TEST")
 	err := os.Mkdir(upper, os.ModeDir|os.ModePerm)
 
-	switch err {
-	case os.ErrExist:
+	switch {
+	case os.IsExist(err):
 		return false // directory already exists!
-	case nil:
+	case err == nil:
 		return true // both were created ok
 	}
 	panic(err)
