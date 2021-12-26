@@ -17,6 +17,7 @@ func All() <-chan program.Command {
 		defer close(cmds)
 
 		cmds <- Root
+		cmds <- Sweep
 
 		cmds <- Ls
 		cmds <- Lsr

@@ -13,6 +13,7 @@ func TestReadVariables(t *testing.T) {
 		"HOME":          "/fake/home",
 		"GGROOT":        "/fake/ggroot",
 		"GGMAN_CANFILE": "/fake/canfile",
+		"GGNORM":        "something-fake",
 	})()
 
 	got := ReadVariables()
@@ -21,6 +22,7 @@ func TestReadVariables(t *testing.T) {
 		PATH:    "/fake/path",
 		GGROOT:  "/fake/ggroot",
 		CANFILE: "/fake/canfile",
+		GGNORM:  "something-fake",
 	}
 
 	if !reflect.DeepEqual(got, want) {

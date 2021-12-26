@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// TempDirAbs is like the TempDirAbs method of t, but resolves all symlinks in the returned path.
+// TempDirAbs is like the TempDir method of t, but resolves all symlinks in the returned path.
 //
 // This function is untested.
 func TempDirAbs(t *testing.T) string {

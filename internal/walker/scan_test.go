@@ -1,4 +1,4 @@
-package scanner
+package walker
 
 import (
 	"os"
@@ -59,16 +59,16 @@ func TestScan(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		options Options
+		visit   ScanProcess
+		params  Params
 		want    []string
 		wantErr bool
 	}{
 		{
 			"scan /",
-
-			Options{
-				Root:        base,
-				FollowLinks: false,
+			nil,
+			Params{
+				Root: NewRealFS(base, false),
 			},
 			[]string{
 				".",
@@ -90,13 +90,11 @@ func TestScan(t *testing.T) {
 		},
 		{
 			"scan /, accept only three-triples",
-
-			Options{
-				Root:        base,
-				FollowLinks: false,
-				Visit: func(path string, context VisitContext) (match, cont bool) {
-					return context.Depth == 3, true
-				},
+			func(path string, root FS, depth int) (match, cont bool) {
+				return depth == 3, true
+			},
+			Params{
+				Root: NewRealFS(base, false),
 			},
 			[]string{
 
@@ -114,13 +112,11 @@ func TestScan(t *testing.T) {
 		},
 		{
 			"scan /, stop inside '/ab'",
-
-			Options{
-				Root:        base,
-				FollowLinks: false,
-				Visit: func(pth string, context VisitContext) (match, cont bool) {
-					return true, trimPath(pth) != path.ToOSPath("a/ab")
-				},
+			func(pth string, root FS, depth int) (match, cont bool) {
+				return true, trimPath(pth) != path.ToOSPath("a/ab")
+			},
+			Params{
+				Root: NewRealFS(base, false),
 			},
 			[]string{
 				".",
@@ -139,11 +135,10 @@ func TestScan(t *testing.T) {
 		},
 		{
 			"scan a/aa, don't follow symlinks",
-
-			Options{
-				Root:        filepath.Join(base, "a", "aa"),
-				ExtraRoots:  []string{filepath.Join(base, "a", "ac")},
-				FollowLinks: false,
+			nil,
+			Params{
+				Root:       NewRealFS(filepath.Join(base, "a", "aa"), false),
+				ExtraRoots: []FS{NewRealFS(filepath.Join(base, "a", "ac"), false)},
 			},
 			[]string{
 				"a/aa",
@@ -159,10 +154,9 @@ func TestScan(t *testing.T) {
 		},
 		{
 			"scan a/aa and extra roots, don't follow links",
-
-			Options{
-				Root:        filepath.Join(base, "a", "aa"),
-				FollowLinks: false,
+			nil,
+			Params{
+				Root: NewRealFS(filepath.Join(base, "a", "aa"), false),
 			},
 			[]string{
 				"a/aa",
@@ -174,10 +168,9 @@ func TestScan(t *testing.T) {
 		},
 		{
 			"scan a/aa, follow symlinks", // a/aa/linked links to the root
-
-			Options{
-				Root:        filepath.Join(base, "a", "aa"),
-				FollowLinks: true,
+			nil,
+			Params{
+				Root: NewRealFS(filepath.Join(base, "a", "aa"), true),
 			},
 			[]string{
 				".",
@@ -200,7 +193,7 @@ func TestScan(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Scan(tt.options)
+			got, err := Scan(tt.visit, tt.params)
 			trimAll(got)
 			path.ToOSPaths(tt.want)
 			if (err != nil) != tt.wantErr {
@@ -209,63 +202,6 @@ func TestScan(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Scan() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_IsDirectory(t *testing.T) {
-	dir := testutil.TempDirAbs(t)
-
-	// make a symlink to a directory
-	dirlink := filepath.Join(dir, "dirlink")
-	if err := os.Symlink(dir, dirlink); err != nil {
-		panic(err)
-	}
-
-	// make a file
-	file := filepath.Join(dir, "file")
-	if err := os.WriteFile(file, nil, os.ModePerm); err != nil {
-		panic(err)
-	}
-
-	// make a symlink to a file
-	filelink := filepath.Join(dir, "filelink")
-	if err := os.Symlink(file, filelink); err != nil {
-		panic(err)
-	}
-
-	type args struct {
-		path       string
-		allowLinks bool
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    bool
-		wantErr bool
-	}{
-		{"directory without allowLinks", args{dir, false}, true, false},
-		{"directory with allowLinks", args{dir, true}, true, false},
-
-		{"directory link without allowLinks", args{dirlink, false}, false, false},
-		{"directory link with allowLinks", args{dirlink, true}, true, false},
-
-		{"file without allowLinks", args{file, false}, false, false},
-		{"file with allowLinks", args{file, true}, false, false},
-
-		{"file link without allowLinks", args{filelink, false}, false, false},
-		{"file link with allowLinks", args{filelink, true}, false, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := IsDirectory(tt.args.path, tt.args.allowLinks)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("IsDirectory() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("IsDirectory() = %v, want %v", got, tt.want)
 			}
 		})
 	}

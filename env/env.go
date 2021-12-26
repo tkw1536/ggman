@@ -10,7 +10,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/path"
-	"github.com/tkw1536/ggman/internal/scanner"
+	"github.com/tkw1536/ggman/internal/walker"
 )
 
 // Env represents an environment to be used by ggman.
@@ -376,19 +376,22 @@ func (env Env) ScanRepos(folder string) ([]string, error) {
 	}
 	extraRoots = extraRoots[:n]
 
-	return scanner.Scan(scanner.Options{
-		Root:       folder,
-		ExtraRoots: extraRoots,
+	extraFS := make([]walker.FS, len(extraRoots))
+	for i, root := range extraRoots {
+		extraFS[i] = walker.NewRealFS(root, true)
+	}
 
-		Visit: func(path string, context scanner.VisitContext) (match, cont bool) {
-			if env.Git.IsRepositoryQuick(path) {
-				return env.Filter.Matches(env, path), false // never continue even if a repository does not match
-			}
-			return false, true
-		},
+	return walker.Scan(func(path string, root walker.FS, depth int) (match, cont bool) {
+		if env.Git.IsRepositoryQuick(path) {
+			return env.Filter.Matches(env, path), false // never continue even if a repository does not match
+		}
+		return false, true
+	}, walker.Params{
+		Root: walker.NewRealFS(folder, true),
+
+		ExtraRoots: extraFS,
 
 		BufferSize:  reposBufferSize,
 		MaxParallel: reposMaxParallelScan,
-		FollowLinks: true,
 	})
 }

@@ -41,7 +41,7 @@ Afterwards simply place it somewhere in your `$PATH`.
 #### Install from Source
 
 If you do not trust pre-built binaries you can build `ggman` from source. 
-You need [`go`](https://golang.org) along with `make` installed on your machine. This project is tested on go `1.16`, older releasees may or may not work. 
+You need [`go`](https://golang.org) along with `make` installed on your machine. This project is tested on go `1.17`, older releasees may or may not work. 
 
 After cloning this repository, you can then simply type `make` and executables will be generated inside the `dist/` directory. 
 
@@ -253,7 +253,7 @@ To fetch data for all repositories, or to run git pull, use `ggman fetch` and `g
 
 ### 'ggman clone', 'ggman link' and `ggman relocate`
 
-To clone a new repoistory into the respective location, use `ggman clone` with the name of the repository as the argument, for example:
+To clone a new repository into the respective location, use `ggman clone` with the name of the repository as the argument, for example:
 
 ```bash
 ggman clone git@github.com:hello/world.git
@@ -333,6 +333,15 @@ However this does not affect existing repositories.
 To find repositories with an old branch, the `ggman find-branch` command can be used. 
 It takes a single argument (a branch name), and finds all repositories that contain a branch with the given name. 
 
+### 'ggman sweep'
+
+After moving repositories around (for example using `ggman relocate`, or by manual operations) empty directories are often left behind. 
+Because of the nature of ggman sometimes directories containing only empty directories may also be left behind. 
+To easily find these directories, the `ggman sweep` command can be used. 
+
+It takes no arguments, and lists all directories, which are not git repositories and are empty, or contain only empty directories.
+These are listed in such an order that they can be deleted in order using `rmdir` and friends.
+
 ### Useful aliases
 
 In addition to ggman certain aliases can be very useful. 
@@ -353,6 +362,8 @@ ggcode () {
 ## Changelog
 
 ### 1.13.0 (Upcoming)
+
+- add `ggman sweep` command
 
 ### 1.12.0 (Released [Dec 23 2021](https://github.com/tkw1536/ggman/releases/tag/v1.12.0))
 
