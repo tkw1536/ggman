@@ -20,6 +20,8 @@ It allows one to:
 - Maintain and expand a local directory structure of multiple repositories
 - Run actions (such as `git clone`, `git pull`) on groups of repositories
 
+ggman is not limited to using specific providers such as GitHub or GitLab.
+In particular all core functionality works either offline, or is only based only on "git" itself.
 
 ## Setting up and using 'ggman'
 
@@ -373,6 +375,7 @@ ggcode () {
 - add `ggman exec` command
 - sort matches against fuzzy filters by score
 - ensure shell escaping when generating scripts using `--simulate`
+- prepare URLs to accept custom aliases
 - internal testing improvements
 - refactor main program initialization
 
