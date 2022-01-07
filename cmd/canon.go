@@ -45,7 +45,7 @@ func (canon) Run(context program.Context) error {
 	}
 
 	// print out the canonical version of the file
-	canonical := env.ParseURL(context.Args[0]).CanonicalWith(file)
+	canonical := context.URLV(0).CanonicalWith(file)
 	context.Println(canonical)
 
 	return nil
