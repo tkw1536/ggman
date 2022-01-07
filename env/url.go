@@ -27,31 +27,10 @@ type URL struct {
 	Path string // e.g. "hello/world.git"
 }
 
-// ParseURL parses a string into a repo URL.
-//
-// We support two types of urls:
-//
-// 1. The long form:
-// [scheme://][user[:password]@]hostname[:port]/path
-// e.g. https://git:git@mydomain:1234/repo.git
-// e.g. https://git@mydomain/example
-//
-// 2. The short form:
-// [scheme://][user[:password]@]hostname:path
-// e.g. mydomain:hello/world.git
-//
-// ParseURL always suceeds.
-// This can lead to unexpected parses of URLs when e.g. a port is specified incorrectly.
-//
-// For windows compatibility, '\\' is replaced by '/' in the input string.
+// ParseURL parses a URL without any namespaces.
+// See ParseURLNamespace.
 func ParseURL(s string) (repo URL) {
-	// Any changes made here should also be made in ComponentsOf.
-
 	s = strings.ReplaceAll(s, "\\", "/") // windows
-
-	// we sometimes have to restore 's' to what it was before
-	// we could do this using string concatination, but that is slow.
-	// so we store it in a temporary variable called 'oldS'
 
 	// Trim off a leading scheme (as seperated by '://') and (if it is valid) store it.
 	scheme, rest := text.SplitBefore(s, "://")
@@ -69,7 +48,7 @@ func ParseURL(s string) (repo URL) {
 		repo.User, repo.Password = text.SplitAfter(auth, ":")
 	}
 
-	// Finally, we cherck if the remainder contains a ':'.
+	// Finally, we check if the remainder contains a ':'.
 	// If it does, we have to figure out if it is of the form hostname:port or hostname:path.
 	// The second form is only allowed if we have some kind of scheme.
 	// If there is no ':', we can straightforwardly split after the first '/'
@@ -94,6 +73,52 @@ func ParseURL(s string) (repo URL) {
 	return
 }
 
+// ParseURLContext parses a string into a repo URL, while expanding the provided namespaces.
+//
+// We support two types of urls:
+//
+// 1. The long form:
+// [scheme://][user[:password]@]hostname[:port]/path
+// e.g. https://git:git@mydomain:1234/repo.git
+// e.g. https://git@mydomain/example
+//
+// 2. The short form:
+// [scheme://][user[:password]@]hostname:path
+// e.g. mydomain:hello/world.git
+//
+// A namespace may be prepended to the URL using the form 'namespace:[//]'
+// When a namespace is encountered, the remainder of the URL is appended to the expansion of the namespace.
+// Then the URL parsing is restarted.
+//
+// Namespaces may not be nested, meaning only one expansion of namespaces is done.
+// This is to prevent infinite loops during parsing.
+//
+// ParseURLContext always suceeds.
+// This can lead to unexpected parses of URLs when e.g. a port is specified incorrectly.
+//
+// For windows compatibility, '\\' is replaced by '/' in the input string.
+func ParseURLContext(s string, namespaces map[string]string) (repo URL) {
+	s = strings.ReplaceAll(s, "\\", "/") // windows
+
+	// check for and subsitute in all the namespaces
+	// we need to check the long form first,
+	for ns, expansion := range namespaces {
+		nsLong := ns + "://"
+		if strings.HasPrefix(s, nsLong) {
+			s = expansion + s[len(nsLong):]
+			break
+		}
+
+		nsShort := ns + ":"
+		if strings.HasPrefix(s, nsShort) {
+			s = expansion + s[len(nsShort):]
+			break
+		}
+	}
+
+	return ParseURL(s)
+}
+
 // IsLocal checks if this URL looks like a local URL.
 // A URL is considered local if it uses the "file" scheme, or the scheme is empty and the hostname is one of ".", ".." or "".
 func (url URL) IsLocal() bool {
@@ -106,8 +131,6 @@ func (url URL) IsLocal() bool {
 // Empty components are ignored.
 // Furthermore a username 'git' as well as a trailing suffix of '.git' are ignored as well.
 func (url URL) Components() []string {
-	// Any changes made here should also be made in ComponentsOf.
-
 	// First split the path into components split by '/'.
 	// and remove a '.git' from the last part.
 	parts := text.RemoveEmpty(strings.Split(url.Path, "/"))

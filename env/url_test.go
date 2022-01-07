@@ -96,6 +96,59 @@ func TestParseURL(t *testing.T) {
 	}
 }
 
+func TestParseURLContext(t *testing.T) {
+	type args struct {
+		s          string
+		namespaces map[string]string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantRepo URL
+	}{
+		{
+			"regular proto without namespaces",
+			args{"ssh://host.xz/path/to/repo.git/", nil},
+			URL{"ssh", "", "", "host.xz", 0, "path/to/repo.git/"},
+		},
+
+		{
+			"custom namespace (long form)",
+			args{"custom://repo.git/", map[string]string{"custom": "ssh://host.xz/path/to/"}},
+			URL{"ssh", "", "", "host.xz", 0, "path/to/repo.git/"},
+		},
+
+		{
+			"custom namespace (short form)",
+			args{"custom:repo.git/", map[string]string{"custom": "ssh://host.xz/path/to/"}},
+			URL{"ssh", "", "", "host.xz", 0, "path/to/repo.git/"},
+		},
+		{
+			"unuused namespace does not get expanded",
+			args{"ssh://host.xz/path/to/repo.git/", map[string]string{"unused": "ssh://host.xz/path/to/"}},
+			URL{"ssh", "", "", "host.xz", 0, "path/to/repo.git/"},
+		},
+		{
+			"nested namespace does not get expanded",
+			args{"custom:repo.git/", map[string]string{"custom": "nested://host.xz/path/to/", "nested": "invalid://"}},
+			URL{"nested", "", "", "host.xz", 0, "path/to/repo.git/"},
+		},
+		{
+			"recursive namespace does not get expanded twice",
+			args{"recursive:repo.git/", map[string]string{"recursive": "recursive://host.xz/path/to/"}},
+			URL{"recursive", "", "", "host.xz", 0, "path/to/repo.git/"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotRepo := ParseURLContext(tt.args.s, tt.args.namespaces)
+			if !reflect.DeepEqual(gotRepo, tt.wantRepo) {
+				t.Errorf("ParseURLContext() = %v, want %v", gotRepo, tt.wantRepo)
+			}
+		})
+	}
+}
+
 func Benchmark_ParseRepoURL(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		ParseURL("ssh://host.xz/path/to/repo.git/")
