@@ -33,43 +33,43 @@ func TestNewGlobPattern(t *testing.T) {
 	}
 }
 
-func TestAnyStringPattern_Match(t *testing.T) {
+func TestAnyStringPattern_Score(t *testing.T) {
 	type args struct {
 		s string
 	}
 	tests := []struct {
 		name string
 		args args
-		want bool
+		want float64
 	}{
 		{
 			"empty string match",
 			args{""},
-			true,
+			1,
 		},
 
 		{
 			"hello world string match",
 			args{"hello world"},
-			true,
+			1,
 		},
 		{
 			"$*? string match",
 			args{"$*?"},
-			true,
+			1,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			a := AnyStringPattern{}
-			if got := a.Match(tt.args.s); got != tt.want {
-				t.Errorf("AnyStringPattern.Match() = %v, want %v", got, tt.want)
+			if got := a.Score(tt.args.s); got != tt.want {
+				t.Errorf("AnyStringPattern.Score() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestEqualityFoldPattern_Match(t *testing.T) {
+func TestEqualityFoldPattern_Score(t *testing.T) {
 	type args struct {
 		s string
 	}
@@ -77,39 +77,39 @@ func TestEqualityFoldPattern_Match(t *testing.T) {
 		name string
 		p    EqualityFoldPattern
 		args args
-		want bool
+		want float64
 	}{
 		{
 			"pattern matches exactly",
 			EqualityFoldPattern("test"),
 			args{"test"},
-			true,
+			1,
 		},
 
 		{
 			"pattern matches case",
 			EqualityFoldPattern("test"),
 			args{"tEsT"},
-			true,
+			1,
 		},
 
 		{
 			"pattern does not match",
 			EqualityFoldPattern("test"),
 			args{"not-match"},
-			false,
+			-1,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.p.Match(tt.args.s); got != tt.want {
-				t.Errorf("EqualityFoldPattern.Match() = %v, want %v", got, tt.want)
+			if got := tt.p.Score(tt.args.s); got != tt.want {
+				t.Errorf("EqualityFoldPattern.Score() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestFuzzyFoldPattern_Match(t *testing.T) {
+func TestFuzzyFoldPattern_Score(t *testing.T) {
 	type args struct {
 		s string
 	}
@@ -117,53 +117,53 @@ func TestFuzzyFoldPattern_Match(t *testing.T) {
 		name string
 		p    FuzzyFoldPattern
 		args args
-		want bool
+		want float64
 	}{
 		{
 			"pattern matches exactly",
 			FuzzyFoldPattern("test"),
 			args{"test"},
-			true,
+			1,
 		},
 
 		{
 			"pattern matches case",
 			FuzzyFoldPattern("test"),
 			args{"tEsT"},
-			true,
+			1,
 		},
 
 		{
 			"pattern matches fuzzy",
 			FuzzyFoldPattern("tst"),
 			args{"test"},
-			true,
+			0.75,
 		},
 
 		{
 			"pattern matches fuzzy case",
 			FuzzyFoldPattern("TsT"),
 			args{"TeSt"},
-			true,
+			0.75,
 		},
 
 		{
 			"pattern does not match",
 			FuzzyFoldPattern("test"),
 			args{"not-match"},
-			false,
+			-1,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.p.Match(tt.args.s); got != tt.want {
-				t.Errorf("FuzzyFoldPattern.Match() = %v, want %v", got, tt.want)
+			if got := tt.p.Score(tt.args.s); got != tt.want {
+				t.Errorf("FuzzyFoldPattern.Score() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestGlobPattern_Match(t *testing.T) {
+func TestGlobPattern_Score(t *testing.T) {
 	type args struct {
 		s string
 	}
@@ -171,33 +171,33 @@ func TestGlobPattern_Match(t *testing.T) {
 		name string
 		p    GlobPattern
 		args args
-		want bool
+		want float64
 	}{
 		{
 			"pattern matches exactly",
 			GlobPattern("a*b"),
 			args{"aaaab"},
-			true,
+			1,
 		},
 
 		{
 			"pattern matches case",
 			GlobPattern("a*b"),
 			args{"AaAaB"},
-			true,
+			1,
 		},
 
 		{
 			"pattern does not match",
 			GlobPattern("a*b"),
 			args{"1234"},
-			false,
+			-1,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.p.Match(tt.args.s); got != tt.want {
-				t.Errorf("GlobPattern.Match() = %v, want %v", got, tt.want)
+			if got := tt.p.Score(tt.args.s); got != tt.want {
+				t.Errorf("GlobPattern.Score() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -262,7 +262,7 @@ func TestNewSplitGlobPattern(t *testing.T) {
 	}
 }
 
-func TestSplitPattern_Match(t *testing.T) {
+func TestSplitPattern_Score(t *testing.T) {
 	type fields struct {
 		Split    func(s string) []string
 		Patterns []Pattern
@@ -283,7 +283,7 @@ func TestSplitPattern_Match(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   bool
+		want   float64
 	}{
 		{
 			"empty Split pattern matches anything (1)",
@@ -292,7 +292,7 @@ func TestSplitPattern_Match(t *testing.T) {
 				Patterns: nil,
 			},
 			args{"a"},
-			true,
+			1,
 		},
 
 		{
@@ -302,7 +302,7 @@ func TestSplitPattern_Match(t *testing.T) {
 				Patterns: nil,
 			},
 			args{"a*b"},
-			true,
+			1,
 		},
 
 		{
@@ -312,7 +312,7 @@ func TestSplitPattern_Match(t *testing.T) {
 				Patterns: nil,
 			},
 			args{""},
-			true,
+			1,
 		},
 
 		{
@@ -326,7 +326,7 @@ func TestSplitPattern_Match(t *testing.T) {
 				},
 			},
 			args{"a;b;c"},
-			true,
+			1,
 		},
 
 		{
@@ -340,7 +340,7 @@ func TestSplitPattern_Match(t *testing.T) {
 				},
 			},
 			args{"a;b;c;c;c"},
-			true,
+			1,
 		},
 
 		{
@@ -354,7 +354,7 @@ func TestSplitPattern_Match(t *testing.T) {
 				},
 			},
 			args{"a;a;b;c;c"},
-			true,
+			1,
 		},
 		{
 			"end match",
@@ -367,7 +367,7 @@ func TestSplitPattern_Match(t *testing.T) {
 				},
 			},
 			args{"a;a;a;b;c"},
-			true,
+			1,
 		},
 
 		{
@@ -381,7 +381,7 @@ func TestSplitPattern_Match(t *testing.T) {
 				},
 			},
 			args{"a;b"},
-			false,
+			-1,
 		},
 
 		{
@@ -395,7 +395,7 @@ func TestSplitPattern_Match(t *testing.T) {
 				},
 			},
 			args{"b;c"},
-			false,
+			-1,
 		},
 
 		{
@@ -409,7 +409,7 @@ func TestSplitPattern_Match(t *testing.T) {
 				},
 			},
 			args{"b;b;c"},
-			false,
+			-1,
 		},
 		{
 			"no match (long)",
@@ -422,7 +422,7 @@ func TestSplitPattern_Match(t *testing.T) {
 				},
 			},
 			args{"a;a;b;b;c;c"},
-			false,
+			-1,
 		},
 	}
 	for _, tt := range tests {
@@ -431,8 +431,8 @@ func TestSplitPattern_Match(t *testing.T) {
 				Split:    tt.fields.Split,
 				Patterns: tt.fields.Patterns,
 			}
-			if got := sp.Match(tt.args.s); got != tt.want {
-				t.Errorf("SplitPattern.Match() = %v, want %v", got, tt.want)
+			if got := sp.Score(tt.args.s); got != tt.want {
+				t.Errorf("SplitPattern.Score() = %v, want %v", got, tt.want)
 			}
 		})
 	}

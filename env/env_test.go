@@ -361,6 +361,79 @@ func TestEnv_ScanRepos(t *testing.T) {
 	}
 }
 
+func TestEnv_ScanRepos_fuzzy(t *testing.T) {
+	root := testutil.TempDirAbs(t)
+
+	// make a dir with parents and turn it into git
+	mkgit := func(s string) {
+		pth := filepath.Join(root, s)
+		err := os.MkdirAll(pth, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+		if testutil.NewTestRepoAt(pth, s) == nil {
+			panic("NewTestRepoAt() returned nil")
+		}
+	}
+
+	mkgit(filepath.Join("abc")) // matches the filter 'bc' with a score of 0.66, but lexiographically first
+	mkgit(filepath.Join("bc"))  // matches the filter 'bc' with a score of 1, but lexiographically last
+
+	// utility to remove root from all the paths
+	trimPath := func(path string) string {
+		t, err := filepath.Rel(root, path)
+		if err != nil {
+			return path
+		}
+		return t
+	}
+	trimAll := func(paths []string) {
+		for idx := range paths {
+			paths[idx] = trimPath(paths[idx])
+		}
+	}
+
+	tests := []struct {
+		name   string
+		Filter string
+		want   []string
+	}{
+		{
+			"all repos", "", []string{
+				"abc",
+				"bc",
+			},
+		},
+		{
+			"filter 'bc', sorted by priority", "bc", []string{
+				"bc",
+				"abc",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			env := Env{
+				Root: root,
+				Git:  git.NewGitFromPlumbing(nil, ""),
+
+				Filter: NewPatternFilter(tt.Filter, true),
+			}
+			got, err := env.ScanRepos(root)
+			wantErr := false
+			if (err != nil) != wantErr {
+				t.Errorf("Env.ScanRepos() error = %v, wantErr %v", err, wantErr)
+				return
+			}
+			trimAll(got)
+			path.ToOSPaths(tt.want)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Env.ScanRepos() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestEnv_Normalization(t *testing.T) {
 	tests := []struct {
 		GGNORM string

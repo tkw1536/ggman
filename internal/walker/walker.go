@@ -28,7 +28,9 @@ type Walker struct {
 
 	errChan    chan error      // contains error in the buffer
 	resultChan chan walkResult // contains results temporarily
-	results    []string        // results
+
+	results []string  // results
+	scores  []float64 // scores
 
 	Params  Params
 	Process Process
@@ -164,9 +166,12 @@ func (w *Walker) Walk() error {
 
 		// store the real (textual) results
 		w.results = make([]string, len(results))
+		w.scores = make([]float64, len(results))
 		for i, r := range results {
 			w.results[i] = r.Node
+			w.scores[i] = r.Score
 		}
+
 	}()
 
 	// wait for the scan to finish, then return the results
@@ -285,8 +290,8 @@ func (w *Walker) walk(sync bool, ctx *walkContext) (ok bool) {
 
 // reportResults reports the given node as a result.
 // might block until a slot in the results is available.
-func (w *Walker) reportResult(node string, prio int) {
-	w.resultChan <- walkResult{Node: node, Priority: prio}
+func (w *Walker) reportResult(node string, score float64) {
+	w.resultChan <- walkResult{Node: node, Score: score}
 }
 
 // reportErrors reports the provided error to the caller of Walk()
@@ -313,22 +318,36 @@ func (w *Walker) Results() []string {
 	return results
 }
 
+// Scores returns the scores which have been marked as a result.
+// They are returned in the same order as Results()
+//
+// Results expects the Scan() function to have returned, and will panic if this is not the case.
+func (w *Walker) Scores() []float64 {
+	if atomic.LoadUint32(&w.state) != 2 {
+		panic("Walker.Walk(): Scores() called before Walk() returned")
+	}
+
+	scores := make([]float64, len(w.scores))
+	copy(scores, w.scores)
+	return scores
+}
+
 var ErrUnknownAction = errors.New("Process.BeforeChild(): Unknown action")
 
 // walkResult represents an internal result of the wlak function
 type walkResult struct {
-	Node     string
-	Priority int
+	Node  string
+	Score float64
 }
 
 // LessThan returns true if w should occur before v when sorting a slice of walkResults
 //
-// Sorting first occurs descending by Priority, then ascending by lexiographic order on Node.
+// Sorting first occurs descending by Score, then ascending by lexiographic order on Node.
 func (w walkResult) LessThan(v walkResult) bool {
 	switch {
-	case w.Priority < v.Priority:
+	case w.Score < v.Score:
 		return false
-	case w.Priority > v.Priority:
+	case w.Score > v.Score:
 		return true
 	case w.Node < v.Node:
 		return true

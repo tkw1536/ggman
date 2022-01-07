@@ -28,7 +28,7 @@ type WalkContext interface {
 	Snapshot(update func(snapshot interface{}) (value interface{}))
 
 	// Mark marks the current node as a result with the given priority
-	Mark(prio int)
+	Mark(prio float64)
 }
 
 var walkContextPool = sync.Pool{
@@ -105,7 +105,7 @@ func (w walkContext) Depth() int {
 	return len(w.path)
 }
 
-func (w walkContext) Mark(prio int) {
+func (w walkContext) Mark(prio float64) {
 	w.w.reportResult(w.nodePath, prio)
 }
 

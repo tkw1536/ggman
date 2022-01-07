@@ -90,8 +90,8 @@ func TestScan(t *testing.T) {
 		},
 		{
 			"scan /, accept only three-triples",
-			func(path string, root FS, depth int) (match, cont bool) {
-				return depth == 3, true
+			func(path string, root FS, depth int) (score float64, cont bool) {
+				return ScanMatch(depth == 3), true
 			},
 			Params{
 				Root: NewRealFS(base, false),
@@ -112,8 +112,8 @@ func TestScan(t *testing.T) {
 		},
 		{
 			"scan /, stop inside '/ab'",
-			func(pth string, root FS, depth int) (match, cont bool) {
-				return true, trimPath(pth) != path.ToOSPath("a/ab")
+			func(pth string, root FS, depth int) (score float64, cont bool) {
+				return ScanMatch(true), trimPath(pth) != path.ToOSPath("a/ab")
 			},
 			Params{
 				Root: NewRealFS(base, false),
@@ -202,6 +202,27 @@ func TestScan(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Scan() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestScanMatch(t *testing.T) {
+	type args struct {
+		value bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want float64
+	}{
+		{"true", args{value: true}, 1},
+		{"false", args{value: false}, -1},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ScanMatch(tt.args.value); got != tt.want {
+				t.Errorf("ScanMatch() = %v, want %v", got, tt.want)
 			}
 		})
 	}

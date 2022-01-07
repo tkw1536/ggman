@@ -355,6 +355,7 @@ func (env Env) Repos() []string {
 }
 
 // ScanRepos scans for repositories in the provided folder that match the Filter of this environment.
+// They are returned in order of filter score.
 // When an error occurs, this function may still return a list of (incomplete) repositories along with an error.
 func (env Env) ScanRepos(folder string) ([]string, error) {
 	if folder == "" {
@@ -381,11 +382,11 @@ func (env Env) ScanRepos(folder string) ([]string, error) {
 		extraFS[i] = walker.NewRealFS(root, true)
 	}
 
-	return walker.Scan(func(path string, root walker.FS, depth int) (match, cont bool) {
+	return walker.Scan(func(path string, root walker.FS, depth int) (score float64, cont bool) {
 		if env.Git.IsRepositoryQuick(path) {
-			return env.Filter.Matches(env, path), false // never continue even if a repository does not match
+			return env.Filter.Score(env, path), false // never continue even if a repository does not match
 		}
-		return false, true
+		return walker.ScanMatch(false), true
 	}, walker.Params{
 		Root: walker.NewRealFS(folder, true),
 

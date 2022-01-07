@@ -17,9 +17,10 @@ func Sweep(Visit SweepProcess, Params Params) ([]string, error) {
 	}
 
 	err := scanner.Walk()
-	results := scanner.Results()
 
-	return results, err
+	// we can safely access results directly
+	// because now the walker becomes inaccessible!
+	return scanner.results, err
 }
 
 // SweepProcess is a function that is called once for each directory that is being sweeped.
@@ -82,7 +83,7 @@ func (SweepProcess) AfterVisit(context WalkContext) (err error) {
 	context.Snapshot(func(snapshot interface{}) interface{} {
 		isEmpty := snapshot.(bool)
 		if isEmpty {
-			context.Mark(context.Depth())
+			context.Mark(float64(context.Depth()))
 		}
 		return isEmpty
 	})

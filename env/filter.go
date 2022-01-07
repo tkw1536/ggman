@@ -9,24 +9,27 @@ import (
 	"github.com/tkw1536/ggman/internal/text"
 )
 
-// Filter is a predicate that matches repositories inside an environment.
+// Filter is a predicate that scores repositories inside an environment.
 //
 // A filter is applied by recursively scanning the root folder for git repositories.
 // Each folder that is a repository will be passed to clonePath.
 //
 // Filter may also optionally implement FilterWithCandidates.
 type Filter interface {
-	// Matches checks if a repository at clonePath matches this filter.
-	Matches(env Env, clonePath string) bool
+	// Score scores the repository at clonePath against this filter.
+	//
+	// When it does match, returns a float64 between 0 and 1 (inclusive on both ends),
+	// If the filter does not match, returns -1
+	Score(env Env, clonePath string) float64
 }
 
-// NoFilter is a special filter that matches every directory
+// NoFilter is a special filter that matches every directory with the highest possible score
 var NoFilter Filter = emptyFilter{}
 
 type emptyFilter struct{}
 
-func (emptyFilter) Matches(env Env, clonePath string) bool {
-	return true
+func (emptyFilter) Score(env Env, clonePath string) float64 {
+	return 1
 }
 
 // FilterWithCandidates is a filter that in addition to being applied normally should also be applied to the provided candidates.
@@ -53,15 +56,18 @@ func Candidates(f Filter) []string {
 // PathFilter is a filter that always matches the provided paths.
 // It implements FilterWithCandidates.
 type PathFilter struct {
-	// Paths is the list of paths this filter should match.
+	// Paths is the list of paths this filter should match with the highest possible score.
 	// It is the callers responsibility to normalize paths accordingly.
 	Paths []string
 }
 
-// Matches checks if a repository at clonePath matches this filter.
-// Root indicates the root of all repositories.
-func (pf PathFilter) Matches(env Env, clonePath string) bool {
-	return text.SliceContainsAny(pf.Paths, clonePath)
+// Score checks if a repository at clonePath matches this filter, and if so returns 1.
+// See Filter.Score.
+func (pf PathFilter) Score(env Env, clonePath string) float64 {
+	if text.SliceContainsAny(pf.Paths, clonePath) {
+		return 1
+	}
+	return -1
 }
 
 // Candidates returns a list of folders that should be scanned regardless of their location.
@@ -98,11 +104,11 @@ func (pat *PatternFilter) Set(value string) {
 
 // Matches checks if this filter matches the repository at clonePath.
 // The caller may assume that there is a repository at clonePath.
-func (pat PatternFilter) Matches(env Env, clonePath string) bool {
+func (pat PatternFilter) Score(env Env, clonePath string) float64 {
 	// find the remote url to use
 	remote, err := env.Git.GetRemote(clonePath)
 	if err != nil {
-		return false
+		return -1
 	}
 
 	// if there is no remote url (because the repo has been cleanly "init"ed)
@@ -110,25 +116,25 @@ func (pat PatternFilter) Matches(env Env, clonePath string) bool {
 	if remote == "" {
 		root, err := env.absRoot()
 		if err != nil { // root not resolved
-			return false
+			return -1
 		}
 		actualClonePath, err := filepath.Abs(clonePath)
 		if err != nil { // clonepath not resolved
-			return false
+			return -1
 		}
 		remote, err = filepath.Rel(root, actualClonePath)
 		if err != nil { // relative path not resolved
-			return false
+			return -1
 		}
 	}
 
-	return pat.pattern.Match(remote)
+	return pat.pattern.Score(remote)
 }
 
 // MatchesURL checks if this filter matches a url
 func (pat PatternFilter) MatchesURL(url URL) bool {
 	parts := strings.Join(url.Components(), string(os.PathSeparator))
-	return pat.pattern.Match(parts)
+	return pat.pattern.Score(parts) >= 0
 }
 
 // DisjunctionFilter represents a filter that joins existing filters using an 'or' clause.
@@ -137,13 +143,14 @@ type DisjunctionFilter struct {
 }
 
 // Matches checks if this filter matches any of the filters that were joined.
-func (or DisjunctionFilter) Matches(env Env, clonePath string) bool {
+func (or DisjunctionFilter) Score(env Env, clonePath string) float64 {
+	max := float64(-1)
 	for _, f := range or.Clauses {
-		if f.Matches(env, clonePath) {
-			return true
+		if score := f.Score(env, clonePath); score > max {
+			max = score
 		}
 	}
-	return false
+	return max
 }
 
 // Candidates returns the candidates of this filter
@@ -173,7 +180,7 @@ func (sf WorktreeFilter) Candidates() []string {
 	return Candidates(sf.Filter)
 }
 
-func (sf WorktreeFilter) Matches(env Env, clonePath string) bool {
+func (sf WorktreeFilter) Score(env Env, clonePath string) float64 {
 	return FilterPredicate(sf.Filter, func() bool {
 		dirty, err := env.Git.IsDirty(clonePath)
 		return err == nil && dirty
@@ -191,7 +198,7 @@ func (sf StatusFilter) Candidates() []string {
 	return Candidates(sf.Filter)
 }
 
-func (sf StatusFilter) Matches(env Env, clonePath string) bool {
+func (sf StatusFilter) Score(env Env, clonePath string) float64 {
 	return FilterPredicate(sf.Filter, func() bool {
 		sync, err := env.Git.IsSync(clonePath)
 		return err == nil && sync
@@ -210,7 +217,7 @@ func (tf TarnishFilter) Candidates() []string {
 	return Candidates(tf.Filter)
 }
 
-func (tf TarnishFilter) Matches(env Env, clonePath string) bool {
+func (tf TarnishFilter) Score(env Env, clonePath string) float64 {
 	return FilterPredicate(tf.Filter, func() bool {
 		dirty, err := env.Git.IsDirty(clonePath)
 		if err != nil {
@@ -230,25 +237,31 @@ func (tf TarnishFilter) Matches(env Env, clonePath string) bool {
 }
 
 // FilterPredicate checks if the provided Filter matches the given predicate
-func FilterPredicate(filter Filter, predicate func() bool, includeTrue bool, includeFalse bool, env Env, clonePath string) bool {
-	switch {
-	// neither is included => return fals eimmediatly
-	case !includeTrue && !includeFalse:
-		return false
-
-	// all other cases need to pass the filter!
-	case !filter.Matches(env, clonePath):
-		return false
-
-	// both are included => we need to do any further checking!
-	case includeTrue && includeFalse:
-		return true
-
-	// exactly one is included
-	case includeTrue:
-		return predicate()
-	case includeFalse:
-		return !predicate()
+func FilterPredicate(filter Filter, predicate func() bool, includeTrue bool, includeFalse bool, env Env, clonePath string) float64 {
+	// neither is included!
+	if !includeTrue && !includeFalse {
+		return -1
 	}
-	panic("never reached")
+
+	// all other cases below need to match the filter!
+	score := filter.Score(env, clonePath)
+	if score < 0 {
+		return -1
+	}
+
+	// both are included, so we don't need to do any more checking
+	if includeTrue && includeFalse {
+		return score
+	}
+
+	// need to check the filter
+	ok := predicate()
+	if includeFalse {
+		ok = !ok
+	}
+
+	if !ok {
+		return -1
+	}
+	return 1
 }
