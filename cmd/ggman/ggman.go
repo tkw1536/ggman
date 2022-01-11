@@ -110,6 +110,7 @@ func init() {
 		cmd.Canon,
 		cmd.Clone,
 		cmd.Comps,
+		cmd.Exec,
 		cmd.Fetch,
 		cmd.FindBranch,
 		cmd.Fix,

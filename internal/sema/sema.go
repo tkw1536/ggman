@@ -1,3 +1,4 @@
+// Package sema implements semaphores and semaphore-related scheduling
 package sema
 
 import "sync"

@@ -342,6 +342,12 @@ To easily find these directories, the `ggman sweep` command can be used.
 It takes no arguments, and lists all directories, which are not git repositories and are empty, or contain only empty directories.
 These are listed in such an order that they can be deleted in order using `rmdir` and friends.
 
+### 'ggman exec'
+
+Sometimes it is useful to run an arbitray command over all the known git repositories.
+This can be achieved using the `ggman exec` command.
+It simply takes a command as an argument and runs it in each repository.
+
 ### Useful aliases
 
 In addition to ggman certain aliases can be very useful. 
@@ -364,6 +370,7 @@ ggcode () {
 ### 1.13.0 (Upcoming)
 
 - add `ggman sweep` command
+- add `ggman exec` command
 - sort matches against fuzzy filters by score
 - ensure shell escaping when generating scripts using `--simulate`
 - refactor main program initialization
