@@ -365,6 +365,7 @@ ggcode () {
 
 - add `ggman sweep` command
 - sort matches against fuzzy filters by score
+- ensure shell escaping when generating scripts using `--simulate`
 - refactor main program initialization
 
 ### 1.12.0 (Released [Dec 23 2021](https://github.com/tkw1536/ggman/releases/tag/v1.12.0))

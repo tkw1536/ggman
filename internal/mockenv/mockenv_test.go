@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/alessio/shellescape"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/program"
@@ -46,6 +47,7 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 		{"replace full path not ok", fields{path.ToOSPath("/root/")}, args{"logprefix", "prefix " + path.ToOSPath("/root") + " suffix", []string{"prefix ${GGROOT a b} suffix"}}, fmt.Sprintf("logprefix got = %q, want = %q", "prefix "+path.ToOSPath("/root")+" suffix", "prefix "+path.ToOSPath("/root/a/b")+" suffix")},
 
 		{"escape path with quotes", fields{path.ToOSPath("/root/")}, args{"logprefix", fmt.Sprintf("%q", path.ToOSPath("/root")), []string{"\"${GGROOT}\""}}, ""},
+		{"escape path with `s", fields{path.ToOSPath("/!root/")}, args{"logprefix", shellescape.Quote(path.ToOSPath("/!root")), []string{"`${GGROOT}`"}}, ""},
 
 		{"equal to first want is ok", fields{path.ToOSPath("/root/")}, args{"logprefix", "first", []string{"first", "last"}}, ""},
 		{"equal to last want is ok", fields{path.ToOSPath("/root/")}, args{"logprefix", "last", []string{"first", "last"}}, ""},

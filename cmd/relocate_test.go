@@ -30,7 +30,7 @@ func TestCommandRelocate(t *testing.T) {
 			[]string{"relocate", "--simulate"},
 
 			0,
-			"mkdir -p ${GGROOT github.com correct}\nmv ${GGROOT github.com incorrect directory} ${GGROOT github.com correct directory}\n",
+			"mkdir -p `${GGROOT github.com correct}`\nmv `${GGROOT github.com incorrect directory}` `${GGROOT github.com correct directory}`\n",
 
 			"",
 		},
@@ -41,7 +41,7 @@ func TestCommandRelocate(t *testing.T) {
 			[]string{"relocate"},
 
 			0,
-			"mkdir -p ${GGROOT github.com correct}\nmv ${GGROOT github.com incorrect directory} ${GGROOT github.com correct directory}\n",
+			"mkdir -p `${GGROOT github.com correct}`\nmv `${GGROOT github.com incorrect directory}` `${GGROOT github.com correct directory}`\n",
 
 			"",
 		},

@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/alessio/shellescape"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/tkw1536/ggman"
@@ -156,24 +157,24 @@ type TestingT interface {
 // If this is not the case, calls TestingT.Errorf() with an error message relating to the last want.
 //
 // For consistency across runs, strings of the form `${GGROOT a b c}` in want are resolved into an absolute path.
-// Furthermore when the character preceeding the $ is a '"', additionally escapes the string.
+// Furthermore when `${}` is surrounded by "s, (e.g. "${GGROOT a b c}"), go quotes the string.
+// When text is instead surrounded by ``s`s, (e.g. `${GGROOT a b c}`) shell escapes the string.
 //
 // Context should be aditional information to be prefixed for the error message.
 func (mock *MockEnv) AssertOutput(t TestingT, prefix, got string, wants ...string) {
-	var ok bool
 	var lastWant string
 	for _, want := range wants {
-		ok, lastWant = mock.isOutputSingle(got, want)
-		if ok {
+		lastWant = mock.interpolate(want)
+		if lastWant == got {
 			return
 		}
 	}
 	t.Errorf("%s got = %q, want = %q", prefix, got, lastWant)
 }
 
-// isOutputSingle normalizes want and checks if got = want.
-func (mock *MockEnv) isOutputSingle(got, want string) (ok bool, normalizedWant string) {
-	want = regexGGROOT.ReplaceAllStringFunc(want, func(s string) string {
+// interpolate interpolates the striing values by replacing all ins
+func (mock *MockEnv) interpolate(value string) (result string) {
+	return regexGGROOT.ReplaceAllStringFunc(value, func(s string) string {
 		// extract the first character, actual characters, and the last character
 		first := string(s[0])
 		actual := s[1 : len(s)-1]
@@ -194,7 +195,9 @@ func (mock *MockEnv) isOutputSingle(got, want string) (ok bool, normalizedWant s
 		if first == "\"" && last == "\"" {
 			return fmt.Sprintf("%q", actual)
 		}
+		if first == "`" && last == "`" {
+			return shellescape.Quote(actual)
+		}
 		return first + actual + last
 	})
-	return got == want, want
 }

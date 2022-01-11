@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/alessio/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
@@ -67,8 +68,8 @@ func (r relocate) Run(context program.Context) error {
 		parentPath := filepath.Join(shouldPath, "..")
 
 		// print what is being done
-		context.Printf("mkdir -p %s\n", parentPath)
-		context.Printf("mv %s %s\n", gotPath, shouldPath)
+		context.Printf("mkdir -p %s\n", shellescape.Quote(parentPath))
+		context.Printf("mv %s %s\n", shellescape.Quote(gotPath), shellescape.Quote(shouldPath))
 		if r.Simulate {
 			continue
 		}

@@ -30,4 +30,6 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )
 
+require github.com/alessio/shellescape v1.4.1
+
 require golang.org/x/text v0.3.7 // indirect
