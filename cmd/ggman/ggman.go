@@ -101,6 +101,35 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
+// the main ggman program, created from the environment
+var ggmanExe *program.Program = &program.Program{IOStream: ggman.NewEnvIOStream()}
+
+// register all the commands to the ggman program!
+func init() {
+	for _, c := range []program.Command{
+		cmd.Canon,
+		cmd.Clone,
+		cmd.Comps,
+		cmd.Fetch,
+		cmd.FindBranch,
+		cmd.Fix,
+		cmd.Here,
+		cmd.License,
+		cmd.Link,
+		cmd.Ls,
+		cmd.Lsr,
+		cmd.Pull,
+		cmd.Relocate,
+		cmd.Root,
+		cmd.Sweep,
+		cmd.URL,
+		cmd.Web,
+		cmd.Where,
+	} {
+		ggmanExe.Register(c)
+	}
+}
+
 func main() {
 
 	// recover from calls to panic(), and exit the program appropriatly.
@@ -116,12 +145,7 @@ func main() {
 
 	// Create the 'ggman' program and register all the subcommands
 	// Then execute the program and handle the exit code.
-	pgrm := &program.Program{IOStream: ggman.NewEnvIOStream()}
-	for c := range cmd.All() {
-		pgrm.Register(c)
-	}
-
-	err := ggman.AsError(pgrm.Main(env.EnvironmentParameters{
+	err := ggman.AsError(ggmanExe.Main(env.EnvironmentParameters{
 		Variables: env.ReadVariables(),
 		Plumbing:  nil,
 		Workdir:   "",
