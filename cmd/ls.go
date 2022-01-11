@@ -9,7 +9,6 @@ import (
 // Ls is the 'ggman ls' command.
 //
 // When called, the ggman ls command prints a list of paths to all locally cloned repositories to standard output.
-// The directories will be listed in dictionary order.
 //   --exit-code
 // When provided, exit with code 1 if no repositories are found.
 //   --one
