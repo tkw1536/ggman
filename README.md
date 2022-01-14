@@ -369,7 +369,9 @@ ggcode () {
 
 ## Changelog
 
-### 1.13.0 (Upcoming)
+### 1.14.0 (Upcoming)
+
+### 1.13.0 (Released [Jan 14 2022](https://github.com/tkw1536/ggman/releases/tag/v1.13.0))
 
 - add `ggman sweep` command
 - add `ggman exec` command
