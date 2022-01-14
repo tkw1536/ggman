@@ -9,14 +9,9 @@ import (
 func TestCommandLsr(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Register("https://github.com/hello/world.git")
-	mock.Install("https://github.com/hello/world.git", "github.com", "hello", "world")
-
-	mock.Register("user@server.com/repo")
-	mock.Install("user@server.com/repo", "server.com", "user", "repo")
-
-	mock.Register("https://gitlab.com/hello/world.git")
-	mock.Install("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
+	mock.Clone("user@server.com/repo", "server.com", "user", "repo")
+	mock.Clone("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
 	tests := []struct {
 		name    string

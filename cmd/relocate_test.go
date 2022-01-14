@@ -9,11 +9,8 @@ import (
 func TestCommandRelocate(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Register("https://github.com/right/directory.git")
-	mock.Install("https://github.com/right/directory.git", "github.com", "right", "directory")
-
-	mock.Register("https://github.com/correct/directory.git")
-	mock.Install("https://github.com/correct/directory.git", "github.com", "incorrect", "directory")
+	mock.Clone("https://github.com/right/directory.git", "github.com", "right", "directory")
+	mock.Clone("https://github.com/correct/directory.git", "github.com", "incorrect", "directory")
 
 	tests := []struct {
 		name    string

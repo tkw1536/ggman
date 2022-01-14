@@ -11,9 +11,7 @@ import (
 func TestCommandSweep(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Register("https://github.com/hello/world.git")
-
-	path := mock.Install("https://github.com/hello/world.git", "github.com", "hello", "world")
+	path := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
 	base := filepath.Join(path, "..", "..", "..")
 
 	mkdir := func(s string, files ...string) {

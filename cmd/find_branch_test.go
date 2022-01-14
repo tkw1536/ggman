@@ -11,10 +11,8 @@ import (
 func TestCommandFindBranch(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Register("https://github.com/hello/world.git")
-
 	// with branch 'branch'
-	clonePath := mock.Install("https://github.com/hello/world.git", "github.com", "hello", "world")
+	clonePath := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
 	repo, err := git.PlainOpen(clonePath)
 	if err != nil {
 		panic(err)
@@ -22,8 +20,7 @@ func TestCommandFindBranch(t *testing.T) {
 	repo.CreateBranch(&config.Branch{Name: "branch"})
 
 	// with branch 'branch'
-	mock.Register("user@server.com/repo")
-	clonePath = mock.Install("user@server.com/repo", "server.com", "user", "repo")
+	clonePath = mock.Clone("user@server.com/repo", "server.com", "user", "repo")
 	repo, err = git.PlainOpen(clonePath)
 	if err != nil {
 		panic(err)
@@ -31,7 +28,7 @@ func TestCommandFindBranch(t *testing.T) {
 	repo.CreateBranch(&config.Branch{Name: "branch"})
 
 	// with only master branch
-	repo, _ = mock.Register("https://gitlab.com/hello/world.git")
+	repo = mock.Register("https://gitlab.com/hello/world.git")
 	repo.CreateBranch(&config.Branch{Name: "branchC"})
 	mock.Install("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 

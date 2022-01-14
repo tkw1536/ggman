@@ -11,14 +11,9 @@ import (
 func TestCommandLs(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Register("https://github.com/hello/world.git")
-	ghHelloWorld := mock.Install("https://github.com/hello/world.git", "github.com", "hello", "world")
-
-	mock.Register("user@server.com/repo")
-	serverRepo := mock.Install("user@server.com/repo", "server.com", "user", "repo")
-
-	mock.Register("https://gitlab.com/hello/world.git")
-	glHelloWorld := mock.Install("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	ghHelloWorld := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
+	serverRepo := mock.Clone("user@server.com/repo", "server.com", "user", "repo")
+	glHelloWorld := mock.Clone("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
 	// make glHelloWorldDirty
 	if err := os.WriteFile(filepath.Join(glHelloWorld, "dirty"), []byte{}, os.ModePerm); err != nil {

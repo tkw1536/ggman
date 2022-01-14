@@ -12,7 +12,6 @@ import (
 
 	"github.com/alessio/shellescape"
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	gggit "github.com/tkw1536/ggman/git"
@@ -72,6 +71,8 @@ func (mock MockEnv) resolve(path ...string) string {
 // Returns the path the repository has been installed into.
 // Assumes that the remote has been registered.
 //
+// When the remote has not been registered, consider using Install instead.
+//
 // If something goes wrong, calls panic().
 func (mock *MockEnv) Install(remote string, path ...string) string {
 	clonePath := mock.resolve(path...)
@@ -82,13 +83,22 @@ func (mock *MockEnv) Install(remote string, path ...string) string {
 	return clonePath
 }
 
+// Clone is like Install, but calls Register(remote) beforehand.
+// Returns the return value of Install.
+//
+// This function is untested because Register and Install are tested.
+func (mock *MockEnv) Clone(remote string, path ...string) (clonePath string) {
+	mock.Register(remote)
+	return mock.Install(remote, path...)
+}
+
 // Register registers a new remote repository with the provided urls.
 // All remote urls point to the same path.
-// The remote repository contains one commit with the provided hash.
+// Returns a reference to the remote repository.
 //
 // The purpose of registering a remote is that it does not place a requirement for external services to be alive during testing.
 // Calls to clone or fetch the provided repository will instead of talking to the remote talk to this dummy repository instead.
-func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository, hash plumbing.Hash) {
+func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 	if len(remotes) == 0 {
 		panic("Register: Must provide at least one remote. ")
 	}
@@ -98,9 +108,7 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository, hash plu
 
 	// create a repository
 	repo = testutil.NewTestRepoAt(fakeRemotePath, "")
-	_, hash = testutil.CommitTestFiles(repo, map[string]string{"fake.txt": remotes[0]})
-
-	mock.plumbing.URLMap[remotes[0]] = fakeRemotePath
+	testutil.CommitTestFiles(repo, map[string]string{"fake.txt": remotes[0]})
 
 	// Register all the repositories.
 	// Here we rely on the fact that adding "/." to the end of a path does not change the actually cloned path.
@@ -111,7 +119,7 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository, hash plu
 		suffix += string(filepath.Separator) + "."
 	}
 
-	return repo, hash
+	return repo
 }
 
 // Run runs the command with the provided arguments.

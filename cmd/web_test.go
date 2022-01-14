@@ -11,8 +11,7 @@ import (
 func TestCommandURL(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Register("git@github.com/hello/world.git")
-	clonePath := mock.Install("git@github.com/hello/world.git", "hello", "world")
+	clonePath := mock.Clone("git@github.com/hello/world.git", "hello", "world")
 
 	subClonePath := filepath.Join(clonePath, "sub")
 	os.MkdirAll(subClonePath, os.ModePerm)
