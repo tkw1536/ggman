@@ -12,7 +12,7 @@ However once the number of repositories grows beyond a small number this can bec
 
 - It is hard to find which folder a repository has been cloned to
 - Getting an overview of what is cloned and what is not is hard
-- It's not easily possible to perform actions on more than one repos at once, e.g. `git pull`
+- It's not easily possible to perform actions on more than one repo at once, e.g. `git pull`
 
 This is the problem `ggman` is designed to solve. 
 It allows one to:
@@ -191,9 +191,9 @@ For example, the repository `https://github.com/hello/world` can actually be clo
 - `https://github.com/hello/world.git` and
 - `git@github.com:hello/world.git`
 
-Usually the latter url is prefered over the former one in order to use SSH authentication instead of having to constantly having to type a password. 
+Usually the latter url is preferred over the former one in order to use SSH authentication instead of having to constantly having to type a password. 
 For this purpose, ggman implements the concept of `canonical urls`, that is it treats the latter url as the main one and uses it to clone the repository. 
-This behaviour can be customized by the user. 
+This behavior can be customized by the user. 
 
 A canonical url is generated from an original url using a so-called `CANSPEC` (canonical specification).
 An example CANSPEC is `git@^:$.git`. 
@@ -346,7 +346,7 @@ These are listed in such an order that they can be deleted in order using `rmdir
 
 ### 'ggman exec'
 
-Sometimes it is useful to run an arbitray command over all the known git repositories.
+Sometimes it is useful to run an arbitrary command over all the known git repositories.
 This can be achieved using the `ggman exec` command.
 It simply takes a command as an argument and runs it in each repository.
 
@@ -370,6 +370,8 @@ ggcode () {
 ## Changelog
 
 ### 1.14.0 (Upcoming)
+
+- fix typos in README
 
 ### 1.13.0 (Released [Jan 14 2022](https://github.com/tkw1536/ggman/releases/tag/v1.13.0))
 
@@ -492,7 +494,7 @@ ggcode () {
 ### 1.1.0 (Released [Apr 11 2019](https://github.com/tkw1536/ggman/releases/tag/v1.1.0))
 
 - Use external `git clone` command when available and allow passing options to it
-- Added help command and better subcommand help behaviour
+- Added help command and better subcommand help behavior
 - Add versioning information to help page
 
 ### 1.0.0 (Released [Feb 17 2019](https://github.com/tkw1536/ggman/releases/tag/v1.0.0))
