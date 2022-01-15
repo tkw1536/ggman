@@ -129,6 +129,12 @@ func init() {
 	} {
 		ggmanExe.Register(c)
 	}
+
+	for _, a := range []program.Alias{
+		{Name: "git", Command: "exec", Args: []string{"git"}, Description: "Execute a git command using a native 'git' executable. "},
+	} {
+		ggmanExe.RegisterAlias(a)
+	}
 }
 
 func main() {

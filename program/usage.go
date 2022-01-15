@@ -19,12 +19,14 @@ func (p Program) UsagePage() usagefmt.Page {
 	text += fmt.Sprintf("ggman version %s\n", constants.BuildVersion)
 	text += "ggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information."
 
+	commands := append(p.Commands(), p.Aliases()...)
+
 	return usagefmt.Page{
 		MainName:    "ggman",
 		MainOpts:    GetMainOpts(nil),
 		Description: text,
 
-		SubCommands: p.Commands(),
+		SubCommands: commands,
 	}
 }
 

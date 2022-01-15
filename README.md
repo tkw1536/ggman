@@ -103,6 +103,27 @@ ggman relocate --simulate
 
 A more thorough documentation on the commands above and how the URL to path mapping works can be found in the thorough documentation below. 
 
+### additional aliases
+
+In addition to ggman (described in detail below) certain aliases can be very useful. 
+These can be added to `.bashrc` or `.zshrc` (or similar profiles) and are completely optional.
+
+```bash
+# ggcd allows 'cd'-ing into a directory given a repository name
+# e.g ggcd github.com/hello/world will cd into the directory where the
+# 'github.com/hello/world' repository is checked out. 
+#
+# This also works with short names, e.g. "ggcd world" will cd into the first
+# repository matching "world".
+ggcd () {
+	ggman -f $1 ls --exit-code --one && cd $(ggman -f $1 ls --exit-code 2>&1)
+}
+# ggcode is like ggcd, except it opens an editor (here vscode) instead of cding. 
+ggcode () {
+	ggman -f $1 ls --exit-code && code $(ggman -f $1 ls --exit-code 2>&1)
+}
+```
+
 ## the `ggman` command
 
 The `ggman` command is implemented in golang and can be compiled using standard golang tools. 
@@ -350,27 +371,18 @@ Sometimes it is useful to run an arbitrary command over all the known git reposi
 This can be achieved using the `ggman exec` command.
 It simply takes a command as an argument and runs it in each repository.
 
-### Useful aliases
+### Command Aliases
 
-In addition to ggman certain aliases can be very useful. 
+ggman comes with the following builtin aliases:
 
-```bash
-# ggcd allows 'cd'-ing into a directory given a repository name
-# e.g ggcd github.com/hello/world will cd into the directory where the
-# 'github.com/hello/world' repository is checked out. 
-ggcd () {
-	ggman -f $1 ls --exit-code --one && cd $(ggman -f $1 ls --exit-code 2>&1)
-}
-# ggcode is like ggcd, except it opens an editor (here vscode) instead of cding. 
-ggcode () {
-	ggman -f $1 ls --exit-code && code $(ggman -f $1 ls --exit-code 2>&1)
-}
-```
+- `ggman git` behaves exactly like `ggman exec git`
+
 
 ## Changelog
 
-### 1.14.0 (Upcoming)
+### 1.13.1 (Upcoming)
 
+- add support for command aliases and add various aliases
 - fix typos in README
 
 ### 1.13.0 (Released [Jan 14 2022](https://github.com/tkw1536/ggman/releases/tag/v1.13.0))

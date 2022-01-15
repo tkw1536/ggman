@@ -19,6 +19,7 @@ type Program struct {
 	ggman.IOStream
 
 	commands map[string]Command
+	aliases  map[string]Alias
 }
 
 // Commands returns a list of known commands
@@ -160,6 +161,12 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 		return nil
 	}
 
+	// expand the command (if any)
+	alias, hasAlias := p.aliases[args.Command]
+	if hasAlias {
+		args.Command, args.Args = alias.Invoke(args.Args)
+	}
+
 	// load the command if we have it
 	command, hasCommand := p.commands[args.Command]
 	if !hasCommand {
@@ -175,6 +182,10 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 	// special cases of arguments
 	switch {
 	case cmdargs.Help:
+		if hasAlias {
+			p.StdoutWriteWrap(cmdargs.AliasPage(alias).String())
+			return nil
+		}
 		p.StdoutWriteWrap(cmdargs.UsagePage().String())
 		return nil
 	}

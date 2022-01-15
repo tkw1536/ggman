@@ -32,6 +32,8 @@ func TestProgram_Main(t *testing.T) {
 		options   Description
 		variables env.Variables
 
+		alias Alias
+
 		// wrap the "want" variables automatically?
 		wrapError bool
 		wrapOut   bool
@@ -84,9 +86,50 @@ func TestProgram_Main(t *testing.T) {
 		},
 
 		{
+			name: "alias help",
+
+			alias: Alias{
+				Name:    "alias",
+				Command: "fake",
+			},
+
+			args:       []string{"alias", "--help"},
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] alias [--] [ARG ...]\n\nAlias for `ggman fake`. See `ggman fake --help` for detailed help page about\nfake.\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   [ARG ...]\n      Arguments to pass after `ggman fake`.\n",
+			wantCode:   0,
+		},
+
+		{
 			name:       "command help",
 			args:       []string{"--", "fake", "--help"},
 			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] fake [--stdout|-o message]\n[--stderr|-e message]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -o, --stdout message\n       (default write to stdout)\n\n   -e, --stderr message\n       (default write to stderr)\n",
+			wantCode:   0,
+		},
+
+		{
+			name: "alias help",
+
+			alias: Alias{
+				Name:    "alias",
+				Command: "fake",
+			},
+
+			args:       []string{"--", "alias", "--help"},
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] alias [--] [ARG ...]\n\nAlias for `ggman fake`. See `ggman fake --help` for detailed help page about\nfake.\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   [ARG ...]\n      Arguments to pass after `ggman fake`.\n",
+			wantCode:   0,
+		},
+
+		{
+			name: "long alias help",
+
+			alias: Alias{
+				Name:        "alias",
+				Command:     "fake",
+				Args:        []string{"something", "else"},
+				Description: "Some useful alias",
+			},
+
+			args:       []string{"alias", "--help"},
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] alias [--] [ARG ...]\n\nSome useful alias\n\nAlias for `ggman fake something else`. See `ggman fake --help` for detailed\nhelp page about fake.\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   [ARG ...]\n      Arguments to pass after `ggman fake something else`.\n",
 			wantCode:   0,
 		},
 
@@ -250,6 +293,69 @@ func TestProgram_Main(t *testing.T) {
 			wantStderr: "Unknown command. Must be one of \"fake\".\n",
 			wantCode:   2,
 		},
+
+		{
+			name: "'notexistent' command (with alias)",
+
+			alias: Alias{
+				Name:    "alias",
+				Command: "fake",
+			},
+
+			args:       []string{"notexistent"},
+			wantStderr: "Unknown command. Must be one of \"fake\".\n",
+			wantCode:   2,
+		},
+
+		{
+			name: "'alias' without args",
+			args: []string{"alias", "hello", "world"},
+
+			alias: Alias{
+				Name:    "alias",
+				Command: "fake",
+			},
+
+			options:    Description{PosArgsMin: 0, PosArgsMax: -1},
+			variables:  env.Variables{GGROOT: root},
+			wantStdout: "Got filter: \nGot arguments: hello,world\nwrite to stdout\n",
+			wantStderr: "write to stderr\n",
+			wantCode:   0,
+		},
+
+		{
+			name: "'alias' with args",
+			args: []string{"alias", "world"},
+
+			alias: Alias{
+				Name:    "alias",
+				Command: "fake",
+				Args:    []string{"hello"},
+			},
+
+			options:    Description{PosArgsMin: 0, PosArgsMax: -1},
+			variables:  env.Variables{GGROOT: root},
+			wantStdout: "Got filter: \nGot arguments: hello,world\nwrite to stdout\n",
+			wantStderr: "write to stderr\n",
+			wantCode:   0,
+		},
+
+		{
+			name: "recursive 'fake' alias ",
+			args: []string{"fake", "world"},
+
+			alias: Alias{
+				Name:    "fake",
+				Command: "fake",
+				Args:    []string{"hello"},
+			},
+
+			options:    Description{PosArgsMin: 0, PosArgsMax: -1},
+			variables:  env.Variables{GGROOT: root},
+			wantStdout: "Got filter: \nGot arguments: hello,world\nwrite to stdout\n",
+			wantStderr: "write to stderr\n",
+			wantCode:   0,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -261,6 +367,11 @@ func TestProgram_Main(t *testing.T) {
 			fake := &echoCommand{name: "fake", description: tt.options}
 			program.commands = nil
 			program.Register(fake)
+
+			program.aliases = nil
+			if tt.alias.Name != "" {
+				program.RegisterAlias(tt.alias)
+			}
 
 			// run the program
 			ret := ggman.AsError(program.Main(env.EnvironmentParameters{
