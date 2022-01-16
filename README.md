@@ -380,7 +380,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.13.1 (Upcoming)
+### 1.14.0 (Upcoming)
+
+### 1.13.1 (Released [Jan 16 2022](https://github.com/tkw1536/ggman/releases/tag/v1.13.1))
 
 - add support for command aliases and add various aliases
 - fix typos in README
