@@ -384,7 +384,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.13.2 (Upcoming)
+### 1.14.0 (Upcoming)
+
+### 1.13.2 (Released [Jan 18 2022](https://github.com/tkw1536/ggman/releases/tag/v1.13.2))
 
 - add new `--path` global argument to match repos under a specific path
 
