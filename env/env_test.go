@@ -344,7 +344,7 @@ func TestEnv_ScanRepos(t *testing.T) {
 				Root: root,
 				Git:  git.NewGitFromPlumbing(nil, ""),
 
-				Filter: NewPatternFilter(tt.Filter, false), // TODO: Make fuzzyness optional!
+				Filter: NewPatternFilter(tt.Filter, false),
 			}
 			got, err := env.ScanRepos(root)
 			wantErr := false

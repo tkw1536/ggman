@@ -39,7 +39,7 @@ func (c Context) makeFilter() (env.Filter, error) {
 		}
 
 		// create a normal pattern filter
-		clauses[i] = env.NewPatternFilter(pat, !c.NoFuzzyFilter) // TODO: Make fuzzyness optional
+		clauses[i] = env.NewPatternFilter(pat, !c.NoFuzzyFilter)
 	}
 
 	// here filter: alias for --path .
