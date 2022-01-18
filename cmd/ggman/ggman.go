@@ -19,7 +19,7 @@
 //
 // Instead of running a subcommand, print version information to STDOUT and exit.
 //
-//  --for filter, -f filter, --here, -H, --dirty, -d, --clean, -c,
+//  --for filter, -f filter, --here, -H, --path, -P, --dirty, -d, --clean, -c,
 //  --synced, -s, --unsynced, -u, --pristine, -p, --tarnished, -t
 //
 // Apply FILTER to list of repositories. See Environment section below.
@@ -62,7 +62,9 @@
 // This matching is fuzzy by default, by the fuzzyness can be disabled by passing the '--no-fuzzy-filter' flag.
 // The '--for' flag also matches (relative or absolute) filesystem paths, as well as full clone URLs.
 //
-// Furthermore the '--here' flag can also be used to match the repository in the current working directory.
+// Furthermore the '--path' flag can be used to match the repository inside of or contained inside the provided directories.
+// '--here' is an alias for '--path .'. The '--path' flag can be provided multiple times.
+//
 // The '--dirty' and '--clean' flags can be used to only match repositories that have a dirty or clean working directory.
 // The '--synced' and '--unsynced' flags can be used to only match repositories that are or are not synced with the remote.
 //

@@ -370,7 +370,7 @@ func (env Env) ScanRepos(folder string) ([]string, error) {
 	extraRoots := Candidates(env.Filter)
 	n := 0
 	for _, path := range extraRoots {
-		if env.Git.IsRepositoryQuick(path) {
+		if ok, err := walker.IsDirectory(path, true); err == nil && ok {
 			extraRoots[n] = path
 			n++
 		}

@@ -1,11 +1,22 @@
 package text
 
-// SliceContainsAny returns true if at least one needle is contained in haystack.
-// Otherwise returns false.
+// SliceContainsAny returns true iff at least one needle is contained in haystack.
 func SliceContainsAny(haystack []string, needles ...string) bool {
 	for _, hay := range haystack {
 		for _, needle := range needles {
 			if hay == needle {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// SliceContainsAny returns true iff at least one predicate matches any of haystack.
+func SliceMatchesAny(haystack []string, predicates ...func(string) bool) bool {
+	for _, hay := range haystack {
+		for _, predicate := range predicates {
+			if predicate(hay) {
 				return true
 			}
 		}

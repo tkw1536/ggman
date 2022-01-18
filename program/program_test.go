@@ -2,6 +2,8 @@ package program
 
 import (
 	"bytes"
+	"os"
+	"path/filepath"
 	"reflect"
 	"runtime"
 	"strings"
@@ -16,6 +18,9 @@ import (
 
 func TestProgram_Main(t *testing.T) {
 	root := testutil.TempDirAbs(t)
+	if err := os.Mkdir(filepath.Join(root, "real"), os.ModeDir&os.ModePerm); err != nil {
+		panic(err)
+	}
 
 	// create buffers for input and output
 	var stdoutBuffer bytes.Buffer
@@ -31,6 +36,7 @@ func TestProgram_Main(t *testing.T) {
 		args      []string
 		options   Description
 		variables env.Variables
+		workdir   string
 
 		alias Alias
 
@@ -59,14 +65,14 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "display help",
 			args:       []string{"--help"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter]\n[--no-fuzzy-filter|-n] [--here|-H] [--dirty|-d] [--clean|-c] [--synced|-s]\n[--unsynced|-u] [--tarnished|-t] [--pristine|-p] [--] COMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -n, --no-fuzzy-filter\n      Disable fuzzy matching for filters\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain the\n      repository in the current directory\n\n   -d, --dirty\n      List only repositories with uncommited changes\n\n   -c, --clean\n      List only repositories without uncommited changes\n\n   -s, --synced\n      List only repositories which are up-to-date with remote\n\n   -u, --unsynced\n      List only repositories not up-to-date with remote\n\n   -t, --tarnished\n      List only repositories which are dirty or unsynced\n\n   -p, --pristine\n      List only repositories which are clean and synced\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter]\n[--no-fuzzy-filter|-n] [--here|-H] [--path|-P] [--dirty|-d] [--clean|-c]\n[--synced|-s] [--unsynced|-u] [--tarnished|-t] [--pristine|-p] [--] COMMAND\n[ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -n, --no-fuzzy-filter\n      Disable fuzzy matching for filters\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain\n      repository in the current directory or subtree. Alias for '-p .'\n\n   -P, --path\n      Filter the list of repositories to apply COMMAND to only contain\n      repositories in or under the specified path. May be used multiple times\n\n   -d, --dirty\n      List only repositories with uncommited changes\n\n   -c, --clean\n      List only repositories without uncommited changes\n\n   -s, --synced\n      List only repositories which are up-to-date with remote\n\n   -u, --unsynced\n      List only repositories not up-to-date with remote\n\n   -t, --tarnished\n      List only repositories which are dirty or unsynced\n\n   -p, --pristine\n      List only repositories which are clean and synced\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
 			wantCode:   0,
 		},
 
 		{
 			name:       "display help, don't run command",
 			args:       []string{"--help", "fake", "whatever"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter]\n[--no-fuzzy-filter|-n] [--here|-H] [--dirty|-d] [--clean|-c] [--synced|-s]\n[--unsynced|-u] [--tarnished|-t] [--pristine|-p] [--] COMMAND [ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -n, --no-fuzzy-filter\n      Disable fuzzy matching for filters\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain the\n      repository in the current directory\n\n   -d, --dirty\n      List only repositories with uncommited changes\n\n   -c, --clean\n      List only repositories without uncommited changes\n\n   -s, --synced\n      List only repositories which are up-to-date with remote\n\n   -u, --unsynced\n      List only repositories not up-to-date with remote\n\n   -t, --tarnished\n      List only repositories which are dirty or unsynced\n\n   -p, --pristine\n      List only repositories which are clean and synced\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
+			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter]\n[--no-fuzzy-filter|-n] [--here|-H] [--path|-P] [--dirty|-d] [--clean|-c]\n[--synced|-s] [--unsynced|-u] [--tarnished|-t] [--pristine|-p] [--] COMMAND\n[ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -n, --no-fuzzy-filter\n      Disable fuzzy matching for filters\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain\n      repository in the current directory or subtree. Alias for '-p .'\n\n   -P, --path\n      Filter the list of repositories to apply COMMAND to only contain\n      repositories in or under the specified path. May be used multiple times\n\n   -d, --dirty\n      List only repositories with uncommited changes\n\n   -c, --clean\n      List only repositories without uncommited changes\n\n   -s, --synced\n      List only repositories which are up-to-date with remote\n\n   -u, --unsynced\n      List only repositories not up-to-date with remote\n\n   -t, --tarnished\n      List only repositories which are dirty or unsynced\n\n   -p, --pristine\n      List only repositories which are clean and synced\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
 			wantCode:   0,
 		},
 
@@ -219,13 +225,25 @@ func TestProgram_Main(t *testing.T) {
 		},
 
 		{
-			name:       "'fake' with here",
+			name:       "'fake' with here (not working)",
 			args:       []string{"--here", "fake", "hello", "world"},
 			options:    Description{Environment: env.Requirement{AllowsFilter: true}, PosArgsMin: 1, PosArgsMax: 2},
 			variables:  env.Variables{GGROOT: root},
+			workdir:    filepath.Join(root, "doesnotexist"),
 			wantStdout: "",
-			wantStderr: "Unable to initialize context: Unable to find current repository: Unable to\nresolve repository \".\"\n",
+			wantStderr: "Unable to initialize context: Not a directory: \".\"\n",
 			wantCode:   5,
+		},
+
+		{
+			name:       "'fake' with path (working)",
+			args:       []string{"--path", "real", "fake", "hello", "world"},
+			options:    Description{Environment: env.Requirement{AllowsFilter: true}, PosArgsMin: 1, PosArgsMax: 2},
+			variables:  env.Variables{GGROOT: root},
+			workdir:    root,
+			wantStdout: "Got filter: \nGot arguments: hello,world\nwrite to stdout\n",
+			wantStderr: "write to stderr\n",
+			wantCode:   0,
 		},
 
 		{
@@ -377,7 +395,7 @@ func TestProgram_Main(t *testing.T) {
 			ret := ggman.AsError(program.Main(env.EnvironmentParameters{
 				Variables: tt.variables,
 				Plumbing:  git.NewPlumbing(),
-				Workdir:   "",
+				Workdir:   tt.workdir,
 			}, tt.args))
 
 			// check all the error values

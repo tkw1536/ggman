@@ -2,9 +2,9 @@ package program
 
 import (
 	"github.com/pkg/errors"
-
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/internal/walker"
 )
 
 // Context represents a context that a command is run inside of
@@ -18,6 +18,11 @@ type Context struct {
 func (c *Context) init() (err error) {
 	c.Filter, err = c.makeFilter()
 	return
+}
+
+var errNotADirectory = ggman.Error{
+	ExitCode: ggman.ExitInvalidRepo,
+	Message:  "Not a directory: %q",
 }
 
 // makeFilter creates a new filter for this context.
@@ -37,14 +42,32 @@ func (c Context) makeFilter() (env.Filter, error) {
 		clauses[i] = env.NewPatternFilter(pat, !c.NoFuzzyFilter) // TODO: Make fuzzyness optional
 	}
 
-	// generate a 'here' filter for the current repository
+	// here filter: alias for --path .
 	if c.Here {
-		repo, _, err := c.At(".")
-		if err != nil {
-			return nil, errors.Wrap(err, "Unable to find current repository")
-		}
+		c.Path = append(c.Path, ".")
+	}
 
-		clauses = append(clauses, env.PathFilter{Paths: []string{repo}})
+	// for each of the candidate paths, add a path filter
+	pf := env.PathFilter{Paths: make([]string, len(c.Path))}
+	for i, p := range c.Path {
+		var err error
+		pf.Paths[i], _, err = c.At(p) // try to use the current repository first.
+		if err != nil {
+			// filter sub-repositories under this repo!
+			pf.Paths[i], err = c.Abs(p)
+			if err != nil {
+				return nil, errors.Wrapf(err, "Unable to resolve path: %q", p)
+			}
+
+			// make sure it is actually a directory!
+			if ok, err := walker.IsDirectory(pf.Paths[i], true); err != nil || !ok {
+				return nil, errNotADirectory.WithMessageF(p)
+			}
+		}
+	}
+
+	if len(pf.Paths) > 0 {
+		clauses = append(clauses, pf)
 	}
 
 	// only set the filter when we actually have something to filter by

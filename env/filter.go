@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/pattern"
 	"github.com/tkw1536/ggman/internal/text"
 )
@@ -36,8 +37,7 @@ func (emptyFilter) Score(env Env, clonePath string) float64 {
 type FilterWithCandidates interface {
 	Filter
 
-	// Candidates returns a list of folders that should be added regardless of their location.
-	// Paths in the return value may be assumed to exist, but may not be repositories.
+	// Candidates returns a list of folders that should be scanned regardless of their location.
 	// A FilterWithCandidates with a Candidates() function that returns a zero-length slice is equivalent to a regular filter.
 	Candidates() []string
 }
@@ -64,7 +64,9 @@ type PathFilter struct {
 // Score checks if a repository at clonePath matches this filter, and if so returns 1.
 // See Filter.Score.
 func (pf PathFilter) Score(env Env, clonePath string) float64 {
-	if text.SliceContainsAny(pf.Paths, clonePath) {
+	if text.SliceMatchesAny(pf.Paths, func(p string) bool {
+		return path.Contains(p, clonePath)
+	}) {
 		return 1
 	}
 	return -1

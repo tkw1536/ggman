@@ -53,6 +53,9 @@ func TestArguments_Parse(t *testing.T) {
 		{"only a here (1)", args{[]string{"--here"}}, Arguments{}, errParseArgsNeedOneArgument},
 		{"only a here (2)", args{[]string{"-H"}}, Arguments{}, errParseArgsNeedOneArgument},
 
+		{"only a path (1)", args{[]string{"--path", "p"}}, Arguments{}, errParseArgsNeedOneArgument},
+		{"only a path (2)", args{[]string{"-P", "p"}}, Arguments{}, errParseArgsNeedOneArgument},
+
 		{"for without command (1)", args{[]string{"for", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
 		{"for without command (2)", args{[]string{"--for", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
 		{"for without command (3)", args{[]string{"-f", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
@@ -63,6 +66,17 @@ func TestArguments_Parse(t *testing.T) {
 
 		{"here with command (1)", args{[]string{"--here", "cmd"}}, Arguments{Command: "cmd", Here: true, Args: []string{}}, nil},
 		{"here with command (2)", args{[]string{"-H", "cmd"}}, Arguments{Command: "cmd", Here: true, Args: []string{}}, nil},
+
+		{"path with command (1)", args{[]string{"--path", "P", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Args: []string{}}, nil},
+		{"path with command (2)", args{[]string{"-P", "P", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Args: []string{}}, nil},
+
+		{"multiple paths with command (1)", args{[]string{"--path", "P1", "--path", "P2", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P1", "P2"}, Args: []string{}}, nil},
+		{"multiple paths with command (2)", args{[]string{"-P", "P1", "--path", "P2", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P1", "P2"}, Args: []string{}}, nil},
+
+		{"path + here with command (1)", args{[]string{"--path", "P", "--here", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Here: true, Args: []string{}}, nil},
+		{"path + here with command (2)", args{[]string{"--path", "P", "-H", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Here: true, Args: []string{}}, nil},
+		{"path + here with command (3)", args{[]string{"-P", "P", "--here", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Here: true, Args: []string{}}, nil},
+		{"path + here with command (4)", args{[]string{"-P", "P", "-H", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Here: true, Args: []string{}}, nil},
 
 		{"dirty with command (1)", args{[]string{"--dirty", "cmd"}}, Arguments{Command: "cmd", Dirty: true, Args: []string{}}, nil},
 		{"dirty with command (2)", args{[]string{"-d", "cmd"}}, Arguments{Command: "cmd", Dirty: true, Args: []string{}}, nil},
@@ -85,6 +99,9 @@ func TestArguments_Parse(t *testing.T) {
 
 		{"here with command and arguments (1)", args{[]string{"--here", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Here: true, Args: []string{"a1", "a2"}}, nil},
 		{"here with command and arguments (2)", args{[]string{"-H", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Here: true, Args: []string{"a1", "a2"}}, nil},
+
+		{"path with command and arguments (1)", args{[]string{"--path", "P", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Path: []string{"P"}, Args: []string{"a1", "a2"}}, nil},
+		{"path with command and arguments (2)", args{[]string{"-P", "P", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Path: []string{"P"}, Args: []string{"a1", "a2"}}, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

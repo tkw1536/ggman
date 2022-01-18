@@ -205,6 +205,18 @@ func TestCommandLs(t *testing.T) {
 
 			"",
 		},
+
+		{
+			"list an absolute path with --path",
+			serverRepo,
+			[]string{"--path", ghHelloWorld, "ls"},
+
+			0,
+			"${GGROOT github.com hello world}\n",
+
+			"",
+		},
+
 		{
 			"list a relative path",
 			glHelloDir,
@@ -212,6 +224,28 @@ func TestCommandLs(t *testing.T) {
 
 			0,
 			"${GGROOT gitlab.com hello world}\n",
+
+			"",
+		},
+
+		{
+			"list a relative path with --path",
+			glHelloDir,
+			[]string{"--path", filepath.Join(".", "world"), "ls"},
+
+			0,
+			"${GGROOT gitlab.com hello world}\n",
+
+			"",
+		},
+
+		{
+			"list multiple paths with --path",
+			glHelloDir,
+			[]string{"--path", filepath.Join(".", "world"), "--path", ghHelloWorld, "ls"},
+
+			0,
+			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n",
 
 			"",
 		},

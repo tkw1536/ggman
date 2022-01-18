@@ -178,7 +178,7 @@ For this purpose the `ggman ls` command lists all repositories that have been fo
 For easier integration into scripts, `ggman ls` supports an `--exit-code` argument. 
 If this is given, the command will return exit code 0 iff at least one repository is found, and exit code 1 otherwise. 
 
-### the '--for' and '--here' arguments
+### the '--for', '--here' and '--path' arguments
 
 When running multi-repository operations, it is possible to limit the operations to a specific subset of repositories. 
 This is achieved by using the 'for' keyword along with a pattern. 
@@ -197,13 +197,17 @@ Examples for supported patterns can be found in this table:
 Note that the `--for` argument also works for exact repository urls, e.g. `ggman --for 'https://github.com/tkw1536/GitManager' ls`. 
 `--for` also works with absolute or relative filepaths to locally installed repositories. 
 
-In addition to the `--for` argument, the `--here` argument also works.
-It is a shortcut that is equivalent to calling `--for` with the remote of the repository located in the current working directory. 
-
 In addition, the `--for` argument by default uses a fuzzy matching algorithm.
 For example, the pattern `wrld` will also match a repository called `world`.
 Fuzzy matching only works for patterns that do not contain a special glob characters (`*` and friends).
 It is also possible to turn off fuzzy matching entirely by passing the `--no-fuzzy-filter` / `-n` argument.
+
+In addition to the `--for` argument, you can also use the `--path` argument.
+Instead of taking a pattern, it takes a (relative or absolute) filesystem path and matches all repositories under it.
+This also works when not inside `GGROOT`.
+The `--path` argument can be provided multiple times.
+
+The `--here` argument is an alias for `--path .`, meaning it matches only the repository located in the current working directory, or repositories under it. 
 
 ### 'ggman comps' and 'ggman canon'
 
@@ -380,7 +384,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.14.0 (Upcoming)
+### 1.13.2 (Upcoming)
+
+- add new `--path` global argument to match repos under a specific path
 
 ### 1.13.1 (Released [Jan 16 2022](https://github.com/tkw1536/ggman/releases/tag/v1.13.1))
 

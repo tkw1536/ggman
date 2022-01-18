@@ -48,6 +48,61 @@ func TestSliceContainsAny(t *testing.T) {
 		})
 	}
 }
+func TestSliceMatchesAny(t *testing.T) {
+
+	// p makes one predicate for each element in haystack
+	p := func(haystack ...string) (fs []func(string) bool) {
+		for _, hay := range haystack {
+			h := hay
+			fs = append(fs, func(s string) bool {
+				return s == h
+			})
+		}
+		return
+	}
+
+	type args struct {
+		haystack   []string
+		predicates []func(string) bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{"single needle contained in haystack", args{
+			haystack:   []string{"a", "b", "c"},
+			predicates: p("a"),
+		}, true},
+		{"single needle not contained in haystack", args{
+			haystack:   []string{"a", "b", "c"},
+			predicates: p("d"),
+		}, false},
+		{"haystack contains a single needle", args{
+			haystack:   []string{"a", "b", "c"},
+			predicates: p("f", "a", "e"),
+		}, true},
+		{"haystack contains no needle", args{
+			haystack:   []string{"a", "b", "c"},
+			predicates: p("d", "e", "f"),
+		}, false},
+		{"empty haystack", args{
+			haystack:   nil,
+			predicates: p("d", "e", "f"),
+		}, false},
+		{"empty needles", args{
+			haystack:   []string{"a", "b", "c"},
+			predicates: nil,
+		}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SliceMatchesAny(tt.args.haystack, tt.args.predicates...); got != tt.want {
+				t.Errorf("SliceMatchesAny() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
 func TestSliceEquals(t *testing.T) {
 	type args struct {
