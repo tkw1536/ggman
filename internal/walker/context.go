@@ -5,29 +5,30 @@ import (
 	"sync"
 )
 
-// ProcessContext represents the current state of the filesystem
+// WalkContext represents the current state of a Walk.
 //
-// An instance of ProcessContext should not be retained by callbacks after invocation.
+// Any instance of WalkContext should not be retained past any callback it is passed in.
 type WalkContext interface {
-	// Root returns the root filesystem the scan of this node started from
+	// Root node this instance of the scan started from
 	Root() FS
 
-	// Node returns the current node being operated on
+	// Current node being operated on
 	Node() FS
 
-	// NodePath returns the path to the current node
+	// Path to the current node
 	NodePath() string
 
-	// Path returns the path from the root node to this node.
+	// Path from the root node to this node
 	Path() []string
 
-	// Depth returns the depth of this node
+	// Depth of this node, equivalent to len(Path())
 	Depth() int
 
-	// Snapshot updates the snapshot based on the update function.
+	// Update the snapshot corresponding to the current context
 	Snapshot(update func(snapshot interface{}) (value interface{}))
 
-	// Mark marks the current node as a result with the given priority
+	// Mark the current node as a result with the given priority.
+	// May be called multiple times, in which case the node is marked as a result multiple times.
 	Mark(prio float64)
 }
 

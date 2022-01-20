@@ -8,11 +8,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-// FS is the filesystem abstraction used by Walker
+// FS represents a file system for use by walker
 //
 // See NewRealFS for a instantiating a sample implementation.
 type FS interface {
-	// Path returns the current pathof this FS.
+	// Path returns the current path of this FS.
 	// This function will be called only once, and may perform (potentially slow) normalization.
 	//
 	// The return value is used for cycle detection, and also passed to all other functions in this interface.
@@ -35,7 +35,7 @@ type FS interface {
 	Sub(path string, entry fs.DirEntry) FS
 }
 
-// NewRealFS returns a new filestsystem rooted at path.
+// NewRealFS returns a new filesystem rooted at path.
 // followLinks indicates if the filesystem should follow and resolve links.
 func NewRealFS(path string, followLinks bool) FS {
 	return realFS{
@@ -44,8 +44,7 @@ func NewRealFS(path string, followLinks bool) FS {
 	}
 }
 
-// realFS represents the real underlying filesystem.
-// It implements FS.
+// realFS represents the real underlying filesystem, implementing FS.
 //
 // This struct is untested; tests are done via Scan and Sweep.
 type realFS struct {
