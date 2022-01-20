@@ -1,6 +1,10 @@
 package url
 
-import "testing"
+import (
+	"math"
+	"strconv"
+	"testing"
+)
 
 func Test_ParsePort(t *testing.T) {
 	type args struct {
@@ -33,6 +37,29 @@ func Test_ParsePort(t *testing.T) {
 				t.Errorf("parsePort() = %v, want %v", gotPort, tt.wantPort)
 			}
 		})
+	}
+}
+
+var maxPortTest = int(math.Pow(10, float64(maxPortLen)) - 1)
+
+func Test_ParsePort_all(t *testing.T) {
+	for port := 0; port <= maxValidPort; port++ {
+		gotPort, err := ParsePort(strconv.Itoa(port))
+		if gotPort != uint16(port) {
+			t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
+		}
+		if err != nil {
+			t.Errorf("ParsePort(%d) got error = %v, want error = nil", port, err)
+		}
+	}
+	for port := maxValidPort + 1; port <= maxPortTest; port++ {
+		gotPort, err := ParsePort(strconv.Itoa(port))
+		if gotPort != 0 {
+			t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
+		}
+		if err != errInvalidRange {
+			t.Errorf("ParsePort(%d) got error = %v, want error = errInvalidRange", port, err)
+		}
 	}
 }
 

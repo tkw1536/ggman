@@ -3,11 +3,14 @@ package url
 
 import (
 	"errors"
-	"strconv"
 )
 
-var errNoPlus = errors.New("ParsePort: s may not start with '+'")
-var errInvalidRange = errors.New("ParsePort: s out of range")
+var errNoPort = errors.New("ParsePort: input is not a number")
+var errInvalidRange = errors.New("ParsePort: port number out of range")
+
+const maxValidPort = 65535         // maximal port (as a number)
+const maxPortStr = "65535"         // maximal port (as a string)
+const maxPortLen = len(maxPortStr) // maximal port length
 
 // ParsePort parses a string into a valid port.
 // A port is between 0 and 65535 (inclusive).
@@ -15,23 +18,31 @@ var errInvalidRange = errors.New("ParsePort: s out of range")
 //
 // When a port can not be parsed, returns 0 and an error.
 func ParsePort(s string) (uint16, error) {
-	// This function could use strconv.ParseUint(s, 10, 16) and then do a conversion on the result.
-	// Instead we call strconv.AtoI and check that the result is in the right range.
-	//
-	// In Benchmarking it turned out that this implementation is about 33% faster for common port usecases.
-	// This is likely because strconv.AtoI has a 'fast' path for small integers, and most port candidates are small enough to fit.
 
-	if len(s) > 0 && s[0] == '+' {
-		return 0, errNoPlus
-	}
-	port, err := strconv.Atoi(s)
-	if err != nil {
-		return 0, err
-	}
-	if port < 0 || port > 65535 {
+	// when the input string is too long, we don't even need to try
+	// parsding can just fail immediatly.
+	if len(s) > maxPortLen {
 		return 0, errInvalidRange
 	}
-	return uint16(port), nil
+
+	// an inlined version of ParseInt(s, 10, 16)
+
+	// we first parse into a uint32
+	// so that we can afterwards check for overflow
+
+	var v uint32
+	for _, ch := range []byte(s) {
+		if '0' > ch || ch > '9' { // invalid digit
+			return 0, errNoPort
+		}
+		v = v*10 + uint32(ch-'0')
+	}
+
+	if v > maxValidPort {
+		return 0, errInvalidRange
+	}
+
+	return uint16(v), nil
 }
 
 // IsValidURLScheme checks if a string reprents a valid URL scheme.
