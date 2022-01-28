@@ -3,9 +3,8 @@
 ![CI Status](https://github.com/tkw1536/ggman/workflows/CI/badge.svg)
 
 A golang tool that can manage all your git repositories. 
-Originally a rewrite of [GitManager](https://github.com/tkw1536/GitManager), but has diverged. 
 
-## Why ggman?
+## What Is ggman?
 
 When you only have a couple of git repositories that you work on it is perfectly feasible to manage them by using `git clone`, `git pull` and friends. 
 However once the number of repositories grows beyond a small number this can become tedious:
@@ -20,8 +19,22 @@ It allows one to:
 - Maintain and expand a local directory structure of multiple repositories
 - Run actions (such as `git clone`, `git pull`) on groups of repositories
 
-ggman is not limited to using specific providers such as GitHub or GitLab.
-In particular all core functionality works either offline, or is only based only on "git" itself.
+## Why ggman?
+
+While similar tools exist these commonly have a lot of downsides:
+
+- they enforce a flat directory structure;
+- they are limited to one repository provider (such as GitHub or GitLab); or
+- they are only available from within an IDE or GUI.
+
+ggman considers these as major downsides. 
+The goals and principles of ggman are:
+
+- to be command-line first;
+- to be simple to install, configure and use;
+- to encourage an obvious hierarchical directory structure, but remain fully functional with any directory structure;
+- to remain free of provider-specific code; and
+- to not store any repository-specific data outside of the repositories themselves (enabling the user to switch back to only git at any point).
 
 ## Setting up and using 'ggman'
 
@@ -385,6 +398,8 @@ ggman comes with the following builtin aliases:
 ## Changelog
 
 ### 1.14.0 (Upcoming)
+
+- README and documentation rework
 
 ### 1.13.2 (Released [Jan 18 2022](https://github.com/tkw1536/ggman/releases/tag/v1.13.2))
 
