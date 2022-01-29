@@ -8,17 +8,27 @@ import (
 	"github.com/tkw1536/ggman/internal/usagefmt"
 )
 
-// Alias represents an alias for a different command
+// Alias represents an alias for a command.
+//
+// Expansion of an alias takes place at runtime.
+// Aliases must not contain global flags; execution of the them will fail at runtime.
+//
+// Aliases are not expanded recursively, meaning one alias may not refer to itself or another.
+// An alias always takes precedence over a command with the same name.
 type Alias struct {
-	Name string // the name of this alias
+	// Name is the name of this alias
+	Name string
 
-	Command string   // command to invoke
-	Args    []string // arguments to pass to command
+	// Command to invoke along with arguments
+	Command string
+	Args    []string
 
-	Description string // Description of the alias
+	// Description for the usage page
+	Description string
 }
 
-// Invoke returns the new command name and arguments when alias in invoked with the provided arguments
+// Invoke returns command arguments that are to be used when invoking this alias
+// args are additional arguments to pass to the command
 func (a Alias) Invoke(args []string) (command string, arguments []string) {
 	// setup command
 	command = a.Command
@@ -31,19 +41,15 @@ func (a Alias) Invoke(args []string) (command string, arguments []string) {
 	return
 }
 
+// Expansion returns a slice representing the expansion of this alias.
 func (a Alias) Expansion() []string {
 	return append([]string{a.Command}, a.Args...)
 }
 
-// RegisterAlias registers an alias.
+// RegisterAlias registers a new alias.
+// See also Alias.
 //
-// An alias must be of non-zero length.
-// If an alias is of length zero, RegisterAlias calls panic().
 // If an alias already exists, RegisterAlias calls panic().
-//
-// Aliases must not contain global flags; execution of the alias will fail at runtime.
-// Aliases are not expanded recursively, meaning one alias may not refer to itself or another.
-// An alias always takes precedence over a command with the same name.
 func (p *Program) RegisterAlias(alias Alias) {
 	if p.aliases == nil {
 		p.aliases = make(map[string]Alias)
@@ -57,6 +63,8 @@ func (p *Program) RegisterAlias(alias Alias) {
 	p.aliases[name] = alias
 }
 
+// Aliases returns the names of all registered aliases.
+// Aliases are returned in sorted order.
 func (p Program) Aliases() []string {
 	aliases := make([]string, 0, len(p.aliases))
 	for alias := range p.aliases {
@@ -66,7 +74,7 @@ func (p Program) Aliases() []string {
 	return aliases
 }
 
-// AliasPage returns a usage page for an alias
+// AliasPage returns a usage page for the provided alias
 func (cmdargs CommandArguments) AliasPage(alias Alias) usagefmt.Page {
 	opt := cmdargs.description
 
