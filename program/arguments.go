@@ -1,6 +1,7 @@
 package program
 
 import (
+	"reflect"
 	"strings"
 
 	"github.com/jessevdk/go-flags"
@@ -9,11 +10,15 @@ import (
 )
 
 // Arguments represent a set of partially parsed arguments for an invocation of the 'ggman' program.
-//
 // These should be further parsed into CommandArguments using the appropriate Parse() method.
+//
+// Command line argument are annotated using syntax provided by "github.com/jessevdk/go-flags".
+// Additionally flags that do not imply any filter semantics are tagged as `nofilter:"true"`.
+//
+// See Also GetMainOpts and Parse.
 type Arguments struct {
-	Help    bool `short:"h" long:"help" description:"Print a help message and exit"`
-	Version bool `short:"v" long:"version" description:"Print a version message and exit"`
+	Help    bool `short:"h" long:"help" description:"Print a help message and exit" nofilter:"true"`
+	Version bool `short:"v" long:"version" description:"Print a version message and exit" nofilter:"true"`
 
 	Filters       []string `short:"f" long:"for" value-name:"filter" description:"Filter list of repositories to apply COMMAND to by filter. Filter can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url"`
 	NoFuzzyFilter bool     `short:"n" long:"no-fuzzy-filter" description:"Disable fuzzy matching for filters"`
@@ -32,6 +37,35 @@ type Arguments struct {
 
 	Command string   // command to run
 	Args    []string // remaining arguments
+}
+
+// reflect access to the arguments type
+var argumentsType reflect.Type = reflect.TypeOf((*Arguments)(nil)).Elem() // TypeOf[Arguments]
+
+var argumentsGeneralOptions []string // names of options that are considered non-filter
+var argumentsFilterIndexes [][]int   // indexes of filter options
+
+func init() {
+	// iterate over the fields of the type
+	fieldCount := argumentsType.NumField()
+	for i := 0; i < fieldCount; i++ {
+		field := argumentsType.Field(i)
+
+		// skip over options that do not have a 'long' name
+		longName, hasLongName := field.Tag.Lookup("long")
+		if !hasLongName {
+			continue
+		}
+
+		// argument is a nonfilter argument!
+		if field.Tag.Get("nofilter") == "true" {
+			argumentsGeneralOptions = append(argumentsGeneralOptions, longName)
+			continue
+		}
+
+		// it's a long filter name
+		argumentsFilterIndexes = append(argumentsFilterIndexes, field.Index)
+	}
 }
 
 var errParseArgsNeedOneArgument = ggman.Error{
@@ -296,45 +330,27 @@ var errTakesNoArgument = ggman.Error{
 	Message:  "Wrong number of arguments: '%s' takes no '%s' argument. ",
 }
 
-// checkFilterArgument checks that if a 'for' argument is not allowed it is not passed.
-// It expects args.For to be set appropriatly
+// checkFilterArgument checks that any filter argument (like --for) which is not allowed is not passed.
+// It expects argument passing to have occured.
 //
-// If the check fails, returns an error of type Error.
+// When filter arguments are allowed, immediatly returns nil.
+// When filter arguments are not allowed returns an error of type Error iff the check fails.
 func (args CommandArguments) checkFilterArgument() error {
+	// we don't have to do any checking!
 	if args.description.Environment.AllowsFilter {
 		return nil
 	}
 
-	if len(args.Filters) > 0 {
-		return errTakesNoArgument.WithMessageF(args.Command, "for")
-	}
+	// check the value of the arguments struct
+	aVal := reflect.ValueOf(args.Arguments)
 
-	if args.Here {
-		return errTakesNoArgument.WithMessageF(args.Command, "--here")
-	}
+	for _, fIndex := range argumentsFilterIndexes {
+		v := aVal.FieldByIndex(fIndex)
 
-	if len(args.Path) != 0 {
-		return errTakesNoArgument.WithMessageF(args.Command, "--path")
-	}
-
-	if args.NoFuzzyFilter {
-		return errTakesNoArgument.WithMessageF(args.Command, "--no-fuzzy-filter")
-	}
-
-	if args.Dirty {
-		return errTakesNoArgument.WithMessageF(args.Command, "--dirty")
-	}
-
-	if args.Clean {
-		return errTakesNoArgument.WithMessageF(args.Command, "--clean")
-	}
-
-	if args.Synced {
-		return errTakesNoArgument.WithMessageF(args.Command, "--synced")
-	}
-
-	if args.UnSynced {
-		return errTakesNoArgument.WithMessageF(args.Command, "--unsynced")
+		if !v.IsZero() { // flag was set iff it is non-zero
+			tp := argumentsType.FieldByIndex(fIndex) // needed for the error message only!
+			return errTakesNoArgument.WithMessageF(args.Command, "--"+tp.Tag.Get("long"))
+		}
 	}
 
 	return nil

@@ -203,7 +203,7 @@ func TestProgram_Main(t *testing.T) {
 			name:       "'fake' with filter but not allowed",
 			args:       []string{"--for", "example", "fake", "hello", "world"},
 			options:    Description{PosArgsMin: 1, PosArgsMax: 2},
-			wantStderr: "Wrong number of arguments: 'fake' takes no 'for' argument.\n",
+			wantStderr: "Wrong number of arguments: 'fake' takes no '--for' argument.\n",
 			wantCode:   4,
 		},
 		{

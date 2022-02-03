@@ -266,7 +266,7 @@ func TestCommandArguments_checkFilterArgument(t *testing.T) {
 			"for not allowed, for given",
 			Description{Environment: env.Requirement{AllowsFilter: false}},
 			Arguments{Command: "example", Filters: []string{"pattern"}},
-			"Wrong number of arguments: 'example' takes no 'for' argument. ",
+			"Wrong number of arguments: 'example' takes no '--for' argument. ",
 		},
 
 		{
@@ -301,7 +301,7 @@ func TestCommandArguments_checkFilterArgument(t *testing.T) {
 				gotErr = err.Error()
 			}
 			if gotErr != tt.wantErr {
-				t.Errorf("CommandArguments.checkFilterArgument() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("CommandArguments.checkFilterArgument() error = %q, wantErr %q", err, tt.wantErr)
 			}
 		})
 	}

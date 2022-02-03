@@ -9,10 +9,6 @@ import (
 	"github.com/tkw1536/ggman/internal/usagefmt"
 )
 
-//
-// PROGRAM
-//
-
 // UsagePage returns a help page about ggman
 func (p Program) UsagePage() usagefmt.Page {
 	text := "ggman manages local git repositories.\n\n"
@@ -51,7 +47,7 @@ func (cmdargs CommandArguments) UsagePage() usagefmt.Page {
 	}
 }
 
-// GetMainOpts returns a list of global options provided
+// GetMainOpts returns a list of global options for the provided command
 func GetMainOpts(opt *Description) (opts []usagefmt.Opt) {
 
 	// generate the main options by parsing the fake 'Arguments' struct.
@@ -61,16 +57,10 @@ func GetMainOpts(opt *Description) (opts []usagefmt.Opt) {
 		return opts
 	}
 
-	// local options were requested, so we need to exclude depending on the configuration.
-	skipLongNames := make([]string, 0, 3)
-	if !opt.Environment.AllowsFilter {
-		skipLongNames = append(skipLongNames, "for", "here", "path", "no-fuzzy-filter", "dirty", "clean", "synced", "unsynced", "tarnished", "pristine")
-	}
-
-	// filter the provided arguments!
 	n := 0
 	for _, arg := range opts {
-		if text.SliceContainsAny(arg.Long(), skipLongNames...) {
+		// when the environment does not allow a filter, we only allow non-filter options!
+		if !opt.Environment.AllowsFilter && !text.SliceContainsAny(arg.Long(), argumentsGeneralOptions...) {
 			continue
 		}
 		opts[n] = arg
