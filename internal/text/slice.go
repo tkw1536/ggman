@@ -42,7 +42,7 @@ func SliceEquals(first, second []string) bool {
 
 // SliceCopy returns a copy of the provided slice.
 func SliceCopy(slice []string) []string {
-	if slice == nil {
+	if len(slice) == 0 {
 		return nil
 	}
 	clone := make([]string, len(slice))
