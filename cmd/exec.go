@@ -81,9 +81,11 @@ func (e *exe) Run(context program.Context) error {
 	return e.runReal(context)
 }
 
+// runReal implements ggman exec for simulate = False
 func (e *exe) runReal(context program.Context) error {
 	repos := context.Repos()
 
+	// schedule each command to be run in parallel by using a semaphore!
 	return sema.Schedule(func(i int) error {
 		repo := repos[i]
 
@@ -106,6 +108,8 @@ func (e *exe) runRepo(context program.Context, repo string) error {
 	cmd := exec.Command(context.Args[0], context.Args[1:]...)
 	cmd.Dir = repo
 
+	// setup standard output / input, using either the environment
+	// or be quiet
 	if !e.Quiet {
 		cmd.Stdin = context.Stdin
 		cmd.Stdout = context.Stdout
@@ -116,11 +120,14 @@ func (e *exe) runRepo(context program.Context, repo string) error {
 		cmd.Stderr = stream.Null
 	}
 
+	// run the actual command, and return if the command was oK!
 	err := cmd.Run()
 	if err == nil {
 		return nil
 	}
 
+	// when something went wrong intercept ExitErrors
+	// but actually return other error properly!
 	if ee, ok := err.(*exec.ExitError); ok {
 		return ggman.Error{
 			ExitCode: ggman.ExitCode(ee.ExitCode()),
@@ -142,6 +149,7 @@ func (e *exe) runSimulate(context program.Context) (err error) {
 		return ErrExecNoParallelSimulate.WithMessageF(e.Parallel)
 	}
 
+	// print header of the bash script
 	context.Println("#!/bin/bash")
 	if !e.Force {
 		context.Println("set -e")
@@ -150,6 +158,8 @@ func (e *exe) runSimulate(context program.Context) (err error) {
 
 	exec := shellescape.QuoteCommand(context.Args)
 
+	// iterate over each repository
+	// then print each of the commands to be run!
 	repos := context.Repos()
 	for _, repo := range repos {
 		context.Printf("cd %s\n", shellescape.Quote(repo))
