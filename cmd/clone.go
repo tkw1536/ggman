@@ -66,21 +66,22 @@ var errCloneOther = ggman.Error{
 }
 
 func (c *clone) Run(context program.Context) error {
-	// find the remote url, check that it is not a local!
-	remote := context.URLV(0)
-	if remote.IsLocal() {
+	// grab the url to clone and make sure it is not local
+	url := context.URLV(0)
+	if url.IsLocal() {
 		return errCloneInvalidURI.WithMessageF(context.Args[0])
 	}
 
-	remoteURI := context.Canonical(remote)
-	clonePath, err := context.Local(remote)
+	// find the remote and local paths to clone to / from
+	remote := context.Canonical(url)
+	local, err := context.Local(url)
 	if err != nil {
 		return err
 	}
 
-	// do the clone command!
-	context.Printf("Cloning %q into %q ...\n", remoteURI, clonePath)
-	switch err := context.Git.Clone(context.IOStream, remoteURI, clonePath, context.Args[1:]...); err {
+	// do the actual cloning!
+	context.Printf("Cloning %q into %q ...\n", remote, local)
+	switch err := context.Git.Clone(context.IOStream, remote, local, context.Args[1:]...); err {
 	case nil:
 		return nil
 	case git.ErrCloneAlreadyExists:
