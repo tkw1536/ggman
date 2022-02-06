@@ -36,10 +36,9 @@ var errFetchCustom = ggman.Error{
 }
 
 func (fetch) Run(context program.Context) error {
-	// find all the repos
 	hasError := false
 
-	// and fetch them
+	// iterate over all the repositories, and run git fetch
 	for _, repo := range context.Repos() {
 		context.Printf("Fetching %q\n", repo)
 		if e := context.Git.Fetch(context.IOStream, repo); e != nil {
