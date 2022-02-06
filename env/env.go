@@ -91,7 +91,7 @@ type Requirement struct {
 //
 // This function is untested.
 func NewEnv(r Requirement, params EnvironmentParameters) (Env, error) {
-	env := &Env{
+	env := Env{
 		Git:     git.NewGitFromPlumbing(params.Plumbing, params.PATH),
 		Vars:    params.Variables,
 		Filter:  NoFilter,
@@ -100,17 +100,17 @@ func NewEnv(r Requirement, params EnvironmentParameters) (Env, error) {
 
 	if r.NeedsRoot || r.AllowsFilter { // AllowsFilter implies NeedsRoot
 		if err := env.LoadDefaultRoot(); err != nil {
-			return *env, err
+			return env, err
 		}
 	}
 
 	if r.NeedsCanFile {
 		if err := env.LoadDefaultCANFILE(); err != nil {
-			return *env, err
+			return env, err
 		}
 	}
 
-	return *env, nil
+	return env, nil
 }
 
 var errMissingRoot = ggman.Error{
