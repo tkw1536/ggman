@@ -28,7 +28,7 @@
 //
 // Disable fuzzy filter matching. See Environment section below.
 //
-// See the Arguments type of the github.com/tkw1536/ggman/program package for more details of package argument parsing.
+// See the Arguments type of the github.com/tkw1536/ggman/program package for more details of argument parsing.
 //
 // Subcommands and their Arguments
 //
@@ -103,11 +103,11 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
-// the main ggman program, created from the environment
+// the main ggman program that will contain everything
 var ggmanExe *program.Program = &program.Program{IOStream: ggman.NewEnvIOStream()}
 
-// register all the commands to the ggman program!
 func init() {
+	// register all the known commands to the ggman program!
 	for _, c := range []program.Command{
 		cmd.Canon,
 		cmd.Clone,
@@ -132,6 +132,7 @@ func init() {
 		ggmanExe.Register(c)
 	}
 
+	// register all the aliases to the program
 	for _, a := range []program.Alias{
 		{Name: "git", Command: "exec", Args: []string{"git"}, Description: "Execute a git command using a native 'git' executable. "},
 	} {
@@ -140,10 +141,9 @@ func init() {
 }
 
 func main() {
-
 	// recover from calls to panic(), and exit the program appropriatly.
-	// This has to be in the main() function because any of the libary functions might be broken.
-	// For this reason, no ggman functions are used here; just stuff from the main package.
+	// This has to be in the main() function because any of the library functions might be broken.
+	// For this reason, as few ggman functions as possible are used here; just stuff from the top-level ggman package.
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Fprintf(os.Stderr, fatalPanicMessage, err)
@@ -152,23 +152,27 @@ func main() {
 		}
 	}()
 
-	// Create the 'ggman' program and register all the subcommands
-	// Then execute the program and handle the exit code.
-	err := ggman.AsError(ggmanExe.Main(env.EnvironmentParameters{
+	// execute the main program with the real environment!
+	err := ggmanExe.Main(env.EnvironmentParameters{
 		Variables: env.ReadVariables(),
 		Plumbing:  nil,
 		Workdir:   "",
-	}, os.Args[1:]))
-	err.Return()
+	}, os.Args[1:])
+
+	// return the error to the user
+	ggman.AsError(err).Return()
 }
 
 const fatalPanicMessage = `Fatal Error: Panic
 
 The ggman program panicked and had to abort execution. This is usually
 indicative of a bug. If this occurs repeatedly you might want to consider
-filing an issue in the issue tracker at
-https://github.com/tkw1536/ggman/issues. Below is debug information that might
-help the developer to track down what happened. 
+filing an issue in the issue tracker at:
+
+https://github.com/tkw1536/ggman/issues
+
+Below is debug information that might help the developer track down what
+happened.
 
 panic: %v
 `
