@@ -7,11 +7,11 @@ func TestToOSPath(t *testing.T) {
 		name string
 		want string
 	}{
-		{"hello/world", "hello" + pathSeperator + "world"},
+		{"hello/world", "hello" + Separator + "world"},
 		{"", ""},
-		{"./", "." + pathSeperator},
-		{"hello/../world", "hello" + pathSeperator + ".." + pathSeperator + "world"},
-		{"/root", defaultVolumePrefix + pathSeperator + "root"},
+		{"./", "." + Separator},
+		{"hello/../world", "hello" + Separator + ".." + Separator + "world"},
+		{"/root", defaultVolumePrefix + Separator + "root"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

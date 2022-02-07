@@ -7,7 +7,7 @@ import (
 )
 
 // pathUpSegment is a segment that indiciates that a path should go up
-var pathUpSegment = ".." + pathSeperator
+var pathUpSegment = ".." + Separator
 
 // GoesUp checks if path is a path that goes up at least one directory.
 func GoesUp(path string) bool {

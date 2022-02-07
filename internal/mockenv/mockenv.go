@@ -15,6 +15,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	gggit "github.com/tkw1536/ggman/git"
+	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/ggman/program"
 )
@@ -116,7 +117,7 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 	suffix := ""
 	for _, remote := range remotes {
 		mock.plumbing.URLMap[remote] = fakeRemotePath + suffix
-		suffix += string(filepath.Separator) + "."
+		suffix += path.Separator + "."
 	}
 
 	return repo
