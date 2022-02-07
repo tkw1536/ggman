@@ -400,6 +400,7 @@ ggman comes with the following builtin aliases:
 ### 1.14.0 (Upcoming)
 
 - README and documentation rework
+- minor internal improvements
 
 ### 1.13.2 (Released [Jan 18 2022](https://github.com/tkw1536/ggman/releases/tag/v1.13.2))
 
