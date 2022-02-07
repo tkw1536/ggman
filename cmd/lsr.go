@@ -44,10 +44,10 @@ var errInvalidCanfile = ggman.Error{
 func (l lsr) Run(context program.Context) error {
 	var lines env.CanFile
 	if l.Canonical {
-		if err := (&context.Env).LoadDefaultCANFILE(); err != nil {
+		var err error
+		if lines, err = (&context.Env).LoadDefaultCANFILE(); err != nil {
 			return errInvalidCanfile
 		}
-		lines = context.CanFile
 	}
 
 	// and print them

@@ -36,10 +36,10 @@ func (canon) Run(context program.Context) error {
 
 	switch len(context.Args) {
 	case 1: // read the default CanFile
-		if err := (&(context.Env)).LoadDefaultCANFILE(); err != nil {
+		var err error
+		if file, err = (&(context.Env)).LoadDefaultCANFILE(); err != nil {
 			return err
 		}
-		file = context.Env.CanFile
 	case 2: // use a custom CanLine
 		file = []env.CanLine{{Pattern: "", Canonical: context.Args[1]}}
 	}

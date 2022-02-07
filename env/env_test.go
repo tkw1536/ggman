@@ -94,7 +94,7 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 			env := &Env{
 				Vars: tt.vars,
 			}
-			if err := env.LoadDefaultCANFILE(); (err != nil) != tt.wantErr {
+			if _, err := env.LoadDefaultCANFILE(); (err != nil) != tt.wantErr {
 				t.Errorf("Env.LoadDefaultCANFILE() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if !reflect.DeepEqual(env.CanFile, tt.wantCanfile) {

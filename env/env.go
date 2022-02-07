@@ -105,7 +105,7 @@ func NewEnv(r Requirement, params EnvironmentParameters) (Env, error) {
 	}
 
 	if r.NeedsCanFile {
-		if err := env.LoadDefaultCANFILE(); err != nil {
+		if _, err := env.LoadDefaultCANFILE(); err != nil {
 			return env, err
 		}
 	}
@@ -160,7 +160,7 @@ func (env *Env) LoadDefaultRoot() error {
 	return nil
 }
 
-// LoadDefaultCANFILE sets env.CANFILE according to the environment variables in e.Vars.
+// LoadDefaultCANFILE sets and returns env.CANFILE according to the environment variables in e.Vars.
 // If the CANFILE is already set, immediatly returns nil.
 //
 // If the GGMAN_CANFILE variable is set, it will use it as a filepath to read the CanFile from.
@@ -169,9 +169,9 @@ func (env *Env) LoadDefaultRoot() error {
 //
 // If loading a CanFile fails, an error of type Error is returned.
 // If loading succeeds, this function returns nil.
-func (env *Env) LoadDefaultCANFILE() error {
+func (env *Env) LoadDefaultCANFILE() (CanFile, error) {
 	if env.CanFile != nil {
-		return nil
+		return nil, nil
 	}
 
 	files := make([]string, 0, 2)
@@ -193,19 +193,19 @@ func (env *Env) LoadDefaultCANFILE() error {
 		case errors.Is(err, fs.ErrNotExist):
 			continue
 		default:
-			return errors.Wrapf(err, "Unable to open CANFILE %q", file)
+			return nil, errors.Wrapf(err, "Unable to open CANFILE %q", file)
 		}
 		defer f.Close()
 		if _, err := (&cf).ReadFrom(f); err != nil {
-			return err
+			return nil, err
 		}
 		env.CanFile = cf
-		return nil
+		return cf, nil
 	}
 
 	(&cf).ReadDefault()
 	env.CanFile = cf
-	return nil
+	return cf, nil
 }
 
 var errUnableDir = ggman.Error{
