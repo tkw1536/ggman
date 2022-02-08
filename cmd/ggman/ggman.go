@@ -104,7 +104,7 @@ import (
 )
 
 // the main ggman program that will contain everything
-var ggmanExe *program.Program = &program.Program{IOStream: ggman.NewEnvIOStream()}
+var ggmanExe = program.Program{IOStream: ggman.NewEnvIOStream()}
 
 func init() {
 	// register all the known commands to the ggman program!

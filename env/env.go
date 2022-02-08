@@ -196,14 +196,14 @@ func (env *Env) LoadDefaultCANFILE() (CanFile, error) {
 			return nil, errors.Wrapf(err, "Unable to open CANFILE %q", file)
 		}
 		defer f.Close()
-		if _, err := (&cf).ReadFrom(f); err != nil {
+		if _, err := cf.ReadFrom(f); err != nil {
 			return nil, err
 		}
 		env.CanFile = cf
 		return cf, nil
 	}
 
-	(&cf).ReadDefault()
+	cf.ReadDefault()
 	env.CanFile = cf
 	return cf, nil
 }

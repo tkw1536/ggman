@@ -8,11 +8,11 @@ import "io/fs"
 //
 // This function is a convenience alternative to:
 //
-//  scanner := &Walker{Visit: Visit, Params: Params}
+//  scanner := Walker{Visit: Visit, Params: Params}
 //  err := scanner.Walk();
 //	results := scanner.Results()
 func Scan(Visit ScanProcess, Params Params) ([]string, error) {
-	scanner := &Walker{
+	scanner := Walker{
 		Process: Visit,
 		Params:  Params,
 	}

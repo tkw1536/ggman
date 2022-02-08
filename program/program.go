@@ -146,7 +146,7 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 	}()
 
 	// parse the general arguments
-	args := &Arguments{}
+	var args Arguments
 	if err := args.Parse(argv); err != nil {
 		return err
 	}
@@ -174,8 +174,8 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 	}
 
 	// parse the command arguments
-	cmdargs := &CommandArguments{}
-	if err := cmdargs.Parse(command, *args); err != nil {
+	var cmdargs CommandArguments
+	if err := cmdargs.Parse(command, args); err != nil {
 		return err
 	}
 
@@ -191,9 +191,9 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 	}
 
 	// create a new context and make an environment for it
-	context := &Context{
+	context := Context{
 		IOStream:         p.IOStream,
-		CommandArguments: *cmdargs,
+		CommandArguments: cmdargs,
 	}
 	if context.Env, err = env.NewEnv(cmdargs.description.Environment, params); err != nil {
 		return err
@@ -204,7 +204,7 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 		return errInitContext.WithMessageF(err)
 	}
 
-	return command.Run(*context)
+	return command.Run(context)
 }
 
 const stringVersion = "ggman version %s, built %s, using %s"

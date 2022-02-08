@@ -37,7 +37,7 @@ func (canon) Run(context program.Context) error {
 	switch len(context.Args) {
 	case 1: // read the default CanFile
 		var err error
-		if file, err = (&(context.Env)).LoadDefaultCANFILE(); err != nil {
+		if file, err = context.Env.LoadDefaultCANFILE(); err != nil {
 			return err
 		}
 	case 2: // use a custom CanLine

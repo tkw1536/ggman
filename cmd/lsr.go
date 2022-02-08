@@ -45,7 +45,7 @@ func (l lsr) Run(context program.Context) error {
 	var lines env.CanFile
 	if l.Canonical {
 		var err error
-		if lines, err = (&context.Env).LoadDefaultCANFILE(); err != nil {
+		if lines, err = context.Env.LoadDefaultCANFILE(); err != nil {
 			return errInvalidCanfile
 		}
 	}
