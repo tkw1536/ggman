@@ -32,6 +32,33 @@ func TestCommandClone(t *testing.T) {
 		},
 
 		{
+			"clone repository into local path",
+			mock.Resolve(),
+			[]string{"clone", "--local", "https://github.com/hello/world.git"},
+
+			0,
+			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT world}\" ...\nEnumerating objects: 3, done.\nCounting objects:  33% (1/3)\rCounting objects:  66% (2/3)\rCounting objects: 100% (3/3)\rCounting objects: 100% (3/3), done.\nTotal 3 (delta 0), reused 0 (delta 0), pack-reused 0\n",
+			"",
+		},
+		{
+			"clone repository into specific path",
+			mock.Resolve(),
+			[]string{"clone", "--to", "somewhere", "https://github.com/hello/world.git"},
+
+			0,
+			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT somewhere}\" ...\nEnumerating objects: 3, done.\nCounting objects:  33% (1/3)\rCounting objects:  66% (2/3)\rCounting objects: 100% (3/3)\rCounting objects: 100% (3/3), done.\nTotal 3 (delta 0), reused 0 (delta 0), pack-reused 0\n",
+			"",
+		},
+		{
+			"clone repository into invalid path path",
+			mock.Resolve(),
+			[]string{"clone", "--local", "--to", "somewhere", "https://github.com/hello/world.git"},
+
+			4,
+			"",
+			"Invalid destination: '--to' and '--local' may not be used together.\n",
+		},
+		{
 			"clone existing repository",
 			"",
 			[]string{"clone", "https://github.com/hello/world.git"},

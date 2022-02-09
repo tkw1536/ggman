@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"errors"
+
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/git"
@@ -17,7 +19,9 @@ import (
 var Clone program.Command = &clone{}
 
 type clone struct {
-	Force bool `short:"f" long:"force" description:"Don't complain when a repository already exists in the target directory"`
+	Force bool   `short:"f" long:"force" description:"Don't complain when a repository already exists in the target directory"`
+	Local bool   `short:"l" long:"local" description:"Clone into an appropriately named subdirectory of the current directory"`
+	To    string `short:"t" long:"to" description:"Clone repository into specified directory"`
 }
 
 func (*clone) BeforeRegister(program *program.Program) {}
@@ -42,11 +46,24 @@ func (*clone) Description() program.Description {
 	}
 }
 
-func (*clone) AfterParse() error {
+var errInvalidDest = ggman.Error{
+	ExitCode: ggman.ExitCommandArguments,
+	Message:  "Invalid destination: '--to' and '--local' may not be used together. ",
+}
+
+func (c *clone) AfterParse() error {
+	if c.Local && c.To != "" {
+		return errInvalidDest
+	}
 	return nil
 }
 
-var errCloneInvalidURI = ggman.Error{
+var errCloneInvalidDest = ggman.Error{
+	ExitCode: ggman.ExitGeneralArguments,
+	Message:  "Unable to determine local destination for %q: %s",
+}
+
+var errCloneLocalURI = ggman.Error{
 	ExitCode: ggman.ExitCommandArguments,
 	Message:  "Invalid remote URI %q: Invalid scheme, not a remote path. ",
 }
@@ -69,14 +86,14 @@ func (c *clone) Run(context program.Context) error {
 	// grab the url to clone and make sure it is not local
 	url := context.URLV(0)
 	if url.IsLocal() {
-		return errCloneInvalidURI.WithMessageF(context.Args[0])
+		return errCloneLocalURI.WithMessageF(context.Args[0])
 	}
 
 	// find the remote and local paths to clone to / from
 	remote := context.Canonical(url)
-	local, err := context.Local(url)
+	local, err := c.dest(context, url)
 	if err != nil {
-		return err
+		return errCloneInvalidDest.WithMessageF(context.Args[0], err)
 	}
 
 	// do the actual cloning!
@@ -95,4 +112,24 @@ func (c *clone) Run(context program.Context) error {
 	default:
 		return errCloneOther.WithMessage(err.Error())
 	}
+}
+
+var errCloneNoComps = errors.New("unable to find components of URI")
+
+// dest returns the destination path to clone the repository into
+func (c clone) dest(context program.Context, url env.URL) (string, error) {
+	if c.Local { // clone into directory named automatically
+		comps := url.Components()
+		if len(comps) == 0 {
+			return "", errCloneNoComps
+		}
+		return context.Abs(comps[len(comps)-1])
+	}
+
+	if c.To != "" { // clone directory into a directory
+		return context.Abs(c.To)
+	}
+
+	// normal clone!
+	return context.Local(url)
 }
