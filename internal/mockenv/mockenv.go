@@ -64,7 +64,8 @@ func NewMockEnv(t *testing.T) *MockEnv {
 	}
 }
 
-func (mock MockEnv) resolve(path ...string) string {
+// Resolve resolves a local path within this environment
+func (mock MockEnv) Resolve(path ...string) string {
 	return filepath.Join(append([]string{mock.localRoot}, path...)...)
 }
 
@@ -76,7 +77,7 @@ func (mock MockEnv) resolve(path ...string) string {
 //
 // If something goes wrong, calls panic().
 func (mock *MockEnv) Install(remote string, path ...string) string {
-	clonePath := mock.resolve(path...)
+	clonePath := mock.Resolve(path...)
 	err := mock.plumbing.Clone(ggman.NewNilIOStream(), remote, clonePath)
 	if err != nil {
 		panic(err)
@@ -199,7 +200,7 @@ func (mock *MockEnv) interpolate(value string) (result string) {
 		}
 
 		parts := strings.Fields(actual[:len(actual)-1])[1:] // remove trailing '}' and first part (${GGROOT)
-		actual = mock.resolve(parts...)
+		actual = mock.Resolve(parts...)
 
 		if first == "\"" && last == "\"" {
 			return fmt.Sprintf("%q", actual)
