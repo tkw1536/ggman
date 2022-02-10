@@ -25,7 +25,7 @@ func (info Info) FmtVersion() string {
 }
 
 // MainUsage returns a help page about ggman
-func (p Program[Runtime]) MainUsage() usagefmt.Page {
+func (p Program[Runtime, Requirements]) MainUsage() usagefmt.Page {
 	commands := append(p.Commands(), p.Aliases()...)
 
 	return usagefmt.Page{
@@ -38,7 +38,7 @@ func (p Program[Runtime]) MainUsage() usagefmt.Page {
 }
 
 // CommandUsage generates the usage information about a specific command
-func (p Program[Runtime]) CommandUsage(cmdargs CommandArguments[Runtime]) usagefmt.Page {
+func (p Program[Runtime, Requirements]) CommandUsage(cmdargs CommandArguments[Runtime, Requirements]) usagefmt.Page {
 	opt := cmdargs.description
 
 	return usagefmt.Page{
@@ -59,7 +59,7 @@ func (p Program[Runtime]) CommandUsage(cmdargs CommandArguments[Runtime]) usagef
 }
 
 // AliasPage returns a usage page for the provided alias
-func (p Program[Runtime]) AliasUsage(cmdargs CommandArguments[Runtime], alias Alias) usagefmt.Page {
+func (p Program[Runtime, Requirements]) AliasUsage(cmdargs CommandArguments[Runtime, Requirements], alias Alias) usagefmt.Page {
 	opt := cmdargs.description
 
 	exCmd := "`" + shellescape.QuoteCommand(append([]string{p.Info.MainName}, alias.Expansion()...)) + "`"

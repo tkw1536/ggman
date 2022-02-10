@@ -6,7 +6,8 @@ import (
 )
 
 func TestProgram_Alias(t *testing.T) {
-	var program Program[struct{}]
+	var program tProgram
+
 	program.Register(fakeCommand("a"))
 	program.RegisterAlias(Alias{Name: "a", Command: "b", Args: []string{"c"}})
 	program.RegisterAlias(Alias{Name: "b", Command: "d", Args: []string{"e"}})

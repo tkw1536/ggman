@@ -17,6 +17,18 @@ import (
 	"github.com/tkw1536/ggman/program/stream"
 )
 
+//
+// test-specific program types
+//
+
+type tRuntime = struct{}
+type tRequirements = struct{}
+
+type tProgram = Program[tRuntime, tRequirements]
+type tCommand = Command[tRuntime, tRequirements]
+type tContext = Context[tRuntime, tRequirements]
+type tCommandArguments = CommandArguments[tRuntime, tRequirements]
+
 // TODO: Fix broken tests (after type parameters)
 
 func TestProgram_Main(t *testing.T) {
@@ -30,8 +42,8 @@ func TestProgram_Main(t *testing.T) {
 	var stderrBuffer bytes.Buffer
 
 	// create a dummy program
-	program := Program[struct{}]{
-		Initalizer: func(params env.EnvironmentParameters, cmdargs CommandArguments[struct{}]) (struct{}, error) {
+	program := tProgram{
+		Initalizer: func(params env.EnvironmentParameters, cmdargs tCommandArguments) (struct{}, error) {
 			return struct{}{}, nil
 		},
 		Info: testInfo,
@@ -451,13 +463,13 @@ type echoCommand struct {
 	description Description
 }
 
-func (e echoCommand) BeforeRegister(program *Program[struct{}]) {}
+func (e echoCommand) BeforeRegister(program *tProgram) {}
 func (e echoCommand) Description() Description {
 	e.description.Name = e.name
 	return e.description
 }
 func (e echoCommand) AfterParse() error { return nil }
-func (e echoCommand) Run(context Context[struct{}]) error {
+func (e echoCommand) Run(context tContext) error {
 	context.Stdout.Write([]byte("Got filter: " + strings.Join(context.Filters, ",")))
 	context.Stdout.Write([]byte("\nGot arguments: " + strings.Join(context.Args, ",")))
 	context.Stdout.Write([]byte("\n" + e.StdoutMsg + "\n"))
@@ -471,7 +483,7 @@ func (e echoCommand) Run(context Context[struct{}]) error {
 }
 
 func TestProgram_Commands(t *testing.T) {
-	var program Program[struct{}]
+	var program tProgram
 	program.Register(fakeCommand("a"))
 	program.Register(fakeCommand("c"))
 	program.Register(fakeCommand("b"))
@@ -485,7 +497,7 @@ func TestProgram_Commands(t *testing.T) {
 }
 
 func TestProgram_FmtCommands(t *testing.T) {
-	var program Program[struct{}]
+	var program tProgram
 	program.Register(fakeCommand("a"))
 	program.Register(fakeCommand("c"))
 	program.Register(fakeCommand("b"))
