@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 )
 
@@ -42,7 +42,7 @@ func (where) AfterParse() error {
 }
 
 func (where) Run(context program.Context) error {
-	localPath, err := gg.C2E(context).Local(context.URLV(0))
+	localPath, err := ggman.C2E(context).Local(context.URLV(0))
 	if err != nil {
 		return err
 	}

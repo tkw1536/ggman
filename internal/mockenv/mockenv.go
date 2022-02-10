@@ -12,8 +12,8 @@ import (
 
 	"github.com/alessio/shellescape"
 	"github.com/go-git/go-git/v5"
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/gg"
 	gggit "github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
@@ -143,7 +143,7 @@ func (mock *MockEnv) Run(command program.Command, workdir string, stdin string, 
 	stderrBuffer := &bytes.Buffer{}
 
 	// create a program and run Main()
-	fakeggman := gg.NewProgram() // TODO: This should be toplevel!
+	fakeggman := ggman.NewProgram() // TODO: This should be toplevel!
 	fakeggman.Register(program.CloneCommand(command))
 
 	stream := stream.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader, 0)

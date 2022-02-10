@@ -1,5 +1,4 @@
-// Package gg implements program-specific functionality for ggman
-package gg
+package ggman
 
 import (
 	"github.com/pkg/errors"

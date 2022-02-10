@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
@@ -40,9 +40,9 @@ func (fetch) Run(context program.Context) error {
 	hasError := false
 
 	// iterate over all the repositories, and run git fetch
-	for _, repo := range gg.C2E(context).Repos() {
+	for _, repo := range ggman.C2E(context).Repos() {
 		context.Printf("Fetching %q\n", repo)
-		if e := gg.C2E(context).Git.Fetch(context.IOStream, repo); e != nil {
+		if e := ggman.C2E(context).Git.Fetch(context.IOStream, repo); e != nil {
 			context.EPrintln(e.Error())
 			hasError = true
 		}

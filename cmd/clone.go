@@ -3,8 +3,8 @@ package cmd
 import (
 	"errors"
 
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
@@ -91,7 +91,7 @@ func (c *clone) Run(context program.Context) error {
 	}
 
 	// find the remote and local paths to clone to / from
-	remote := gg.C2E(context).Canonical(url)
+	remote := ggman.C2E(context).Canonical(url)
 	local, err := c.dest(context, url)
 	if err != nil {
 		return errCloneInvalidDest.WithMessageF(context.Args[0], err)
@@ -99,7 +99,7 @@ func (c *clone) Run(context program.Context) error {
 
 	// do the actual cloning!
 	context.Printf("Cloning %q into %q ...\n", remote, local)
-	switch err := gg.C2E(context).Git.Clone(context.IOStream, remote, local, context.Args[1:]...); err {
+	switch err := ggman.C2E(context).Git.Clone(context.IOStream, remote, local, context.Args[1:]...); err {
 	case nil:
 		return nil
 	case git.ErrCloneAlreadyExists:
@@ -124,13 +124,13 @@ func (c clone) dest(context program.Context, url env.URL) (string, error) {
 		if len(comps) == 0 {
 			return "", errCloneNoComps
 		}
-		return gg.C2E(context).Abs(comps[len(comps)-1])
+		return ggman.C2E(context).Abs(comps[len(comps)-1])
 	}
 
 	if c.To != "" { // clone directory into a directory
-		return gg.C2E(context).Abs(c.To)
+		return ggman.C2E(context).Abs(c.To)
 	}
 
 	// normal clone!
-	return gg.C2E(context).Local(url)
+	return ggman.C2E(context).Local(url)
 }

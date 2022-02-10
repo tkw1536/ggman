@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
@@ -66,19 +66,19 @@ var errLinkUnknown = exit.Error{
 func (link) Run(context program.Context) error {
 	// make sure that the path is absolute
 	// to avoid relative symlinks
-	from, e := gg.C2E(context).Abs(context.Args[0])
+	from, e := ggman.C2E(context).Abs(context.Args[0])
 	if e != nil {
 		return errLinkDoesNotExist
 	}
 
 	// open the source repository and get the remotre
-	r, e := gg.C2E(context).Git.GetRemote(from)
+	r, e := ggman.C2E(context).Git.GetRemote(from)
 	if e != nil {
 		return errLinkDoesNotExist
 	}
 
 	// find the target path
-	to, err := gg.C2E(context).Local(env.ParseURL(r))
+	to, err := ggman.C2E(context).Local(env.ParseURL(r))
 	if err != nil {
 		return err
 	}

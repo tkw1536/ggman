@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/alessio/shellescape"
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/program"
 )
@@ -87,8 +87,8 @@ func (mockEnvRunCommand) Description() program.Description {
 }
 func (mockEnvRunCommand) AfterParse() error { return nil }
 func (mockEnvRunCommand) Run(context program.Context) error {
-	clonePath := filepath.Join(gg.C2E(context).Root, "server.com", "repo")
-	remote, _ := gg.C2E(context).Git.GetRemote(clonePath)
+	clonePath := filepath.Join(ggman.C2E(context).Root, "server.com", "repo")
+	remote, _ := ggman.C2E(context).Git.GetRemote(clonePath)
 
 	fmt.Fprintf(context.Stdout, "path=%s remote=%s\n", clonePath, remote)
 	fmt.Fprintf(context.Stderr, "got args: %v\n", context.Args)

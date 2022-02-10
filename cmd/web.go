@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
@@ -235,7 +235,7 @@ func (uw urlweb) Run(context program.Context) error {
 	}
 
 	if root != "" && (uw.Tree || uw.Branch) {
-		ref, err := gg.C2E(context).Git.GetHeadRef(root)
+		ref, err := ggman.C2E(context).Git.GetHeadRef(root)
 		if err != nil {
 			return errOutsideRepository
 		}
@@ -272,7 +272,7 @@ func (uw urlweb) getRemoteURL(context program.Context) (root string, remote stri
 
 func (uw urlweb) getRemoteURLReal(context program.Context) (root string, remote string, relative string, err error) {
 	// find the repository at the current location
-	root, relative, err = gg.C2E(context).At(".")
+	root, relative, err = ggman.C2E(context).At(".")
 	if err != nil {
 		return "", "", "", err
 	}
@@ -282,7 +282,7 @@ func (uw urlweb) getRemoteURLReal(context program.Context) (root string, remote 
 	}
 
 	// get the remote
-	remote, err = gg.C2E(context).Git.GetRemote(root)
+	remote, err = ggman.C2E(context).Git.GetRemote(root)
 	if err != nil {
 		return "", "", "", errOutsideRepository
 	}
@@ -292,13 +292,13 @@ func (uw urlweb) getRemoteURLReal(context program.Context) (root string, remote 
 
 func (uw urlweb) getRemoteURLFake(context program.Context) (root string, remote string, relative string, err error) {
 	// get the absolute path to the current workdir
-	workdir, err := gg.C2E(context).Abs("")
+	workdir, err := ggman.C2E(context).Abs("")
 	if err != nil {
 		return "", "", "", err
 	}
 
 	// determine the relative path to the root directory
-	relpath, err := filepath.Rel(gg.C2E(context).Root, workdir)
+	relpath, err := filepath.Rel(ggman.C2E(context).Root, workdir)
 	if err != nil || path.GoesUp(relpath) {
 		return "", "", "", errNoRelativeRepository
 	}

@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
@@ -46,14 +46,14 @@ func (l lsr) Run(context program.Context) error {
 	var lines env.CanFile
 	if l.Canonical {
 		var err error
-		if lines, err = gg.C2E(context).LoadDefaultCANFILE(); err != nil {
+		if lines, err = ggman.C2E(context).LoadDefaultCANFILE(); err != nil {
 			return errInvalidCanfile
 		}
 	}
 
 	// and print them
-	for _, repo := range gg.C2E(context).Repos() {
-		remote, err := gg.C2E(context).Git.GetRemote(repo)
+	for _, repo := range ggman.C2E(context).Repos() {
+		remote, err := ggman.C2E(context).Git.GetRemote(repo)
 		if err != nil {
 			continue
 		}

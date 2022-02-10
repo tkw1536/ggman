@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 
 	"github.com/alessio/shellescape"
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
@@ -50,13 +50,13 @@ var errUnableToMoveRepo = exit.Error{
 }
 
 func (r relocate) Run(context program.Context) error {
-	for _, gotPath := range gg.C2E(context).Repos() {
+	for _, gotPath := range ggman.C2E(context).Repos() {
 		// determine the remote path and where it should go
-		remote, err := gg.C2E(context).Git.GetRemote(gotPath)
+		remote, err := ggman.C2E(context).Git.GetRemote(gotPath)
 		if err != nil || remote == "" { // ignore remotes that don't exist
 			continue
 		}
-		shouldPath, err := gg.C2E(context).Local(env.ParseURL(remote))
+		shouldPath, err := ggman.C2E(context).Local(env.ParseURL(remote))
 		if err != nil {
 			return err
 		}

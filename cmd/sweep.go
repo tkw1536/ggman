@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/internal/walker"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
@@ -41,9 +41,9 @@ var errSweepErr = exit.Error{
 
 func (sweep) Run(context program.Context) error {
 	results, err := walker.Sweep(func(path string, root walker.FS, depth int) (stop bool) {
-		return gg.C2E(context).Git.IsRepository(path)
+		return ggman.C2E(context).Git.IsRepository(path)
 	}, walker.Params{
-		Root: walker.NewRealFS(gg.C2E(context).Root, false),
+		Root: walker.NewRealFS(ggman.C2E(context).Root, false),
 	})
 	if err != nil {
 		return errSweepErr.WithMessageF(err)

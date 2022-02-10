@@ -97,16 +97,16 @@ import (
 	"os"
 	"runtime/debug"
 
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/cmd"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 	"github.com/tkw1536/ggman/program/stream"
 )
 
 // the main ggman program that will contain everything
-var ggmanExe = gg.NewProgram()
+var ggmanExe = ggman.NewProgram()
 
 func init() {
 	// register all the known commands to the ggman program!

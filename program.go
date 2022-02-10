@@ -1,4 +1,4 @@
-package gg
+package ggman
 
 import (
 	"github.com/tkw1536/ggman/env"
@@ -15,7 +15,7 @@ func NewProgram() (p program.Program) {
 }
 
 // C2E returns the environment belonging to a context.
-// It should be replaced by a type parameter in the future.
+// TODO: Type parameter
 func C2E(context program.Context) *env.Env {
 	return context.Runtime().(*env.Env)
 }
