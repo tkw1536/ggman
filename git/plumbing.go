@@ -12,8 +12,8 @@ import (
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/internal/text"
+	"github.com/tkw1536/ggman/program/stream"
 )
 
 // Plumbing is an interface that represents a working internal implementation of git.
@@ -29,7 +29,7 @@ import (
 //  if !isRepo {
 //    // error, not a repository
 //  }
-//  err = plumbining.Pull(ggman.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world", cache)
+//  err = plumbining.Pull(stream.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world", cache)
 //
 // Such code is typically handled by a Git instance that wraps a Plumbing.
 type Plumbing interface {
@@ -100,7 +100,7 @@ type Plumbing interface {
 	// If the clone succeeds returns, err = nil.
 	// If the underlying clone command returns a non-zero code, returns an error of type ExitError.
 	// If something else goes wrong, may return any other error type.
-	Clone(stream ggman.IOStream, remoteURI, clonePath string, extraargs ...string) error
+	Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error
 
 	// Fetch should fetch new objects and refs from all remotes of the repository cloned at clonePath.
 	// May attempt to read credentials from stream.Stdin.
@@ -108,7 +108,7 @@ type Plumbing interface {
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
-	Fetch(stream ggman.IOStream, clonePath string, cache interface{}) (err error)
+	Fetch(stream stream.IOStream, clonePath string, cache interface{}) (err error)
 
 	// Pull should fetch new objects and refs from all remotes of the repository cloned at clonePath.
 	// It then merges them into the local branch wherever an upstream is set.
@@ -117,7 +117,7 @@ type Plumbing interface {
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
-	Pull(stream ggman.IOStream, clonePath string, cache interface{}) (err error)
+	Pull(stream stream.IOStream, clonePath string, cache interface{}) (err error)
 
 	// GetBranches gets the names of all branches contained in the repository at clonePath.
 	//
@@ -220,7 +220,7 @@ func (gg gitgit) findGitByExtension(exts []string) (git string, err error) {
 	return "", exec.ErrNotFound
 }
 
-func (gg gitgit) Clone(stream ggman.IOStream, remoteURI, clonePath string, extraargs ...string) error {
+func (gg gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error {
 
 	gargs := append([]string{"clone", remoteURI, clonePath}, extraargs...)
 
@@ -451,7 +451,7 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject interface{}, name string
 	return
 }
 
-func (gogit) Clone(stream ggman.IOStream, remoteURI, clonePath string, extraargs ...string) error {
+func (gogit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error {
 	// doesn't support extra arguments
 	if len(extraargs) > 0 {
 		return ErrArgumentsUnsupported
@@ -466,7 +466,7 @@ func (gogit) Clone(stream ggman.IOStream, remoteURI, clonePath string, extraargs
 	return err
 }
 
-func (gogit) Fetch(stream ggman.IOStream, clonePath string, cache interface{}) (err error) {
+func (gogit) Fetch(stream stream.IOStream, clonePath string, cache interface{}) (err error) {
 	// get the repository
 	r := cache.(*git.Repository)
 
@@ -492,7 +492,7 @@ func (gogit) Fetch(stream ggman.IOStream, clonePath string, cache interface{}) (
 	return
 }
 
-func (gogit) Pull(stream ggman.IOStream, clonePath string, cache interface{}) (err error) {
+func (gogit) Pull(stream stream.IOStream, clonePath string, cache interface{}) (err error) {
 	// get the repository
 	r := cache.(*git.Repository)
 
@@ -513,7 +513,7 @@ func (gogit) Pull(stream ggman.IOStream, clonePath string, cache interface{}) (e
 	return
 }
 
-func ignoreErrUpToDate(stream ggman.IOStream, err error) error {
+func ignoreErrUpToDate(stream stream.IOStream, err error) error {
 	if err == git.NoErrAlreadyUpToDate {
 		stream.StdoutWriteWrap(err.Error())
 		err = nil

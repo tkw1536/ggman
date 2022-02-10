@@ -97,12 +97,12 @@ import (
 	"os"
 	"runtime/debug"
 
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/cmd"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/stream"
 )
 
 // the main ggman program that will contain everything
@@ -155,7 +155,7 @@ func main() {
 	}()
 
 	// execute the main program with the real environment!
-	err := ggmanExe.Main(ggman.NewEnvIOStream(), env.EnvironmentParameters{
+	err := ggmanExe.Main(stream.NewEnvIOStream(), env.EnvironmentParameters{
 		Variables: env.ReadVariables(),
 		Plumbing:  nil,
 		Workdir:   "",

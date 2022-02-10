@@ -6,9 +6,9 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
-	"github.com/tkw1536/ggman"
 	gggit "github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/program/stream"
 )
 
 func TestMappedPlumbing_Forward(t *testing.T) {
@@ -359,7 +359,7 @@ func Test_MappedPlumbing_Clone(t *testing.T) {
 	t.Run("cloning a repository", func(t *testing.T) {
 		clone := testutil.TempDirAbs(t)
 
-		err := mp.Clone(ggman.NewNilIOStream(), mappedRemote, clone)
+		err := mp.Clone(stream.NewNilIOStream(), mappedRemote, clone)
 		if err != nil {
 			t.Error("Clone() got err != nil, want err = nil")
 		}

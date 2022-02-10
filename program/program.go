@@ -9,10 +9,10 @@ import (
 	"sort"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/stream"
 	"github.com/tkw1536/ggman/program/usagefmt"
 )
 
@@ -143,7 +143,7 @@ var errInitContext = exit.Error{
 
 // Main is the entry point to this program.
 // When an error occurs, returns an error of type Error and writes the error to context.Stderr.
-func (p Program) Main(stream ggman.IOStream, params env.EnvironmentParameters, argv []string) (err error) {
+func (p Program) Main(stream stream.IOStream, params env.EnvironmentParameters, argv []string) (err error) {
 	// whenever an error occurs, we want it printed
 	defer func() {
 		err = stream.Die(err)

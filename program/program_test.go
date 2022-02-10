@@ -9,12 +9,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/ggman/internal/text"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/stream"
 )
 
 func TestProgram_Main(t *testing.T) {
@@ -35,7 +35,7 @@ func TestProgram_Main(t *testing.T) {
 	}
 
 	wrapLength := 80
-	stream := ggman.NewIOStream(&stdoutBuffer, &stderrBuffer, nil, wrapLength)
+	stream := stream.NewIOStream(&stdoutBuffer, &stderrBuffer, nil, wrapLength)
 
 	tests := []struct {
 		name      string

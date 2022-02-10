@@ -12,7 +12,6 @@ import (
 
 	"github.com/alessio/shellescape"
 	"github.com/go-git/go-git/v5"
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	gggit "github.com/tkw1536/ggman/git"
@@ -20,6 +19,7 @@ import (
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/stream"
 )
 
 // MockEnv represents a new environment that can be used for testing ggman commands.
@@ -80,7 +80,7 @@ func (mock MockEnv) Resolve(path ...string) string {
 // If something goes wrong, calls panic().
 func (mock *MockEnv) Install(remote string, path ...string) string {
 	clonePath := mock.Resolve(path...)
-	err := mock.plumbing.Clone(ggman.NewNilIOStream(), remote, clonePath)
+	err := mock.plumbing.Clone(stream.NewNilIOStream(), remote, clonePath)
 	if err != nil {
 		panic(err)
 	}
@@ -146,7 +146,7 @@ func (mock *MockEnv) Run(command program.Command, workdir string, stdin string, 
 	fakeggman := gg.NewProgram() // TODO: This should be toplevel!
 	fakeggman.Register(program.CloneCommand(command))
 
-	stream := ggman.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader, 0)
+	stream := stream.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader, 0)
 
 	// run the code
 	err := exit.AsError(fakeggman.Main(stream, env.EnvironmentParameters{

@@ -3,8 +3,8 @@ package mockenv
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/git"
+	"github.com/tkw1536/ggman/program/stream"
 )
 
 // MappedPlumbing is a version of a git.Plumbing that runs all URLs via a translation mapping.
@@ -43,7 +43,7 @@ func (mp MappedPlumbing) Backward(url string) string {
 }
 
 // Clone translates remoteURI and calls Clone on the underlying Plumbing.
-func (mp MappedPlumbing) Clone(stream ggman.IOStream, remoteURI, clonePath string, extraargs ...string) error {
+func (mp MappedPlumbing) Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error {
 	return mp.Plumbing.Clone(stream, mp.Forward(remoteURI), clonePath, extraargs...)
 }
 

@@ -11,8 +11,8 @@ import (
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/program/stream"
 )
 
 func Test_gogit_IsRepository(t *testing.T) {
@@ -402,7 +402,7 @@ func Test_gogit_Clone(t *testing.T) {
 	t.Run("cloning a repository", func(t *testing.T) {
 		clone := testutil.TempDirAbs(t)
 
-		err := gg.Clone(ggman.NewNilIOStream(), remote, clone)
+		err := gg.Clone(stream.NewNilIOStream(), remote, clone)
 		if err != nil {
 			t.Error("Clone() got err != nil, want err = nil")
 		}
@@ -415,7 +415,7 @@ func Test_gogit_Clone(t *testing.T) {
 	t.Run("cloning a repository with arguments is not supported", func(t *testing.T) {
 		clone := testutil.TempDirAbs(t)
 
-		err := gg.Clone(ggman.NewNilIOStream(), remote, clone, "--branch", "main")
+		err := gg.Clone(stream.NewNilIOStream(), remote, clone, "--branch", "main")
 		if err != ErrArgumentsUnsupported {
 			t.Error("Clone() got err != ErrArgumentsUnsupported, want err = ErrArgumentsUnsupported")
 		}
@@ -471,7 +471,7 @@ func Test_gogit_Fetch(t *testing.T) {
 	}
 
 	t.Run("fetching fetches all remotes", func(t *testing.T) {
-		err := gg.Fetch(ggman.NewNilIOStream(), clone, ggRepoObject)
+		err := gg.Fetch(stream.NewNilIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Fetch() returned err != nil, want err = nil")
 		}
@@ -503,7 +503,7 @@ func Test_gogit_Fetch(t *testing.T) {
 	})
 
 	t.Run("fetching an up-to-date repo returns no error", func(t *testing.T) {
-		err := gg.Fetch(ggman.NewNilIOStream(), clone, ggRepoObject)
+		err := gg.Fetch(stream.NewNilIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Fetch() returned err != nil, want err = nil")
 		}
@@ -539,7 +539,7 @@ func Test_gogit_Pull(t *testing.T) {
 	}
 
 	t.Run("pulling pulls a repository", func(t *testing.T) {
-		err := gg.Pull(ggman.NewNilIOStream(), clone, ggRepoObject)
+		err := gg.Pull(stream.NewNilIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Pull() returned err != nil, want err = nil")
 		}
@@ -555,7 +555,7 @@ func Test_gogit_Pull(t *testing.T) {
 	})
 
 	t.Run("pulling an up-to-date repo returns no error", func(t *testing.T) {
-		err := gg.Pull(ggman.NewNilIOStream(), clone, ggRepoObject)
+		err := gg.Pull(stream.NewNilIOStream(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Pull() returned err != nil, want err = nil")
 		}

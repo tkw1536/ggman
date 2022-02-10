@@ -1,4 +1,4 @@
-// Package exit defines exit and error behavior of commands
+// Package exit defines exit and error behavior of programs and commands.
 package exit
 
 import (

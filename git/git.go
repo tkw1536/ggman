@@ -16,7 +16,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/tkw1536/ggman"
+	"github.com/tkw1536/ggman/program/stream"
 )
 
 // Git represents a wrapper around a Plumbing instance.
@@ -25,7 +25,7 @@ import (
 // As opposed to Plumbing, which poses certain requirements and assumptions on the caller, a Git does not.
 // Using a Git can be as simple as:
 //
-//  err := git.Pull(ggman.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world")
+//  err := git.Pull(stream.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world")
 //
 type Git interface {
 	// Plumbing returns the plumbing used by this git.
@@ -50,7 +50,7 @@ type Git interface {
 	// If the underlying 'git' process exits abnormally, returns.
 	// If extraargs is non-empty and extra arguments are not supported by this Wrapper, returns ErrArgumentsUnsupported.
 	// May return other error types for other errors.
-	Clone(stream ggman.IOStream, remoteURI, clonePath string, extraargs ...string) error
+	Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error
 
 	// GetHeadRef gets a resolved reference to head at the repository at clonePath.
 	//
@@ -66,7 +66,7 @@ type Git interface {
 	// When fetching succeeded, returns nil.
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	Fetch(stream ggman.IOStream, clonePath string) error
+	Fetch(stream stream.IOStream, clonePath string) error
 
 	// Pull fetches the repository at clonePath and merges in changes where appropriate.
 	// May attempt to read credentials from stream.Stdin.
@@ -75,7 +75,7 @@ type Git interface {
 	// When pulling succeeded, returns nil.
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	Pull(stream ggman.IOStream, clonePath string) error
+	Pull(stream stream.IOStream, clonePath string) error
 
 	// GetRemote gets the url of the canonical remote at clonePath.
 	// The semantics of 'canonical' are determined by the underlying git implementation.
@@ -180,7 +180,7 @@ func (impl *dfltGitWrapper) IsRepositoryQuick(localPath string) bool {
 	return impl.IsRepository(localPath)
 }
 
-func (impl *dfltGitWrapper) Clone(stream ggman.IOStream, remoteURI, clonePath string, extraargs ...string) error {
+func (impl *dfltGitWrapper) Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error {
 	impl.ensureInit()
 
 	// check if the repository already exists
@@ -210,7 +210,7 @@ func (impl *dfltGitWrapper) GetHeadRef(clonePath string) (ref string, err error)
 	return impl.git.GetHeadRef(clonePath, repoObject)
 }
 
-func (impl *dfltGitWrapper) Fetch(stream ggman.IOStream, clonePath string) error {
+func (impl *dfltGitWrapper) Fetch(stream stream.IOStream, clonePath string) error {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -222,7 +222,7 @@ func (impl *dfltGitWrapper) Fetch(stream ggman.IOStream, clonePath string) error
 	return impl.git.Fetch(stream, clonePath, repoObject)
 }
 
-func (impl *dfltGitWrapper) Pull(stream ggman.IOStream, clonePath string) error {
+func (impl *dfltGitWrapper) Pull(stream stream.IOStream, clonePath string) error {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository

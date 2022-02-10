@@ -1,4 +1,5 @@
-package ggman
+// Packate stream defines input and output streams of programs
+package stream
 
 import (
 	"fmt"

@@ -1,13 +1,13 @@
 package program
 
 import (
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/program/stream"
 )
 
 // Context represents a context that a command is run inside of
 type Context struct {
-	ggman.IOStream
+	stream.IOStream
 	CommandArguments
 	runtime Runtime
 }
