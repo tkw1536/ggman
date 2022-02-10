@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -16,12 +15,12 @@ type pull struct{}
 
 func (pull) BeforeRegister(program *ggman.Program) {}
 
-func (pull) Description() program.Description {
-	return program.Description{
+func (pull) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "pull",
 		Description: "Run 'git pull' on locally cloned repositories",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			AllowsFilter: true,
 			NeedsRoot:    true,
 		},

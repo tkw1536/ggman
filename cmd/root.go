@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
 )
 
 // Root is the 'ggman root' command.
@@ -16,12 +15,12 @@ type root struct{}
 
 func (root) BeforeRegister(program *ggman.Program) {}
 
-func (root) Description() program.Description {
-	return program.Description{
+func (root) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "root",
 		Description: "Print the ggman root folder. ",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},
 	}

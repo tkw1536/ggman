@@ -11,7 +11,7 @@ import (
 // NewRuntime makes a new runtime for ggman
 func NewRuntime(params env.EnvironmentParameters, cmdargs CommandArguments) (*env.Env, error) {
 	// create a new environment
-	env, err := env.NewEnv(cmdargs.Description().Environment, params)
+	env, err := env.NewEnv(cmdargs.Description().Requirements, params)
 	if err != nil {
 		return nil, err
 	}

@@ -125,7 +125,7 @@ func TestCommandArguments_checkPositionalCount(t *testing.T) {
 	tests := []struct {
 		name string
 
-		options   Description
+		options   tDescription
 		arguments Arguments
 
 		wantErr string
@@ -133,7 +133,7 @@ func TestCommandArguments_checkPositionalCount(t *testing.T) {
 		// taking 0 args
 		{
 			"no arguments",
-			Description{PosArgsMin: 0, PosArgsMax: 0},
+			tDescription{PosArgsMin: 0, PosArgsMax: 0},
 			Arguments{Command: "example", Args: []string{}},
 			"",
 		},
@@ -141,19 +141,19 @@ func TestCommandArguments_checkPositionalCount(t *testing.T) {
 		// taking 1 arg
 		{
 			"one argument, too few",
-			Description{PosArgsMin: 1, PosArgsMax: 1},
+			tDescription{PosArgsMin: 1, PosArgsMax: 1},
 			Arguments{Command: "example", Args: []string{}},
 			"Wrong number of arguments: 'example' takes exactly 1 argument(s). ",
 		},
 		{
 			"one argument, exactly enough",
-			Description{PosArgsMin: 1, PosArgsMax: 1},
+			tDescription{PosArgsMin: 1, PosArgsMax: 1},
 			Arguments{Command: "example", Args: []string{"world"}},
 			"",
 		},
 		{
 			"one argument, too many",
-			Description{PosArgsMin: 1, PosArgsMax: 1},
+			tDescription{PosArgsMin: 1, PosArgsMax: 1},
 			Arguments{Command: "example", Args: []string{"hello", "world"}},
 			"Wrong number of arguments: 'example' takes exactly 1 argument(s). ",
 		},
@@ -161,25 +161,25 @@ func TestCommandArguments_checkPositionalCount(t *testing.T) {
 		// taking 1 or 2 args
 		{
 			"1-2 arguments, too few",
-			Description{PosArgsMin: 1, PosArgsMax: 2},
+			tDescription{PosArgsMin: 1, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{}},
 			"Wrong number of arguments: 'example' takes between 1 and 2 arguments. ",
 		},
 		{
 			"1-2 arguments, enough",
-			Description{PosArgsMin: 1, PosArgsMax: 2},
+			tDescription{PosArgsMin: 1, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"world"}},
 			"",
 		},
 		{
 			"1-2 arguments, enough (2)",
-			Description{PosArgsMin: 1, PosArgsMax: 2},
+			tDescription{PosArgsMin: 1, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"hello", "world"}},
 			"",
 		},
 		{
 			"1-2 arguments, too many",
-			Description{PosArgsMin: 1, PosArgsMax: 2},
+			tDescription{PosArgsMin: 1, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"hello", "world", "you"}},
 			"Wrong number of arguments: 'example' takes between 1 and 2 arguments. ",
 		},
@@ -187,25 +187,25 @@ func TestCommandArguments_checkPositionalCount(t *testing.T) {
 		// taking 2 args
 		{
 			"two arguments, too few",
-			Description{PosArgsMin: 2, PosArgsMax: 2},
+			tDescription{PosArgsMin: 2, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{}},
 			"Wrong number of arguments: 'example' takes exactly 2 argument(s). ",
 		},
 		{
 			"two arguments, too few (2)",
-			Description{PosArgsMin: 2, PosArgsMax: 2},
+			tDescription{PosArgsMin: 2, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"world"}},
 			"Wrong number of arguments: 'example' takes exactly 2 argument(s). ",
 		},
 		{
 			"two arguments, enough",
-			Description{PosArgsMin: 2, PosArgsMax: 2},
+			tDescription{PosArgsMin: 2, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"hello", "world"}},
 			"",
 		},
 		{
 			"two arguments, too many",
-			Description{PosArgsMin: 2, PosArgsMax: 2},
+			tDescription{PosArgsMin: 2, PosArgsMax: 2},
 			Arguments{Command: "example", Args: []string{"hello", "world", "you"}},
 			"Wrong number of arguments: 'example' takes exactly 2 argument(s). ",
 		},
@@ -213,19 +213,19 @@ func TestCommandArguments_checkPositionalCount(t *testing.T) {
 		// at least one argument
 		{
 			"at least 1 arguments, not enough",
-			Description{PosArgsMin: 1, PosArgsMax: -1},
+			tDescription{PosArgsMin: 1, PosArgsMax: -1},
 			Arguments{Command: "example", Args: []string{}},
 			"Wrong number of arguments: 'example' takes at least 1 argument(s). ",
 		},
 		{
 			"at least 1 arguments, enough",
-			Description{PosArgsMin: 1, PosArgsMax: -1},
+			tDescription{PosArgsMin: 1, PosArgsMax: -1},
 			Arguments{Command: "example", Args: []string{"hello"}},
 			"",
 		},
 		{
 			"at least 1 arguments, enough (2)",
-			Description{PosArgsMin: 1, PosArgsMax: -1},
+			tDescription{PosArgsMin: 1, PosArgsMax: -1},
 			Arguments{Command: "example", Args: []string{"hello", "cruel", "world"}},
 			"",
 		},
@@ -251,40 +251,40 @@ func TestCommandArguments_checkPositionalCount(t *testing.T) {
 func TestCommandArguments_checkFilterArgument(t *testing.T) {
 	tests := []struct {
 		name      string
-		options   Description
+		options   tDescription
 		arguments Arguments
 
 		wantErr string
 	}{
 		{
 			"for not allowed, for not given",
-			Description{Environment: env.Requirement{AllowsFilter: false}},
+			tDescription{Requirements: env.Requirement{AllowsFilter: false}},
 			Arguments{Command: "example"},
 			"",
 		},
 		{
 			"for not allowed, for given",
-			Description{Environment: env.Requirement{AllowsFilter: false}},
+			tDescription{Requirements: env.Requirement{AllowsFilter: false}},
 			Arguments{Command: "example", Filters: []string{"pattern"}},
 			"Wrong number of arguments: 'example' takes no '--for' argument. ",
 		},
 
 		{
 			"fuzzy not allowed, fuzzy given",
-			Description{Environment: env.Requirement{AllowsFilter: false}},
+			tDescription{Requirements: env.Requirement{AllowsFilter: false}},
 			Arguments{Command: "example", NoFuzzyFilter: true, Filters: nil},
 			"Wrong number of arguments: 'example' takes no '--no-fuzzy-filter' argument. ",
 		},
 
 		{
 			"for allowed, for not given",
-			Description{Environment: env.Requirement{AllowsFilter: true}},
+			tDescription{Requirements: env.Requirement{AllowsFilter: true}},
 			Arguments{Command: "example", Filters: nil},
 			"",
 		},
 		{
 			"for allowed, for given",
-			Description{Environment: env.Requirement{AllowsFilter: true}},
+			tDescription{Requirements: env.Requirement{AllowsFilter: true}},
 			Arguments{Command: "example", Filters: []string{"pattern"}},
 			"",
 		},

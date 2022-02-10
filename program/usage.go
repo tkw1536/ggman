@@ -30,7 +30,7 @@ func (p Program[Runtime, Parameters, Requirements]) MainUsage() usagefmt.Page {
 
 	return usagefmt.Page{
 		MainName:    p.Info.MainName,
-		MainOpts:    GetMainOpts(nil),
+		MainOpts:    GetMainOpts[Requirements](nil),
 		Description: p.Info.Description,
 
 		SubCommands: commands,
@@ -90,7 +90,7 @@ func (p Program[Runtime, Parameters, Requirements]) AliasUsage(cmdargs CommandAr
 }
 
 // GetMainOpts returns a list of global options for the provided command
-func GetMainOpts(opt *Description) (opts []usagefmt.Opt) {
+func GetMainOpts[Requirements any](opt *Description[Requirements]) (opts []usagefmt.Opt) {
 
 	// generate the main options by parsing the fake 'Arguments' struct.
 	// return immediatly if global options only were requested
@@ -102,7 +102,7 @@ func GetMainOpts(opt *Description) (opts []usagefmt.Opt) {
 	n := 0
 	for _, arg := range opts {
 		// when the environment does not allow a filter, we only allow non-filter options!
-		if !opt.Environment.AllowsFilter && !text.SliceContainsAny(arg.Long(), argumentsGeneralOptions...) {
+		if !opt.Requirements.AllowsFilter && !text.SliceContainsAny(arg.Long(), argumentsGeneralOptions...) {
 			continue
 		}
 		opts[n] = arg

@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -21,8 +20,8 @@ type findBranch struct {
 
 func (findBranch) BeforeRegister(program *ggman.Program) {}
 
-func (f *findBranch) Description() program.Description {
-	return program.Description{
+func (f *findBranch) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "find-branch",
 		Description: "List repositories containing a specific branch",
 
@@ -33,7 +32,7 @@ func (f *findBranch) Description() program.Description {
 
 		PosArgDescription: "Name of branch to find",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},
 	}

@@ -14,7 +14,7 @@ type fakeCommand string
 var _ tCommand = (fakeCommand)("")
 
 func (fakeCommand) BeforeRegister(program *tProgram) {}
-func (f fakeCommand) Description() Description       { return Description{Name: string(f)} }
+func (f fakeCommand) Description() tDescription      { return tDescription{Name: string(f)} }
 func (fakeCommand) AfterParse() error                { panic("fakeCommand: not implemented") }
 func (fakeCommand) Run(tContext) error               { panic("fakeCommand: not implemented") }
 
@@ -121,9 +121,9 @@ func TestProgram_CommandUsage(t *testing.T) {
 
 				parser: parser,
 
-				description: Description{
+				description: tDescription{
 					Description:       tt.fields.Description,
-					Environment:       tt.fields.Environment,
+					Requirements:      tt.fields.Environment,
 					PosArgsMin:        tt.fields.MinArgs,
 					PosArgsMax:        tt.fields.MaxArgs,
 					PosArgName:        tt.fields.Metavar,

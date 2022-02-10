@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/program"
 )
 
 // Comps is the 'ggman comps' command.
@@ -15,8 +14,8 @@ type comps struct{}
 
 func (comps) BeforeRegister(program *ggman.Program) {}
 
-func (comps) Description() program.Description {
-	return program.Description{
+func (comps) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "comps",
 		Description: "Print the components of a URL",
 

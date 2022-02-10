@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
 )
 
 // Where is the 'ggman where' command.
@@ -19,8 +18,8 @@ type where struct{}
 
 func (where) BeforeRegister(program *ggman.Program) {}
 
-func (where) Description() program.Description {
-	return program.Description{
+func (where) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "where",
 		Description: "Print the location where a repository would be cloned to",
 
@@ -31,7 +30,7 @@ func (where) Description() program.Description {
 
 		PosArgDescription: "Remote repository URL to use",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},
 	}

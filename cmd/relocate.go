@@ -7,7 +7,6 @@ import (
 	"github.com/alessio/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -22,12 +21,12 @@ type relocate struct {
 
 func (relocate) BeforeRegister(program *ggman.Program) {}
 
-func (r *relocate) Description() program.Description {
-	return program.Description{
+func (r *relocate) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "relocate",
 		Description: "Move locally cloned repositories into locations as per 'ggman where'. ",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			NeedsRoot:    true,
 			NeedsCanFile: true,
 			AllowsFilter: true,

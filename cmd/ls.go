@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -23,12 +22,12 @@ type ls struct {
 
 func (*ls) BeforeRegister(program *ggman.Program) {}
 
-func (l *ls) Description() program.Description {
-	return program.Description{
+func (l *ls) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "ls",
 		Description: "List local paths to all locally cloned repositories. ",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			AllowsFilter: true,
 			NeedsRoot:    true,
 		},

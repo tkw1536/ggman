@@ -6,7 +6,6 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -27,8 +26,8 @@ type clone struct {
 
 func (*clone) BeforeRegister(program *ggman.Program) {}
 
-func (*clone) Description() program.Description {
-	return program.Description{
+func (*clone) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "clone",
 		Description: "Clone a repository into a path described by 'ggman where'",
 
@@ -40,7 +39,7 @@ func (*clone) Description() program.Description {
 
 		PosArgDescription: "URL of repository and arguments to pass to 'git clone'",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			NeedsRoot:    true,
 			NeedsCanFile: true,
 		},

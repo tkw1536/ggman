@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -16,12 +15,12 @@ type fetch struct{}
 
 func (fetch) BeforeRegister(program *ggman.Program) {}
 
-func (fetch) Description() program.Description {
-	return program.Description{
+func (fetch) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "fetch",
 		Description: "Run 'git fetch --all' on locally cloned repositories",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			AllowsFilter: true,
 			NeedsRoot:    true,
 		},

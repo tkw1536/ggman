@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/constants/legal"
-	"github.com/tkw1536/ggman/program"
 )
 
 // License is the 'ggman license' command.
@@ -15,8 +14,8 @@ type license struct{}
 
 func (license) BeforeRegister(program *ggman.Program) {}
 
-func (license) Description() program.Description {
-	return program.Description{
+func (license) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "license",
 		Description: "Print license information about ggman and exit. ",
 	}

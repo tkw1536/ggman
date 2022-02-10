@@ -5,7 +5,6 @@ import (
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -22,11 +21,11 @@ type fix struct {
 
 func (fix) BeforeRegister(program *ggman.Program) {}
 
-func (f *fix) Description() program.Description {
-	return program.Description{
+func (f *fix) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "fix",
 		Description: "Canonicalizes remote URLs for cloned repositories. ",
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			NeedsRoot:    true,
 			NeedsCanFile: true,
 			AllowsFilter: true,

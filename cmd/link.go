@@ -8,7 +8,6 @@ import (
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -21,8 +20,8 @@ type link struct{}
 
 func (link) BeforeRegister(program *ggman.Program) {}
 
-func (link) Description() program.Description {
-	return program.Description{
+func (link) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "link",
 		Description: "Symlink a repository into the local repository structure. ",
 
@@ -33,7 +32,7 @@ func (link) Description() program.Description {
 
 		PosArgDescription: "Path of repository to symlink",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},
 	}

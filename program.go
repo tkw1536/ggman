@@ -18,6 +18,7 @@ type Program = program.Program[ggmanRuntime, ggmanParameters, ggmanRequirements]
 type Command = program.Command[ggmanRuntime, ggmanParameters, ggmanRequirements]
 type Context = program.Context[ggmanRuntime, ggmanParameters, ggmanRequirements]
 type CommandArguments = program.CommandArguments[ggmanRuntime, ggmanParameters, ggmanRequirements]
+type Description = program.Description[ggmanRequirements]
 
 // info contains information about the ggman program
 var info = program.Info{

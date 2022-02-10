@@ -8,7 +8,6 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/sema"
 	"github.com/tkw1536/ggman/internal/stream"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -46,8 +45,8 @@ type exe struct {
 
 func (*exe) BeforeRegister(program *ggman.Program) {}
 
-func (*exe) Description() program.Description {
-	return program.Description{
+func (*exe) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "exec",
 		Description: "Execute a command for all repositories",
 
@@ -56,7 +55,7 @@ func (*exe) Description() program.Description {
 		PosArgsMax:         -1,
 		PosArgName:         "ARGS",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			AllowsFilter: true,
 			NeedsRoot:    true,
 		},

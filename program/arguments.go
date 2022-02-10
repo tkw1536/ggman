@@ -192,7 +192,7 @@ type CommandArguments[Runtime any, Parameters any, Requirements any] struct {
 	Arguments // Arguments that were passed to the command globally
 
 	parser      *flags.Parser
-	description Description
+	description Description[Requirements]
 }
 
 // Parse parses arguments from a set of parsed command arguments.
@@ -337,7 +337,7 @@ var errTakesNoArgument = exit.Error{
 // When filter arguments are not allowed returns an error of type Error iff the check fails.
 func (args CommandArguments[Runtime, Parameters, Requirements]) checkFilterArgument() error {
 	// we don't have to do any checking!
-	if args.description.Environment.AllowsFilter {
+	if args.description.Requirements.AllowsFilter {
 		return nil
 	}
 
@@ -357,6 +357,6 @@ func (args CommandArguments[Runtime, Parameters, Requirements]) checkFilterArgum
 }
 
 // Description returns the description of the command invoked by these arguments
-func (args CommandArguments[Runtime, Parameters, Requirements]) Description() Description {
+func (args CommandArguments[Runtime, Parameters, Requirements]) Description() Description[Requirements] {
 	return args.description
 }

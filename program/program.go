@@ -65,7 +65,7 @@ type Command[Runtime any, Parameters any, Requirements any] interface {
 
 	// Description returns a description of this command.
 	// It may be called multiple times.
-	Description() Description
+	Description() Description[Requirements]
 
 	// AfterParse is called after arguments have been parsed, but before the command is being run.
 	// It may perform additional argument checking and should return an error if needed.
@@ -115,11 +115,11 @@ func CloneCommand[Runtime any, Parameters any, Requirements any](command Command
 }
 
 // Description represents the description of a command
-type Description struct {
+type Description[Requirements any] struct {
 	Name        string // name this command can be invoked under
 	Description string // human readable description of the command
 
-	Environment env.Requirement // environment requirements for this command
+	Requirements env.Requirement // environment requirements for this command
 
 	SkipUnknownOptions bool // do not complain about unkown options and add the to positionals instead
 

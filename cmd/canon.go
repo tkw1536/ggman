@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
 )
 
 // Canon is the 'ggman canon' command.
@@ -16,8 +15,8 @@ type canon struct{}
 
 func (canon) BeforeRegister(program *ggman.Program) {}
 
-func (canon) Description() program.Description {
-	return program.Description{
+func (canon) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "canon",
 		Description: "Print the canonical version of a URL",
 

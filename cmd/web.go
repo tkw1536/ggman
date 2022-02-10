@@ -9,7 +9,6 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 
 	"github.com/pkg/browser"
@@ -112,7 +111,7 @@ func FmtWebBuiltInBaseNames() string {
 
 var stringWebBaseUsage = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s"
 
-func (uw *urlweb) Description() program.Description {
+func (uw *urlweb) Description() ggman.Description {
 
 	var Name string
 	if uw.isWebCommand {
@@ -128,7 +127,7 @@ func (uw *urlweb) Description() program.Description {
 		Description = "Print the URL to this repository for opening a web browser"
 	}
 
-	return program.Description{
+	return ggman.Description{
 		Name:        Name,
 		Description: Description,
 
@@ -138,7 +137,7 @@ func (uw *urlweb) Description() program.Description {
 
 		PosArgDescription: fmt.Sprintf(stringWebBaseUsage, urlwebBuiltinBaseNames),
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},
 	}

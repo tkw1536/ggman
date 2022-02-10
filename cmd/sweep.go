@@ -4,7 +4,6 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/walker"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -19,12 +18,12 @@ type sweep struct{}
 
 func (sweep) BeforeRegister(program *ggman.Program) {}
 
-func (sweep) Description() program.Description {
-	return program.Description{
+func (sweep) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "sweep",
 		Description: "Find empty folders in the project folder. ",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},
 	}

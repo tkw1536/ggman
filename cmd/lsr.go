@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -21,12 +20,12 @@ type lsr struct {
 
 func (lsr) BeforeRegister(program *ggman.Program) {}
 
-func (l *lsr) Description() program.Description {
-	return program.Description{
+func (l *lsr) Description() ggman.Description {
+	return ggman.Description{
 		Name:        "lsr",
 		Description: "List remote URLs to all locally cloned repositories. ",
 
-		Environment: env.Requirement{
+		Requirements: env.Requirement{
 			AllowsFilter: true,
 			NeedsRoot:    true,
 		},
