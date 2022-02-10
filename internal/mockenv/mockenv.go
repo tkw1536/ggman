@@ -80,7 +80,7 @@ func (mock MockEnv) Resolve(path ...string) string {
 // If something goes wrong, calls panic().
 func (mock *MockEnv) Install(remote string, path ...string) string {
 	clonePath := mock.Resolve(path...)
-	err := mock.plumbing.Clone(stream.NewNilIOStream(), remote, clonePath)
+	err := mock.plumbing.Clone(stream.FromNil(), remote, clonePath)
 	if err != nil {
 		panic(err)
 	}

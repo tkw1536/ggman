@@ -1,11 +1,7 @@
 package program
 
 import (
-	"fmt"
 	"sort"
-
-	"github.com/alessio/shellescape"
-	"github.com/tkw1536/ggman/program/usagefmt"
 )
 
 // Alias represents an alias for a command.
@@ -72,35 +68,4 @@ func (p Program) Aliases() []string {
 	}
 	sort.Strings(aliases)
 	return aliases
-}
-
-// AliasPage returns a usage page for the provided alias
-func (cmdargs CommandArguments) AliasPage(alias Alias) usagefmt.Page {
-	opt := cmdargs.description
-
-	exCmd := "`" + shellescape.QuoteCommand(append([]string{"ggman"}, alias.Expansion()...)) + "`"
-	helpCmd := "`" + shellescape.QuoteCommand([]string{"ggman", alias.Command, "--help"}) + "`"
-	name := shellescape.Quote(alias.Command)
-
-	var description string
-	if alias.Description != "" {
-		description = alias.Description + "\n\n"
-	}
-	description += fmt.Sprintf("Alias for %s. See %s for detailed help page about %s. ", exCmd, helpCmd, name)
-
-	return usagefmt.Page{
-		MainName: "ggman",
-		MainOpts: GetMainOpts(&opt),
-
-		Description: description,
-
-		SubName: alias.Name,
-		SubOpts: nil,
-
-		MetaName: "ARG",
-		MetaMin:  0,
-		MetaMax:  -1,
-
-		Usage: fmt.Sprintf("Arguments to pass after %s.", exCmd),
-	}
 }

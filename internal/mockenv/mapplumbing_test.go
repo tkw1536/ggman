@@ -359,7 +359,7 @@ func Test_MappedPlumbing_Clone(t *testing.T) {
 	t.Run("cloning a repository", func(t *testing.T) {
 		clone := testutil.TempDirAbs(t)
 
-		err := mp.Clone(stream.NewNilIOStream(), mappedRemote, clone)
+		err := mp.Clone(stream.FromNil(), mappedRemote, clone)
 		if err != nil {
 			t.Error("Clone() got err != nil, want err = nil")
 		}

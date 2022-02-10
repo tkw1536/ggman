@@ -4,7 +4,6 @@ package stream
 import (
 	"fmt"
 	"io"
-	"os"
 
 	"github.com/tkw1536/ggman/internal/stream"
 	"github.com/tkw1536/ggman/internal/text"
@@ -43,18 +42,6 @@ func (io IOStream) EPrintln(args ...interface{}) (n int, err error) {
 // ioDefaultWrap is the default value for Wrap of an IOStream.
 const ioDefaultWrap = 80
 
-// NewEnvIOStream creates a new IOStream using the environment.
-//
-// The Stdin, Stdout and Stderr streams are used from the os package.
-func NewEnvIOStream() IOStream {
-	return IOStream{
-		Stdin:  os.Stdin,
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-		wrap:   ioDefaultWrap,
-	}
-}
-
 // NewIOStream creates a new IOStream with the provided readers and writers.
 // If any of them are set to an empty stream, they are set to util.NullStream.
 // When wrap is set to 0, it is set to a reasonable default.
@@ -79,11 +66,6 @@ func NewIOStream(Stdout, Stderr io.Writer, Stdin io.Reader, wrap int) IOStream {
 		Stderr: Stderr,
 		wrap:   wrap,
 	}
-}
-
-// NewNilIOStream is a convenience alias for NewIOStream(nil, nil, nil, 0).
-func NewNilIOStream() IOStream {
-	return NewIOStream(nil, nil, nil, 0)
 }
 
 var newLine = []byte("\n")

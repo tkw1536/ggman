@@ -3,13 +3,10 @@
 package program
 
 import (
-	"fmt"
 	"reflect"
-	"runtime"
 	"sort"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program/exit"
 	"github.com/tkw1536/ggman/program/stream"
@@ -21,6 +18,9 @@ import (
 type Program struct {
 	// Initalizer creates a new runtime for the given parameters and command arguments
 	Initalizer func(params env.EnvironmentParameters, cmdargs CommandArguments) (Runtime, error)
+
+	// Info contains meta-information about this program
+	Info Info
 
 	commands map[string]Command
 	aliases  map[string]Alias
@@ -158,10 +158,10 @@ func (p Program) Main(stream stream.IOStream, params env.EnvironmentParameters, 
 	// handle special global flags!
 	switch {
 	case args.Help:
-		stream.StdoutWriteWrap(p.UsagePage().String())
+		stream.StdoutWriteWrap(p.MainUsage().String())
 		return nil
 	case args.Version:
-		stream.StdoutWriteWrap(p.getVersionInfo())
+		stream.StdoutWriteWrap(p.Info.FmtVersion())
 		return nil
 	}
 
@@ -187,10 +187,10 @@ func (p Program) Main(stream stream.IOStream, params env.EnvironmentParameters, 
 	switch {
 	case cmdargs.Help:
 		if hasAlias {
-			stream.StdoutWriteWrap(cmdargs.AliasPage(alias).String())
+			stream.StdoutWriteWrap(p.AliasUsage(cmdargs, alias).String())
 			return nil
 		}
-		stream.StdoutWriteWrap(cmdargs.UsagePage().String())
+		stream.StdoutWriteWrap(p.CommandUsage(cmdargs).String())
 		return nil
 	}
 
@@ -206,13 +206,6 @@ func (p Program) Main(stream stream.IOStream, params env.EnvironmentParameters, 
 	}
 
 	return command.Run(context)
-}
-
-const stringVersion = "ggman version %s, built %s, using %s"
-
-// printVersion prints version information for this program
-func (p Program) getVersionInfo() string {
-	return fmt.Sprintf(stringVersion, constants.BuildVersion, constants.BuildTime, runtime.Version())
 }
 
 // Register registers a new command with this program.

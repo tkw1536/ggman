@@ -2,36 +2,51 @@ package program
 
 import (
 	"fmt"
+	"runtime"
+	"time"
 
+	"github.com/alessio/shellescape"
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/internal/text"
 	"github.com/tkw1536/ggman/program/usagefmt"
 )
 
-// UsagePage returns a help page about ggman
-func (p Program) UsagePage() usagefmt.Page {
+type Info struct {
+	BuildVersion string
+	BuildTime    time.Time
+
+	MainName    string
+	Description string
+}
+
+// FmtVersion formats version information to be shown to a human info
+func (info Info) FmtVersion() string {
+	return fmt.Sprintf("%s version %s, built %s, using %s", info.MainName, info.BuildVersion, info.BuildTime, runtime.Version())
+}
+
+// MainUsage returns a help page about ggman
+func (p Program) MainUsage() usagefmt.Page {
 	text := "ggman manages local git repositories.\n\n"
-	text += fmt.Sprintf("ggman version %s\n", constants.BuildVersion)
+	text += fmt.Sprintf("ggman version %s\n", p.Info.BuildVersion)
 	text += "ggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information."
 
 	commands := append(p.Commands(), p.Aliases()...)
 
 	return usagefmt.Page{
-		MainName:    "ggman",
+		MainName:    p.Info.MainName,
 		MainOpts:    GetMainOpts(nil),
-		Description: text,
+		Description: p.Info.Description,
 
 		SubCommands: commands,
 	}
 }
 
-// UsagePage generates a help page about this ggman subcommand
-func (cmdargs CommandArguments) UsagePage() usagefmt.Page {
+// CommandUsage generates the usage information about a specific command
+func (p Program) CommandUsage(cmdargs CommandArguments) usagefmt.Page {
 	opt := cmdargs.description
 
 	return usagefmt.Page{
-		MainName: "ggman",
+		MainName: p.Info.MainName,
 		MainOpts: GetMainOpts(&opt),
 
 		Description: opt.Description,
@@ -44,6 +59,37 @@ func (cmdargs CommandArguments) UsagePage() usagefmt.Page {
 		MetaMax:  opt.PosArgsMax,
 
 		Usage: opt.PosArgDescription,
+	}
+}
+
+// AliasPage returns a usage page for the provided alias
+func (p Program) AliasUsage(cmdargs CommandArguments, alias Alias) usagefmt.Page {
+	opt := cmdargs.description
+
+	exCmd := "`" + shellescape.QuoteCommand(append([]string{p.Info.MainName}, alias.Expansion()...)) + "`"
+	helpCmd := "`" + shellescape.QuoteCommand([]string{p.Info.MainName, alias.Command, "--help"}) + "`"
+	name := shellescape.Quote(alias.Command)
+
+	var description string
+	if alias.Description != "" {
+		description = alias.Description + "\n\n"
+	}
+	description += fmt.Sprintf("Alias for %s. See %s for detailed help page about %s. ", exCmd, helpCmd, name)
+
+	return usagefmt.Page{
+		MainName: p.Info.MainName,
+		MainOpts: GetMainOpts(&opt),
+
+		Description: description,
+
+		SubName: alias.Name,
+		SubOpts: nil,
+
+		MetaName: "ARG",
+		MetaMin:  0,
+		MetaMax:  -1,
+
+		Usage: fmt.Sprintf("Arguments to pass after %s.", exCmd),
 	}
 }
 

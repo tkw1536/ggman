@@ -17,6 +17,8 @@ import (
 	"github.com/tkw1536/ggman/program/stream"
 )
 
+// TODO: Fix broken tests (after type parameters)
+
 func TestProgram_Main(t *testing.T) {
 	root := testutil.TempDirAbs(t)
 	if err := os.Mkdir(filepath.Join(root, "real"), os.ModeDir&os.ModePerm); err != nil {
@@ -32,6 +34,7 @@ func TestProgram_Main(t *testing.T) {
 		Initalizer: func(params env.EnvironmentParameters, cmdargs CommandArguments) (Runtime, error) {
 			return nil, nil
 		},
+		Info: testInfo,
 	}
 
 	wrapLength := 80
@@ -71,21 +74,21 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "display help",
 			args:       []string{"--help"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter]\n[--no-fuzzy-filter|-n] [--here|-H] [--path|-P] [--dirty|-d] [--clean|-c]\n[--synced|-s] [--unsynced|-u] [--tarnished|-t] [--pristine|-p] [--] COMMAND\n[ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -n, --no-fuzzy-filter\n      Disable fuzzy matching for filters\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain\n      repository in the current directory or subtree. Alias for '-p .'\n\n   -P, --path\n      Filter the list of repositories to apply COMMAND to only contain\n      repositories in or under the specified path. May be used multiple times\n\n   -d, --dirty\n      List only repositories with uncommited changes\n\n   -c, --clean\n      List only repositories without uncommited changes\n\n   -s, --synced\n      List only repositories which are up-to-date with remote\n\n   -u, --unsynced\n      List only repositories not up-to-date with remote\n\n   -t, --tarnished\n      List only repositories which are dirty or unsynced\n\n   -p, --pristine\n      List only repositories which are clean and synced\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
+			wantStdout: "Usage: exe [--help|-h] [--version|-v] [--for|-f filter] [--no-fuzzy-filter|-n]\n[--here|-H] [--path|-P] [--dirty|-d] [--clean|-c] [--synced|-s] [--unsynced|-u]\n[--tarnished|-t] [--pristine|-p] [--] COMMAND [ARGS...]\n\nsomething something dark side\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -n, --no-fuzzy-filter\n      Disable fuzzy matching for filters\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain\n      repository in the current directory or subtree. Alias for '-p .'\n\n   -P, --path\n      Filter the list of repositories to apply COMMAND to only contain\n      repositories in or under the specified path. May be used multiple times\n\n   -d, --dirty\n      List only repositories with uncommited changes\n\n   -c, --clean\n      List only repositories without uncommited changes\n\n   -s, --synced\n      List only repositories which are up-to-date with remote\n\n   -u, --unsynced\n      List only repositories not up-to-date with remote\n\n   -t, --tarnished\n      List only repositories which are dirty or unsynced\n\n   -p, --pristine\n      List only repositories which are clean and synced\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
 			wantCode:   0,
 		},
 
 		{
 			name:       "display help, don't run command",
 			args:       []string{"--help", "fake", "whatever"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--for|-f filter]\n[--no-fuzzy-filter|-n] [--here|-H] [--path|-P] [--dirty|-d] [--clean|-c]\n[--synced|-s] [--unsynced|-u] [--tarnished|-t] [--pristine|-p] [--] COMMAND\n[ARGS...]\n\nggman manages local git repositories.\n\nggman version v0.0.0-unknown\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -n, --no-fuzzy-filter\n      Disable fuzzy matching for filters\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain\n      repository in the current directory or subtree. Alias for '-p .'\n\n   -P, --path\n      Filter the list of repositories to apply COMMAND to only contain\n      repositories in or under the specified path. May be used multiple times\n\n   -d, --dirty\n      List only repositories with uncommited changes\n\n   -c, --clean\n      List only repositories without uncommited changes\n\n   -s, --synced\n      List only repositories which are up-to-date with remote\n\n   -u, --unsynced\n      List only repositories not up-to-date with remote\n\n   -t, --tarnished\n      List only repositories which are dirty or unsynced\n\n   -p, --pristine\n      List only repositories which are clean and synced\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
+			wantStdout: "Usage: exe [--help|-h] [--version|-v] [--for|-f filter] [--no-fuzzy-filter|-n]\n[--here|-H] [--path|-P] [--dirty|-d] [--clean|-c] [--synced|-s] [--unsynced|-u]\n[--tarnished|-t] [--pristine|-p] [--] COMMAND [ARGS...]\n\nsomething something dark side\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be\n      a relative or absolute path, or a glob pattern which will be matched\n      against the normalized repository url\n\n   -n, --no-fuzzy-filter\n      Disable fuzzy matching for filters\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain\n      repository in the current directory or subtree. Alias for '-p .'\n\n   -P, --path\n      Filter the list of repositories to apply COMMAND to only contain\n      repositories in or under the specified path. May be used multiple times\n\n   -d, --dirty\n      List only repositories with uncommited changes\n\n   -c, --clean\n      List only repositories without uncommited changes\n\n   -s, --synced\n      List only repositories which are up-to-date with remote\n\n   -u, --unsynced\n      List only repositories not up-to-date with remote\n\n   -t, --tarnished\n      List only repositories which are dirty or unsynced\n\n   -p, --pristine\n      List only repositories which are clean and synced\n\n   COMMAND [ARGS...]\n      Command to call. One of \"fake\". See individual commands for more help.\n",
 			wantCode:   0,
 		},
 
 		{
 			name:       "display version",
 			args:       []string{"--version"},
-			wantStdout: "ggman version v0.0.0-unknown, built 1970-01-01 00:00:00 +0000 UTC, using " + runtime.Version() + "\n",
+			wantStdout: "exe version 42.0.0, built 1970-01-01 00:00:00 +0000 UTC, using " + runtime.Version() + "\n",
 			wrapOut:    true,
 			wantCode:   0,
 		},
@@ -93,7 +96,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "command help",
 			args:       []string{"fake", "--help"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] fake [--stdout|-o message]\n[--stderr|-e message]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -o, --stdout message\n       (default write to stdout)\n\n   -e, --stderr message\n       (default write to stderr)\n",
+			wantStdout: "Usage: exe [--help|-h] [--version|-v] [--] fake [--stdout|-o message]\n[--stderr|-e message]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -o, --stdout message\n       (default write to stdout)\n\n   -e, --stderr message\n       (default write to stderr)\n",
 			wantCode:   0,
 		},
 
@@ -106,14 +109,14 @@ func TestProgram_Main(t *testing.T) {
 			},
 
 			args:       []string{"alias", "--help"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] alias [--] [ARG ...]\n\nAlias for `ggman fake`. See `ggman fake --help` for detailed help page about\nfake.\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   [ARG ...]\n      Arguments to pass after `ggman fake`.\n",
+			wantStdout: "Usage: exe [--help|-h] [--version|-v] [--] alias [--] [ARG ...]\n\nAlias for `exe fake`. See `exe fake --help` for detailed help page about fake.\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   [ARG ...]\n      Arguments to pass after `exe fake`.\n",
 			wantCode:   0,
 		},
 
 		{
 			name:       "command help",
 			args:       []string{"--", "fake", "--help"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] fake [--stdout|-o message]\n[--stderr|-e message]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -o, --stdout message\n       (default write to stdout)\n\n   -e, --stderr message\n       (default write to stderr)\n",
+			wantStdout: "Usage: exe [--help|-h] [--version|-v] [--] fake [--stdout|-o message]\n[--stderr|-e message]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -o, --stdout message\n       (default write to stdout)\n\n   -e, --stderr message\n       (default write to stderr)\n",
 			wantCode:   0,
 		},
 
@@ -126,7 +129,7 @@ func TestProgram_Main(t *testing.T) {
 			},
 
 			args:       []string{"--", "alias", "--help"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] alias [--] [ARG ...]\n\nAlias for `ggman fake`. See `ggman fake --help` for detailed help page about\nfake.\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   [ARG ...]\n      Arguments to pass after `ggman fake`.\n",
+			wantStdout: "Usage: exe [--help|-h] [--version|-v] [--] alias [--] [ARG ...]\n\nAlias for `exe fake`. See `exe fake --help` for detailed help page about fake.\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   [ARG ...]\n      Arguments to pass after `exe fake`.\n",
 			wantCode:   0,
 		},
 
@@ -141,7 +144,7 @@ func TestProgram_Main(t *testing.T) {
 			},
 
 			args:       []string{"alias", "--help"},
-			wantStdout: "Usage: ggman [--help|-h] [--version|-v] [--] alias [--] [ARG ...]\n\nSome useful alias\n\nAlias for `ggman fake something else`. See `ggman fake --help` for detailed\nhelp page about fake.\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   [ARG ...]\n      Arguments to pass after `ggman fake something else`.\n",
+			wantStdout: "Usage: exe [--help|-h] [--version|-v] [--] alias [--] [ARG ...]\n\nSome useful alias\n\nAlias for `exe fake something else`. See `exe fake --help` for detailed help\npage about fake.\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   [ARG ...]\n      Arguments to pass after `exe fake something else`.\n",
 			wantCode:   0,
 		},
 
