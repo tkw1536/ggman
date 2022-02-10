@@ -41,7 +41,7 @@ jobs:
           stable: ${{ env.GO_STABLE }}
           go-version: ${{ env.GO_VERSION }}
       - name: Install gogenlicense
-        run: go get github.com/tkw1536/gogenlicense/cmd/gogenlicense
+        run: go install github.com/tkw1536/gogenlicense/cmd/gogenlicense@latest
       - uses: actions/checkout@v2
       - name: Run 'make generate'
         run: |
