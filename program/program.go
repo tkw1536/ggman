@@ -16,7 +16,7 @@ import (
 // Program represents an executable program with a list of subcommands.
 // the zero value is ready to use.
 type Program struct {
-	ggman.IOStream
+	IOStream ggman.IOStream
 
 	commands map[string]Command
 	aliases  map[string]Alias
@@ -142,7 +142,7 @@ var errInitContext = ggman.Error{
 func (p Program) Main(params env.EnvironmentParameters, argv []string) (err error) {
 	// whenever an error occurs, we want it printed
 	defer func() {
-		err = p.Die(err)
+		err = p.IOStream.Die(err)
 	}()
 
 	// parse the general arguments
@@ -154,7 +154,7 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 	// handle special cases
 	switch {
 	case args.Help:
-		p.StdoutWriteWrap(p.UsagePage().String())
+		p.IOStream.StdoutWriteWrap(p.UsagePage().String())
 		return nil
 	case args.Version:
 		p.printVersion()
@@ -183,10 +183,10 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 	switch {
 	case cmdargs.Help:
 		if hasAlias {
-			p.StdoutWriteWrap(cmdargs.AliasPage(alias).String())
+			p.IOStream.StdoutWriteWrap(cmdargs.AliasPage(alias).String())
 			return nil
 		}
-		p.StdoutWriteWrap(cmdargs.UsagePage().String())
+		p.IOStream.StdoutWriteWrap(cmdargs.UsagePage().String())
 		return nil
 	}
 
@@ -211,7 +211,7 @@ const stringVersion = "ggman version %s, built %s, using %s"
 
 // printVersion prints version information for this program
 func (p Program) printVersion() {
-	p.StdoutWriteWrap(fmt.Sprintf(stringVersion, constants.BuildVersion, constants.BuildTime, runtime.Version()))
+	p.IOStream.StdoutWriteWrap(fmt.Sprintf(stringVersion, constants.BuildVersion, constants.BuildTime, runtime.Version()))
 }
 
 // Register registers a new command with this program.
