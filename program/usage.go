@@ -6,7 +6,7 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/internal/text"
-	"github.com/tkw1536/ggman/internal/usagefmt"
+	"github.com/tkw1536/ggman/program/usagefmt"
 )
 
 // UsagePage returns a help page about ggman

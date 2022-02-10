@@ -10,7 +10,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/internal/usagefmt"
+	"github.com/tkw1536/ggman/program/usagefmt"
 )
 
 // Program represents an executable program with a list of subcommands.

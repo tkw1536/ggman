@@ -5,7 +5,7 @@ import (
 	"sort"
 
 	"github.com/alessio/shellescape"
-	"github.com/tkw1536/ggman/internal/usagefmt"
+	"github.com/tkw1536/ggman/program/usagefmt"
 )
 
 // Alias represents an alias for a command.
