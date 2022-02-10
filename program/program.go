@@ -162,10 +162,10 @@ func (p Program[Runtime, Parameters, Requirements]) Main(stream stream.IOStream,
 
 	// handle special global flags!
 	switch {
-	case args.Help:
+	case args.Universals.Help:
 		stream.StdoutWriteWrap(p.MainUsage().String())
 		return nil
-	case args.Version:
+	case args.Universals.Version:
 		stream.StdoutWriteWrap(p.Info.FmtVersion())
 		return nil
 	}
@@ -190,7 +190,7 @@ func (p Program[Runtime, Parameters, Requirements]) Main(stream stream.IOStream,
 
 	// special cases of arguments
 	switch {
-	case cmdargs.Help:
+	case cmdargs.Universals.Help:
 		if hasAlias {
 			stream.StdoutWriteWrap(p.AliasUsage(cmdargs, alias).String())
 			return nil

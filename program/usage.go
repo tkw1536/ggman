@@ -86,22 +86,37 @@ func (p Program[Runtime, Parameters, Requirements]) AliasUsage(cmdargs CommandAr
 	}
 }
 
+var universalOpts = usagefmt.MakeOpts(flags.NewParser(&Universals{}, flags.None))
+
 // globalOptions returns all global options
-func (p Program[Runtime, Parameters, Requirements]) globalOptions() []usagefmt.Opt {
-	return usagefmt.MakeOpts(flags.NewParser(&Arguments{}, flags.None))
+func (p Program[Runtime, Parameters, Requirements]) globalOptions() (opts []usagefmt.Opt) {
+	opts = append(opts, universalOpts...)
+	opts = append(opts, p.flagOptions()...)
+	return
 }
 
 // globalOptionsFor returns global options for the provided requirement
-func (p Program[Runtime, Parameters, Requirements]) globalOptionsFor(r Requirements) []usagefmt.Opt {
-	opts := p.globalOptions()
+func (p Program[Runtime, Parameters, Requirements]) globalOptionsFor(r Requirements) (opts []usagefmt.Opt) {
+	flags := p.flagOptions()
 
+	// filter options to be those that are allowed
 	n := 0
-	for _, arg := range opts {
-		if !r.AllowsOption(arg) {
+	for _, opt := range flags {
+		if !r.AllowsOption(opt) {
 			continue
 		}
-		opts[n] = arg
+		flags[n] = opt
 		n++
 	}
-	return opts[:n]
+	flags = flags[:n]
+
+	// add both universals and then locals
+	opts = append(opts, universalOpts...)
+	opts = append(opts, flags...)
+	return
+}
+
+// flagOptions returns the options something something something
+func (p Program[Runtime, Parameters, Requirements]) flagOptions() []usagefmt.Opt {
+	return usagefmt.MakeOpts(flags.NewParser(&Flags{}, flags.None))
 }

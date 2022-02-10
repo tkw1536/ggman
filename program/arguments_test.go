@@ -26,21 +26,21 @@ func TestArguments_Parse(t *testing.T) {
 		{"no arguments", args{[]string{}}, Arguments{}, errParseArgsNeedOneArgument},
 		{"command without arguments", args{[]string{"cmd"}}, Arguments{Command: "cmd", Args: []string{}}, nil},
 
-		{"help with command (1)", args{[]string{"help", "cmd"}}, Arguments{Help: true, Args: []string{"cmd"}}, nil},
-		{"help with command (2)", args{[]string{"--help", "cmd"}}, Arguments{Help: true, Args: []string{"cmd"}}, nil},
-		{"help with command (3)", args{[]string{"-h", "cmd"}}, Arguments{Help: true, Args: []string{"cmd"}}, nil},
+		{"help with command (1)", args{[]string{"help", "cmd"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{"cmd"}}, nil},
+		{"help with command (2)", args{[]string{"--help", "cmd"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{"cmd"}}, nil},
+		{"help with command (3)", args{[]string{"-h", "cmd"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{"cmd"}}, nil},
 
-		{"help without command (1)", args{[]string{"help"}}, Arguments{Help: true, Args: []string{}}, nil},
-		{"help without command (2)", args{[]string{"--help"}}, Arguments{Help: true, Args: []string{}}, nil},
-		{"help without command (3)", args{[]string{"-h"}}, Arguments{Help: true, Args: []string{}}, nil},
+		{"help without command (1)", args{[]string{"help"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{}}, nil},
+		{"help without command (2)", args{[]string{"--help"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{}}, nil},
+		{"help without command (3)", args{[]string{"-h"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{}}, nil},
 
-		{"version with command (1)", args{[]string{"version", "cmd"}}, Arguments{Version: true, Args: []string{"cmd"}}, nil},
-		{"version with command (2)", args{[]string{"--version", "cmd"}}, Arguments{Version: true, Args: []string{"cmd"}}, nil},
-		{"version with command (3)", args{[]string{"-v", "cmd"}}, Arguments{Version: true, Args: []string{"cmd"}}, nil},
+		{"version with command (1)", args{[]string{"version", "cmd"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{"cmd"}}, nil},
+		{"version with command (2)", args{[]string{"--version", "cmd"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{"cmd"}}, nil},
+		{"version with command (3)", args{[]string{"-v", "cmd"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{"cmd"}}, nil},
 
-		{"version without command (1)", args{[]string{"version"}}, Arguments{Version: true, Args: []string{}}, nil},
-		{"version without command (2)", args{[]string{"--version"}}, Arguments{Version: true, Args: []string{}}, nil},
-		{"version without command (3)", args{[]string{"-v"}}, Arguments{Version: true, Args: []string{}}, nil},
+		{"version without command (1)", args{[]string{"version"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{}}, nil},
+		{"version without command (2)", args{[]string{"--version"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{}}, nil},
+		{"version without command (3)", args{[]string{"-v"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{}}, nil},
 
 		{"command with arguments", args{[]string{"cmd", "a1", "a2"}}, Arguments{Command: "cmd", Args: []string{"a1", "a2"}}, nil},
 
@@ -65,48 +65,48 @@ func TestArguments_Parse(t *testing.T) {
 		{"for without command (2)", args{[]string{"--for", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
 		{"for without command (3)", args{[]string{"-f", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
 
-		{"for with command (1)", args{[]string{"for", "match", "cmd"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{}}, nil},
-		{"for with command (2)", args{[]string{"--for", "match", "cmd"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{}}, nil},
-		{"for with command (3)", args{[]string{"-f", "match", "cmd"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{}}, nil},
+		{"for with command (1)", args{[]string{"for", "match", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{}}, nil},
+		{"for with command (2)", args{[]string{"--for", "match", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{}}, nil},
+		{"for with command (3)", args{[]string{"-f", "match", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{}}, nil},
 
-		{"here with command (1)", args{[]string{"--here", "cmd"}}, Arguments{Command: "cmd", Here: true, Args: []string{}}, nil},
-		{"here with command (2)", args{[]string{"-H", "cmd"}}, Arguments{Command: "cmd", Here: true, Args: []string{}}, nil},
+		{"here with command (1)", args{[]string{"--here", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Here: true}, Args: []string{}}, nil},
+		{"here with command (2)", args{[]string{"-H", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Here: true}, Args: []string{}}, nil},
 
-		{"path with command (1)", args{[]string{"--path", "P", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Args: []string{}}, nil},
-		{"path with command (2)", args{[]string{"-P", "P", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Args: []string{}}, nil},
+		{"path with command (1)", args{[]string{"--path", "P", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Path: []string{"P"}}, Args: []string{}}, nil},
+		{"path with command (2)", args{[]string{"-P", "P", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Path: []string{"P"}}, Args: []string{}}, nil},
 
-		{"multiple paths with command (1)", args{[]string{"--path", "P1", "--path", "P2", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P1", "P2"}, Args: []string{}}, nil},
-		{"multiple paths with command (2)", args{[]string{"-P", "P1", "--path", "P2", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P1", "P2"}, Args: []string{}}, nil},
+		{"multiple paths with command (1)", args{[]string{"--path", "P1", "--path", "P2", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Path: []string{"P1", "P2"}}, Args: []string{}}, nil},
+		{"multiple paths with command (2)", args{[]string{"-P", "P1", "--path", "P2", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Path: []string{"P1", "P2"}}, Args: []string{}}, nil},
 
-		{"path + here with command (1)", args{[]string{"--path", "P", "--here", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Here: true, Args: []string{}}, nil},
-		{"path + here with command (2)", args{[]string{"--path", "P", "-H", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Here: true, Args: []string{}}, nil},
-		{"path + here with command (3)", args{[]string{"-P", "P", "--here", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Here: true, Args: []string{}}, nil},
-		{"path + here with command (4)", args{[]string{"-P", "P", "-H", "cmd"}}, Arguments{Command: "cmd", Path: []string{"P"}, Here: true, Args: []string{}}, nil},
+		{"path + here with command (1)", args{[]string{"--path", "P", "--here", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Path: []string{"P"}, Here: true}, Args: []string{}}, nil},
+		{"path + here with command (2)", args{[]string{"--path", "P", "-H", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Path: []string{"P"}, Here: true}, Args: []string{}}, nil},
+		{"path + here with command (3)", args{[]string{"-P", "P", "--here", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Path: []string{"P"}, Here: true}, Args: []string{}}, nil},
+		{"path + here with command (4)", args{[]string{"-P", "P", "-H", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Path: []string{"P"}, Here: true}, Args: []string{}}, nil},
 
-		{"dirty with command (1)", args{[]string{"--dirty", "cmd"}}, Arguments{Command: "cmd", Dirty: true, Args: []string{}}, nil},
-		{"dirty with command (2)", args{[]string{"-d", "cmd"}}, Arguments{Command: "cmd", Dirty: true, Args: []string{}}, nil},
-		{"clean with command (1)", args{[]string{"--clean", "cmd"}}, Arguments{Command: "cmd", Clean: true, Args: []string{}}, nil},
-		{"clean with command (2)", args{[]string{"-c", "cmd"}}, Arguments{Command: "cmd", Clean: true, Args: []string{}}, nil},
+		{"dirty with command (1)", args{[]string{"--dirty", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Dirty: true}, Args: []string{}}, nil},
+		{"dirty with command (2)", args{[]string{"-d", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Dirty: true}, Args: []string{}}, nil},
+		{"clean with command (1)", args{[]string{"--clean", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Clean: true}, Args: []string{}}, nil},
+		{"clean with command (2)", args{[]string{"-c", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Clean: true}, Args: []string{}}, nil},
 
-		{"synced with command (1)", args{[]string{"--synced", "cmd"}}, Arguments{Command: "cmd", Synced: true, Args: []string{}}, nil},
-		{"synced with command (2)", args{[]string{"-s", "cmd"}}, Arguments{Command: "cmd", Synced: true, Args: []string{}}, nil},
-		{"unsynced with command (1)", args{[]string{"--unsynced", "cmd"}}, Arguments{Command: "cmd", UnSynced: true, Args: []string{}}, nil},
-		{"unsynced with command (2)", args{[]string{"-u", "cmd"}}, Arguments{Command: "cmd", UnSynced: true, Args: []string{}}, nil},
+		{"synced with command (1)", args{[]string{"--synced", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Synced: true}, Args: []string{}}, nil},
+		{"synced with command (2)", args{[]string{"-s", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Synced: true}, Args: []string{}}, nil},
+		{"unsynced with command (1)", args{[]string{"--unsynced", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{UnSynced: true}, Args: []string{}}, nil},
+		{"unsynced with command (2)", args{[]string{"-u", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{UnSynced: true}, Args: []string{}}, nil},
 
-		{"pristine with command (1)", args{[]string{"--pristine", "cmd"}}, Arguments{Command: "cmd", Pristine: true, Args: []string{}}, nil},
-		{"pristine with command (2)", args{[]string{"-p", "cmd"}}, Arguments{Command: "cmd", Pristine: true, Args: []string{}}, nil},
-		{"pristine with command (1)", args{[]string{"--tarnished", "cmd"}}, Arguments{Command: "cmd", Tarnished: true, Args: []string{}}, nil},
-		{"pristine with command (2)", args{[]string{"-t", "cmd"}}, Arguments{Command: "cmd", Tarnished: true, Args: []string{}}, nil},
+		{"pristine with command (1)", args{[]string{"--pristine", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Pristine: true}, Args: []string{}}, nil},
+		{"pristine with command (2)", args{[]string{"-p", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Pristine: true}, Args: []string{}}, nil},
+		{"pristine with command (1)", args{[]string{"--tarnished", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Tarnished: true}, Args: []string{}}, nil},
+		{"pristine with command (2)", args{[]string{"-t", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Tarnished: true}, Args: []string{}}, nil},
 
-		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
-		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
-		{"for with command and arguments (3)", args{[]string{"-f", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Filters: []string{"match"}, Args: []string{"a1", "a2"}}, nil},
+		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{"a1", "a2"}}, nil},
+		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{"a1", "a2"}}, nil},
+		{"for with command and arguments (3)", args{[]string{"-f", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{"a1", "a2"}}, nil},
 
-		{"here with command and arguments (1)", args{[]string{"--here", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Here: true, Args: []string{"a1", "a2"}}, nil},
-		{"here with command and arguments (2)", args{[]string{"-H", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Here: true, Args: []string{"a1", "a2"}}, nil},
+		{"here with command and arguments (1)", args{[]string{"--here", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Flags: program.Flags{Here: true}, Args: []string{"a1", "a2"}}, nil},
+		{"here with command and arguments (2)", args{[]string{"-H", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Flags: program.Flags{Here: true}, Args: []string{"a1", "a2"}}, nil},
 
-		{"path with command and arguments (1)", args{[]string{"--path", "P", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Path: []string{"P"}, Args: []string{"a1", "a2"}}, nil},
-		{"path with command and arguments (2)", args{[]string{"-P", "P", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Path: []string{"P"}, Args: []string{"a1", "a2"}}, nil},
+		{"path with command and arguments (1)", args{[]string{"--path", "P", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Flags: program.Flags{Path: []string{"P"}}, Args: []string{"a1", "a2"}}, nil},
+		{"path with command and arguments (2)", args{[]string{"-P", "P", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Flags: program.Flags{Path: []string{"P"}}, Args: []string{"a1", "a2"}}, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -270,27 +270,27 @@ func TestCommandArguments_checkFilterArgument(t *testing.T) {
 		{
 			"for not allowed, for given",
 			tDescription{Requirements: env.Requirement{AllowsFilter: false}},
-			Arguments{Command: "example", Filters: []string{"pattern"}},
+			Arguments{Command: "example", Flags: program.Flags{Filters: []string{"pattern"}}},
 			"Wrong number of arguments: 'example' takes no '--for' argument. ",
 		},
 
 		{
 			"fuzzy not allowed, fuzzy given",
 			tDescription{Requirements: env.Requirement{AllowsFilter: false}},
-			Arguments{Command: "example", NoFuzzyFilter: true, Filters: nil},
+			Arguments{Command: "example", Flags: program.Flags{NoFuzzyFilter: true, Filters: nil}},
 			"Wrong number of arguments: 'example' takes no '--no-fuzzy-filter' argument. ",
 		},
 
 		{
 			"for allowed, for not given",
 			tDescription{Requirements: env.Requirement{AllowsFilter: true}},
-			Arguments{Command: "example", Filters: nil},
+			Arguments{Command: "example", Flags: program.Flags{Filters: nil}},
 			"",
 		},
 		{
 			"for allowed, for given",
 			tDescription{Requirements: env.Requirement{AllowsFilter: true}},
-			Arguments{Command: "example", Filters: []string{"pattern"}},
+			Arguments{Command: "example", Flags: program.Flags{Filters: []string{"pattern"}}},
 			"",
 		},
 	}

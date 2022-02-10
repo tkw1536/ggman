@@ -3,7 +3,6 @@ package env
 import (
 	"reflect"
 
-	"github.com/tkw1536/ggman/internal/text"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 	"github.com/tkw1536/ggman/program/usagefmt"
@@ -22,6 +21,11 @@ type Requirement struct {
 	NeedsCanFile bool
 }
 
+// AllowsOption checks if the provided option is allowed by this option
+func (req Requirement) AllowsOption(opt usagefmt.Opt) bool {
+	return req.AllowsFilter
+}
+
 var errTakesNoArgument = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
 	Message:  "Wrong number of arguments: '%s' takes no '%s' argument. ",
@@ -33,13 +37,13 @@ func (req Requirement) Validate(args program.Arguments) error {
 	}
 
 	// check the value of the arguments struct
-	aVal := reflect.ValueOf(args)
+	aVal := reflect.ValueOf(args.Flags)
 
-	for _, fIndex := range argumentsFilterIndexes {
+	for _, fIndex := range flagsIndexes {
 		v := aVal.FieldByIndex(fIndex)
 
 		if !v.IsZero() { // flag was set iff it is non-zero
-			tp := argumentsType.FieldByIndex(fIndex) // needed for the error message only!
+			tp := flagsType.FieldByIndex(fIndex) // needed for the error message only!
 			return errTakesNoArgument.WithMessageF(args.Command, "--"+tp.Tag.Get("long"))
 		}
 	}
@@ -47,37 +51,17 @@ func (req Requirement) Validate(args program.Arguments) error {
 	return nil
 }
 
-// AllowsOption checks if the provided option is allowed by this option
-func (req Requirement) AllowsOption(opt usagefmt.Opt) bool {
-	return req.AllowsFilter || text.SliceContainsAny(opt.Long(), argumentsGeneralOptions...)
-}
-
 // reflect access to the arguments type
-// TODO: Copied over from program
-var argumentsType reflect.Type = reflect.TypeOf((*program.Arguments)(nil)).Elem() // TypeOf[Arguments]
-
-var argumentsGeneralOptions []string // names of options that are considered non-filter
-var argumentsFilterIndexes [][]int   // indexes of filter options
+var flagsType reflect.Type = reflect.TypeOf((*program.Flags)(nil)).Elem()
+var flagsIndexes [][]int // indexes of all the options
 
 func init() {
 	// iterate over the fields of the type
-	fieldCount := argumentsType.NumField()
+	fieldCount := flagsType.NumField()
 	for i := 0; i < fieldCount; i++ {
-		field := argumentsType.Field(i)
-
-		// skip over options that do not have a 'long' name
-		longName, hasLongName := field.Tag.Lookup("long")
-		if !hasLongName {
-			continue
-		}
-
-		// argument is a nonfilter argument!
-		if field.Tag.Get("nofilter") == "true" {
-			argumentsGeneralOptions = append(argumentsGeneralOptions, longName)
-			continue
-		}
+		field := flagsType.Field(i)
 
 		// it's a long filter name
-		argumentsFilterIndexes = append(argumentsFilterIndexes, field.Index)
+		flagsIndexes = append(flagsIndexes, field.Index)
 	}
 }

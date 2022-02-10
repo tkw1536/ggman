@@ -13,13 +13,23 @@ import (
 // These should be further parsed into CommandArguments using the appropriate Parse() method.
 //
 // Command line argument are annotated using syntax provided by "github.com/jessevdk/go-flags".
-// Additionally flags that do not imply any filter semantics are tagged as `nofilter:"true"`.
-//
-// See Also GetMainOpts and Parse.
 type Arguments struct {
-	Help    bool `short:"h" long:"help" description:"Print a help message and exit" nofilter:"true"`
-	Version bool `short:"v" long:"version" description:"Print a version message and exit" nofilter:"true"`
+	Universals Universals
+	Flags      Flags // TODO: Replace by type param
 
+	Command string   // command to run
+	Args    []string // remaining arguments
+}
+
+// Universals holds flags added to every executable.
+//
+// Command line arguments are annotated using syntax provided by "github.com/jessevdk/go-flags".
+type Universals struct {
+	Help    bool `short:"h" long:"help" description:"Print a help message and exit"`
+	Version bool `short:"v" long:"version" description:"Print a version message and exit"`
+}
+
+type Flags struct {
 	Filters       []string `short:"f" long:"for" value-name:"filter" description:"Filter list of repositories to apply COMMAND to by filter. Filter can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url"`
 	NoFuzzyFilter bool     `short:"n" long:"no-fuzzy-filter" description:"Disable fuzzy matching for filters"`
 
@@ -34,12 +44,6 @@ type Arguments struct {
 
 	Tarnished bool `short:"t" long:"tarnished" description:"List only repositories which are dirty or unsynced"`
 	Pristine  bool `short:"p" long:"pristine" description:"List only repositories which are clean and synced"`
-
-	Command string   // command to run
-	Args    []string // remaining arguments
-}
-
-type Flags struct {
 }
 
 // reflect access to the arguments type
@@ -118,9 +122,9 @@ func (args *Arguments) Parse(argv []string) error {
 	// If we had a 'for' argument though, we should raise an error.
 	if len(args.Args) == 0 {
 		switch {
-		case args.Help || args.Version:
+		case args.Universals.Help || args.Universals.Version:
 			return nil
-		case len(args.Filters) > 0:
+		case len(args.Flags.Filters) > 0:
 			return ErrParseArgsNeedTwoAfterFor
 		default:
 			return ErrParseArgsNeedOneArgument
@@ -129,7 +133,7 @@ func (args *Arguments) Parse(argv []string) error {
 
 	// if we had help or version arguments we don't need to do
 	// any more parsing and can bail out.
-	if args.Help || args.Version {
+	if args.Universals.Help || args.Universals.Version {
 		return nil
 	}
 
@@ -139,22 +143,23 @@ func (args *Arguments) Parse(argv []string) error {
 
 	// catch special undocumented legacy flags
 	// these can be provided with '--'s in front of their arguments
+	// TODO: There should be a hook for this!
 	switch args.Command {
 	// ggman help
 	case "help":
 		args.Command = ""
-		args.Help = true
+		args.Universals.Help = true
 	// ggman version
 	case "version":
 		args.Command = ""
-		args.Version = true
+		args.Universals.Version = true
 
 	// ggman for FILTER command args...
 	case "for":
 		if len(args.Args) < 2 {
 			return ErrParseArgsNeedTwoAfterFor
 		}
-		args.Filters = append(args.Filters, args.Args[0])
+		args.Flags.Filters = append(args.Flags.Filters, args.Args[0])
 		args.Command = args.Args[1]
 		args.Args = args.Args[2:]
 	}
@@ -214,7 +219,7 @@ func (args *CommandArguments[Runtime, Parameters, Requirements]) Parse(command C
 	// - the right number of arguments
 
 	if text.SliceContainsAny(args.Args, "--help", "-h", "help") {
-		args.Help = true
+		args.Universals.Help = true
 		return nil
 	}
 
@@ -265,7 +270,7 @@ func (args *CommandArguments[Runtime, Parameters, Requirements]) parseFlags() (e
 
 	// catch the help error
 	if flagErr, ok := err.(*flags.Error); ok && flagErr.Type == flags.ErrHelp {
-		args.Help = true
+		args.Universals.Help = true
 		err = nil
 	}
 

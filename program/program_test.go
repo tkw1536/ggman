@@ -473,7 +473,7 @@ func (e echoCommand) Description() tDescription {
 }
 func (e echoCommand) AfterParse() error { return nil }
 func (e echoCommand) Run(context tContext) error {
-	context.Stdout.Write([]byte("Got filter: " + strings.Join(context.Filters, ",")))
+	context.Stdout.Write([]byte("Got filter: " + strings.Join(context.Flags.Filters, ",")))
 	context.Stdout.Write([]byte("\nGot arguments: " + strings.Join(context.Args, ",")))
 	context.Stdout.Write([]byte("\n" + e.StdoutMsg + "\n"))
 	context.Stderr.Write([]byte(e.StderrMsg + "\n"))

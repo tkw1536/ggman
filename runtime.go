@@ -34,8 +34,8 @@ var errNotADirectory = exit.Error{
 
 func makeFilter(e *env.Env, c program.Arguments) (env.Filter, error) {
 	// generate pattern filters for the "--for" arguments
-	clauses := make([]env.Filter, len(c.Filters))
-	for i, pat := range c.Filters {
+	clauses := make([]env.Filter, len(c.Flags.Filters))
+	for i, pat := range c.Flags.Filters {
 
 		// check if 'pat' represents the root of a repository
 		if repo, err := e.AtRoot(pat); err == nil && repo != "" {
@@ -44,17 +44,17 @@ func makeFilter(e *env.Env, c program.Arguments) (env.Filter, error) {
 		}
 
 		// create a normal pattern filter
-		clauses[i] = env.NewPatternFilter(pat, !c.NoFuzzyFilter)
+		clauses[i] = env.NewPatternFilter(pat, !c.Flags.NoFuzzyFilter)
 	}
 
 	// here filter: alias for --path .
-	if c.Here {
-		c.Path = append(c.Path, ".")
+	if c.Flags.Here {
+		c.Flags.Path = append(c.Flags.Path, ".")
 	}
 
 	// for each of the candidate paths, add a path filter
-	pf := env.PathFilter{Paths: make([]string, len(c.Path))}
-	for i, p := range c.Path {
+	pf := env.PathFilter{Paths: make([]string, len(c.Flags.Path))}
+	for i, p := range c.Flags.Path {
 		var err error
 		pf.Paths[i], _, err = e.At(p) // try to use the current repository first.
 		if err != nil {
@@ -82,30 +82,30 @@ func makeFilter(e *env.Env, c program.Arguments) (env.Filter, error) {
 	}
 
 	// add a WorktreeFilter filter if requested
-	if c.Dirty || c.Clean {
+	if c.Flags.Dirty || c.Flags.Clean {
 		dj = env.WorktreeFilter{
 			Filter: dj,
 
-			Dirty: c.Dirty,
-			Clean: c.Clean,
+			Dirty: c.Flags.Dirty,
+			Clean: c.Flags.Clean,
 		}
 	}
 
-	if c.Synced || c.UnSynced {
+	if c.Flags.Synced || c.Flags.UnSynced {
 		dj = env.StatusFilter{
 			Filter: dj,
 
-			Synced:   c.Synced,
-			UnSynced: c.UnSynced,
+			Synced:   c.Flags.Synced,
+			UnSynced: c.Flags.UnSynced,
 		}
 	}
 
-	if c.Tarnished || c.Pristine {
+	if c.Flags.Tarnished || c.Flags.Pristine {
 		dj = env.TarnishFilter{
 			Filter: dj,
 
-			Tarnished: c.Tarnished,
-			Pristine:  c.Pristine,
+			Tarnished: c.Flags.Tarnished,
+			Pristine:  c.Flags.Pristine,
 		}
 	}
 
