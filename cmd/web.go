@@ -234,7 +234,7 @@ func (uw urlweb) Run(context program.Context) error {
 	}
 
 	if root != "" && (uw.Tree || uw.Branch) {
-		ref, err := context.Git.GetHeadRef(root)
+		ref, err := context.Env.Git.GetHeadRef(root)
 		if err != nil {
 			return errOutsideRepository
 		}
@@ -271,7 +271,7 @@ func (uw urlweb) getRemoteURL(context program.Context) (root string, remote stri
 
 func (uw urlweb) getRemoteURLReal(context program.Context) (root string, remote string, relative string, err error) {
 	// find the repository at the current location
-	root, relative, err = context.At(".")
+	root, relative, err = context.Env.At(".")
 	if err != nil {
 		return "", "", "", err
 	}
@@ -281,7 +281,7 @@ func (uw urlweb) getRemoteURLReal(context program.Context) (root string, remote 
 	}
 
 	// get the remote
-	remote, err = context.Git.GetRemote(root)
+	remote, err = context.Env.Git.GetRemote(root)
 	if err != nil {
 		return "", "", "", errOutsideRepository
 	}
@@ -291,13 +291,13 @@ func (uw urlweb) getRemoteURLReal(context program.Context) (root string, remote 
 
 func (uw urlweb) getRemoteURLFake(context program.Context) (root string, remote string, relative string, err error) {
 	// get the absolute path to the current workdir
-	workdir, err := context.Abs("")
+	workdir, err := context.Env.Abs("")
 	if err != nil {
 		return "", "", "", err
 	}
 
 	// determine the relative path to the root directory
-	relpath, err := filepath.Rel(context.Root, workdir)
+	relpath, err := filepath.Rel(context.Env.Root, workdir)
 	if err != nil || path.GoesUp(relpath) {
 		return "", "", "", errNoRelativeRepository
 	}

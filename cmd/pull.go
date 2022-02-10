@@ -39,7 +39,7 @@ func (pull) Run(context program.Context) error {
 	var hasError bool
 	for _, repo := range context.Env.Repos() {
 		context.Printf("Pulling %q\n", repo)
-		if e := context.Git.Pull(context.IOStream, repo); e != nil {
+		if e := context.Env.Git.Pull(context.IOStream, repo); e != nil {
 			context.EPrintf("%s\n", e)
 			hasError = true
 		}

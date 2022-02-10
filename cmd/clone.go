@@ -90,7 +90,7 @@ func (c *clone) Run(context program.Context) error {
 	}
 
 	// find the remote and local paths to clone to / from
-	remote := context.Canonical(url)
+	remote := context.Env.Canonical(url)
 	local, err := c.dest(context, url)
 	if err != nil {
 		return errCloneInvalidDest.WithMessageF(context.Args[0], err)
@@ -98,7 +98,7 @@ func (c *clone) Run(context program.Context) error {
 
 	// do the actual cloning!
 	context.Printf("Cloning %q into %q ...\n", remote, local)
-	switch err := context.Git.Clone(context.IOStream, remote, local, context.Args[1:]...); err {
+	switch err := context.Env.Git.Clone(context.IOStream, remote, local, context.Args[1:]...); err {
 	case nil:
 		return nil
 	case git.ErrCloneAlreadyExists:
@@ -123,13 +123,13 @@ func (c clone) dest(context program.Context, url env.URL) (string, error) {
 		if len(comps) == 0 {
 			return "", errCloneNoComps
 		}
-		return context.Abs(comps[len(comps)-1])
+		return context.Env.Abs(comps[len(comps)-1])
 	}
 
 	if c.To != "" { // clone directory into a directory
-		return context.Abs(c.To)
+		return context.Env.Abs(c.To)
 	}
 
 	// normal clone!
-	return context.Local(url)
+	return context.Env.Local(url)
 }

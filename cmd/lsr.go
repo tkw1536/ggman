@@ -51,8 +51,8 @@ func (l lsr) Run(context program.Context) error {
 	}
 
 	// and print them
-	for _, repo := range context.Repos() {
-		remote, err := context.Git.GetRemote(repo)
+	for _, repo := range context.Env.Repos() {
+		remote, err := context.Env.Git.GetRemote(repo)
 		if err != nil {
 			continue
 		}

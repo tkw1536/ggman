@@ -40,7 +40,7 @@ var errSweepErr = ggman.Error{
 
 func (sweep) Run(context program.Context) error {
 	results, err := walker.Sweep(func(path string, root walker.FS, depth int) (stop bool) {
-		return context.Git.IsRepository(path)
+		return context.Env.Git.IsRepository(path)
 	}, walker.Params{
 		Root: walker.NewRealFS(context.Env.Root, false),
 	})

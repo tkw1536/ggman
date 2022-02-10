@@ -48,9 +48,9 @@ var errFindBranchCustom = ggman.Error{
 
 func (f findBranch) Run(context program.Context) error {
 	foundRepo := false
-	for _, repo := range context.Repos() {
+	for _, repo := range context.Env.Repos() {
 		// check if the repository has the branch!
-		hasBranch, err := context.Git.ContainsBranch(repo, context.Args[0])
+		hasBranch, err := context.Env.Git.ContainsBranch(repo, context.Args[0])
 		if err != nil {
 			panic(err)
 		}

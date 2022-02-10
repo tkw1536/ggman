@@ -49,13 +49,13 @@ var errUnableToMoveRepo = ggman.Error{
 }
 
 func (r relocate) Run(context program.Context) error {
-	for _, gotPath := range context.Repos() {
+	for _, gotPath := range context.Env.Repos() {
 		// determine the remote path and where it should go
-		remote, err := context.Git.GetRemote(gotPath)
+		remote, err := context.Env.Git.GetRemote(gotPath)
 		if err != nil || remote == "" { // ignore remotes that don't exist
 			continue
 		}
-		shouldPath, err := context.Local(env.ParseURL(remote))
+		shouldPath, err := context.Env.Local(env.ParseURL(remote))
 		if err != nil {
 			return err
 		}

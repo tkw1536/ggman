@@ -86,8 +86,8 @@ func (mockEnvRunCommand) Description() program.Description {
 }
 func (mockEnvRunCommand) AfterParse() error { return nil }
 func (mockEnvRunCommand) Run(context program.Context) error {
-	clonePath := filepath.Join(context.Root, "server.com", "repo")
-	remote, _ := context.Git.GetRemote(clonePath)
+	clonePath := filepath.Join(context.Env.Root, "server.com", "repo")
+	remote, _ := context.Env.Git.GetRemote(clonePath)
 
 	fmt.Fprintf(context.Stdout, "path=%s remote=%s\n", clonePath, remote)
 	fmt.Fprintf(context.Stderr, "got args: %v\n", context.Args)

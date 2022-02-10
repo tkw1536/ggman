@@ -83,7 +83,7 @@ func (e *exe) Run(context program.Context) error {
 
 // runReal implements ggman exec for simulate = False
 func (e *exe) runReal(context program.Context) error {
-	repos := context.Repos()
+	repos := context.Env.Repos()
 
 	// schedule each command to be run in parallel by using a semaphore!
 	return sema.Schedule(func(i int) error {
@@ -160,7 +160,7 @@ func (e *exe) runSimulate(context program.Context) (err error) {
 
 	// iterate over each repository
 	// then print each of the commands to be run!
-	repos := context.Repos()
+	repos := context.Env.Repos()
 	for _, repo := range repos {
 		context.Printf("cd %s\n", shellescape.Quote(repo))
 		if !e.NoRepo {

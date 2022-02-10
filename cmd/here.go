@@ -34,7 +34,7 @@ func (here) AfterParse() error {
 }
 
 func (h here) Run(context program.Context) error {
-	root, worktree, err := context.At(".")
+	root, worktree, err := context.Env.At(".")
 	if err != nil {
 		return err
 	}

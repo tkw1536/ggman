@@ -10,13 +10,13 @@ import (
 // Context represents a context that a command is run inside of
 type Context struct {
 	ggman.IOStream
-	env.Env
+	Env env.Env
 	CommandArguments
 }
 
 // init initializes this context by setting up the environment according to the arguments
 func (c *Context) init() (err error) {
-	c.Filter, err = c.makeFilter()
+	c.Env.Filter, err = c.makeFilter()
 	return
 }
 
@@ -33,7 +33,7 @@ func (c Context) makeFilter() (env.Filter, error) {
 	for i, pat := range c.Filters {
 
 		// check if 'pat' represents the root of a repository
-		if repo, err := c.AtRoot(pat); err == nil && repo != "" {
+		if repo, err := c.Env.AtRoot(pat); err == nil && repo != "" {
 			clauses[i] = env.PathFilter{Paths: []string{repo}}
 			continue
 		}
@@ -51,10 +51,10 @@ func (c Context) makeFilter() (env.Filter, error) {
 	pf := env.PathFilter{Paths: make([]string, len(c.Path))}
 	for i, p := range c.Path {
 		var err error
-		pf.Paths[i], _, err = c.At(p) // try to use the current repository first.
+		pf.Paths[i], _, err = c.Env.At(p) // try to use the current repository first.
 		if err != nil {
 			// filter sub-repositories under this repo!
-			pf.Paths[i], err = c.Abs(p)
+			pf.Paths[i], err = c.Env.Abs(p)
 			if err != nil {
 				return nil, errors.Wrapf(err, "Unable to resolve path: %q", p)
 			}
