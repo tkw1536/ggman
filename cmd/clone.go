@@ -3,11 +3,11 @@ package cmd
 import (
 	"errors"
 
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Clone is the 'ggman clone' command.
@@ -47,8 +47,8 @@ func (*clone) Description() program.Description {
 	}
 }
 
-var errInvalidDest = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var errInvalidDest = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "Invalid destination: '--to' and '--local' may not be used together. ",
 }
 
@@ -59,28 +59,28 @@ func (c *clone) AfterParse() error {
 	return nil
 }
 
-var errCloneInvalidDest = ggman.Error{
-	ExitCode: ggman.ExitGeneralArguments,
+var errCloneInvalidDest = exit.Error{
+	ExitCode: exit.ExitGeneralArguments,
 	Message:  "Unable to determine local destination for %q: %s",
 }
 
-var errCloneLocalURI = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var errCloneLocalURI = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "Invalid remote URI %q: Invalid scheme, not a remote path. ",
 }
 
-var errCloneAlreadyExists = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errCloneAlreadyExists = exit.Error{
+	ExitCode: exit.ExitGeneric,
 	Message:  "Unable to clone repository: Another git repository already exists in target location. ",
 }
 
-var errCloneNoArguments = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errCloneNoArguments = exit.Error{
+	ExitCode: exit.ExitGeneric,
 	Message:  "External 'git' not found, can not pass any additional arguments to 'git clone'. ",
 }
 
-var errCloneOther = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errCloneOther = exit.Error{
+	ExitCode: exit.ExitGeneric,
 }
 
 func (c *clone) Run(context program.Context) error {

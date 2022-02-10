@@ -1,15 +1,13 @@
-package ggman
+// Package exit defines exit and error behavior of commands
+package exit
 
 import (
 	"os"
 )
 
-// ExitCode determines the exit behavior of the ggman command.
+// ExitCode determines the exit behavior of a program.
 // These are returned as an exit code to the operating system.
 // See ExitCode.Return().
-//
-// Each ExitCode is defined by constants starting with Exit in this package.
-// These each define a different Error condition of the ggman program.
 type ExitCode uint8
 
 // Return returns this ExitCode to the operating system by invoking os.Exit().
@@ -41,10 +39,11 @@ const (
 	ExitInvalidEnvironment ExitCode = 5
 
 	// ExitInvalidRepo indicates that the user attempted to perform an operation on an invalid repository.
+	// TODO: Move me to ggman
 	// This typically means that the current directory is not inside GGROOT.
 	ExitInvalidRepo ExitCode = 6
 
 	// ExitPanic indicates that the go code called panic() inside the executation of the ggman program.
-	// This typically implies a bug inside ggman.
+	// This typically implies a bug inside a program.
 	ExitPanic ExitCode = 255
 )

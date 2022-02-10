@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/internal/walker"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Sweep is the 'ggman sweep' command.
@@ -34,9 +34,9 @@ func (sweep) AfterParse() error {
 	return nil
 }
 
-var errSweepErr = ggman.Error{
+var errSweepErr = exit.Error{
 	Message:  "Error scanning for empty directories: %s",
-	ExitCode: ggman.ExitGeneric,
+	ExitCode: exit.ExitGeneric,
 }
 
 func (sweep) Run(context program.Context) error {

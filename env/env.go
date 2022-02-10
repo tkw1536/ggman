@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/walker"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Env represents an environment to be used by ggman.
@@ -113,8 +113,8 @@ func NewEnv(r Requirement, params EnvironmentParameters) (*Env, error) {
 	return env, nil
 }
 
-var errMissingRoot = ggman.Error{
-	ExitCode: ggman.ExitInvalidEnvironment,
+var errMissingRoot = exit.Error{
+	ExitCode: exit.ExitInvalidEnvironment,
 	Message:  "Unable to find GGROOT directory. ",
 }
 
@@ -208,8 +208,8 @@ func (env *Env) LoadDefaultCANFILE() (CanFile, error) {
 	return cf, nil
 }
 
-var errUnableDir = ggman.Error{
-	ExitCode: ggman.ExitInvalidRepo,
+var errUnableDir = exit.Error{
+	ExitCode: exit.ExitInvalidRepo,
 	Message:  "Unable to read directory %s",
 }
 
@@ -230,13 +230,13 @@ func (env Env) Local(url URL) (string, error) {
 	return path, nil
 }
 
-var errInvalidRoot = ggman.Error{
-	ExitCode: ggman.ExitInvalidEnvironment,
+var errInvalidRoot = exit.Error{
+	ExitCode: exit.ExitInvalidEnvironment,
 	Message:  "Unable to resolve root directory: %s",
 }
 
-var errNotResolved = ggman.Error{
-	ExitCode: ggman.ExitInvalidRepo,
+var errNotResolved = exit.Error{
+	ExitCode: exit.ExitInvalidRepo,
 	Message:  "Unable to resolve repository %q",
 }
 

@@ -4,12 +4,12 @@ import (
 	"os/exec"
 
 	"github.com/alessio/shellescape"
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/internal/sema"
 	"github.com/tkw1536/ggman/internal/stream"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Exec is the 'ggman exec' command.
@@ -63,8 +63,8 @@ func (*exe) Description() program.Description {
 	}
 }
 
-var ErrExecParalllelNegative = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var ErrExecParalllelNegative = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "argument for --parallel must be non-negative",
 }
 
@@ -101,8 +101,8 @@ func (e *exe) runReal(context program.Context) error {
 	})
 }
 
-var ErrExecFatal = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var ErrExecFatal = exit.Error{
+	ExitCode: exit.ExitGeneric,
 }
 
 func (e *exe) runRepo(context program.Context, repo string) error {
@@ -130,8 +130,8 @@ func (e *exe) runRepo(context program.Context, repo string) error {
 	// when something went wrong intercept ExitErrors
 	// but actually return other error properly!
 	if ee, ok := err.(*exec.ExitError); ok {
-		return ggman.Error{
-			ExitCode: ggman.ExitCode(ee.ExitCode()),
+		return exit.Error{
+			ExitCode: exit.ExitCode(ee.ExitCode()),
 			Message:  ee.Error(),
 		}
 	}
@@ -139,8 +139,8 @@ func (e *exe) runRepo(context program.Context, repo string) error {
 	return ErrExecFatal.WithMessage(err.Error())
 }
 
-var ErrExecNoParallelSimulate = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var ErrExecNoParallelSimulate = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "--simulate expects --parallel to be 1, but got %d",
 }
 

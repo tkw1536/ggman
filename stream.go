@@ -7,6 +7,7 @@ import (
 
 	"github.com/tkw1536/ggman/internal/stream"
 	"github.com/tkw1536/ggman/internal/text"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // IOStream represents a set of input and output streams commonly associated to a process.
@@ -112,8 +113,8 @@ func (io IOStream) StderrWriteWrap(s string) (int, error) {
 	return n, err
 }
 
-var errDieUnknown = Error{
-	ExitCode: ExitGeneric,
+var errDieUnknown = exit.Error{
+	ExitCode: exit.ExitGeneric,
 	Message:  "Unknown Error: %s",
 }
 
@@ -124,11 +125,11 @@ var errDieUnknown = Error{
 //
 // If err is nil, it does nothing and returns nil.
 func (io IOStream) Die(err error) error {
-	var e Error
+	var e exit.Error
 	switch ee := err.(type) {
 	case nil:
 		return nil
-	case Error:
+	case exit.Error:
 		e = ee
 	default:
 		e = errDieUnknown.WithMessageF(ee)

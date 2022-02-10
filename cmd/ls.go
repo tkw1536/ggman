@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Ls is the 'ggman ls' command.
@@ -39,8 +39,8 @@ func (*ls) AfterParse() error {
 	return nil
 }
 
-var errLSExitFlag = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errLSExitFlag = exit.Error{
+	ExitCode: exit.ExitGeneric,
 }
 
 func (l *ls) Run(context program.Context) error {

@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/internal/text"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Arguments represent a set of partially parsed arguments for an invocation of the 'ggman' program.
@@ -68,18 +68,18 @@ func init() {
 	}
 }
 
-var errParseArgsNeedOneArgument = ggman.Error{
-	ExitCode: ggman.ExitGeneralArguments,
+var errParseArgsNeedOneArgument = exit.Error{
+	ExitCode: exit.ExitGeneralArguments,
 	Message:  "Unable to parse arguments: Need at least one argument. Use `ggman license` to view licensing information.",
 }
 
-var errParseArgsUnknownError = ggman.Error{
-	ExitCode: ggman.ExitGeneralArguments,
+var errParseArgsUnknownError = exit.Error{
+	ExitCode: exit.ExitGeneralArguments,
 	Message:  "Unable to parse arguments: %s",
 }
 
-var errParseArgsNeedTwoAfterFor = ggman.Error{
-	ExitCode: ggman.ExitGeneralArguments,
+var errParseArgsNeedTwoAfterFor = exit.Error{
+	ExitCode: exit.ExitGeneralArguments,
 	Message:  "Unable to parse arguments: At least two arguments needed after 'for' keyword. ",
 }
 
@@ -248,8 +248,8 @@ func (args *CommandArguments) prepare(command Command, arguments Arguments) {
 	args.parser = makeFlagsParser(command, options)
 }
 
-var errParseFlagSet = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var errParseFlagSet = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "Error parsing flags: %s",
 }
 
@@ -274,23 +274,23 @@ func (args *CommandArguments) parseFlags() (err error) {
 	return err
 }
 
-var errParseTakesExactlyArguments = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var errParseTakesExactlyArguments = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "Wrong number of arguments: '%s' takes exactly %d argument(s). ",
 }
 
-var errParseTakesNoArguments = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var errParseTakesNoArguments = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "Wrong number of arguments: '%s' takes no arguments. ",
 }
 
-var errParseTakesMinArguments = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var errParseTakesMinArguments = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "Wrong number of arguments: '%s' takes at least %d argument(s). ",
 }
 
-var errParseTakesBetweenArguments = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var errParseTakesBetweenArguments = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "Wrong number of arguments: '%s' takes between %d and %d arguments. ",
 }
 
@@ -325,8 +325,8 @@ func (args CommandArguments) checkPositionalCount() error {
 	return nil
 }
 
-var errTakesNoArgument = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var errTakesNoArgument = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "Wrong number of arguments: '%s' takes no '%s' argument. ",
 }
 

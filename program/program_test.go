@@ -14,6 +14,7 @@ import (
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/ggman/internal/text"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 func TestProgram_Main(t *testing.T) {
@@ -403,7 +404,7 @@ func TestProgram_Main(t *testing.T) {
 			}
 
 			// run the program
-			ret := ggman.AsError(program.Main(stream, env.EnvironmentParameters{
+			ret := exit.AsError(program.Main(stream, env.EnvironmentParameters{
 				Variables: tt.variables,
 				Plumbing:  git.NewPlumbing(),
 				Workdir:   tt.workdir,
@@ -460,7 +461,7 @@ func (e echoCommand) Run(context Context) error {
 	context.Stderr.Write([]byte(e.StderrMsg + "\n"))
 
 	if len(context.Args) > 0 && context.Args[0] == "fail" {
-		return ggman.Error{ExitCode: ggman.ExitGeneric, Message: "Test Failure"}
+		return exit.Error{ExitCode: exit.ExitGeneric, Message: "Test Failure"}
 	}
 
 	return nil

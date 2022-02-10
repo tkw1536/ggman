@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Pull is the 'ggman pull' command.
@@ -32,8 +32,8 @@ func (pull) AfterParse() error {
 	return nil
 }
 
-var errPullCustom = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errPullCustom = exit.Error{
+	ExitCode: exit.ExitGeneric,
 }
 
 func (pull) Run(context program.Context) error {

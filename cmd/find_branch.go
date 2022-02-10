@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // FindBranch is the 'ggman find-branch' command.
@@ -43,8 +43,8 @@ func (findBranch) AfterParse() error {
 	return nil
 }
 
-var errFindBranchCustom = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errFindBranchCustom = exit.Error{
+	ExitCode: exit.ExitGeneric,
 }
 
 func (f findBranch) Run(context program.Context) error {

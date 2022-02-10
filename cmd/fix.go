@@ -3,10 +3,10 @@ package cmd
 import (
 	"sync"
 
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Fix is the 'ggman fix' command.
@@ -38,8 +38,8 @@ func (fix) AfterParse() error {
 	return nil
 }
 
-var errFixCustom = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errFixCustom = exit.Error{
+	ExitCode: exit.ExitGeneric,
 }
 
 func (f fix) Run(context program.Context) error {

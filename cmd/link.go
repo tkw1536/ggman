@@ -6,10 +6,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Link is the 'ggman link' command.
@@ -43,23 +43,23 @@ func (link) AfterParse() error {
 	return nil
 }
 
-var errLinkDoesNotExist = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errLinkDoesNotExist = exit.Error{
+	ExitCode: exit.ExitGeneric,
 	Message:  "Unable to link repository: Can not open source repository. ",
 }
 
-var errLinkSamePath = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errLinkSamePath = exit.Error{
+	ExitCode: exit.ExitGeneric,
 	Message:  "Unable to link repository: Link source and target are identical. ",
 }
 
-var errLinkAlreadyExists = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errLinkAlreadyExists = exit.Error{
+	ExitCode: exit.ExitGeneric,
 	Message:  "Unable to link repository: Another directory already exists in target location. ",
 }
 
-var errLinkUnknown = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errLinkUnknown = exit.Error{
+	ExitCode: exit.ExitGeneric,
 	Message:  "Unknown linking error: %s",
 }
 

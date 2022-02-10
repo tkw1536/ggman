@@ -102,6 +102,7 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // the main ggman program that will contain everything
@@ -149,7 +150,7 @@ func main() {
 		if err := recover(); err != nil {
 			fmt.Fprintf(os.Stderr, fatalPanicMessage, err)
 			debug.PrintStack()
-			ggman.ExitPanic.Return()
+			exit.ExitPanic.Return()
 		}
 	}()
 
@@ -161,7 +162,7 @@ func main() {
 	}, os.Args[1:])
 
 	// return the error to the user
-	ggman.AsError(err).Return()
+	exit.AsError(err).Return()
 }
 
 const fatalPanicMessage = `Fatal Error: Panic

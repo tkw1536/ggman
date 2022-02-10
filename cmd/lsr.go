@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Lsr is the 'ggman lsr' command.
@@ -37,9 +37,9 @@ func (lsr) AfterParse() error {
 	return nil
 }
 
-var errInvalidCanfile = ggman.Error{
+var errInvalidCanfile = exit.Error{
 	Message:  "Invalid CANFILE found. ",
-	ExitCode: ggman.ExitInvalidEnvironment,
+	ExitCode: exit.ExitInvalidEnvironment,
 }
 
 func (l lsr) Run(context program.Context) error {

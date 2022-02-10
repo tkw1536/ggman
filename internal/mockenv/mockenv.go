@@ -19,6 +19,7 @@ import (
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // MockEnv represents a new environment that can be used for testing ggman commands.
@@ -148,7 +149,7 @@ func (mock *MockEnv) Run(command program.Command, workdir string, stdin string, 
 	stream := ggman.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader, 0)
 
 	// run the code
-	err := ggman.AsError(fakeggman.Main(stream, env.EnvironmentParameters{
+	err := exit.AsError(fakeggman.Main(stream, env.EnvironmentParameters{
 		Variables: mock.vars,
 		Plumbing:  mock.plumbing,
 		Workdir:   workdir,

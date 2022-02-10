@@ -1,8 +1,8 @@
-package ggman
+package exit
 
 import "fmt"
 
-// Error represents any error state by the ggman program.
+// Error represents any error state by a program.
 // It implements the builtin error interface.
 //
 // The zero value represents that no error occured and is ready to use.

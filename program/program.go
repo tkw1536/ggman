@@ -12,6 +12,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/program/exit"
 	"github.com/tkw1536/ggman/program/usagefmt"
 )
 
@@ -130,13 +131,13 @@ type Description struct {
 	PosArgsMax        int    // maximal number of positional arguments taken, set to -1 for unlimited arguments
 }
 
-var errProgramUnknownCommand = ggman.Error{
-	ExitCode: ggman.ExitUnknownCommand,
+var errProgramUnknownCommand = exit.Error{
+	ExitCode: exit.ExitUnknownCommand,
 	Message:  "Unknown command. Must be one of %s. ",
 }
 
-var errInitContext = ggman.Error{
-	ExitCode: ggman.ExitInvalidEnvironment,
+var errInitContext = exit.Error{
+	ExitCode: exit.ExitInvalidEnvironment,
 	Message:  "Unable to initialize context: %s",
 }
 

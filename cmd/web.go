@@ -6,11 +6,11 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 
 	"github.com/pkg/browser"
 )
@@ -170,23 +170,23 @@ func (uw *urlweb) AfterParse() error {
 	return nil
 }
 
-var errOutsideRepository = ggman.Error{
-	ExitCode: ggman.ExitInvalidRepo,
+var errOutsideRepository = exit.Error{
+	ExitCode: exit.ExitInvalidRepo,
 	Message:  "Not inside a ggman-controlled repository. ",
 }
 
-var errNoRelativeRepository = ggman.Error{
-	ExitCode: ggman.ExitInvalidRepo,
+var errNoRelativeRepository = exit.Error{
+	ExitCode: exit.ExitInvalidRepo,
 	Message:  "Unable to use '--relative': Not inside GGROOT",
 }
 
-var errWebFlagUnsupported = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var errWebFlagUnsupported = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "ggman web does not support the %s flag. ",
 }
 
-var errURLCloneAndUnsupported = ggman.Error{
-	ExitCode: ggman.ExitCommandArguments,
+var errURLCloneAndUnsupported = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
 	Message:  "ggman url does not support %s and %s arguments at the same time",
 }
 

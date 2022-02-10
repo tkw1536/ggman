@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Fetch is the 'ggman fetch' command.
@@ -32,8 +32,8 @@ func (fetch) AfterParse() error {
 	return nil
 }
 
-var errFetchCustom = ggman.Error{
-	ExitCode: ggman.ExitGeneric,
+var errFetchCustom = exit.Error{
+	ExitCode: exit.ExitGeneric,
 }
 
 func (fetch) Run(context program.Context) error {

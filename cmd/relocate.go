@@ -5,10 +5,10 @@ import (
 	"path/filepath"
 
 	"github.com/alessio/shellescape"
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // Relocate is the 'ggman relocate' command.
@@ -39,14 +39,14 @@ func (relocate) AfterParse() error {
 	return nil
 }
 
-var errUnableMoveCreateParent = ggman.Error{
+var errUnableMoveCreateParent = exit.Error{
 	Message:  "Unable to create parent directory for destination: %s",
-	ExitCode: ggman.ExitGeneric,
+	ExitCode: exit.ExitGeneric,
 }
 
-var errUnableToMoveRepo = ggman.Error{
+var errUnableToMoveRepo = exit.Error{
 	Message:  "Unable to move repository: %s",
-	ExitCode: ggman.ExitGeneric,
+	ExitCode: exit.ExitGeneric,
 }
 
 func (r relocate) Run(context program.Context) error {

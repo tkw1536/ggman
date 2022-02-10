@@ -1,4 +1,4 @@
-package ggman
+package exit
 
 import (
 	"errors"

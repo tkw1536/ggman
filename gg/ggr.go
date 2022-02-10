@@ -3,10 +3,10 @@ package gg
 
 import (
 	"github.com/pkg/errors"
-	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/walker"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // NewRuntime makes a new runtime for ggman
@@ -28,8 +28,8 @@ func NewRuntime(params env.EnvironmentParameters, cmdargs program.CommandArgumen
 
 }
 
-var errNotADirectory = ggman.Error{
-	ExitCode: ggman.ExitInvalidRepo,
+var errNotADirectory = exit.Error{
+	ExitCode: exit.ExitInvalidRepo,
 	Message:  "Not a directory: %q",
 }
 
