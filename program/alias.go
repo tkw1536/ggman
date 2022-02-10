@@ -30,7 +30,6 @@ func (a Alias) Invoke(args []string) (command string, arguments []string) {
 	command = a.Command
 
 	// setup arguments
-	arguments = make([]string, 0, len(a.Args)+len(args))
 	arguments = append(arguments, a.Args...)
 	arguments = append(arguments, args...)
 

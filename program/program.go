@@ -21,8 +21,10 @@ type Program[Runtime any, Parameters any, Requirements Requirement] struct {
 	// Info contains meta-information about this program
 	Info Info
 
+	// commands are actions to be performed by commands
 	commands map[string]Command[Runtime, Parameters, Requirements]
-	aliases  map[string]Alias
+	keywords map[string]Keyword // keywords perform an action on command parsing before they are executed
+	aliases  map[string]Alias   // aliases replace commands before they are executed
 }
 
 // Requirements represents anything that can be validated against requirements
@@ -158,6 +160,14 @@ func (p Program[Runtime, Parameters, Requirements]) Main(stream stream.IOStream,
 	var args Arguments
 	if err := args.Parse(argv); err != nil {
 		return err
+	}
+
+	// expand keywords ("help", "version" etc)
+	keyword, hasKeyword := p.keywords[args.Command]
+	if hasKeyword {
+		if err := keyword(&args); err != nil {
+			return err
+		}
 	}
 
 	// handle special global flags!

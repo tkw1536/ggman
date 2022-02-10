@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
 )
@@ -11,7 +12,7 @@ import (
 type Arguments = program.Arguments // FIXME
 
 var errParseArgsNeedOneArgument = program.ErrParseArgsNeedOneArgument
-var errParseArgsNeedTwoAfterFor = program.ErrParseArgsNeedTwoAfterFor
+var errParseMissingForArgument = &flags.Error{Type: flags.ErrExpectedArgument, Message: "expected argument for flag `-f, --for'"}
 
 func TestArguments_Parse(t *testing.T) {
 	type args struct {
@@ -26,19 +27,15 @@ func TestArguments_Parse(t *testing.T) {
 		{"no arguments", args{[]string{}}, Arguments{}, errParseArgsNeedOneArgument},
 		{"command without arguments", args{[]string{"cmd"}}, Arguments{Command: "cmd", Args: []string{}}, nil},
 
-		{"help with command (1)", args{[]string{"help", "cmd"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{"cmd"}}, nil},
 		{"help with command (2)", args{[]string{"--help", "cmd"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{"cmd"}}, nil},
 		{"help with command (3)", args{[]string{"-h", "cmd"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{"cmd"}}, nil},
 
-		{"help without command (1)", args{[]string{"help"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{}}, nil},
 		{"help without command (2)", args{[]string{"--help"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{}}, nil},
 		{"help without command (3)", args{[]string{"-h"}}, Arguments{Universals: program.Universals{Help: true}, Args: []string{}}, nil},
 
-		{"version with command (1)", args{[]string{"version", "cmd"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{"cmd"}}, nil},
 		{"version with command (2)", args{[]string{"--version", "cmd"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{"cmd"}}, nil},
 		{"version with command (3)", args{[]string{"-v", "cmd"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{"cmd"}}, nil},
 
-		{"version without command (1)", args{[]string{"version"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{}}, nil},
 		{"version without command (2)", args{[]string{"--version"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{}}, nil},
 		{"version without command (3)", args{[]string{"-v"}}, Arguments{Universals: program.Universals{Version: true}, Args: []string{}}, nil},
 
@@ -51,9 +48,9 @@ func TestArguments_Parse(t *testing.T) {
 		{"command with version (1)", args{[]string{"cmd", "version", "a1"}}, Arguments{Command: "cmd", Args: []string{"version", "a1"}}, nil},
 		{"command with version (2)", args{[]string{"cmd", "--version", "a1"}}, Arguments{Command: "cmd", Args: []string{"--version", "a1"}}, nil},
 		{"command with version (3)", args{[]string{"cmd", "-v", "a1"}}, Arguments{Command: "cmd", Args: []string{"-v", "a1"}}, nil},
-		{"only a for (1)", args{[]string{"for"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
-		{"only a for (2)", args{[]string{"--for"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
-		{"only a for (3)", args{[]string{"-f"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
+
+		{"only a for (2)", args{[]string{"--for"}}, Arguments{}, errParseMissingForArgument},
+		{"only a for (3)", args{[]string{"-f"}}, Arguments{}, errParseMissingForArgument},
 
 		{"only a here (1)", args{[]string{"--here"}}, Arguments{}, errParseArgsNeedOneArgument},
 		{"only a here (2)", args{[]string{"-H"}}, Arguments{}, errParseArgsNeedOneArgument},
@@ -61,11 +58,9 @@ func TestArguments_Parse(t *testing.T) {
 		{"only a path (1)", args{[]string{"--path", "p"}}, Arguments{}, errParseArgsNeedOneArgument},
 		{"only a path (2)", args{[]string{"-P", "p"}}, Arguments{}, errParseArgsNeedOneArgument},
 
-		{"for without command (1)", args{[]string{"for", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
-		{"for without command (2)", args{[]string{"--for", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
-		{"for without command (3)", args{[]string{"-f", "match"}}, Arguments{}, errParseArgsNeedTwoAfterFor},
+		{"for without command (2)", args{[]string{"--for", "match"}}, Arguments{}, errParseArgsNeedOneArgument},
+		{"for without command (3)", args{[]string{"-f", "match"}}, Arguments{}, errParseArgsNeedOneArgument},
 
-		{"for with command (1)", args{[]string{"for", "match", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{}}, nil},
 		{"for with command (2)", args{[]string{"--for", "match", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{}}, nil},
 		{"for with command (3)", args{[]string{"-f", "match", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{}}, nil},
 
@@ -98,7 +93,7 @@ func TestArguments_Parse(t *testing.T) {
 		{"pristine with command (1)", args{[]string{"--tarnished", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Tarnished: true}, Args: []string{}}, nil},
 		{"pristine with command (2)", args{[]string{"-t", "cmd"}}, Arguments{Command: "cmd", Flags: program.Flags{Tarnished: true}, Args: []string{}}, nil},
 
-		{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{"a1", "a2"}}, nil},
+		/*{"for with command and arguments (1)", args{[]string{"for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{"a1", "a2"}}, nil},*/
 		{"for with command and arguments (2)", args{[]string{"--for", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{"a1", "a2"}}, nil},
 		{"for with command and arguments (3)", args{[]string{"-f", "match", "cmd", "a1", "a2"}}, Arguments{Command: "cmd", Flags: program.Flags{Filters: []string{"match"}}, Args: []string{"a1", "a2"}}, nil},
 
@@ -111,7 +106,8 @@ func TestArguments_Parse(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			args := &Arguments{}
-			if err := args.Parse(tt.args.argv); err != tt.wantErr {
+			// TODO: Fix linter warnings
+			if err := args.Parse(tt.args.argv); !reflect.DeepEqual(err, tt.wantErr) {
 				t.Errorf("Arguments.Parse() error = %#v, wantErr %#v", err, tt.wantErr)
 			}
 

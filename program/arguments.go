@@ -85,11 +85,6 @@ var errParseArgsUnknownError = exit.Error{
 	Message:  "Unable to parse arguments: %s",
 }
 
-var ErrParseArgsNeedTwoAfterFor = exit.Error{ // TODO: Public because test
-	ExitCode: exit.ExitGeneralArguments,
-	Message:  "Unable to parse arguments: At least two arguments needed after 'for' keyword. ",
-}
-
 // parser returns a new parser for the arguments
 func (args *Arguments) parser() *flags.Parser {
 	return makeFlagsParser(args, flags.PassAfterNonOption|flags.PassDoubleDash)
@@ -103,19 +98,9 @@ func (args *Arguments) Parse(argv []string) error {
 	var err error
 	args.Args, err = args.parser().ParseArgs(argv)
 
-	if e, ok := err.(*flags.Error); ok {
-		switch e.Type {
-
-		// --for, -f was passed without an argument!
-		case flags.ErrExpectedArgument:
-			if names, ok := parseFlagNames(e); ok && text.SliceContainsAny(names, "f", "for") {
-				err = ErrParseArgsNeedTwoAfterFor
-			}
-
-		// encounted an unknown flag
-		case flags.ErrUnknownFlag:
-			err = errParseArgsUnknownError.WithMessageF(e.Message)
-		}
+	// intercept unknonw flags
+	if e, ok := err.(*flags.Error); ok && e.Type == flags.ErrUnknownFlag {
+		err = errParseArgsUnknownError.WithMessageF(e.Message)
 	}
 
 	// store the arguments we got and complain if there are none.
@@ -124,8 +109,6 @@ func (args *Arguments) Parse(argv []string) error {
 		switch {
 		case args.Universals.Help || args.Universals.Version:
 			return nil
-		case len(args.Flags.Filters) > 0:
-			return ErrParseArgsNeedTwoAfterFor
 		default:
 			return ErrParseArgsNeedOneArgument
 		}
@@ -140,29 +123,6 @@ func (args *Arguments) Parse(argv []string) error {
 	// setup command and arguments
 	args.Command = args.Args[0]
 	args.Args = args.Args[1:]
-
-	// catch special undocumented legacy flags
-	// these can be provided with '--'s in front of their arguments
-	// TODO: There should be a hook for this!
-	switch args.Command {
-	// ggman help
-	case "help":
-		args.Command = ""
-		args.Universals.Help = true
-	// ggman version
-	case "version":
-		args.Command = ""
-		args.Universals.Version = true
-
-	// ggman for FILTER command args...
-	case "for":
-		if len(args.Args) < 2 {
-			return ErrParseArgsNeedTwoAfterFor
-		}
-		args.Flags.Filters = append(args.Flags.Filters, args.Args[0])
-		args.Command = args.Args[1]
-		args.Args = args.Args[2:]
-	}
 
 	return err
 }

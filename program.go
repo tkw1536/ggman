@@ -6,6 +6,7 @@ import (
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/exit"
 )
 
 // these define the ggman-specific program types
@@ -29,6 +30,11 @@ var info = program.Info{
 	Description: fmt.Sprintf("ggman manages local git repositories\n\nggman version %s\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.", constants.BuildVersion),
 }
 
+var ErrParseArgsNeedTwoAfterFor = exit.Error{ // TODO: Public because test
+	ExitCode: exit.ExitGeneralArguments,
+	Message:  "Unable to parse arguments: At least two arguments needed after 'for' keyword. ",
+}
+
 // NewProgram returns a new ggman program
 func NewProgram() (p Program) {
 	p.NewRuntime = func(params env.EnvironmentParameters, cmdargs CommandArguments) (*env.Env, error) {
@@ -36,6 +42,29 @@ func NewProgram() (p Program) {
 		return rt, err
 	}
 	p.Info = info
+
+	p.RegisterKeyword("help", func(args *program.Arguments) error {
+		args.Command = ""
+		args.Universals.Help = true
+		return nil
+	})
+
+	p.RegisterKeyword("version", func(args *program.Arguments) error {
+		args.Command = ""
+		args.Universals.Version = true
+		return nil
+	})
+
+	p.RegisterKeyword("for", func(args *program.Arguments) error {
+		if len(args.Args) < 2 {
+			return ErrParseArgsNeedTwoAfterFor
+		}
+		args.Flags.Filters = append(args.Flags.Filters, args.Args[0])
+		args.Command = args.Args[1]
+		args.Args = args.Args[2:]
+
+		return nil
+	})
 
 	return
 }
