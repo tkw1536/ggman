@@ -5,13 +5,13 @@ import (
 )
 
 // Context represents a context that a command is run inside of
-type Context[Runtime any, Requirements any] struct {
+type Context[Runtime any, Parameters any, Requirements any] struct {
 	stream.IOStream
-	CommandArguments[Runtime, Requirements]
+	CommandArguments[Runtime, Parameters, Requirements]
 	runtime Runtime
 }
 
 // Runtime returns the runtime belonging to this context
-func (c Context[Runtime, Requirements]) Runtime() Runtime {
+func (c Context[Runtime, Parameters, Requirements]) Runtime() Runtime {
 	return c.runtime
 }

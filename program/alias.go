@@ -46,7 +46,7 @@ func (a Alias) Expansion() []string {
 // See also Alias.
 //
 // If an alias already exists, RegisterAlias calls panic().
-func (p *Program[Runtime, Requirements]) RegisterAlias(alias Alias) {
+func (p *Program[Runtime, Parameters, Requirements]) RegisterAlias(alias Alias) {
 	if p.aliases == nil {
 		p.aliases = make(map[string]Alias)
 	}
@@ -61,7 +61,7 @@ func (p *Program[Runtime, Requirements]) RegisterAlias(alias Alias) {
 
 // Aliases returns the names of all registered aliases.
 // Aliases are returned in sorted order.
-func (p Program[Runtime, Requirements]) Aliases() []string {
+func (p Program[Runtime, Parameters, Requirements]) Aliases() []string {
 	aliases := make([]string, 0, len(p.aliases))
 	for alias := range p.aliases {
 		aliases = append(aliases, alias)

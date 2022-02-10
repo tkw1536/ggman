@@ -11,12 +11,13 @@ import (
 // these define the ggman-specific program types
 // none of these are strictly needed, they're just around for convenience
 type ggmanRuntime = *env.Env
+type ggmanParameters = env.EnvironmentParameters
 type ggmanRequirements = env.Requirement
 
-type Program = program.Program[ggmanRuntime, ggmanRequirements]
-type Command = program.Command[ggmanRuntime, ggmanRequirements]
-type Context = program.Context[ggmanRuntime, ggmanRequirements]
-type CommandArguments = program.CommandArguments[ggmanRuntime, ggmanRequirements]
+type Program = program.Program[ggmanRuntime, ggmanParameters, ggmanRequirements]
+type Command = program.Command[ggmanRuntime, ggmanParameters, ggmanRequirements]
+type Context = program.Context[ggmanRuntime, ggmanParameters, ggmanRequirements]
+type CommandArguments = program.CommandArguments[ggmanRuntime, ggmanParameters, ggmanRequirements]
 
 // info contains information about the ggman program
 var info = program.Info{
@@ -29,7 +30,7 @@ var info = program.Info{
 
 // NewProgram returns a new ggman program
 func NewProgram() (p Program) {
-	p.Initalizer = func(params env.EnvironmentParameters, cmdargs CommandArguments) (*env.Env, error) {
+	p.NewRuntime = func(params env.EnvironmentParameters, cmdargs CommandArguments) (*env.Env, error) {
 		rt, err := NewRuntime(params, cmdargs)
 		return rt, err
 	}

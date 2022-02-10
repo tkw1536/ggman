@@ -22,12 +22,13 @@ import (
 //
 
 type tRuntime = struct{}
+type tParameters = env.EnvironmentParameters // TODO: Remove this dependency and make up some testing thing!
 type tRequirements = struct{}
 
-type tProgram = Program[tRuntime, tRequirements]
-type tCommand = Command[tRuntime, tRequirements]
-type tContext = Context[tRuntime, tRequirements]
-type tCommandArguments = CommandArguments[tRuntime, tRequirements]
+type tProgram = Program[tRuntime, tParameters, tRequirements]
+type tCommand = Command[tRuntime, tParameters, tRequirements]
+type tContext = Context[tRuntime, tParameters, tRequirements]
+type tCommandArguments = CommandArguments[tRuntime, tParameters, tRequirements]
 
 // TODO: Fix broken tests (after type parameters)
 
@@ -43,7 +44,7 @@ func TestProgram_Main(t *testing.T) {
 
 	// create a dummy program
 	program := tProgram{
-		Initalizer: func(params env.EnvironmentParameters, cmdargs tCommandArguments) (struct{}, error) {
+		NewRuntime: func(params tParameters, cmdargs tCommandArguments) (struct{}, error) {
 			return struct{}{}, nil
 		},
 		Info: testInfo,

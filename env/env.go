@@ -59,6 +59,7 @@ func (env Env) Normalization() path.Normalization {
 }
 
 // EnvironmentParameters represent additional parameters to create a new environment.
+// TODO: rename me!
 type EnvironmentParameters struct {
 	Variables
 	Workdir  string
