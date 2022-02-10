@@ -105,7 +105,7 @@ var ErrExecFatal = exit.Error{
 }
 
 func (e *exe) runRepo(context ggman.Context, repo string) error {
-	cmd := exec.Command(context.Args[0], context.Args[1:]...)
+	cmd := exec.Command(context.Args.Arguments.Pos[0], context.Args.Arguments.Pos[1:]...)
 	cmd.Dir = repo
 
 	// setup standard output / input, using either the environment
@@ -156,7 +156,7 @@ func (e *exe) runSimulate(context ggman.Context) (err error) {
 	}
 	context.Println("")
 
-	exec := shellescape.QuoteCommand(context.Args)
+	exec := shellescape.QuoteCommand(context.Args.Arguments.Pos)
 
 	// iterate over each repository
 	// then print each of the commands to be run!

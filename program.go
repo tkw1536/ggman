@@ -14,12 +14,14 @@ import (
 type ggmanRuntime = *env.Env
 type ggmanParameters = env.EnvironmentParameters
 type ggmanRequirements = env.Requirement
+type ggmanFlags = env.Flags
 
-type Program = program.Program[ggmanRuntime, ggmanParameters, ggmanRequirements]
-type Command = program.Command[ggmanRuntime, ggmanParameters, ggmanRequirements]
-type Context = program.Context[ggmanRuntime, ggmanParameters, ggmanRequirements]
-type CommandArguments = program.CommandArguments[ggmanRuntime, ggmanParameters, ggmanRequirements]
-type Description = program.Description[ggmanRequirements]
+type Program = program.Program[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
+type Command = program.Command[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
+type Context = program.Context[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
+type CommandArguments = program.CommandArguments[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
+type Arguments = program.Arguments[ggmanFlags]
+type Description = program.Description[ggmanFlags, ggmanRequirements]
 
 // info contains information about the ggman program
 var info = program.Info{
@@ -43,25 +45,25 @@ func NewProgram() (p Program) {
 	}
 	p.Info = info
 
-	p.RegisterKeyword("help", func(args *program.Arguments) error {
+	p.RegisterKeyword("help", func(args *Arguments) error {
 		args.Command = ""
 		args.Universals.Help = true
 		return nil
 	})
 
-	p.RegisterKeyword("version", func(args *program.Arguments) error {
+	p.RegisterKeyword("version", func(args *Arguments) error {
 		args.Command = ""
 		args.Universals.Version = true
 		return nil
 	})
 
-	p.RegisterKeyword("for", func(args *program.Arguments) error {
-		if len(args.Args) < 2 {
+	p.RegisterKeyword("for", func(args *Arguments) error {
+		if len(args.Pos) < 2 {
 			return ErrParseArgsNeedTwoAfterFor
 		}
-		args.Flags.Filters = append(args.Flags.Filters, args.Args[0])
-		args.Command = args.Args[1]
-		args.Args = args.Args[2:]
+		args.Flags.Filters = append(args.Flags.Filters, args.Pos[0])
+		args.Command = args.Pos[1]
+		args.Pos = args.Pos[2:]
 
 		return nil
 	})

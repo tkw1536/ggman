@@ -50,7 +50,7 @@ func (f findBranch) Run(context ggman.Context) error {
 	foundRepo := false
 	for _, repo := range context.Runtime().Repos() {
 		// check if the repository has the branch!
-		hasBranch, err := context.Runtime().Git.ContainsBranch(repo, context.Args[0])
+		hasBranch, err := context.Runtime().Git.ContainsBranch(repo, context.Args.Arguments.Pos[0])
 		if err != nil {
 			panic(err)
 		}

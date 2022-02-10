@@ -90,7 +90,7 @@ func (mockEnvRunCommand) Run(context ggman.Context) error {
 	remote, _ := context.Runtime().Git.GetRemote(clonePath)
 
 	fmt.Fprintf(context.Stdout, "path=%s remote=%s\n", clonePath, remote)
-	fmt.Fprintf(context.Stderr, "got args: %v\n", context.Args)
+	fmt.Fprintf(context.Stderr, "got args: %v\n", context.Args.Arguments.Pos)
 
 	return nil
 }

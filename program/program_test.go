@@ -25,12 +25,14 @@ import (
 type tRuntime = struct{}
 type tParameters = env.EnvironmentParameters // TODO: Remove this dependency and make up some testing thing!
 type tRequirements = env.Requirement
+type tFlags = env.Flags
 
-type tProgram = program.Program[tRuntime, tParameters, tRequirements]
-type tCommand = program.Command[tRuntime, tParameters, tRequirements]
-type tContext = program.Context[tRuntime, tParameters, tRequirements]
-type tCommandArguments = program.CommandArguments[tRuntime, tParameters, tRequirements]
-type tDescription = program.Description[tRequirements]
+type tProgram = program.Program[tRuntime, tParameters, tFlags, tRequirements]
+type tCommand = program.Command[tRuntime, tParameters, tFlags, tRequirements]
+type tContext = program.Context[tRuntime, tParameters, tFlags, tRequirements]
+type tCommandArguments = program.CommandArguments[tRuntime, tParameters, tFlags, tRequirements]
+type tDescription = program.Description[tFlags, tRequirements]
+type tArguments = program.Arguments[tFlags]
 
 // TODO: Fix broken tests (after type parameters)
 
@@ -473,12 +475,12 @@ func (e echoCommand) Description() tDescription {
 }
 func (e echoCommand) AfterParse() error { return nil }
 func (e echoCommand) Run(context tContext) error {
-	context.Stdout.Write([]byte("Got filter: " + strings.Join(context.Flags.Filters, ",")))
-	context.Stdout.Write([]byte("\nGot arguments: " + strings.Join(context.Args, ",")))
+	context.Stdout.Write([]byte("Got filter: " + strings.Join(context.Args.Arguments.Flags.Filters, ",")))
+	context.Stdout.Write([]byte("\nGot arguments: " + strings.Join(context.Args.Arguments.Pos, ",")))
 	context.Stdout.Write([]byte("\n" + e.StdoutMsg + "\n"))
 	context.Stderr.Write([]byte(e.StderrMsg + "\n"))
 
-	if len(context.Args) > 0 && context.Args[0] == "fail" {
+	if len(context.Args.Arguments.Pos) > 0 && context.Args.Arguments.Pos[0] == "fail" {
 		return exit.Error{ExitCode: exit.ExitGeneric, Message: "Test Failure"}
 	}
 

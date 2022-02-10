@@ -116,7 +116,7 @@ func TestProgram_CommandUsage(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			args := tCommandArguments{
-				Arguments: Arguments{
+				Arguments: tArguments{
 					Command: tt.args.command,
 				},
 

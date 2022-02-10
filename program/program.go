@@ -14,27 +14,27 @@ import (
 
 // Program represents an executable program with a list of subcommands.
 // the zero value is ready to use and represents a command with no subcommands.
-type Program[Runtime any, Parameters any, Requirements Requirement] struct {
+type Program[Runtime any, Parameters any, Flags any, Requirements Requirement[Flags]] struct {
 	// NewRuntime creates a new runtime for the given parameters and command arguments
-	NewRuntime func(params Parameters, cmdargs CommandArguments[Runtime, Parameters, Requirements]) (Runtime, error)
+	NewRuntime func(params Parameters, cmdargs CommandArguments[Runtime, Parameters, Flags, Requirements]) (Runtime, error)
 
 	// Info contains meta-information about this program
 	Info Info
 
 	// commands are actions to be performed by commands
-	commands map[string]Command[Runtime, Parameters, Requirements]
-	keywords map[string]Keyword // keywords perform an action on command parsing before they are executed
-	aliases  map[string]Alias   // aliases replace commands before they are executed
+	commands map[string]Command[Runtime, Parameters, Flags, Requirements]
+	keywords map[string]Keyword[Flags] // keywords perform an action on command parsing before they are executed
+	aliases  map[string]Alias          // aliases replace commands before they are executed
 }
 
 // Requirements represents anything that can be validated against requirements
-type Requirement interface {
-	Validate(arguments Arguments) error
+type Requirement[Flags any] interface {
+	Validate(arguments Arguments[Flags]) error
 	AllowsOption(option usagefmt.Opt) bool
 }
 
 // Commands returns a list of known commands
-func (p Program[Runtime, Parameters, Requirements]) Commands() []string {
+func (p Program[Runtime, Parameters, Flags, Requirements]) Commands() []string {
 	commands := make([]string, 0, len(p.commands))
 	for cmd := range p.commands {
 		commands = append(commands, cmd)
@@ -45,7 +45,7 @@ func (p Program[Runtime, Parameters, Requirements]) Commands() []string {
 
 // FmtCommands returns a human readable string describing the commands.
 // See also Commands.
-func (p Program[Runtime, Parameters, Requirements]) FmtCommands() string {
+func (p Program[Runtime, Parameters, Flags, Requirements]) FmtCommands() string {
 	return usagefmt.FmtCommands(p.Commands())
 }
 
@@ -63,16 +63,16 @@ func (p Program[Runtime, Parameters, Requirements]) FmtCommands() string {
 // If it is not implemented as a pointer receiver, the zero value is expected to be ready to use.
 // Otherwise the zero value of the element struct is expected to be ready to use.
 // See also CloneCommand.
-type Command[Runtime any, Parameters any, Requirements Requirement] interface {
+type Command[Runtime any, Parameters any, Flags any, Requirements Requirement[Flags]] interface {
 	// BeforeRegister is called right before this command is registered with a program.
 	// In particular it is called before any other function on this command is called.
 	//
 	// It is never called more than once for a single instance of a command.
-	BeforeRegister(program *Program[Runtime, Parameters, Requirements])
+	BeforeRegister(program *Program[Runtime, Parameters, Flags, Requirements])
 
 	// Description returns a description of this command.
 	// It may be called multiple times.
-	Description() Description[Requirements]
+	Description() Description[Flags, Requirements]
 
 	// AfterParse is called after arguments have been parsed, but before the command is being run.
 	// It may perform additional argument checking and should return an error if needed.
@@ -83,7 +83,7 @@ type Command[Runtime any, Parameters any, Requirements Requirement] interface {
 	// Run runs this command in the given context.
 	//
 	// It is called only once and must return either nil or an error of type Error.
-	Run(context Context[Runtime, Parameters, Requirements]) error
+	Run(context Context[Runtime, Parameters, Flags, Requirements]) error
 }
 
 // makeFlagsParser creates a new flags parser for data.
@@ -105,7 +105,7 @@ func makeFlagsParser(data interface{}, options flags.Options) *flags.Parser {
 //
 // This function is mostly intended to be used when a command should be called multiple times
 // during a single run of ggman.
-func CloneCommand[Runtime any, Parameters any, Requirements Requirement](command Command[Runtime, Parameters, Requirements]) (cmd Command[Runtime, Parameters, Requirements]) {
+func CloneCommand[Runtime any, Parameters any, Flags any, Requirements Requirement[Flags]](command Command[Runtime, Parameters, Flags, Requirements]) (cmd Command[Runtime, Parameters, Flags, Requirements]) {
 	cmdStruct := reflect.ValueOf(command) // cmd.CommandStruct
 
 	// clone := cmd.CommandStruct{...zero...}
@@ -122,7 +122,7 @@ func CloneCommand[Runtime any, Parameters any, Requirements Requirement](command
 }
 
 // Description represents the description of a command
-type Description[Requirements Requirement] struct {
+type Description[Flags any, Requirements Requirement[Flags]] struct {
 	Name        string // name this command can be invoked under
 	Description string // human readable description of the command
 
@@ -150,14 +150,14 @@ var errInitContext = exit.Error{
 
 // Main is the entry point to this program.
 // When an error occurs, returns an error of type Error and writes the error to context.Stderr.
-func (p Program[Runtime, Parameters, Requirements]) Main(stream stream.IOStream, params Parameters, argv []string) (err error) {
+func (p Program[Runtime, Parameters, Flags, Requirements]) Main(stream stream.IOStream, params Parameters, argv []string) (err error) {
 	// whenever an error occurs, we want it printed
 	defer func() {
 		err = stream.Die(err)
 	}()
 
 	// parse the general arguments
-	var args Arguments
+	var args Arguments[Flags]
 	if err := args.Parse(argv); err != nil {
 		return err
 	}
@@ -183,7 +183,7 @@ func (p Program[Runtime, Parameters, Requirements]) Main(stream stream.IOStream,
 	// expand the command (if any)
 	alias, hasAlias := p.aliases[args.Command]
 	if hasAlias {
-		args.Command, args.Args = alias.Invoke(args.Args)
+		args.Command, args.Pos = alias.Invoke(args.Pos)
 	}
 
 	// load the command if we have it
@@ -193,14 +193,14 @@ func (p Program[Runtime, Parameters, Requirements]) Main(stream stream.IOStream,
 	}
 
 	// parse the command arguments
-	var cmdargs CommandArguments[Runtime, Parameters, Requirements]
+	var cmdargs CommandArguments[Runtime, Parameters, Flags, Requirements]
 	if err := cmdargs.Parse(command, args); err != nil {
 		return err
 	}
 
 	// special cases of arguments
 	switch {
-	case cmdargs.Universals.Help:
+	case cmdargs.Arguments.Universals.Help:
 		if hasAlias {
 			stream.StdoutWriteWrap(p.AliasUsage(cmdargs, alias).String())
 			return nil
@@ -210,9 +210,9 @@ func (p Program[Runtime, Parameters, Requirements]) Main(stream stream.IOStream,
 	}
 
 	// create a new context and make an environment for it
-	context := Context[Runtime, Parameters, Requirements]{
-		IOStream:         stream,
-		CommandArguments: cmdargs,
+	context := Context[Runtime, Parameters, Flags, Requirements]{
+		IOStream: stream,
+		Args:     cmdargs,
 	}
 
 	// setup the runtime with the program
@@ -225,9 +225,9 @@ func (p Program[Runtime, Parameters, Requirements]) Main(stream stream.IOStream,
 
 // Register registers a new command with this program.
 // It expects that the command does not have a name that is already taken.
-func (p *Program[Runtime, Parameters, Requirements]) Register(c Command[Runtime, Parameters, Requirements]) {
+func (p *Program[Runtime, Parameters, Flags, Requirements]) Register(c Command[Runtime, Parameters, Flags, Requirements]) {
 	if p.commands == nil {
-		p.commands = make(map[string]Command[Runtime, Parameters, Requirements])
+		p.commands = make(map[string]Command[Runtime, Parameters, Flags, Requirements])
 	}
 
 	c.BeforeRegister(p)

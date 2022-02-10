@@ -31,7 +31,7 @@ var errTakesNoArgument = exit.Error{
 	Message:  "Wrong number of arguments: '%s' takes no '%s' argument. ",
 }
 
-func (req Requirement) Validate(args program.Arguments) error {
+func (req Requirement) Validate(args program.Arguments[Flags]) error {
 	if req.AllowsFilter { // no checking needed!
 		return nil
 	}
@@ -52,7 +52,7 @@ func (req Requirement) Validate(args program.Arguments) error {
 }
 
 // reflect access to the arguments type
-var flagsType reflect.Type = reflect.TypeOf((*program.Flags)(nil)).Elem()
+var flagsType reflect.Type = reflect.TypeOf((*Flags)(nil)).Elem()
 var flagsIndexes [][]int // indexes of all the options
 
 func init() {

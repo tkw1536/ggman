@@ -205,8 +205,8 @@ func (uw urlweb) Run(context ggman.Context) error {
 		base := "https://" + url.HostName
 
 		// if we have a base argument, we need to use it
-		if len(context.Args) > 0 {
-			base = context.Args[0]
+		if len(context.Args.Arguments.Pos) > 0 {
+			base = context.Args.Arguments.Pos[0]
 
 			// lookup in builtins
 			if builtIn, ok := WebBuiltInBases[base]; ok {

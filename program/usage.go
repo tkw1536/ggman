@@ -24,7 +24,7 @@ func (info Info) FmtVersion() string {
 }
 
 // MainUsage returns a help page about ggman
-func (p Program[Runtime, Parameters, Requirements]) MainUsage() usagefmt.Page {
+func (p Program[Runtime, Parameters, Flags, Requirements]) MainUsage() usagefmt.Page {
 	commands := append(p.Commands(), p.Aliases()...)
 
 	return usagefmt.Page{
@@ -37,7 +37,7 @@ func (p Program[Runtime, Parameters, Requirements]) MainUsage() usagefmt.Page {
 }
 
 // CommandUsage generates the usage information about a specific command
-func (p Program[Runtime, Parameters, Requirements]) CommandUsage(cmdargs CommandArguments[Runtime, Parameters, Requirements]) usagefmt.Page {
+func (p Program[Runtime, Parameters, Flags, Requirements]) CommandUsage(cmdargs CommandArguments[Runtime, Parameters, Flags, Requirements]) usagefmt.Page {
 	Description := cmdargs.Description
 
 	return usagefmt.Page{
@@ -58,7 +58,7 @@ func (p Program[Runtime, Parameters, Requirements]) CommandUsage(cmdargs Command
 }
 
 // AliasPage returns a usage page for the provided alias
-func (p Program[Runtime, Parameters, Requirements]) AliasUsage(cmdargs CommandArguments[Runtime, Parameters, Requirements], alias Alias) usagefmt.Page {
+func (p Program[Runtime, Parameters, Flags, Requirements]) AliasUsage(cmdargs CommandArguments[Runtime, Parameters, Flags, Requirements], alias Alias) usagefmt.Page {
 	exCmd := "`" + shellescape.QuoteCommand(append([]string{p.Info.MainName}, alias.Expansion()...)) + "`"
 	helpCmd := "`" + shellescape.QuoteCommand([]string{p.Info.MainName, alias.Command, "--help"}) + "`"
 	name := shellescape.Quote(alias.Command)
@@ -89,14 +89,14 @@ func (p Program[Runtime, Parameters, Requirements]) AliasUsage(cmdargs CommandAr
 var universalOpts = usagefmt.MakeOpts(flags.NewParser(&Universals{}, flags.None))
 
 // globalOptions returns all global options
-func (p Program[Runtime, Parameters, Requirements]) globalOptions() (opts []usagefmt.Opt) {
+func (p Program[Runtime, Parameters, Flags, Requirements]) globalOptions() (opts []usagefmt.Opt) {
 	opts = append(opts, universalOpts...)
 	opts = append(opts, p.flagOptions()...)
 	return
 }
 
 // globalOptionsFor returns global options for the provided requirement
-func (p Program[Runtime, Parameters, Requirements]) globalOptionsFor(r Requirements) (opts []usagefmt.Opt) {
+func (p Program[Runtime, Parameters, Flags, Requirements]) globalOptionsFor(r Requirements) (opts []usagefmt.Opt) {
 	flags := p.flagOptions()
 
 	// filter options to be those that are allowed
@@ -116,7 +116,7 @@ func (p Program[Runtime, Parameters, Requirements]) globalOptionsFor(r Requireme
 	return
 }
 
-// flagOptions returns the options something something something
-func (p Program[Runtime, Parameters, Requirements]) flagOptions() []usagefmt.Opt {
-	return usagefmt.MakeOpts(flags.NewParser(&Flags{}, flags.None))
+// flagOptions returns the options for something
+func (p Program[Runtime, Parameters, Flags, Requirements]) flagOptions() []usagefmt.Opt {
+	return usagefmt.MakeOpts(flags.NewParser(new(Flags), flags.None))
 }

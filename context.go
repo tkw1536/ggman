@@ -6,6 +6,6 @@ import (
 )
 
 // URLV returns the ith parameters as a url.
-func URLV[Runtime any, Parameters any, Requirements program.Requirement](context program.Context[Runtime, Parameters, Requirements], i int) env.URL {
-	return env.ParseURL(context.Args[i])
+func URLV[Runtime any, Parameters any, Flags any, Requirements program.Requirement[Flags]](context program.Context[Runtime, Parameters, Flags, Requirements], i int) env.URL {
+	return env.ParseURL(context.Args.Arguments.Pos[i])
 }

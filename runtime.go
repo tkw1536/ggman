@@ -4,7 +4,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/walker"
-	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -32,7 +31,7 @@ var errNotADirectory = exit.Error{
 	Message:  "Not a directory: %q",
 }
 
-func makeFilter(e *env.Env, c program.Arguments) (env.Filter, error) {
+func makeFilter(e *env.Env, c Arguments) (env.Filter, error) {
 	// generate pattern filters for the "--for" arguments
 	clauses := make([]env.Filter, len(c.Flags.Filters))
 	for i, pat := range c.Flags.Filters {
