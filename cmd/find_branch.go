@@ -13,13 +13,13 @@ import (
 // The remotes will be listed in dictionary order of their local installation paths.
 //   --exit-code
 // When provided, exit with code 1 if no repositories are found.
-var FindBranch program.Command = &findBranch{}
+var FindBranch ggman.Command = &findBranch{}
 
 type findBranch struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"Exit with Status Code 1 when no repositories with provided branch exist"`
 }
 
-func (findBranch) BeforeRegister(program *program.Program) {}
+func (findBranch) BeforeRegister(program *ggman.Program) {}
 
 func (f *findBranch) Description() program.Description {
 	return program.Description{
@@ -47,11 +47,11 @@ var errFindBranchCustom = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (f findBranch) Run(context program.Context) error {
+func (f findBranch) Run(context ggman.Context) error {
 	foundRepo := false
-	for _, repo := range ggman.C2E(context).Repos() {
+	for _, repo := range context.Runtime().Repos() {
 		// check if the repository has the branch!
-		hasBranch, err := ggman.C2E(context).Git.ContainsBranch(repo, context.Args[0])
+		hasBranch, err := context.Runtime().Git.ContainsBranch(repo, context.Args[0])
 		if err != nil {
 			panic(err)
 		}

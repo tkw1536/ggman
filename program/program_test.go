@@ -30,9 +30,9 @@ func TestProgram_Main(t *testing.T) {
 	var stderrBuffer bytes.Buffer
 
 	// create a dummy program
-	program := Program{
-		Initalizer: func(params env.EnvironmentParameters, cmdargs CommandArguments) (Runtime, error) {
-			return nil, nil
+	program := Program[struct{}]{
+		Initalizer: func(params env.EnvironmentParameters, cmdargs CommandArguments[struct{}]) (struct{}, error) {
+			return struct{}{}, nil
 		},
 		Info: testInfo,
 	}
@@ -451,13 +451,13 @@ type echoCommand struct {
 	description Description
 }
 
-func (e echoCommand) BeforeRegister(program *Program) {}
+func (e echoCommand) BeforeRegister(program *Program[struct{}]) {}
 func (e echoCommand) Description() Description {
 	e.description.Name = e.name
 	return e.description
 }
 func (e echoCommand) AfterParse() error { return nil }
-func (e echoCommand) Run(context Context) error {
+func (e echoCommand) Run(context Context[struct{}]) error {
 	context.Stdout.Write([]byte("Got filter: " + strings.Join(context.Filters, ",")))
 	context.Stdout.Write([]byte("\nGot arguments: " + strings.Join(context.Args, ",")))
 	context.Stdout.Write([]byte("\n" + e.StdoutMsg + "\n"))
@@ -471,7 +471,7 @@ func (e echoCommand) Run(context Context) error {
 }
 
 func TestProgram_Commands(t *testing.T) {
-	var program Program
+	var program Program[struct{}]
 	program.Register(fakeCommand("a"))
 	program.Register(fakeCommand("c"))
 	program.Register(fakeCommand("b"))
@@ -485,7 +485,7 @@ func TestProgram_Commands(t *testing.T) {
 }
 
 func TestProgram_FmtCommands(t *testing.T) {
-	var program Program
+	var program Program[struct{}]
 	program.Register(fakeCommand("a"))
 	program.Register(fakeCommand("c"))
 	program.Register(fakeCommand("b"))

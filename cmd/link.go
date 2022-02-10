@@ -15,11 +15,11 @@ import (
 // Link is the 'ggman link' command.
 //
 // The 'ggman link' symlinks the repository in the path passed as the first argument where it would have been cloned to inside 'ggman root'.
-var Link program.Command = link{}
+var Link ggman.Command = link{}
 
 type link struct{}
 
-func (link) BeforeRegister(program *program.Program) {}
+func (link) BeforeRegister(program *ggman.Program) {}
 
 func (link) Description() program.Description {
 	return program.Description{
@@ -63,22 +63,22 @@ var errLinkUnknown = exit.Error{
 	Message:  "Unknown linking error: %s",
 }
 
-func (link) Run(context program.Context) error {
+func (link) Run(context ggman.Context) error {
 	// make sure that the path is absolute
 	// to avoid relative symlinks
-	from, e := ggman.C2E(context).Abs(context.Args[0])
+	from, e := context.Runtime().Abs(context.Args[0])
 	if e != nil {
 		return errLinkDoesNotExist
 	}
 
 	// open the source repository and get the remotre
-	r, e := ggman.C2E(context).Git.GetRemote(from)
+	r, e := context.Runtime().Git.GetRemote(from)
 	if e != nil {
 		return errLinkDoesNotExist
 	}
 
 	// find the target path
-	to, err := ggman.C2E(context).Local(env.ParseURL(r))
+	to, err := context.Runtime().Local(env.ParseURL(r))
 	if err != nil {
 		return err
 	}

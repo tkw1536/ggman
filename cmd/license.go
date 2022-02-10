@@ -9,11 +9,11 @@ import (
 // License is the 'ggman license' command.
 //
 // The license command prints to standard output legal notices about the ggman program.
-var License program.Command = license{}
+var License ggman.Command = license{}
 
 type license struct{}
 
-func (license) BeforeRegister(program *program.Program) {}
+func (license) BeforeRegister(program *ggman.Program) {}
 
 func (license) Description() program.Description {
 	return program.Description{
@@ -26,7 +26,7 @@ func (license) AfterParse() error {
 	return nil
 }
 
-func (license) Run(context program.Context) error {
+func (license) Run(context ggman.Context) error {
 	context.Printf(stringLicenseInfo, ggman.License, legal.Notices)
 	return nil
 }

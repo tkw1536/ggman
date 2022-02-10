@@ -34,7 +34,7 @@ import (
 //   --force
 // Continue execution of programs, even if one returns a non-zero exit code.
 // 'exec' will still return code 0 as the final exit code.
-var Exec program.Command = &exe{}
+var Exec ggman.Command = &exe{}
 
 type exe struct {
 	Parallel int  `short:"p" long:"parallel" default:"1" description:"number of commands to run in parallel, 0 for no limit"`
@@ -44,7 +44,7 @@ type exe struct {
 	Force    bool `short:"f" long:"force" description:"Continue execution even if an executable returns a non-zero exit code"`
 }
 
-func (*exe) BeforeRegister(program *program.Program) {}
+func (*exe) BeforeRegister(program *ggman.Program) {}
 
 func (*exe) Description() program.Description {
 	return program.Description{
@@ -75,7 +75,7 @@ func (e *exe) AfterParse() error {
 	return nil
 }
 
-func (e *exe) Run(context program.Context) error {
+func (e *exe) Run(context ggman.Context) error {
 	if e.Simulate {
 		return e.runSimulate(context)
 	}
@@ -83,8 +83,8 @@ func (e *exe) Run(context program.Context) error {
 }
 
 // runReal implements ggman exec for simulate = False
-func (e *exe) runReal(context program.Context) error {
-	repos := ggman.C2E(context).Repos()
+func (e *exe) runReal(context ggman.Context) error {
+	repos := context.Runtime().Repos()
 
 	// schedule each command to be run in parallel by using a semaphore!
 	return sema.Schedule(func(i int) error {
@@ -105,7 +105,7 @@ var ErrExecFatal = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (e *exe) runRepo(context program.Context, repo string) error {
+func (e *exe) runRepo(context ggman.Context, repo string) error {
 	cmd := exec.Command(context.Args[0], context.Args[1:]...)
 	cmd.Dir = repo
 
@@ -145,7 +145,7 @@ var ErrExecNoParallelSimulate = exit.Error{
 }
 
 // runSimulate runs the --simulate flag
-func (e *exe) runSimulate(context program.Context) (err error) {
+func (e *exe) runSimulate(context ggman.Context) (err error) {
 	if e.Parallel != 1 {
 		return ErrExecNoParallelSimulate.WithMessageF(e.Parallel)
 	}
@@ -161,7 +161,7 @@ func (e *exe) runSimulate(context program.Context) (err error) {
 
 	// iterate over each repository
 	// then print each of the commands to be run!
-	repos := ggman.C2E(context).Repos()
+	repos := context.Runtime().Repos()
 	for _, repo := range repos {
 		context.Printf("cd %s\n", shellescape.Quote(repo))
 		if !e.NoRepo {

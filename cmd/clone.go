@@ -17,7 +17,7 @@ import (
 // It optionally takes any argument that would be passed to the normal invocation of a git command.
 //
 // When 'git' is not available on the system ggman is running on, additional arguments may not be supported.
-var Clone program.Command = &clone{}
+var Clone ggman.Command = &clone{}
 
 type clone struct {
 	Force bool   `short:"f" long:"force" description:"Don't complain when a repository already exists in the target directory"`
@@ -25,7 +25,7 @@ type clone struct {
 	To    string `short:"t" long:"to" description:"Clone repository into specified directory"`
 }
 
-func (*clone) BeforeRegister(program *program.Program) {}
+func (*clone) BeforeRegister(program *ggman.Program) {}
 
 func (*clone) Description() program.Description {
 	return program.Description{
@@ -83,15 +83,15 @@ var errCloneOther = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (c *clone) Run(context program.Context) error {
+func (c *clone) Run(context ggman.Context) error {
 	// grab the url to clone and make sure it is not local
-	url := context.URLV(0)
+	url := ggman.URLV(context, 0)
 	if url.IsLocal() {
 		return errCloneLocalURI.WithMessageF(context.Args[0])
 	}
 
 	// find the remote and local paths to clone to / from
-	remote := ggman.C2E(context).Canonical(url)
+	remote := context.Runtime().Canonical(url)
 	local, err := c.dest(context, url)
 	if err != nil {
 		return errCloneInvalidDest.WithMessageF(context.Args[0], err)
@@ -99,7 +99,7 @@ func (c *clone) Run(context program.Context) error {
 
 	// do the actual cloning!
 	context.Printf("Cloning %q into %q ...\n", remote, local)
-	switch err := ggman.C2E(context).Git.Clone(context.IOStream, remote, local, context.Args[1:]...); err {
+	switch err := context.Runtime().Git.Clone(context.IOStream, remote, local, context.Args[1:]...); err {
 	case nil:
 		return nil
 	case git.ErrCloneAlreadyExists:
@@ -118,19 +118,19 @@ func (c *clone) Run(context program.Context) error {
 var errCloneNoComps = errors.New("unable to find components of URI")
 
 // dest returns the destination path to clone the repository into
-func (c clone) dest(context program.Context, url env.URL) (string, error) {
+func (c clone) dest(context ggman.Context, url env.URL) (string, error) {
 	if c.Local { // clone into directory named automatically
 		comps := url.Components()
 		if len(comps) == 0 {
 			return "", errCloneNoComps
 		}
-		return ggman.C2E(context).Abs(comps[len(comps)-1])
+		return context.Runtime().Abs(comps[len(comps)-1])
 	}
 
 	if c.To != "" { // clone directory into a directory
-		return ggman.C2E(context).Abs(c.To)
+		return context.Runtime().Abs(c.To)
 	}
 
 	// normal clone!
-	return ggman.C2E(context).Local(url)
+	return context.Runtime().Local(url)
 }

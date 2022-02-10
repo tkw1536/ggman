@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/program"
 )
 
@@ -8,11 +9,11 @@ import (
 //
 // When invoked, it prints the components of the first argument passed to it.
 // Each component is printed on a seperate line of standard output.
-var Comps program.Command = comps{}
+var Comps ggman.Command = comps{}
 
 type comps struct{}
 
-func (comps) BeforeRegister(program *program.Program) {}
+func (comps) BeforeRegister(program *ggman.Program) {}
 
 func (comps) Description() program.Description {
 	return program.Description{
@@ -32,8 +33,8 @@ func (comps) AfterParse() error {
 	return nil
 }
 
-func (comps) Run(context program.Context) error {
-	for _, comp := range context.URLV(0).Components() {
+func (comps) Run(context ggman.Context) error {
+	for _, comp := range ggman.URLV(context, 0).Components() {
 		context.Println(comp)
 	}
 

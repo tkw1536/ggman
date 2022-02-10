@@ -14,14 +14,14 @@ import (
 // When provided, exit with code 1 if no repositories are found.
 //   --one
 // List at most one repository
-var Ls program.Command = &ls{}
+var Ls ggman.Command = &ls{}
 
 type ls struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"Return exit code 1 if no repositories are found"`
 	One      bool `short:"o" long:"one" description:"List at most one repository, for use in shell scripts"`
 }
 
-func (*ls) BeforeRegister(program *program.Program) {}
+func (*ls) BeforeRegister(program *ggman.Program) {}
 
 func (l *ls) Description() program.Description {
 	return program.Description{
@@ -43,8 +43,8 @@ var errLSExitFlag = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (l *ls) Run(context program.Context) error {
-	repos := ggman.C2E(context).Repos()
+func (l *ls) Run(context ggman.Context) error {
+	repos := context.Runtime().Repos()
 	if l.One && len(repos) > 0 {
 		repos = repos[:1]
 	}

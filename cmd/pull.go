@@ -10,11 +10,11 @@ import (
 // Pull is the 'ggman pull' command.
 //
 // 'ggman pull' is the equivalent of running 'git pull' on all locally installed repositories.
-var Pull program.Command = pull{}
+var Pull ggman.Command = pull{}
 
 type pull struct{}
 
-func (pull) BeforeRegister(program *program.Program) {}
+func (pull) BeforeRegister(program *ggman.Program) {}
 
 func (pull) Description() program.Description {
 	return program.Description{
@@ -36,11 +36,11 @@ var errPullCustom = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (pull) Run(context program.Context) error {
+func (pull) Run(context ggman.Context) error {
 	hasError := false
-	for _, repo := range ggman.C2E(context).Repos() {
+	for _, repo := range context.Runtime().Repos() {
 		context.Printf("Pulling %q\n", repo)
-		if e := ggman.C2E(context).Git.Pull(context.IOStream, repo); e != nil {
+		if e := context.Runtime().Git.Pull(context.IOStream, repo); e != nil {
 			context.EPrintf("%s\n", e)
 			hasError = true
 		}

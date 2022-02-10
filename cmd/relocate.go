@@ -14,13 +14,13 @@ import (
 // Relocate is the 'ggman relocate' command.
 //
 // Relocate moves all repositories to the location where they should be moved to if they had been cloned with 'ggman clone'.
-var Relocate program.Command = &relocate{}
+var Relocate ggman.Command = &relocate{}
 
 type relocate struct {
 	Simulate bool `short:"s" long:"simulate" description:"Only print unix-like commands to move repositories around"`
 }
 
-func (relocate) BeforeRegister(program *program.Program) {}
+func (relocate) BeforeRegister(program *ggman.Program) {}
 
 func (r *relocate) Description() program.Description {
 	return program.Description{
@@ -49,14 +49,14 @@ var errUnableToMoveRepo = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (r relocate) Run(context program.Context) error {
-	for _, gotPath := range ggman.C2E(context).Repos() {
+func (r relocate) Run(context ggman.Context) error {
+	for _, gotPath := range context.Runtime().Repos() {
 		// determine the remote path and where it should go
-		remote, err := ggman.C2E(context).Git.GetRemote(gotPath)
+		remote, err := context.Runtime().Git.GetRemote(gotPath)
 		if err != nil || remote == "" { // ignore remotes that don't exist
 			continue
 		}
-		shouldPath, err := ggman.C2E(context).Local(env.ParseURL(remote))
+		shouldPath, err := context.Runtime().Local(env.ParseURL(remote))
 		if err != nil {
 			return err
 		}

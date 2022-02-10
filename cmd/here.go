@@ -11,13 +11,13 @@ import (
 // 'ggman here' prints the path to the root of the repository in the current working directory to standard output.
 //   --tree
 // When provided, also print the relative path from the root of the repository to the current path.
-var Here program.Command = &here{}
+var Here ggman.Command = &here{}
 
 type here struct {
 	Tree bool `short:"t" long:"tree" description:"Also print the current HEAD reference and relative path to the root of the git worktree"`
 }
 
-func (here) BeforeRegister(program *program.Program) {}
+func (here) BeforeRegister(program *ggman.Program) {}
 
 func (h *here) Description() program.Description {
 	return program.Description{
@@ -34,8 +34,8 @@ func (here) AfterParse() error {
 	return nil
 }
 
-func (h here) Run(context program.Context) error {
-	root, worktree, err := ggman.C2E(context).At(".")
+func (h here) Run(context ggman.Context) error {
+	root, worktree, err := context.Runtime().At(".")
 	if err != nil {
 		return err
 	}

@@ -8,6 +8,15 @@ import (
 	"github.com/tkw1536/ggman/program"
 )
 
+// these define the ggman-specific program types
+// none of these are strictly needed, they're just around for convenience
+type runtimeT = *env.Env
+
+type Program = program.Program[runtimeT]
+type Command = program.Command[runtimeT]
+type Context = program.Context[runtimeT]
+type CommandArguments = program.CommandArguments[runtimeT]
+
 // info contains information about the ggman program
 var info = program.Info{
 	BuildVersion: constants.BuildVersion,
@@ -18,18 +27,12 @@ var info = program.Info{
 }
 
 // NewProgram returns a new ggman program
-func NewProgram() (p program.Program) {
-	p.Initalizer = func(params env.EnvironmentParameters, cmdargs program.CommandArguments) (program.Runtime, error) {
+func NewProgram() (p program.Program[*env.Env]) {
+	p.Initalizer = func(params env.EnvironmentParameters, cmdargs CommandArguments) (*env.Env, error) {
 		rt, err := NewRuntime(params, cmdargs)
 		return rt, err
 	}
 	p.Info = info
 
 	return
-}
-
-// C2E returns the environment belonging to a context.
-// TODO: Type parameter
-func C2E(context program.Context) *env.Env {
-	return context.Runtime().(*env.Env)
 }

@@ -15,19 +15,19 @@ import (
 
 // Program represents an executable program with a list of subcommands.
 // the zero value is ready to use and represents a command with no subcommands.
-type Program struct {
+type Program[Runtime any] struct {
 	// Initalizer creates a new runtime for the given parameters and command arguments
-	Initalizer func(params env.EnvironmentParameters, cmdargs CommandArguments) (Runtime, error)
+	Initalizer func(params env.EnvironmentParameters, cmdargs CommandArguments[Runtime]) (Runtime, error)
 
 	// Info contains meta-information about this program
 	Info Info
 
-	commands map[string]Command
+	commands map[string]Command[Runtime]
 	aliases  map[string]Alias
 }
 
 // Commands returns a list of known commands
-func (p Program) Commands() []string {
+func (p Program[Runtime]) Commands() []string {
 	commands := make([]string, 0, len(p.commands))
 	for cmd := range p.commands {
 		commands = append(commands, cmd)
@@ -38,7 +38,7 @@ func (p Program) Commands() []string {
 
 // FmtCommands returns a human readable string describing the commands.
 // See also Commands.
-func (p Program) FmtCommands() string {
+func (p Program[Runtime]) FmtCommands() string {
 	return usagefmt.FmtCommands(p.Commands())
 }
 
@@ -56,12 +56,12 @@ func (p Program) FmtCommands() string {
 // If it is not implemented as a pointer receiver, the zero value is expected to be ready to use.
 // Otherwise the zero value of the element struct is expected to be ready to use.
 // See also CloneCommand.
-type Command interface {
+type Command[Runtime any] interface {
 	// BeforeRegister is called right before this command is registered with a program.
 	// In particular it is called before any other function on this command is called.
 	//
 	// It is never called more than once for a single instance of a command.
-	BeforeRegister(program *Program)
+	BeforeRegister(program *Program[Runtime])
 
 	// Description returns a description of this command.
 	// It may be called multiple times.
@@ -76,7 +76,7 @@ type Command interface {
 	// Run runs this command in the given context.
 	//
 	// It is called only once and must return either nil or an error of type Error.
-	Run(context Context) error
+	Run(context Context[Runtime]) error
 }
 
 // makeFlagsParser creates a new flags parser for data.
@@ -98,7 +98,7 @@ func makeFlagsParser(data interface{}, options flags.Options) *flags.Parser {
 //
 // This function is mostly intended to be used when a command should be called multiple times
 // during a single run of ggman.
-func CloneCommand(command Command) (cmd Command) {
+func CloneCommand[Runtime any](command Command[Runtime]) (cmd Command[Runtime]) {
 	cmdStruct := reflect.ValueOf(command) // cmd.CommandStruct
 
 	// clone := cmd.CommandStruct{...zero...}
@@ -143,7 +143,7 @@ var errInitContext = exit.Error{
 
 // Main is the entry point to this program.
 // When an error occurs, returns an error of type Error and writes the error to context.Stderr.
-func (p Program) Main(stream stream.IOStream, params env.EnvironmentParameters, argv []string) (err error) {
+func (p Program[Runtime]) Main(stream stream.IOStream, params env.EnvironmentParameters, argv []string) (err error) {
 	// whenever an error occurs, we want it printed
 	defer func() {
 		err = stream.Die(err)
@@ -178,7 +178,7 @@ func (p Program) Main(stream stream.IOStream, params env.EnvironmentParameters, 
 	}
 
 	// parse the command arguments
-	var cmdargs CommandArguments
+	var cmdargs CommandArguments[Runtime]
 	if err := cmdargs.Parse(command, args); err != nil {
 		return err
 	}
@@ -195,7 +195,7 @@ func (p Program) Main(stream stream.IOStream, params env.EnvironmentParameters, 
 	}
 
 	// create a new context and make an environment for it
-	context := Context{
+	context := Context[Runtime]{
 		IOStream:         stream,
 		CommandArguments: cmdargs,
 	}
@@ -210,9 +210,9 @@ func (p Program) Main(stream stream.IOStream, params env.EnvironmentParameters, 
 
 // Register registers a new command with this program.
 // It expects that the command does not have a name that is already taken.
-func (p *Program) Register(c Command) {
+func (p *Program[Runtime]) Register(c Command[Runtime]) {
 	if p.commands == nil {
-		p.commands = make(map[string]Command)
+		p.commands = make(map[string]Command[Runtime])
 	}
 
 	c.BeforeRegister(p)

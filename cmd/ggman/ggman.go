@@ -110,7 +110,7 @@ var ggmanExe = ggman.NewProgram()
 
 func init() {
 	// register all the known commands to the ggman program!
-	for _, c := range []program.Command{
+	for _, c := range []ggman.Command{
 		cmd.Canon,
 		cmd.Clone,
 		cmd.Comps,

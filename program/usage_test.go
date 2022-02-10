@@ -11,12 +11,12 @@ import (
 // fakeCommand represents a dummy command with the given name
 type fakeCommand string
 
-var _ Command = (fakeCommand)("")
+var _ Command[struct{}] = (fakeCommand)("")
 
-func (fakeCommand) BeforeRegister(program *Program) {}
-func (f fakeCommand) Description() Description      { return Description{Name: string(f)} }
-func (fakeCommand) AfterParse() error               { panic("fakeCommand: not implemented") }
-func (fakeCommand) Run(Context) error               { panic("fakeCommand: not implemented") }
+func (fakeCommand) BeforeRegister(program *Program[struct{}]) {}
+func (f fakeCommand) Description() Description                { return Description{Name: string(f)} }
+func (fakeCommand) AfterParse() error                         { panic("fakeCommand: not implemented") }
+func (fakeCommand) Run(Context[struct{}]) error               { panic("fakeCommand: not implemented") }
 
 var testInfo = Info{
 	BuildVersion: "42.0.0",
@@ -27,7 +27,7 @@ var testInfo = Info{
 }
 
 func TestProgram_MainUsage(t *testing.T) {
-	program := Program{
+	program := Program[struct{}]{
 		Info: testInfo,
 	}
 
@@ -44,7 +44,7 @@ func TestProgram_MainUsage(t *testing.T) {
 
 func TestProgram_CommandUsage(t *testing.T) {
 
-	program := Program{
+	program := Program[struct{}]{
 		Info: testInfo,
 	}
 
@@ -114,7 +114,7 @@ func TestProgram_CommandUsage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			args := CommandArguments{
+			args := CommandArguments[struct{}]{
 				Arguments: Arguments{
 					Command: tt.args.command,
 				},

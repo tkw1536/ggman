@@ -13,11 +13,11 @@ import (
 // The sweep command can be used to identify non-git directories within the GGROOT directory which are empty, or contain only subdirectories which are empty recursively.
 // Such directories are left behind after running the 'ggman relocate' command, or after manually deleting repositories.
 // The command takes no arguments, and produces them in an order such that they can be passed to 'rmdir' and be deleted.
-var Sweep program.Command = sweep{}
+var Sweep ggman.Command = sweep{}
 
 type sweep struct{}
 
-func (sweep) BeforeRegister(program *program.Program) {}
+func (sweep) BeforeRegister(program *ggman.Program) {}
 
 func (sweep) Description() program.Description {
 	return program.Description{
@@ -39,11 +39,11 @@ var errSweepErr = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (sweep) Run(context program.Context) error {
+func (sweep) Run(context ggman.Context) error {
 	results, err := walker.Sweep(func(path string, root walker.FS, depth int) (stop bool) {
-		return ggman.C2E(context).Git.IsRepository(path)
+		return context.Runtime().Git.IsRepository(path)
 	}, walker.Params{
-		Root: walker.NewRealFS(ggman.C2E(context).Root, false),
+		Root: walker.NewRealFS(context.Runtime().Root, false),
 	})
 	if err != nil {
 		return errSweepErr.WithMessageF(err)

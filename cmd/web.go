@@ -48,22 +48,22 @@ import (
 //
 // --reclone
 // Like the --clone flag, but instead of using a normalized url, use the exact one found in the current repository.
-var Web program.Command = &web{}
+var Web ggman.Command = &web{}
 
 type web struct{ urlweb }
 
-func (w *web) BeforeRegister(program *program.Program) {
+func (w *web) BeforeRegister(program *ggman.Program) {
 	w.urlweb.isWebCommand = true
 }
 
 // URL is the 'ggman url' command.
 //
 // The ggman url command behaves exactly like the ggman web command, except that instead of opening the URL in a webbrowser it prints it to standard output.
-var URL program.Command = &url{}
+var URL ggman.Command = &url{}
 
 type url struct{ urlweb }
 
-func (u *url) BeforeRegister(program *program.Program) {
+func (u *url) BeforeRegister(program *ggman.Program) {
 	u.urlweb.isWebCommand = false
 }
 
@@ -190,7 +190,7 @@ var errURLCloneAndUnsupported = exit.Error{
 	Message:  "ggman url does not support %s and %s arguments at the same time",
 }
 
-func (uw urlweb) Run(context program.Context) error {
+func (uw urlweb) Run(context ggman.Context) error {
 	// get the remote url of the current repository
 	root, remote, relative, err := uw.getRemoteURL(context)
 	if err != nil {
@@ -235,7 +235,7 @@ func (uw urlweb) Run(context program.Context) error {
 	}
 
 	if root != "" && (uw.Tree || uw.Branch) {
-		ref, err := ggman.C2E(context).Git.GetHeadRef(root)
+		ref, err := context.Runtime().Git.GetHeadRef(root)
 		if err != nil {
 			return errOutsideRepository
 		}
@@ -261,7 +261,7 @@ func (uw urlweb) Run(context program.Context) error {
 }
 
 // getRemoteURL gets the remote url of current repository in the context
-func (uw urlweb) getRemoteURL(context program.Context) (root string, remote string, relative string, err error) {
+func (uw urlweb) getRemoteURL(context ggman.Context) (root string, remote string, relative string, err error) {
 
 	if uw.ForceRepoHere { // don't use a repository, instead fake one!
 		return uw.getRemoteURLFake(context)
@@ -270,9 +270,9 @@ func (uw urlweb) getRemoteURL(context program.Context) (root string, remote stri
 	return uw.getRemoteURLReal(context)
 }
 
-func (uw urlweb) getRemoteURLReal(context program.Context) (root string, remote string, relative string, err error) {
+func (uw urlweb) getRemoteURLReal(context ggman.Context) (root string, remote string, relative string, err error) {
 	// find the repository at the current location
-	root, relative, err = ggman.C2E(context).At(".")
+	root, relative, err = context.Runtime().At(".")
 	if err != nil {
 		return "", "", "", err
 	}
@@ -282,7 +282,7 @@ func (uw urlweb) getRemoteURLReal(context program.Context) (root string, remote 
 	}
 
 	// get the remote
-	remote, err = ggman.C2E(context).Git.GetRemote(root)
+	remote, err = context.Runtime().Git.GetRemote(root)
 	if err != nil {
 		return "", "", "", errOutsideRepository
 	}
@@ -290,15 +290,15 @@ func (uw urlweb) getRemoteURLReal(context program.Context) (root string, remote 
 	return
 }
 
-func (uw urlweb) getRemoteURLFake(context program.Context) (root string, remote string, relative string, err error) {
+func (uw urlweb) getRemoteURLFake(context ggman.Context) (root string, remote string, relative string, err error) {
 	// get the absolute path to the current workdir
-	workdir, err := ggman.C2E(context).Abs("")
+	workdir, err := context.Runtime().Abs("")
 	if err != nil {
 		return "", "", "", err
 	}
 
 	// determine the relative path to the root directory
-	relpath, err := filepath.Rel(ggman.C2E(context).Root, workdir)
+	relpath, err := filepath.Rel(context.Runtime().Root, workdir)
 	if err != nil || path.GoesUp(relpath) {
 		return "", "", "", errNoRelativeRepository
 	}

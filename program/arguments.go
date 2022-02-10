@@ -188,7 +188,7 @@ func parseFlagNames(err *flags.Error) (names []string, ok bool) {
 
 // CommandArguments represent a parsed set of options for a specific subcommand
 // The zero value is ready to use, see the "Parse" method.
-type CommandArguments struct {
+type CommandArguments[Runtime any] struct {
 	Arguments // Arguments that were passed to the command globally
 
 	parser      *flags.Parser
@@ -201,7 +201,7 @@ type CommandArguments struct {
 // It expects that neither the Help nor Version flag of Arguments are true.
 //
 // When parsing fails, returns an error of type Error.
-func (args *CommandArguments) Parse(command Command, arguments Arguments) error {
+func (args *CommandArguments[Runtime]) Parse(command Command[Runtime], arguments Arguments) error {
 	args.prepare(command, arguments)
 
 	// We first have to check the following (in order):
@@ -235,7 +235,7 @@ func (args *CommandArguments) Parse(command Command, arguments Arguments) error 
 }
 
 // prepare prepares this CommandArguments for parsing arguments for command
-func (args *CommandArguments) prepare(command Command, arguments Arguments) {
+func (args *CommandArguments[Runtime]) prepare(command Command[Runtime], arguments Arguments) {
 	// setup options and arguments!
 	args.description = command.Description()
 	args.Arguments = arguments
@@ -257,7 +257,7 @@ var errParseFlagSet = exit.Error{
 // If the flagset has no defined flags (or is nil), immediatly returns nil
 //
 // When an error occurs, returns an error of type Error.
-func (args *CommandArguments) parseFlags() (err error) {
+func (args *CommandArguments[Runtime]) parseFlags() (err error) {
 	args.Args, err = args.parser.ParseArgs(args.Args)
 
 	// catch the help error
@@ -297,7 +297,7 @@ var errParseTakesBetweenArguments = exit.Error{
 // checkPositionalCount checks that the correct number of arguments was passed to this command.
 // This function implicitly assumes that Options, Arguments and Argv are set appropriatly.
 // When the wrong number of arguments is passed, returns an error of type Error.
-func (args CommandArguments) checkPositionalCount() error {
+func (args CommandArguments[Runtime]) checkPositionalCount() error {
 
 	min := args.description.PosArgsMin
 	max := args.description.PosArgsMax
@@ -335,7 +335,7 @@ var errTakesNoArgument = exit.Error{
 //
 // When filter arguments are allowed, immediatly returns nil.
 // When filter arguments are not allowed returns an error of type Error iff the check fails.
-func (args CommandArguments) checkFilterArgument() error {
+func (args CommandArguments[Runtime]) checkFilterArgument() error {
 	// we don't have to do any checking!
 	if args.description.Environment.AllowsFilter {
 		return nil
@@ -357,6 +357,6 @@ func (args CommandArguments) checkFilterArgument() error {
 }
 
 // Description returns the description of the command invoked by these arguments
-func (args CommandArguments) Description() Description {
+func (args CommandArguments[Runtime]) Description() Description {
 	return args.description
 }

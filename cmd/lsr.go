@@ -13,13 +13,13 @@ import (
 // The remotes will be listed in dictionary order of their local installation paths.
 //  --canonical
 // When provided, instead of printing the urls directly, prints the canonical remotes of all repositories
-var Lsr program.Command = &lsr{}
+var Lsr ggman.Command = &lsr{}
 
 type lsr struct {
 	Canonical bool `short:"c" long:"canonical" description:"Print canonicalized URLs"`
 }
 
-func (lsr) BeforeRegister(program *program.Program) {}
+func (lsr) BeforeRegister(program *ggman.Program) {}
 
 func (l *lsr) Description() program.Description {
 	return program.Description{
@@ -42,18 +42,18 @@ var errInvalidCanfile = exit.Error{
 	ExitCode: exit.ExitInvalidEnvironment,
 }
 
-func (l lsr) Run(context program.Context) error {
+func (l lsr) Run(context ggman.Context) error {
 	var lines env.CanFile
 	if l.Canonical {
 		var err error
-		if lines, err = ggman.C2E(context).LoadDefaultCANFILE(); err != nil {
+		if lines, err = context.Runtime().LoadDefaultCANFILE(); err != nil {
 			return errInvalidCanfile
 		}
 	}
 
 	// and print them
-	for _, repo := range ggman.C2E(context).Repos() {
-		remote, err := ggman.C2E(context).Git.GetRemote(repo)
+	for _, repo := range context.Runtime().Repos() {
+		remote, err := context.Runtime().Git.GetRemote(repo)
 		if err != nil {
 			continue
 		}

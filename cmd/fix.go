@@ -14,13 +14,13 @@ import (
 // The 'ggman fix' command canonicalizes the urls of all remotes of a repository.
 //   --simulate
 // Instead of writing out the changes to disk, only print what would be done.
-var Fix program.Command = &fix{}
+var Fix ggman.Command = &fix{}
 
 type fix struct {
 	Simulate bool `short:"s" long:"simulate" description:"Do not perform any canonicalization. Only print what would be done"`
 }
 
-func (fix) BeforeRegister(program *program.Program) {}
+func (fix) BeforeRegister(program *ggman.Program) {}
 
 func (f *fix) Description() program.Description {
 	return program.Description{
@@ -42,15 +42,15 @@ var errFixCustom = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (f fix) Run(context program.Context) error {
+func (f fix) Run(context ggman.Context) error {
 	simulate := f.Simulate
 
 	hasError := false
-	for _, repo := range ggman.C2E(context).Repos() {
+	for _, repo := range context.Runtime().Repos() {
 		var initialMessage sync.Once // send an initial log message to the user, once
 
-		if e := ggman.C2E(context).Git.UpdateRemotes(repo, func(url, remoteName string) (string, error) {
-			canon := ggman.C2E(context).Canonical(env.ParseURL(url))
+		if e := context.Runtime().Git.UpdateRemotes(repo, func(url, remoteName string) (string, error) {
+			canon := context.Runtime().Canonical(env.ParseURL(url))
 
 			if url == canon {
 				return url, nil

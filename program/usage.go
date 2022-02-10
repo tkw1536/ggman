@@ -25,11 +25,7 @@ func (info Info) FmtVersion() string {
 }
 
 // MainUsage returns a help page about ggman
-func (p Program) MainUsage() usagefmt.Page {
-	text := "ggman manages local git repositories.\n\n"
-	text += fmt.Sprintf("ggman version %s\n", p.Info.BuildVersion)
-	text += "ggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information."
-
+func (p Program[Runtime]) MainUsage() usagefmt.Page {
 	commands := append(p.Commands(), p.Aliases()...)
 
 	return usagefmt.Page{
@@ -42,7 +38,7 @@ func (p Program) MainUsage() usagefmt.Page {
 }
 
 // CommandUsage generates the usage information about a specific command
-func (p Program) CommandUsage(cmdargs CommandArguments) usagefmt.Page {
+func (p Program[Runtime]) CommandUsage(cmdargs CommandArguments[Runtime]) usagefmt.Page {
 	opt := cmdargs.description
 
 	return usagefmt.Page{
@@ -63,7 +59,7 @@ func (p Program) CommandUsage(cmdargs CommandArguments) usagefmt.Page {
 }
 
 // AliasPage returns a usage page for the provided alias
-func (p Program) AliasUsage(cmdargs CommandArguments, alias Alias) usagefmt.Page {
+func (p Program[Runtime]) AliasUsage(cmdargs CommandArguments[Runtime], alias Alias) usagefmt.Page {
 	opt := cmdargs.description
 
 	exCmd := "`" + shellescape.QuoteCommand(append([]string{p.Info.MainName}, alias.Expansion()...)) + "`"

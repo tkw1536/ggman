@@ -13,11 +13,11 @@ import (
 // Each segment of the path correesponding to a component of the repository url.
 //
 // This command does not perform any interactions with the remote repository or the local disk, in particular it does not require access to the remote repository or require it to be installed.
-var Where program.Command = where{}
+var Where ggman.Command = where{}
 
 type where struct{}
 
-func (where) BeforeRegister(program *program.Program) {}
+func (where) BeforeRegister(program *ggman.Program) {}
 
 func (where) Description() program.Description {
 	return program.Description{
@@ -41,8 +41,8 @@ func (where) AfterParse() error {
 	return nil
 }
 
-func (where) Run(context program.Context) error {
-	localPath, err := ggman.C2E(context).Local(context.URLV(0))
+func (where) Run(context ggman.Context) error {
+	localPath, err := context.Runtime().Local(ggman.URLV(context, 0))
 	if err != nil {
 		return err
 	}

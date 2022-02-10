@@ -10,11 +10,11 @@ import (
 //
 // The 'ggman root' command prints the ggman root directory to standard output.
 // It does not require the root directory to exist.
-var Root program.Command = root{}
+var Root ggman.Command = root{}
 
 type root struct{}
 
-func (root) BeforeRegister(program *program.Program) {}
+func (root) BeforeRegister(program *ggman.Program) {}
 
 func (root) Description() program.Description {
 	return program.Description{
@@ -31,7 +31,7 @@ func (root) AfterParse() error {
 	return nil
 }
 
-func (root) Run(context program.Context) error {
-	context.Println(ggman.C2E(context).Root)
+func (root) Run(context ggman.Context) error {
+	context.Println(context.Runtime().Root)
 	return nil
 }

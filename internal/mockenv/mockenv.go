@@ -136,7 +136,7 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 // In particular all interactions with remote git repositories are intercepted, see the Register() method for details.
 //
 // Run returns the exit code of the provided command, along with standard output and standard error.
-func (mock *MockEnv) Run(command program.Command, workdir string, stdin string, argv ...string) (code uint8, stdout, stderr string) {
+func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, argv ...string) (code uint8, stdout, stderr string) {
 	// create buffers
 	stdinReader := strings.NewReader(stdin)
 	stdoutBuffer := &bytes.Buffer{}

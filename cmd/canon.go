@@ -10,11 +10,11 @@ import (
 //
 // The 'ggman canon' command prints to standard output the canonical version of the URL passed as the first argument.
 // An optional second argument determines the CANSPEC to use for canonizing the URL.
-var Canon program.Command = &canon{}
+var Canon ggman.Command = &canon{}
 
 type canon struct{}
 
-func (canon) BeforeRegister(program *program.Program) {}
+func (canon) BeforeRegister(program *ggman.Program) {}
 
 func (canon) Description() program.Description {
 	return program.Description{
@@ -32,13 +32,13 @@ func (canon) AfterParse() error {
 	return nil
 }
 
-func (canon) Run(context program.Context) error {
+func (canon) Run(context ggman.Context) error {
 	var file env.CanFile
 
 	switch len(context.Args) {
 	case 1: // read the default CanFile
 		var err error
-		if file, err = ggman.C2E(context).LoadDefaultCANFILE(); err != nil {
+		if file, err = context.Runtime().LoadDefaultCANFILE(); err != nil {
 			return err
 		}
 	case 2: // use a custom CanLine
@@ -46,7 +46,7 @@ func (canon) Run(context program.Context) error {
 	}
 
 	// print out the canonical version of the file
-	canonical := context.URLV(0).CanonicalWith(file)
+	canonical := ggman.URLV(context, 0).CanonicalWith(file)
 	context.Println(canonical)
 
 	return nil

@@ -232,7 +232,7 @@ func TestCommandArguments_checkPositionalCount(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			args := &CommandArguments{
+			args := &CommandArguments[struct{}]{
 				description: tt.options,
 				Arguments:   tt.arguments,
 			}
@@ -291,7 +291,7 @@ func TestCommandArguments_checkFilterArgument(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			args := CommandArguments{
+			args := CommandArguments[struct{}]{
 				description: tt.options,
 				Arguments:   tt.arguments,
 			}

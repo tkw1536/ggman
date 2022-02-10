@@ -74,7 +74,7 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 // mockEnvRunCommand
 type mockEnvRunCommand struct{}
 
-func (mockEnvRunCommand) BeforeRegister(program *program.Program) {}
+func (mockEnvRunCommand) BeforeRegister(program *ggman.Program) {}
 
 func (mockEnvRunCommand) Description() program.Description {
 	return program.Description{
@@ -86,9 +86,9 @@ func (mockEnvRunCommand) Description() program.Description {
 	}
 }
 func (mockEnvRunCommand) AfterParse() error { return nil }
-func (mockEnvRunCommand) Run(context program.Context) error {
-	clonePath := filepath.Join(ggman.C2E(context).Root, "server.com", "repo")
-	remote, _ := ggman.C2E(context).Git.GetRemote(clonePath)
+func (mockEnvRunCommand) Run(context ggman.Context) error {
+	clonePath := filepath.Join(context.Runtime().Root, "server.com", "repo")
+	remote, _ := context.Runtime().Git.GetRemote(clonePath)
 
 	fmt.Fprintf(context.Stdout, "path=%s remote=%s\n", clonePath, remote)
 	fmt.Fprintf(context.Stderr, "got args: %v\n", context.Args)
@@ -104,7 +104,7 @@ func TestMockEnv_Run(t *testing.T) {
 	mock.Register(repo)
 	clonePath := mock.Install(repo, "server.com", "repo")
 
-	cmd := program.Command(mockEnvRunCommand{})
+	cmd := ggman.Command(mockEnvRunCommand{})
 
 	tests := []struct {
 		name       string
