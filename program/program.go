@@ -1,3 +1,5 @@
+// Package program provides a program abstraction.
+// It can be used to make recursive programs.
 package program
 
 import (
@@ -14,10 +16,8 @@ import (
 )
 
 // Program represents an executable program with a list of subcommands.
-// the zero value is ready to use.
+// the zero value is ready to use and represents a command with no subcommands.
 type Program struct {
-	IOStream ggman.IOStream
-
 	commands map[string]Command
 	aliases  map[string]Alias
 }
@@ -139,10 +139,10 @@ var errInitContext = ggman.Error{
 
 // Main is the entry point to this program.
 // When an error occurs, returns an error of type Error and writes the error to context.Stderr.
-func (p Program) Main(params env.EnvironmentParameters, argv []string) (err error) {
+func (p Program) Main(stream ggman.IOStream, params env.EnvironmentParameters, argv []string) (err error) {
 	// whenever an error occurs, we want it printed
 	defer func() {
-		err = p.IOStream.Die(err)
+		err = stream.Die(err)
 	}()
 
 	// parse the general arguments
@@ -151,13 +151,13 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 		return err
 	}
 
-	// handle special cases
+	// handle special global flags!
 	switch {
 	case args.Help:
-		p.IOStream.StdoutWriteWrap(p.UsagePage().String())
+		stream.StdoutWriteWrap(p.UsagePage().String())
 		return nil
 	case args.Version:
-		p.printVersion()
+		stream.StdoutWriteWrap(p.getVersionInfo())
 		return nil
 	}
 
@@ -183,16 +183,16 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 	switch {
 	case cmdargs.Help:
 		if hasAlias {
-			p.IOStream.StdoutWriteWrap(cmdargs.AliasPage(alias).String())
+			stream.StdoutWriteWrap(cmdargs.AliasPage(alias).String())
 			return nil
 		}
-		p.IOStream.StdoutWriteWrap(cmdargs.UsagePage().String())
+		stream.StdoutWriteWrap(cmdargs.UsagePage().String())
 		return nil
 	}
 
 	// create a new context and make an environment for it
 	context := Context{
-		IOStream:         p.IOStream,
+		IOStream:         stream,
 		CommandArguments: cmdargs,
 	}
 	if context.Env, err = env.NewEnv(cmdargs.description.Environment, params); err != nil {
@@ -210,8 +210,8 @@ func (p Program) Main(params env.EnvironmentParameters, argv []string) (err erro
 const stringVersion = "ggman version %s, built %s, using %s"
 
 // printVersion prints version information for this program
-func (p Program) printVersion() {
-	p.IOStream.StdoutWriteWrap(fmt.Sprintf(stringVersion, constants.BuildVersion, constants.BuildTime, runtime.Version()))
+func (p Program) getVersionInfo() string {
+	return fmt.Sprintf(stringVersion, constants.BuildVersion, constants.BuildTime, runtime.Version())
 }
 
 // Register registers a new command with this program.

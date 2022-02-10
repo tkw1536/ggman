@@ -29,7 +29,7 @@ func TestProgram_Main(t *testing.T) {
 	// create a dummy program
 	var program Program
 	wrapLength := 80
-	program.IOStream = ggman.NewIOStream(&stdoutBuffer, &stderrBuffer, nil, wrapLength)
+	stream := ggman.NewIOStream(&stdoutBuffer, &stderrBuffer, nil, wrapLength)
 
 	tests := []struct {
 		name      string
@@ -392,7 +392,7 @@ func TestProgram_Main(t *testing.T) {
 			}
 
 			// run the program
-			ret := ggman.AsError(program.Main(env.EnvironmentParameters{
+			ret := ggman.AsError(program.Main(stream, env.EnvironmentParameters{
 				Variables: tt.variables,
 				Plumbing:  git.NewPlumbing(),
 				Workdir:   tt.workdir,

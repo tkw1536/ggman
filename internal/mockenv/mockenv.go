@@ -141,13 +141,13 @@ func (mock *MockEnv) Run(command program.Command, workdir string, stdin string, 
 	stderrBuffer := &bytes.Buffer{}
 
 	// create a program and run Main()
-	fakeggman := &program.Program{
-		IOStream: ggman.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader, 0),
-	}
+	fakeggman := &program.Program{}
 	fakeggman.Register(program.CloneCommand(command))
 
+	stream := ggman.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader, 0)
+
 	// run the code
-	err := ggman.AsError(fakeggman.Main(env.EnvironmentParameters{
+	err := ggman.AsError(fakeggman.Main(stream, env.EnvironmentParameters{
 		Variables: mock.vars,
 		Plumbing:  mock.plumbing,
 		Workdir:   workdir,

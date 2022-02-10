@@ -104,7 +104,7 @@ import (
 )
 
 // the main ggman program that will contain everything
-var ggmanExe = program.Program{IOStream: ggman.NewEnvIOStream()}
+var ggmanExe program.Program
 
 func init() {
 	// register all the known commands to the ggman program!
@@ -153,7 +153,7 @@ func main() {
 	}()
 
 	// execute the main program with the real environment!
-	err := ggmanExe.Main(env.EnvironmentParameters{
+	err := ggmanExe.Main(ggman.NewEnvIOStream(), env.EnvironmentParameters{
 		Variables: env.ReadVariables(),
 		Plumbing:  nil,
 		Workdir:   "",

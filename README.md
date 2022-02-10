@@ -399,6 +399,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.14.0 (Upcoming)
 
+- prepare refactoring of program for usage with generics
 - add `--to` and `--local` flags to `ggman clone`
 - fix `ggman pull` not respecting input / output streams
 - README and documentation rework
