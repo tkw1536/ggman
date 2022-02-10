@@ -355,3 +355,8 @@ func (args CommandArguments) checkFilterArgument() error {
 
 	return nil
 }
+
+// Description returns the description of the command invoked by these arguments
+func (args CommandArguments) Description() Description {
+	return args.description
+}

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 )
 
@@ -31,6 +32,6 @@ func (root) AfterParse() error {
 }
 
 func (root) Run(context program.Context) error {
-	context.Println(context.Env.Root)
+	context.Println(gg.C2E(context).Root)
 	return nil
 }

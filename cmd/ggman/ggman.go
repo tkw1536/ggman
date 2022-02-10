@@ -100,11 +100,12 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/cmd"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 )
 
 // the main ggman program that will contain everything
-var ggmanExe program.Program
+var ggmanExe = gg.NewProgram()
 
 func init() {
 	// register all the known commands to the ggman program!

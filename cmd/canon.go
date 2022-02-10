@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 )
 
@@ -37,7 +38,7 @@ func (canon) Run(context program.Context) error {
 	switch len(context.Args) {
 	case 1: // read the default CanFile
 		var err error
-		if file, err = context.Env.LoadDefaultCANFILE(); err != nil {
+		if file, err = gg.C2E(context).LoadDefaultCANFILE(); err != nil {
 			return err
 		}
 	case 2: // use a custom CanLine

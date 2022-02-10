@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 )
 
@@ -48,9 +49,9 @@ var errFindBranchCustom = ggman.Error{
 
 func (f findBranch) Run(context program.Context) error {
 	foundRepo := false
-	for _, repo := range context.Env.Repos() {
+	for _, repo := range gg.C2E(context).Repos() {
 		// check if the repository has the branch!
-		hasBranch, err := context.Env.Git.ContainsBranch(repo, context.Args[0])
+		hasBranch, err := gg.C2E(context).Git.ContainsBranch(repo, context.Args[0])
 		if err != nil {
 			panic(err)
 		}

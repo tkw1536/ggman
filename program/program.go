@@ -18,6 +18,9 @@ import (
 // Program represents an executable program with a list of subcommands.
 // the zero value is ready to use and represents a command with no subcommands.
 type Program struct {
+	// Initalizer creates a new runtime for the given parameters and command arguments
+	Initalizer func(params env.EnvironmentParameters, cmdargs CommandArguments) (Runtime, error)
+
 	commands map[string]Command
 	aliases  map[string]Alias
 }
@@ -195,13 +198,10 @@ func (p Program) Main(stream ggman.IOStream, params env.EnvironmentParameters, a
 		IOStream:         stream,
 		CommandArguments: cmdargs,
 	}
-	if context.Env, err = env.NewEnv(cmdargs.description.Environment, params); err != nil {
-		return err
-	}
 
-	// initialize the context
-	if err := context.init(); err != nil {
-		return errInitContext.WithMessageF(err)
+	// setup the runtime with the program
+	if context.runtime, err = p.Initalizer(params, cmdargs); err != nil {
+		return err
 	}
 
 	return command.Run(context)

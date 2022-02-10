@@ -5,6 +5,7 @@ import (
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 )
 
@@ -45,11 +46,11 @@ func (f fix) Run(context program.Context) error {
 	simulate := f.Simulate
 
 	hasError := false
-	for _, repo := range context.Env.Repos() {
+	for _, repo := range gg.C2E(context).Repos() {
 		var initialMessage sync.Once // send an initial log message to the user, once
 
-		if e := context.Env.Git.UpdateRemotes(repo, func(url, remoteName string) (string, error) {
-			canon := context.Env.Canonical(env.ParseURL(url))
+		if e := gg.C2E(context).Git.UpdateRemotes(repo, func(url, remoteName string) (string, error) {
+			canon := gg.C2E(context).Canonical(env.ParseURL(url))
 
 			if url == canon {
 				return url, nil

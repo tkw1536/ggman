@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 )
 
@@ -43,7 +44,7 @@ var errLSExitFlag = ggman.Error{
 }
 
 func (l *ls) Run(context program.Context) error {
-	repos := context.Env.Repos()
+	repos := gg.C2E(context).Repos()
 	if l.One && len(repos) > 0 {
 		repos = repos[:1]
 	}

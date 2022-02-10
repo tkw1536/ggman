@@ -6,6 +6,7 @@ import (
 	"github.com/alessio/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/internal/sema"
 	"github.com/tkw1536/ggman/internal/stream"
 	"github.com/tkw1536/ggman/program"
@@ -83,7 +84,7 @@ func (e *exe) Run(context program.Context) error {
 
 // runReal implements ggman exec for simulate = False
 func (e *exe) runReal(context program.Context) error {
-	repos := context.Env.Repos()
+	repos := gg.C2E(context).Repos()
 
 	// schedule each command to be run in parallel by using a semaphore!
 	return sema.Schedule(func(i int) error {
@@ -160,7 +161,7 @@ func (e *exe) runSimulate(context program.Context) (err error) {
 
 	// iterate over each repository
 	// then print each of the commands to be run!
-	repos := context.Env.Repos()
+	repos := gg.C2E(context).Repos()
 	for _, repo := range repos {
 		context.Printf("cd %s\n", shellescape.Quote(repo))
 		if !e.NoRepo {

@@ -49,6 +49,7 @@ func (cmdargs CommandArguments) UsagePage() usagefmt.Page {
 
 // GetMainOpts returns a list of global options for the provided command
 func GetMainOpts(opt *Description) (opts []usagefmt.Opt) {
+
 	// generate the main options by parsing the fake 'Arguments' struct.
 	// return immediatly if global options only were requested
 	opts = usagefmt.MakeOpts(flags.NewParser(&Arguments{}, flags.None))

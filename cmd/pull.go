@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/gg"
 	"github.com/tkw1536/ggman/program"
 )
 
@@ -36,10 +37,10 @@ var errPullCustom = ggman.Error{
 }
 
 func (pull) Run(context program.Context) error {
-	var hasError bool
-	for _, repo := range context.Env.Repos() {
+	hasError := false
+	for _, repo := range gg.C2E(context).Repos() {
 		context.Printf("Pulling %q\n", repo)
-		if e := context.Env.Git.Pull(context.IOStream, repo); e != nil {
+		if e := gg.C2E(context).Git.Pull(context.IOStream, repo); e != nil {
 			context.EPrintf("%s\n", e)
 			hasError = true
 		}
