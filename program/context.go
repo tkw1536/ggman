@@ -5,7 +5,7 @@ import (
 )
 
 // Context represents a context that a command is run inside of
-type Context[Runtime any, Parameters any, Requirements any] struct {
+type Context[Runtime any, Parameters any, Requirements Requirement] struct {
 	stream.IOStream
 	CommandArguments[Runtime, Parameters, Requirements]
 	runtime Runtime

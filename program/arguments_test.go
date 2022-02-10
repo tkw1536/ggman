@@ -1,12 +1,17 @@
-package program
+package program_test
 
 import (
 	"reflect"
 	"testing"
 
-	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/program"
 )
+
+type Arguments = program.Arguments // FIXME
+
+var errParseArgsNeedOneArgument = program.ErrParseArgsNeedOneArgument
+var errParseArgsNeedTwoAfterFor = program.ErrParseArgsNeedTwoAfterFor
 
 func TestArguments_Parse(t *testing.T) {
 	type args struct {
@@ -15,7 +20,7 @@ func TestArguments_Parse(t *testing.T) {
 	tests := []struct {
 		name       string
 		args       args
-		wantParsed Arguments
+		wantParsed program.Arguments
 		wantErr    error
 	}{
 		{"no arguments", args{[]string{}}, Arguments{}, errParseArgsNeedOneArgument},
@@ -233,10 +238,10 @@ func TestCommandArguments_checkPositionalCount(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			args := &tCommandArguments{
-				description: tt.options,
+				Description: tt.options,
 				Arguments:   tt.arguments,
 			}
-			err := args.checkPositionalCount()
+			err := args.CheckPositionalCount()
 			gotErr := ""
 			if err != nil {
 				gotErr = err.Error()
@@ -292,115 +297,16 @@ func TestCommandArguments_checkFilterArgument(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			args := tCommandArguments{
-				description: tt.options,
+				Description: tt.options,
 				Arguments:   tt.arguments,
 			}
-			err := args.checkFilterArgument()
+			err := args.CheckFilterArgument()
 			gotErr := ""
 			if err != nil {
 				gotErr = err.Error()
 			}
 			if gotErr != tt.wantErr {
 				t.Errorf("CommandArguments.checkFilterArgument() error = %q, wantErr %q", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func Test_parseFlagNames(t *testing.T) {
-	type args struct {
-		err *flags.Error
-	}
-	tests := []struct {
-		name      string
-		args      args
-		wantNames []string
-		wantOk    bool
-	}{
-		{
-			"unix flag message",
-			args{
-				&flags.Error{
-					Message: "expected argument for flag `-f, --for'",
-				},
-			},
-			[]string{"f", "for"},
-			true,
-		},
-		{
-			"windows flag message",
-			args{
-				&flags.Error{
-					Message: "expected argument for flag `/f, /for'",
-				},
-			},
-			[]string{"f", "for"},
-			true,
-		},
-
-		{
-			"no message",
-			args{
-				&flags.Error{
-					Message: "",
-				},
-			},
-			nil,
-			false,
-		},
-
-		{
-			"only beginning",
-			args{
-				&flags.Error{
-					Message: "expected argument for flag `-f, --for",
-				},
-			},
-			nil,
-			false,
-		},
-
-		{
-			"only end",
-			args{
-				&flags.Error{
-					Message: "expected argument for flag -f, --for'",
-				},
-			},
-			nil,
-			false,
-		},
-
-		{
-			"wrong order",
-			args{
-				&flags.Error{
-					Message: "expected argument for flag '-f, --for`",
-				},
-			},
-			nil,
-			false,
-		},
-
-		{
-			"empty flags",
-			args{
-				&flags.Error{
-					Message: "expected argument for flag `'",
-				},
-			},
-			nil,
-			false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotNames, gotOk := parseFlagNames(tt.args.err)
-			if !reflect.DeepEqual(gotNames, tt.wantNames) {
-				t.Errorf("parseFlagNames() gotNames = %v, want %v", gotNames, tt.wantNames)
-			}
-			if gotOk != tt.wantOk {
-				t.Errorf("parseFlagNames() gotOk = %v, want %v", gotOk, tt.wantOk)
 			}
 		})
 	}

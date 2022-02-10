@@ -39,6 +39,9 @@ type Arguments struct {
 	Args    []string // remaining arguments
 }
 
+type Flags struct {
+}
+
 // reflect access to the arguments type
 var argumentsType reflect.Type = reflect.TypeOf((*Arguments)(nil)).Elem() // TypeOf[Arguments]
 
@@ -68,7 +71,7 @@ func init() {
 	}
 }
 
-var errParseArgsNeedOneArgument = exit.Error{
+var ErrParseArgsNeedOneArgument = exit.Error{ // TODO: Public because test
 	ExitCode: exit.ExitGeneralArguments,
 	Message:  "Unable to parse arguments: Need at least one argument. Use `ggman license` to view licensing information.",
 }
@@ -78,7 +81,7 @@ var errParseArgsUnknownError = exit.Error{
 	Message:  "Unable to parse arguments: %s",
 }
 
-var errParseArgsNeedTwoAfterFor = exit.Error{
+var ErrParseArgsNeedTwoAfterFor = exit.Error{ // TODO: Public because test
 	ExitCode: exit.ExitGeneralArguments,
 	Message:  "Unable to parse arguments: At least two arguments needed after 'for' keyword. ",
 }
@@ -102,7 +105,7 @@ func (args *Arguments) Parse(argv []string) error {
 		// --for, -f was passed without an argument!
 		case flags.ErrExpectedArgument:
 			if names, ok := parseFlagNames(e); ok && text.SliceContainsAny(names, "f", "for") {
-				err = errParseArgsNeedTwoAfterFor
+				err = ErrParseArgsNeedTwoAfterFor
 			}
 
 		// encounted an unknown flag
@@ -118,9 +121,9 @@ func (args *Arguments) Parse(argv []string) error {
 		case args.Help || args.Version:
 			return nil
 		case len(args.Filters) > 0:
-			return errParseArgsNeedTwoAfterFor
+			return ErrParseArgsNeedTwoAfterFor
 		default:
-			return errParseArgsNeedOneArgument
+			return ErrParseArgsNeedOneArgument
 		}
 	}
 
@@ -149,7 +152,7 @@ func (args *Arguments) Parse(argv []string) error {
 	// ggman for FILTER command args...
 	case "for":
 		if len(args.Args) < 2 {
-			return errParseArgsNeedTwoAfterFor
+			return ErrParseArgsNeedTwoAfterFor
 		}
 		args.Filters = append(args.Filters, args.Args[0])
 		args.Command = args.Args[1]
@@ -188,11 +191,11 @@ func parseFlagNames(err *flags.Error) (names []string, ok bool) {
 
 // CommandArguments represent a parsed set of options for a specific subcommand
 // The zero value is ready to use, see the "Parse" method.
-type CommandArguments[Runtime any, Parameters any, Requirements any] struct {
+type CommandArguments[Runtime any, Parameters any, Requirements Requirement] struct {
 	Arguments // Arguments that were passed to the command globally
 
-	parser      *flags.Parser
-	description Description[Requirements]
+	Parser      *flags.Parser             // TODO: Public because test
+	Description Description[Requirements] // TODO: Public because test
 }
 
 // Parse parses arguments from a set of parsed command arguments.
@@ -215,7 +218,7 @@ func (args *CommandArguments[Runtime, Parameters, Requirements]) Parse(command C
 		return nil
 	}
 
-	if err := args.checkFilterArgument(); err != nil {
+	if err := args.CheckFilterArgument(); err != nil {
 		return err
 	}
 
@@ -223,7 +226,7 @@ func (args *CommandArguments[Runtime, Parameters, Requirements]) Parse(command C
 		return err
 	}
 
-	if err := args.checkPositionalCount(); err != nil {
+	if err := args.CheckPositionalCount(); err != nil {
 		return err
 	}
 
@@ -237,15 +240,15 @@ func (args *CommandArguments[Runtime, Parameters, Requirements]) Parse(command C
 // prepare prepares this CommandArguments for parsing arguments for command
 func (args *CommandArguments[Runtime, Parameters, Requirements]) prepare(command Command[Runtime, Parameters, Requirements], arguments Arguments) {
 	// setup options and arguments!
-	args.description = command.Description()
+	args.Description = command.Description()
 	args.Arguments = arguments
 
 	// make a flag parser
 	var options flags.Options = flags.PassDoubleDash | flags.HelpFlag
-	if args.description.SkipUnknownOptions {
+	if args.Description.SkipUnknownOptions {
 		options |= flags.IgnoreUnknown
 	}
-	args.parser = makeFlagsParser(command, options)
+	args.Parser = makeFlagsParser(command, options)
 }
 
 var errParseFlagSet = exit.Error{
@@ -258,7 +261,7 @@ var errParseFlagSet = exit.Error{
 //
 // When an error occurs, returns an error of type Error.
 func (args *CommandArguments[Runtime, Parameters, Requirements]) parseFlags() (err error) {
-	args.Args, err = args.parser.ParseArgs(args.Args)
+	args.Args, err = args.Parser.ParseArgs(args.Args)
 
 	// catch the help error
 	if flagErr, ok := err.(*flags.Error); ok && flagErr.Type == flags.ErrHelp {
@@ -297,10 +300,11 @@ var errParseTakesBetweenArguments = exit.Error{
 // checkPositionalCount checks that the correct number of arguments was passed to this command.
 // This function implicitly assumes that Options, Arguments and Argv are set appropriatly.
 // When the wrong number of arguments is passed, returns an error of type Error.
-func (args CommandArguments[Runtime, Parameters, Requirements]) checkPositionalCount() error {
+func (args CommandArguments[Runtime, Parameters, Requirements]) CheckPositionalCount() error {
+	// TODO: Public because test!
 
-	min := args.description.PosArgsMin
-	max := args.description.PosArgsMax
+	min := args.Description.PosArgsMin
+	max := args.Description.PosArgsMax
 
 	argc := len(args.Args)
 
@@ -325,38 +329,12 @@ func (args CommandArguments[Runtime, Parameters, Requirements]) checkPositionalC
 	return nil
 }
 
-var errTakesNoArgument = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "Wrong number of arguments: '%s' takes no '%s' argument. ",
-}
-
 // checkFilterArgument checks that any filter argument (like --for) which is not allowed is not passed.
 // It expects argument passing to have occured.
 //
 // When filter arguments are allowed, immediatly returns nil.
 // When filter arguments are not allowed returns an error of type Error iff the check fails.
-func (args CommandArguments[Runtime, Parameters, Requirements]) checkFilterArgument() error {
-	// we don't have to do any checking!
-	if args.description.Requirements.AllowsFilter {
-		return nil
-	}
-
-	// check the value of the arguments struct
-	aVal := reflect.ValueOf(args.Arguments)
-
-	for _, fIndex := range argumentsFilterIndexes {
-		v := aVal.FieldByIndex(fIndex)
-
-		if !v.IsZero() { // flag was set iff it is non-zero
-			tp := argumentsType.FieldByIndex(fIndex) // needed for the error message only!
-			return errTakesNoArgument.WithMessageF(args.Command, "--"+tp.Tag.Get("long"))
-		}
-	}
-
-	return nil
-}
-
-// Description returns the description of the command invoked by these arguments
-func (args CommandArguments[Runtime, Parameters, Requirements]) Description() Description[Requirements] {
-	return args.description
+func (args CommandArguments[Runtime, Parameters, Requirements]) CheckFilterArgument() error {
+	// TODO: public because test!
+	return args.Description.Requirements.Validate(args.Arguments)
 }

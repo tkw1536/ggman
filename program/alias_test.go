@@ -1,18 +1,20 @@
-package program
+package program_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/tkw1536/ggman/program"
 )
 
 func TestProgram_Alias(t *testing.T) {
-	var program tProgram
+	var p tProgram
 
-	program.Register(fakeCommand("a"))
-	program.RegisterAlias(Alias{Name: "a", Command: "b", Args: []string{"c"}})
-	program.RegisterAlias(Alias{Name: "b", Command: "d", Args: []string{"e"}})
+	p.Register(fakeCommand("a"))
+	p.RegisterAlias(program.Alias{Name: "a", Command: "b", Args: []string{"c"}})
+	p.RegisterAlias(program.Alias{Name: "b", Command: "d", Args: []string{"e"}})
 
-	got := program.Aliases()
+	got := p.Aliases()
 	want := []string{"a", "b"}
 
 	if !reflect.DeepEqual(got, want) {

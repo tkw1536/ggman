@@ -1,4 +1,4 @@
-package program
+package program_test
 
 import (
 	"bytes"
@@ -13,6 +13,7 @@ import (
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/ggman/internal/text"
+	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
 	"github.com/tkw1536/ggman/program/stream"
 )
@@ -23,15 +24,17 @@ import (
 
 type tRuntime = struct{}
 type tParameters = env.EnvironmentParameters // TODO: Remove this dependency and make up some testing thing!
-type tRequirements = struct{}
+type tRequirements = env.Requirement
 
-type tProgram = Program[tRuntime, tParameters, tRequirements]
-type tCommand = Command[tRuntime, tParameters, tRequirements]
-type tContext = Context[tRuntime, tParameters, tRequirements]
-type tCommandArguments = CommandArguments[tRuntime, tParameters, tRequirements]
-type tDescription = Description[tRequirements]
+type tProgram = program.Program[tRuntime, tParameters, tRequirements]
+type tCommand = program.Command[tRuntime, tParameters, tRequirements]
+type tContext = program.Context[tRuntime, tParameters, tRequirements]
+type tCommandArguments = program.CommandArguments[tRuntime, tParameters, tRequirements]
+type tDescription = program.Description[tRequirements]
 
 // TODO: Fix broken tests (after type parameters)
+
+type Alias = program.Alias // TODO: FIXME
 
 func TestProgram_Main(t *testing.T) {
 	root := testutil.TempDirAbs(t)
@@ -39,19 +42,11 @@ func TestProgram_Main(t *testing.T) {
 		panic(err)
 	}
 
+	wrapLength := 80
+
 	// create buffers for input and output
 	var stdoutBuffer bytes.Buffer
 	var stderrBuffer bytes.Buffer
-
-	// create a dummy program
-	program := tProgram{
-		NewRuntime: func(params tParameters, cmdargs tCommandArguments) (struct{}, error) {
-			return struct{}{}, nil
-		},
-		Info: testInfo,
-	}
-
-	wrapLength := 80
 	stream := stream.NewIOStream(&stdoutBuffer, &stderrBuffer, nil, wrapLength)
 
 	tests := []struct {
@@ -410,12 +405,18 @@ func TestProgram_Main(t *testing.T) {
 			stdoutBuffer.Reset()
 			stderrBuffer.Reset()
 
+			// create a dummy program
+			program := tProgram{
+				NewRuntime: func(params tParameters, cmdargs tCommandArguments) (struct{}, error) {
+					return struct{}{}, nil
+				},
+				Info: testInfo,
+			}
+
 			// add a fake command
 			fake := &echoCommand{name: "fake", description: tt.options}
-			program.commands = nil
 			program.Register(fake)
 
-			program.aliases = nil
 			if tt.alias.Name != "" {
 				program.RegisterAlias(tt.alias)
 			}

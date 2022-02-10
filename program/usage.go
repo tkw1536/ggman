@@ -7,7 +7,6 @@ import (
 
 	"github.com/alessio/shellescape"
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman/internal/text"
 	"github.com/tkw1536/ggman/program/usagefmt"
 )
 
@@ -30,7 +29,7 @@ func (p Program[Runtime, Parameters, Requirements]) MainUsage() usagefmt.Page {
 
 	return usagefmt.Page{
 		MainName:    p.Info.MainName,
-		MainOpts:    GetMainOpts[Requirements](nil),
+		MainOpts:    p.globalOptions(),
 		Description: p.Info.Description,
 
 		SubCommands: commands,
@@ -39,29 +38,27 @@ func (p Program[Runtime, Parameters, Requirements]) MainUsage() usagefmt.Page {
 
 // CommandUsage generates the usage information about a specific command
 func (p Program[Runtime, Parameters, Requirements]) CommandUsage(cmdargs CommandArguments[Runtime, Parameters, Requirements]) usagefmt.Page {
-	opt := cmdargs.description
+	Description := cmdargs.Description
 
 	return usagefmt.Page{
 		MainName: p.Info.MainName,
-		MainOpts: GetMainOpts(&opt),
+		MainOpts: p.globalOptionsFor(Description.Requirements),
 
-		Description: opt.Description,
+		Description: Description.Description,
 
 		SubName: cmdargs.Arguments.Command,
-		SubOpts: usagefmt.MakeOpts(cmdargs.parser),
+		SubOpts: usagefmt.MakeOpts(cmdargs.Parser),
 
-		MetaName: opt.PosArgName,
-		MetaMin:  opt.PosArgsMin,
-		MetaMax:  opt.PosArgsMax,
+		MetaName: Description.PosArgName,
+		MetaMin:  Description.PosArgsMin,
+		MetaMax:  Description.PosArgsMax,
 
-		Usage: opt.PosArgDescription,
+		Usage: Description.PosArgDescription,
 	}
 }
 
 // AliasPage returns a usage page for the provided alias
 func (p Program[Runtime, Parameters, Requirements]) AliasUsage(cmdargs CommandArguments[Runtime, Parameters, Requirements], alias Alias) usagefmt.Page {
-	opt := cmdargs.description
-
 	exCmd := "`" + shellescape.QuoteCommand(append([]string{p.Info.MainName}, alias.Expansion()...)) + "`"
 	helpCmd := "`" + shellescape.QuoteCommand([]string{p.Info.MainName, alias.Command, "--help"}) + "`"
 	name := shellescape.Quote(alias.Command)
@@ -74,7 +71,7 @@ func (p Program[Runtime, Parameters, Requirements]) AliasUsage(cmdargs CommandAr
 
 	return usagefmt.Page{
 		MainName: p.Info.MainName,
-		MainOpts: GetMainOpts(&opt),
+		MainOpts: p.globalOptionsFor(cmdargs.Description.Requirements),
 
 		Description: description,
 
@@ -89,20 +86,18 @@ func (p Program[Runtime, Parameters, Requirements]) AliasUsage(cmdargs CommandAr
 	}
 }
 
-// GetMainOpts returns a list of global options for the provided command
-func GetMainOpts[Requirements any](opt *Description[Requirements]) (opts []usagefmt.Opt) {
+// globalOptions returns all global options
+func (p Program[Runtime, Parameters, Requirements]) globalOptions() []usagefmt.Opt {
+	return usagefmt.MakeOpts(flags.NewParser(&Arguments{}, flags.None))
+}
 
-	// generate the main options by parsing the fake 'Arguments' struct.
-	// return immediatly if global options only were requested
-	opts = usagefmt.MakeOpts(flags.NewParser(&Arguments{}, flags.None))
-	if opt == nil {
-		return opts
-	}
+// globalOptionsFor returns global options for the provided requirement
+func (p Program[Runtime, Parameters, Requirements]) globalOptionsFor(r Requirements) []usagefmt.Opt {
+	opts := p.globalOptions()
 
 	n := 0
 	for _, arg := range opts {
-		// when the environment does not allow a filter, we only allow non-filter options!
-		if !opt.Requirements.AllowsFilter && !text.SliceContainsAny(arg.Long(), argumentsGeneralOptions...) {
+		if !r.AllowsOption(arg) {
 			continue
 		}
 		opts[n] = arg

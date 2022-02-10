@@ -1,4 +1,4 @@
-package program
+package program_test
 
 import (
 	"testing"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/program"
 )
 
 // fakeCommand represents a dummy command with the given name
@@ -18,7 +19,7 @@ func (f fakeCommand) Description() tDescription      { return tDescription{Name:
 func (fakeCommand) AfterParse() error                { panic("fakeCommand: not implemented") }
 func (fakeCommand) Run(tContext) error               { panic("fakeCommand: not implemented") }
 
-var testInfo = Info{
+var testInfo = program.Info{
 	BuildVersion: "42.0.0",
 	BuildTime:    time.Unix(0, 0).UTC(),
 
@@ -119,9 +120,9 @@ func TestProgram_CommandUsage(t *testing.T) {
 					Command: tt.args.command,
 				},
 
-				parser: parser,
+				Parser: parser, // TODO: Fix public / private issue
 
-				description: tDescription{
+				Description: tDescription{
 					Description:       tt.fields.Description,
 					Requirements:      tt.fields.Environment,
 					PosArgsMin:        tt.fields.MinArgs,

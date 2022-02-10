@@ -7,7 +7,6 @@ import (
 	"sort"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program/exit"
 	"github.com/tkw1536/ggman/program/stream"
 	"github.com/tkw1536/ggman/program/usagefmt"
@@ -15,7 +14,7 @@ import (
 
 // Program represents an executable program with a list of subcommands.
 // the zero value is ready to use and represents a command with no subcommands.
-type Program[Runtime any, Parameters any, Requirements any] struct {
+type Program[Runtime any, Parameters any, Requirements Requirement] struct {
 	// NewRuntime creates a new runtime for the given parameters and command arguments
 	NewRuntime func(params Parameters, cmdargs CommandArguments[Runtime, Parameters, Requirements]) (Runtime, error)
 
@@ -24,6 +23,12 @@ type Program[Runtime any, Parameters any, Requirements any] struct {
 
 	commands map[string]Command[Runtime, Parameters, Requirements]
 	aliases  map[string]Alias
+}
+
+// Requirements represents anything that can be validated against requirements
+type Requirement interface {
+	Validate(arguments Arguments) error
+	AllowsOption(option usagefmt.Opt) bool
 }
 
 // Commands returns a list of known commands
@@ -56,7 +61,7 @@ func (p Program[Runtime, Parameters, Requirements]) FmtCommands() string {
 // If it is not implemented as a pointer receiver, the zero value is expected to be ready to use.
 // Otherwise the zero value of the element struct is expected to be ready to use.
 // See also CloneCommand.
-type Command[Runtime any, Parameters any, Requirements any] interface {
+type Command[Runtime any, Parameters any, Requirements Requirement] interface {
 	// BeforeRegister is called right before this command is registered with a program.
 	// In particular it is called before any other function on this command is called.
 	//
@@ -98,7 +103,7 @@ func makeFlagsParser(data interface{}, options flags.Options) *flags.Parser {
 //
 // This function is mostly intended to be used when a command should be called multiple times
 // during a single run of ggman.
-func CloneCommand[Runtime any, Parameters any, Requirements any](command Command[Runtime, Parameters, Requirements]) (cmd Command[Runtime, Parameters, Requirements]) {
+func CloneCommand[Runtime any, Parameters any, Requirements Requirement](command Command[Runtime, Parameters, Requirements]) (cmd Command[Runtime, Parameters, Requirements]) {
 	cmdStruct := reflect.ValueOf(command) // cmd.CommandStruct
 
 	// clone := cmd.CommandStruct{...zero...}
@@ -115,11 +120,11 @@ func CloneCommand[Runtime any, Parameters any, Requirements any](command Command
 }
 
 // Description represents the description of a command
-type Description[Requirements any] struct {
+type Description[Requirements Requirement] struct {
 	Name        string // name this command can be invoked under
 	Description string // human readable description of the command
 
-	Requirements env.Requirement // environment requirements for this command
+	Requirements Requirements // environment requirements for this command
 
 	SkipUnknownOptions bool // do not complain about unkown options and add the to positionals instead
 
