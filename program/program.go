@@ -1,168 +1,70 @@
-// Package program provides a program abstraction.
-// It can be used to make recursive programs.
+// Package program provides a program abstraction that can be used to create programs
 package program
 
 import (
-	"reflect"
-	"sort"
-
-	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman/program/exit"
 	"github.com/tkw1536/ggman/program/stream"
-	"github.com/tkw1536/ggman/program/usagefmt"
 )
 
-// Program represents an executable program with a list of subcommands.
-// the zero value is ready to use and represents a command with no subcommands.
-type Program[Runtime any, Parameters any, Flags any, Requirements Requirement[Flags]] struct {
-	// NewRuntime creates a new runtime for the given parameters and command arguments
-	NewRuntime func(params Parameters, cmdargs CommandArguments[Runtime, Parameters, Flags, Requirements]) (Runtime, error)
-
-	// Info contains meta-information about this program
+// Program represents an executable program.
+// A program is intended to be invoked on the command line.
+// Each invocation of a program executes a command.
+//
+// Programs have 4 type parameters:
+// An environment of type E, a type of parameters P, a type of flags F and a type requirements R.
+//
+// The Environment type E defines a runtime environment for commands to execute in.
+// An Environment is created using the NewEnvironment function, taking parameters P.
+//
+// The type of (global) command line flags F is backed by a struct type.
+// It is jointed by a type of Requirements R which impose restrictions on flags for commands.
+//
+// Internally a program also contains a list of commands, keywords and aliases.
+//
+// See the Main method for a description of how program execution takes place.
+type Program[E any, P any, F any, R Requirement[F]] struct {
+	// Meta-information about the current program
+	// Used to generate help and version pages
 	Info Info
 
-	// commands are actions to be performed by commands
-	commands map[string]Command[Runtime, Parameters, Flags, Requirements]
-	keywords map[string]Keyword[Flags] // keywords perform an action on command parsing before they are executed
-	aliases  map[string]Alias          // aliases replace commands before they are executed
+	// The NewEnvironment function associated is used to create a new environment.
+	// The returned error may be nil or of type exit.Error.
+	NewEnvironment func(params P, context Context[E, P, F, R]) (E, error)
+
+	// Commands, Keywords, and Aliases associated with this program.
+	// They are expanded in order; see Main for details.
+	keywords map[string]Keyword[F]
+	aliases  map[string]Alias
+	commands map[string]Command[E, P, F, R]
 }
 
-// Requirements represents anything that can be validated against requirements
-type Requirement[Flags any] interface {
-	Validate(arguments Arguments[Flags]) error
-	AllowsOption(option usagefmt.Opt) bool
-}
-
-// Commands returns a list of known commands
-func (p Program[Runtime, Parameters, Flags, Requirements]) Commands() []string {
-	commands := make([]string, 0, len(p.commands))
-	for cmd := range p.commands {
-		commands = append(commands, cmd)
-	}
-	sort.Strings(commands)
-	return commands
-}
-
-// FmtCommands returns a human readable string describing the commands.
-// See also Commands.
-func (p Program[Runtime, Parameters, Flags, Requirements]) FmtCommands() string {
-	return usagefmt.FmtCommands(p.Commands())
-}
-
-// Command represents a single command to be parsed.
+// Main invokes this program and returns an error of type exit.Error or nil.
 //
-// A command may contain state representing different flags.
-// Flag parsing is implemented using the "github.com/jessevdk/go-flags" package.
-// A Command implementation that is not a pointer to a struct is assumed to be flagless.
+// Main takes input / output streams, parameters for the environment and a set of command-line arguments.
 //
-// Typically command contains state that represents the parsed options.
-// This would prevent a single value of type command to run multiple times.
-// To work around this, the CloneCommand method exists.
+// It first parses these into arguments for a specific command to be executed.
+// Next, it executes any keywords and expands any aliases.
+// Finally, it executes the requested command or displays a help or version page.
 //
-// In order for the CloneCommand method to work correctly, a Command must fullfill the following:
-// If it is not implemented as a pointer receiver, the zero value is expected to be ready to use.
-// Otherwise the zero value of the element struct is expected to be ready to use.
-// See also CloneCommand.
-type Command[Runtime any, Parameters any, Flags any, Requirements Requirement[Flags]] interface {
-	// BeforeRegister is called right before this command is registered with a program.
-	// In particular it is called before any other function on this command is called.
-	//
-	// It is never called more than once for a single instance of a command.
-	BeforeRegister(program *Program[Runtime, Parameters, Flags, Requirements])
-
-	// Description returns a description of this command.
-	// It may be called multiple times.
-	Description() Description[Flags, Requirements]
-
-	// AfterParse is called after arguments have been parsed, but before the command is being run.
-	// It may perform additional argument checking and should return an error if needed.
-	//
-	// It is called only once and must return either nil or an error of type Error.
-	AfterParse() error
-
-	// Run runs this command in the given context.
-	//
-	// It is called only once and must return either nil or an error of type Error.
-	Run(context Context[Runtime, Parameters, Flags, Requirements]) error
-}
-
-// makeFlagsParser creates a new flags parser for data.
-// When data is nil or not a pointer to a struct, returns an empty parser.
+// For keyword actions, see Keyword.
+// For alias expansion, see Alias.
+// For command execution, see Command.
 //
-// This function is untested.
-func makeFlagsParser(data interface{}, options flags.Options) *flags.Parser {
-	var actual interface{} = data
-	if ptrval := reflect.ValueOf(actual); data == nil || ptrval.Type().Kind() != reflect.Ptr {
-		// not a pointer to struct
-		actual = &struct{}{}
-	}
-
-	return flags.NewParser(actual, options)
-}
-
-// CloneCommand returns a new Command that behaves exactly like Command,
-// except that it does not modify any internal state of Command.
-//
-// This function is mostly intended to be used when a command should be called multiple times
-// during a single run of ggman.
-func CloneCommand[Runtime any, Parameters any, Flags any, Requirements Requirement[Flags]](command Command[Runtime, Parameters, Flags, Requirements]) (cmd Command[Runtime, Parameters, Flags, Requirements]) {
-	cmdStruct := reflect.ValueOf(command) // cmd.CommandStruct
-
-	// clone := cmd.CommandStruct{...zero...}
-	var clone reflect.Value
-	if cmdStruct.Type().Kind() == reflect.Ptr {
-		clone = reflect.New(cmdStruct.Type().Elem())
-	} else {
-		clone = reflect.Zero(cmdStruct.Type())
-	}
-
-	// command = clone
-	reflect.ValueOf(&cmd).Elem().Set(clone)
-	return cmd
-}
-
-// Description represents the description of a command
-type Description[Flags any, Requirements Requirement[Flags]] struct {
-	Name        string // name this command can be invoked under
-	Description string // human readable description of the command
-
-	Requirements Requirements // environment requirements for this command
-
-	SkipUnknownOptions bool // do not complain about unkown options and add the to positionals instead
-
-	// description of the positional arguments this command takes in addition to the regular option parsing.
-
-	PosArgName        string // used only in help page, defaults to "ARGUMENT"
-	PosArgDescription string // used only in help page, human readable
-	PosArgsMin        int    // minimum number of positional arguments taken >= 0
-	PosArgsMax        int    // maximal number of positional arguments taken, set to -1 for unlimited arguments
-}
-
-var errProgramUnknownCommand = exit.Error{
-	ExitCode: exit.ExitUnknownCommand,
-	Message:  "Unknown command. Must be one of %s. ",
-}
-
-var errInitContext = exit.Error{
-	ExitCode: exit.ExitInvalidEnvironment,
-	Message:  "Unable to initialize context: %s",
-}
-
-// Main is the entry point to this program.
-// When an error occurs, returns an error of type Error and writes the error to context.Stderr.
-func (p Program[Runtime, Parameters, Flags, Requirements]) Main(stream stream.IOStream, params Parameters, argv []string) (err error) {
+// For help pages, see MainUsage, CommandUsage, AliasUsage.
+// For version pages, see FmtVersion.
+func (p Program[E, P, F, R]) Main(stream stream.IOStream, params P, argv []string) (err error) {
 	// whenever an error occurs, we want it printed
 	defer func() {
 		err = stream.Die(err)
 	}()
 
 	// parse the general arguments
-	var args Arguments[Flags]
+	var args Arguments[F]
 	if err := args.Parse(argv); err != nil {
 		return err
 	}
 
-	// expand keywords ("help", "version" etc)
+	// expand keywords
 	keyword, hasKeyword := p.keywords[args.Command]
 	if hasKeyword {
 		if err := keyword(&args); err != nil {
@@ -192,50 +94,41 @@ func (p Program[Runtime, Parameters, Flags, Requirements]) Main(stream stream.IO
 		return errProgramUnknownCommand.WithMessageF(p.FmtCommands())
 	}
 
+	// create a new context and make an environment for it
+	context := Context[E, P, F, R]{
+		IOStream: stream,
+	}
+
 	// parse the command arguments
-	var cmdargs CommandArguments[Runtime, Parameters, Flags, Requirements]
-	if err := cmdargs.Parse(command, args); err != nil {
+	if err := context.Parse(command, args); err != nil {
 		return err
 	}
 
 	// special cases of arguments
-	switch {
-	case cmdargs.Arguments.Universals.Help:
+	if context.Args.Universals.Help {
 		if hasAlias {
-			stream.StdoutWriteWrap(p.AliasUsage(cmdargs, alias).String())
+			stream.StdoutWriteWrap(p.AliasUsage(context, alias).String())
 			return nil
 		}
-		stream.StdoutWriteWrap(p.CommandUsage(cmdargs).String())
+		stream.StdoutWriteWrap(p.CommandUsage(context).String())
 		return nil
 	}
 
-	// create a new context and make an environment for it
-	context := Context[Runtime, Parameters, Flags, Requirements]{
-		IOStream: stream,
-		Args:     cmdargs,
-	}
-
-	// setup the runtime with the program
-	if context.runtime, err = p.NewRuntime(params, cmdargs); err != nil {
+	// create the environment
+	if context.Environment, err = p.NewEnvironment(params, context); err != nil {
 		return err
 	}
 
+	// do the command!
 	return command.Run(context)
 }
 
-// Register registers a new command with this program.
-// It expects that the command does not have a name that is already taken.
-func (p *Program[Runtime, Parameters, Flags, Requirements]) Register(c Command[Runtime, Parameters, Flags, Requirements]) {
-	if p.commands == nil {
-		p.commands = make(map[string]Command[Runtime, Parameters, Flags, Requirements])
-	}
+var errProgramUnknownCommand = exit.Error{
+	ExitCode: exit.ExitUnknownCommand,
+	Message:  "Unknown command. Must be one of %s. ",
+}
 
-	c.BeforeRegister(p)
-	Name := c.Description().Name
-
-	if _, ok := p.commands[Name]; ok {
-		panic("Register(): Command already registered")
-	}
-
-	p.commands[Name] = c
+var errInitContext = exit.Error{
+	ExitCode: exit.ExitInvalidEnvironment,
+	Message:  "Unable to initialize context: %s",
 }

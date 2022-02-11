@@ -8,15 +8,15 @@ import (
 )
 
 // NewRuntime makes a new runtime for ggman
-func NewRuntime(params env.EnvironmentParameters, cmdargs CommandArguments) (*env.Env, error) {
+func NewRuntime(params env.EnvironmentParameters, context Context) (*env.Env, error) {
 	// create a new environment
-	env, err := env.NewEnv(cmdargs.Description.Requirements, params)
+	env, err := env.NewEnv(context.Description.Requirements, params)
 	if err != nil {
 		return nil, err
 	}
 
 	// make a filter
-	f, err := makeFilter(env, cmdargs.Arguments)
+	f, err := makeFilter(env, context.Args)
 	if err != nil {
 		return nil, err
 	}

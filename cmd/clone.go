@@ -86,19 +86,19 @@ func (c *clone) Run(context ggman.Context) error {
 	// grab the url to clone and make sure it is not local
 	url := ggman.URLV(context, 0)
 	if url.IsLocal() {
-		return errCloneLocalURI.WithMessageF(context.Args.Arguments.Pos[0])
+		return errCloneLocalURI.WithMessageF(context.Args.Pos[0])
 	}
 
 	// find the remote and local paths to clone to / from
-	remote := context.Runtime().Canonical(url)
+	remote := context.Environment.Canonical(url)
 	local, err := c.dest(context, url)
 	if err != nil {
-		return errCloneInvalidDest.WithMessageF(context.Args.Arguments.Pos[0], err)
+		return errCloneInvalidDest.WithMessageF(context.Args.Pos[0], err)
 	}
 
 	// do the actual cloning!
 	context.Printf("Cloning %q into %q ...\n", remote, local)
-	switch err := context.Runtime().Git.Clone(context.IOStream, remote, local, context.Args.Arguments.Pos[1:]...); err {
+	switch err := context.Environment.Git.Clone(context.IOStream, remote, local, context.Args.Pos[1:]...); err {
 	case nil:
 		return nil
 	case git.ErrCloneAlreadyExists:
@@ -123,13 +123,13 @@ func (c clone) dest(context ggman.Context, url env.URL) (string, error) {
 		if len(comps) == 0 {
 			return "", errCloneNoComps
 		}
-		return context.Runtime().Abs(comps[len(comps)-1])
+		return context.Environment.Abs(comps[len(comps)-1])
 	}
 
 	if c.To != "" { // clone directory into a directory
-		return context.Runtime().Abs(c.To)
+		return context.Environment.Abs(c.To)
 	}
 
 	// normal clone!
-	return context.Runtime().Local(url)
+	return context.Environment.Local(url)
 }

@@ -16,12 +16,13 @@ type FakeOpt struct {
 
 var _ Opt = (*FakeOpt)(nil)
 
-func (f FakeOpt) Required() bool  { return f.required }
-func (f FakeOpt) Short() []string { return f.short }
-func (f FakeOpt) Long() []string  { return f.long }
-func (f FakeOpt) Value() string   { return f.value }
-func (f FakeOpt) Usage() string   { return f.usage }
-func (f FakeOpt) Default() string { return f.dflt }
+func (f FakeOpt) Required() bool    { return f.required }
+func (f FakeOpt) Short() []string   { return f.short }
+func (f FakeOpt) Long() []string    { return f.long }
+func (f FakeOpt) FieldName() string { return "" }
+func (f FakeOpt) Value() string     { return f.value }
+func (f FakeOpt) Usage() string     { return f.usage }
+func (f FakeOpt) Default() string   { return f.dflt }
 
 func TestNewOpt(t *testing.T) {
 	tests := []struct {

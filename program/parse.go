@@ -1,32 +1,13 @@
 package program
 
 import (
+	"reflect"
 	"strings"
 
 	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman/internal/text"
 	"github.com/tkw1536/ggman/program/exit"
 )
-
-// Arguments represent a set of partially parsed arguments for an invocation of the 'ggman' program.
-// These should be further parsed into CommandArguments using the appropriate Parse() method.
-//
-// Command line argument are annotated using syntax provided by "github.com/jessevdk/go-flags".
-type Arguments[Flags any] struct {
-	Universals Universals
-	Flags      Flags
-
-	Command string   // command to run
-	Pos     []string // positional arguments
-}
-
-// Universals holds flags added to every executable.
-//
-// Command line arguments are annotated using syntax provided by "github.com/jessevdk/go-flags".
-type Universals struct {
-	Help    bool `short:"h" long:"help" description:"Print a help message and exit"`
-	Version bool `short:"v" long:"version" description:"Print a version message and exit"`
-}
 
 var ErrParseArgsNeedOneArgument = exit.Error{ // TODO: Public because test
 	ExitCode: exit.ExitGeneralArguments,
@@ -41,6 +22,20 @@ var errParseArgsUnknownError = exit.Error{
 // parser returns a new parser for the arguments
 func (args *Arguments[Flags]) parser() *flags.Parser {
 	return makeFlagsParser(args, flags.PassAfterNonOption|flags.PassDoubleDash)
+}
+
+// makeFlagsParser creates a new flags parser for data.
+// When data is nil or not a pointer to a struct, returns an empty parser.
+//
+// This function is untested.
+func makeFlagsParser(data interface{}, options flags.Options) *flags.Parser {
+	var actual interface{} = data
+	if ptrval := reflect.ValueOf(actual); data == nil || ptrval.Type().Kind() != reflect.Ptr {
+		// not a pointer to struct
+		actual = &struct{}{}
+	}
+
+	return flags.NewParser(actual, options)
 }
 
 // Parse parses arguments.
@@ -107,23 +102,14 @@ func parseFlagNames(err *flags.Error) (names []string, ok bool) {
 	return
 }
 
-// CommandArguments represent a parsed set of options for a specific subcommand
-// The zero value is ready to use, see the "Parse" method.
-type CommandArguments[Runtime any, Parameters any, Flags any, Requirements Requirement[Flags]] struct {
-	Arguments Arguments[Flags] // Arguments that were passed to the command globally
-
-	Parser      *flags.Parser                    // TODO: Public because test
-	Description Description[Flags, Requirements] // TODO: Public because test
-}
-
 // Parse parses arguments from a set of parsed command arguments.
 // It also calls .Parse() with the provided arguments on the flagset
 //
 // It expects that neither the Help nor Version flag of Arguments are true.
 //
 // When parsing fails, returns an error of type Error.
-func (args *CommandArguments[Runtime, Parameters, Flags, Requirements]) Parse(command Command[Runtime, Parameters, Flags, Requirements], arguments Arguments[Flags]) error {
-	args.prepare(command, arguments)
+func (context *Context[E, P, F, R]) Parse(command Command[E, P, F, R], arguments Arguments[F]) error {
+	context.prepare(command, arguments)
 
 	// We first have to check the following (in order):
 	// - a help flag
@@ -131,20 +117,20 @@ func (args *CommandArguments[Runtime, Parameters, Flags, Requirements]) Parse(co
 	// - the custom flag(s)
 	// - the right number of arguments
 
-	if text.SliceContainsAny(args.Arguments.Pos, "--help", "-h", "help") {
-		args.Arguments.Universals.Help = true
+	if text.SliceContainsAny(context.Args.Pos, "--help", "-h", "help") {
+		context.Args.Universals.Help = true
 		return nil
 	}
 
-	if err := args.CheckFilterArgument(); err != nil {
+	if err := context.CheckFilterArgument(); err != nil {
 		return err
 	}
 
-	if err := args.parseFlags(); err != nil {
+	if err := context.parseFlags(); err != nil {
 		return err
 	}
 
-	if err := args.CheckPositionalCount(); err != nil {
+	if err := context.CheckPositionalCount(); err != nil {
 		return err
 	}
 
@@ -156,17 +142,17 @@ func (args *CommandArguments[Runtime, Parameters, Flags, Requirements]) Parse(co
 }
 
 // prepare prepares this CommandArguments for parsing arguments for command
-func (args *CommandArguments[Runtime, Parameters, Flags, Requirements]) prepare(command Command[Runtime, Parameters, Flags, Requirements], arguments Arguments[Flags]) {
+func (context *Context[E, P, F, R]) prepare(command Command[E, P, F, R], arguments Arguments[F]) {
 	// setup options and arguments!
-	args.Description = command.Description()
-	args.Arguments = arguments
+	context.Description = command.Description()
+	context.Args = arguments
 
 	// make a flag parser
 	var options flags.Options = flags.PassDoubleDash | flags.HelpFlag
-	if args.Description.SkipUnknownOptions {
+	if context.Description.SkipUnknownOptions {
 		options |= flags.IgnoreUnknown
 	}
-	args.Parser = makeFlagsParser(command, options)
+	context.Parser = makeFlagsParser(command, options)
 }
 
 var errParseFlagSet = exit.Error{
@@ -178,12 +164,12 @@ var errParseFlagSet = exit.Error{
 // If the flagset has no defined flags (or is nil), immediatly returns nil
 //
 // When an error occurs, returns an error of type Error.
-func (args *CommandArguments[Runtime, Parameters, Flags, Requirements]) parseFlags() (err error) {
-	args.Arguments.Pos, err = args.Parser.ParseArgs(args.Arguments.Pos)
+func (context *Context[E, P, F, R]) parseFlags() (err error) {
+	context.Args.Pos, err = context.Parser.ParseArgs(context.Args.Pos)
 
 	// catch the help error
 	if flagErr, ok := err.(*flags.Error); ok && flagErr.Type == flags.ErrHelp {
-		args.Arguments.Universals.Help = true
+		context.Args.Universals.Help = true
 		err = nil
 	}
 
@@ -218,13 +204,12 @@ var errParseTakesBetweenArguments = exit.Error{
 // checkPositionalCount checks that the correct number of arguments was passed to this command.
 // This function implicitly assumes that Options, Arguments and Argv are set appropriatly.
 // When the wrong number of arguments is passed, returns an error of type Error.
-func (args CommandArguments[Runtime, Parameters, Flags, Requirements]) CheckPositionalCount() error {
+func (context Context[E, P, F, R]) CheckPositionalCount() error {
 	// TODO: Public because test!
+	min := context.Description.PosArgsMin
+	max := context.Description.PosArgsMax
 
-	min := args.Description.PosArgsMin
-	max := args.Description.PosArgsMax
-
-	argc := len(args.Arguments.Pos)
+	argc := len(context.Args.Pos)
 
 	// If we are outside the range for the arguments, we reset the counter to 0
 	// and return the appropriate error message.
@@ -234,13 +219,13 @@ func (args CommandArguments[Runtime, Parameters, Flags, Requirements]) CheckPosi
 	if argc < min || ((max != -1) && (argc > max)) {
 		switch {
 		case min == max && min == 0: // 0 arguments, but some given
-			return errParseTakesNoArguments.WithMessageF(args.Arguments.Command)
+			return errParseTakesNoArguments.WithMessageF(context.Args.Command)
 		case min == max: // exact number of arguments is wrong
-			return errParseTakesExactlyArguments.WithMessageF(args.Arguments.Command, min)
+			return errParseTakesExactlyArguments.WithMessageF(context.Args.Command, min)
 		case max == -1: // less than min arguments
-			return errParseTakesMinArguments.WithMessageF(args.Arguments.Command, min)
+			return errParseTakesMinArguments.WithMessageF(context.Args.Command, min)
 		default: // between set number of arguments
-			return errParseTakesBetweenArguments.WithMessageF(args.Arguments.Command, min, max)
+			return errParseTakesBetweenArguments.WithMessageF(context.Args.Command, min, max)
 		}
 	}
 
@@ -252,7 +237,7 @@ func (args CommandArguments[Runtime, Parameters, Flags, Requirements]) CheckPosi
 //
 // When filter arguments are allowed, immediatly returns nil.
 // When filter arguments are not allowed returns an error of type Error iff the check fails.
-func (args CommandArguments[Runtime, Parameters, Flags, Requirements]) CheckFilterArgument() error {
+func (context Context[E, P, F, R]) CheckFilterArgument() error {
 	// TODO: public because test!
-	return args.Description.Requirements.Validate(args.Arguments)
+	return context.Description.Requirements.Validate(context.Args)
 }

@@ -65,19 +65,19 @@ var errLinkUnknown = exit.Error{
 func (link) Run(context ggman.Context) error {
 	// make sure that the path is absolute
 	// to avoid relative symlinks
-	from, e := context.Runtime().Abs(context.Args.Arguments.Pos[0])
+	from, e := context.Environment.Abs(context.Args.Pos[0])
 	if e != nil {
 		return errLinkDoesNotExist
 	}
 
 	// open the source repository and get the remotre
-	r, e := context.Runtime().Git.GetRemote(from)
+	r, e := context.Environment.Git.GetRemote(from)
 	if e != nil {
 		return errLinkDoesNotExist
 	}
 
 	// find the target path
-	to, err := context.Runtime().Local(env.ParseURL(r))
+	to, err := context.Environment.Local(env.ParseURL(r))
 	if err != nil {
 		return err
 	}

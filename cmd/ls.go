@@ -43,7 +43,7 @@ var errLSExitFlag = exit.Error{
 }
 
 func (l *ls) Run(context ggman.Context) error {
-	repos := context.Runtime().Repos()
+	repos := context.Environment.Repos()
 	if l.One && len(repos) > 0 {
 		repos = repos[:1]
 	}

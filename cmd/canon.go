@@ -34,14 +34,14 @@ func (canon) AfterParse() error {
 func (canon) Run(context ggman.Context) error {
 	var file env.CanFile
 
-	switch len(context.Args.Arguments.Pos) {
+	switch len(context.Args.Pos) {
 	case 1: // read the default CanFile
 		var err error
-		if file, err = context.Runtime().LoadDefaultCANFILE(); err != nil {
+		if file, err = context.Environment.LoadDefaultCANFILE(); err != nil {
 			return err
 		}
 	case 2: // use a custom CanLine
-		file = []env.CanLine{{Pattern: "", Canonical: context.Args.Arguments.Pos[1]}}
+		file = []env.CanLine{{Pattern: "", Canonical: context.Args.Pos[1]}}
 	}
 
 	// print out the canonical version of the file

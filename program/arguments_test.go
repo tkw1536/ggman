@@ -119,7 +119,7 @@ func TestArguments_Parse(t *testing.T) {
 	}
 }
 
-func TestCommandArguments_checkPositionalCount(t *testing.T) {
+func TestContext_checkPositionalCount(t *testing.T) {
 	tests := []struct {
 		name string
 
@@ -230,17 +230,17 @@ func TestCommandArguments_checkPositionalCount(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			args := &tCommandArguments{
+			context := &tContext{
+				Args:        tt.arguments,
 				Description: tt.options,
-				Arguments:   tt.arguments,
 			}
-			err := args.CheckPositionalCount()
+			err := context.CheckPositionalCount()
 			gotErr := ""
 			if err != nil {
 				gotErr = err.Error()
 			}
 			if gotErr != tt.wantErr {
-				t.Errorf("CommandArguments.checkPositionalCount() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Context.checkPositionalCount() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
@@ -289,17 +289,17 @@ func TestCommandArguments_checkFilterArgument(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			args := tCommandArguments{
+			context := &tContext{
+				Args:        tt.arguments,
 				Description: tt.options,
-				Arguments:   tt.arguments,
 			}
-			err := args.CheckFilterArgument()
+			err := context.CheckFilterArgument()
 			gotErr := ""
 			if err != nil {
 				gotErr = err.Error()
 			}
 			if gotErr != tt.wantErr {
-				t.Errorf("CommandArguments.checkFilterArgument() error = %q, wantErr %q", err, tt.wantErr)
+				t.Errorf("Context.checkFilterArgument() error = %q, wantErr %q", err, tt.wantErr)
 			}
 		})
 	}

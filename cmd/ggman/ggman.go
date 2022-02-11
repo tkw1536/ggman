@@ -155,7 +155,7 @@ func main() {
 	}()
 
 	// execute the main program with the real environment!
-	err := ggmanExe.Main(stream.NewEnvIOStream(), env.EnvironmentParameters{
+	err := ggmanExe.Main(stream.FromEnv(), env.EnvironmentParameters{
 		Variables: env.ReadVariables(),
 		Plumbing:  nil,
 		Workdir:   "",

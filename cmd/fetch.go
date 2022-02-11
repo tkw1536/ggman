@@ -39,9 +39,9 @@ func (fetch) Run(context ggman.Context) error {
 	hasError := false
 
 	// iterate over all the repositories, and run git fetch
-	for _, repo := range context.Runtime().Repos() {
+	for _, repo := range context.Environment.Repos() {
 		context.Printf("Fetching %q\n", repo)
-		if e := context.Runtime().Git.Fetch(context.IOStream, repo); e != nil {
+		if e := context.Environment.Git.Fetch(context.IOStream, repo); e != nil {
 			context.EPrintln(e.Error())
 			hasError = true
 		}

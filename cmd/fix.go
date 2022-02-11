@@ -45,11 +45,11 @@ func (f fix) Run(context ggman.Context) error {
 	simulate := f.Simulate
 
 	hasError := false
-	for _, repo := range context.Runtime().Repos() {
+	for _, repo := range context.Environment.Repos() {
 		var initialMessage sync.Once // send an initial log message to the user, once
 
-		if e := context.Runtime().Git.UpdateRemotes(repo, func(url, remoteName string) (string, error) {
-			canon := context.Runtime().Canonical(env.ParseURL(url))
+		if e := context.Environment.Git.UpdateRemotes(repo, func(url, remoteName string) (string, error) {
+			canon := context.Environment.Canonical(env.ParseURL(url))
 
 			if url == canon {
 				return url, nil

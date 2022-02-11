@@ -4,7 +4,6 @@ import (
 	"reflect"
 
 	"github.com/tkw1536/ggman/program"
-	"github.com/tkw1536/ggman/program/exit"
 	"github.com/tkw1536/ggman/program/usagefmt"
 )
 
@@ -26,29 +25,8 @@ func (req Requirement) AllowsOption(opt usagefmt.Opt) bool {
 	return req.AllowsFilter
 }
 
-var errTakesNoArgument = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "Wrong number of arguments: '%s' takes no '%s' argument. ",
-}
-
 func (req Requirement) Validate(args program.Arguments[Flags]) error {
-	if req.AllowsFilter { // no checking needed!
-		return nil
-	}
-
-	// check the value of the arguments struct
-	aVal := reflect.ValueOf(args.Flags)
-
-	for _, fIndex := range flagsIndexes {
-		v := aVal.FieldByIndex(fIndex)
-
-		if !v.IsZero() { // flag was set iff it is non-zero
-			tp := flagsType.FieldByIndex(fIndex) // needed for the error message only!
-			return errTakesNoArgument.WithMessageF(args.Command, "--"+tp.Tag.Get("long"))
-		}
-	}
-
-	return nil
+	return program.ValidateAllowedOptions[Flags](req, args)
 }
 
 // reflect access to the arguments type

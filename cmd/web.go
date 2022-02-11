@@ -205,8 +205,8 @@ func (uw urlweb) Run(context ggman.Context) error {
 		base := "https://" + url.HostName
 
 		// if we have a base argument, we need to use it
-		if len(context.Args.Arguments.Pos) > 0 {
-			base = context.Args.Arguments.Pos[0]
+		if len(context.Args.Pos) > 0 {
+			base = context.Args.Pos[0]
 
 			// lookup in builtins
 			if builtIn, ok := WebBuiltInBases[base]; ok {
@@ -234,7 +234,7 @@ func (uw urlweb) Run(context ggman.Context) error {
 	}
 
 	if root != "" && (uw.Tree || uw.Branch) {
-		ref, err := context.Runtime().Git.GetHeadRef(root)
+		ref, err := context.Environment.Git.GetHeadRef(root)
 		if err != nil {
 			return errOutsideRepository
 		}
@@ -271,7 +271,7 @@ func (uw urlweb) getRemoteURL(context ggman.Context) (root string, remote string
 
 func (uw urlweb) getRemoteURLReal(context ggman.Context) (root string, remote string, relative string, err error) {
 	// find the repository at the current location
-	root, relative, err = context.Runtime().At(".")
+	root, relative, err = context.Environment.At(".")
 	if err != nil {
 		return "", "", "", err
 	}
@@ -281,7 +281,7 @@ func (uw urlweb) getRemoteURLReal(context ggman.Context) (root string, remote st
 	}
 
 	// get the remote
-	remote, err = context.Runtime().Git.GetRemote(root)
+	remote, err = context.Environment.Git.GetRemote(root)
 	if err != nil {
 		return "", "", "", errOutsideRepository
 	}
@@ -291,13 +291,13 @@ func (uw urlweb) getRemoteURLReal(context ggman.Context) (root string, remote st
 
 func (uw urlweb) getRemoteURLFake(context ggman.Context) (root string, remote string, relative string, err error) {
 	// get the absolute path to the current workdir
-	workdir, err := context.Runtime().Abs("")
+	workdir, err := context.Environment.Abs("")
 	if err != nil {
 		return "", "", "", err
 	}
 
 	// determine the relative path to the root directory
-	relpath, err := filepath.Rel(context.Runtime().Root, workdir)
+	relpath, err := filepath.Rel(context.Environment.Root, workdir)
 	if err != nil || path.GoesUp(relpath) {
 		return "", "", "", errNoRelativeRepository
 	}

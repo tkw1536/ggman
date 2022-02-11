@@ -45,14 +45,14 @@ func (l lsr) Run(context ggman.Context) error {
 	var lines env.CanFile
 	if l.Canonical {
 		var err error
-		if lines, err = context.Runtime().LoadDefaultCANFILE(); err != nil {
+		if lines, err = context.Environment.LoadDefaultCANFILE(); err != nil {
 			return errInvalidCanfile
 		}
 	}
 
 	// and print them
-	for _, repo := range context.Runtime().Repos() {
-		remote, err := context.Runtime().Git.GetRemote(repo)
+	for _, repo := range context.Environment.Repos() {
+		remote, err := context.Environment.Git.GetRemote(repo)
 		if err != nil {
 			continue
 		}

@@ -115,8 +115,8 @@ func TestProgram_CommandUsage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			args := tCommandArguments{
-				Arguments: tArguments{
+			context := tContext{
+				Args: tArguments{
 					Command: tt.args.command,
 				},
 
@@ -131,8 +131,8 @@ func TestProgram_CommandUsage(t *testing.T) {
 					PosArgDescription: tt.fields.UsageDescription,
 				},
 			}
-			if gotUsage := program.CommandUsage(args).String(); gotUsage != tt.wantUsage {
-				t.Errorf("CommandArguments.UsagePage() = %q, want %q", gotUsage, tt.wantUsage)
+			if gotUsage := program.CommandUsage(context).String(); gotUsage != tt.wantUsage {
+				t.Errorf("Program.CommandUsage() = %q, want %q", gotUsage, tt.wantUsage)
 			}
 		})
 	}

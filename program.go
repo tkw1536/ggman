@@ -19,7 +19,6 @@ type ggmanFlags = env.Flags
 type Program = program.Program[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
 type Command = program.Command[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
 type Context = program.Context[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
-type CommandArguments = program.CommandArguments[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
 type Arguments = program.Arguments[ggmanFlags]
 type Description = program.Description[ggmanFlags, ggmanRequirements]
 
@@ -39,8 +38,8 @@ var ErrParseArgsNeedTwoAfterFor = exit.Error{ // TODO: Public because test
 
 // NewProgram returns a new ggman program
 func NewProgram() (p Program) {
-	p.NewRuntime = func(params env.EnvironmentParameters, cmdargs CommandArguments) (*env.Env, error) {
-		rt, err := NewRuntime(params, cmdargs)
+	p.NewEnvironment = func(params env.EnvironmentParameters, context Context) (*env.Env, error) {
+		rt, err := NewRuntime(params, context)
 		return rt, err
 	}
 	p.Info = info

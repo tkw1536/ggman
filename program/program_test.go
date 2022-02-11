@@ -18,19 +18,21 @@ import (
 	"github.com/tkw1536/ggman/program/stream"
 )
 
+// This part of the test suite creates a full examples of a program
+// Including its' own runtime, parameters, flags and requirements.
 //
-// test-specific program types
-//
+// These types are defined here, and re-used throughout the package.
 
-type tRuntime = struct{}
-type tParameters = env.EnvironmentParameters // TODO: Remove this dependency and make up some testing thing!
+// TODO: Remove the dependency on the env package here (and remove testing import cycle!)
+type tEnvironment = struct{}
+type tParameters = env.EnvironmentParameters
 type tRequirements = env.Requirement
 type tFlags = env.Flags
 
-type tProgram = program.Program[tRuntime, tParameters, tFlags, tRequirements]
-type tCommand = program.Command[tRuntime, tParameters, tFlags, tRequirements]
-type tContext = program.Context[tRuntime, tParameters, tFlags, tRequirements]
-type tCommandArguments = program.CommandArguments[tRuntime, tParameters, tFlags, tRequirements]
+// aliases
+type tProgram = program.Program[tEnvironment, tParameters, tFlags, tRequirements]
+type tCommand = program.Command[tEnvironment, tParameters, tFlags, tRequirements]
+type tContext = program.Context[tEnvironment, tParameters, tFlags, tRequirements]
 type tDescription = program.Description[tFlags, tRequirements]
 type tArguments = program.Arguments[tFlags]
 
@@ -409,7 +411,7 @@ func TestProgram_Main(t *testing.T) {
 
 			// create a dummy program
 			program := tProgram{
-				NewRuntime: func(params tParameters, cmdargs tCommandArguments) (struct{}, error) {
+				NewEnvironment: func(params tParameters, context tContext) (struct{}, error) {
 					return struct{}{}, nil
 				},
 				Info: testInfo,
@@ -475,12 +477,12 @@ func (e echoCommand) Description() tDescription {
 }
 func (e echoCommand) AfterParse() error { return nil }
 func (e echoCommand) Run(context tContext) error {
-	context.Stdout.Write([]byte("Got filter: " + strings.Join(context.Args.Arguments.Flags.Filters, ",")))
-	context.Stdout.Write([]byte("\nGot arguments: " + strings.Join(context.Args.Arguments.Pos, ",")))
+	context.Stdout.Write([]byte("Got filter: " + strings.Join(context.Args.Flags.Filters, ",")))
+	context.Stdout.Write([]byte("\nGot arguments: " + strings.Join(context.Args.Pos, ",")))
 	context.Stdout.Write([]byte("\n" + e.StdoutMsg + "\n"))
 	context.Stderr.Write([]byte(e.StderrMsg + "\n"))
 
-	if len(context.Args.Arguments.Pos) > 0 && context.Args.Arguments.Pos[0] == "fail" {
+	if len(context.Args.Pos) > 0 && context.Args.Pos[0] == "fail" {
 		return exit.Error{ExitCode: exit.ExitGeneric, Message: "Test Failure"}
 	}
 

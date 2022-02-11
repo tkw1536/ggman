@@ -41,7 +41,7 @@ func (where) AfterParse() error {
 }
 
 func (where) Run(context ggman.Context) error {
-	localPath, err := context.Runtime().Local(ggman.URLV(context, 0))
+	localPath, err := context.Environment.Local(ggman.URLV(context, 0))
 	if err != nil {
 		return err
 	}

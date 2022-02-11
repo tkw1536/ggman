@@ -31,6 +31,6 @@ func (root) AfterParse() error {
 }
 
 func (root) Run(context ggman.Context) error {
-	context.Println(context.Runtime().Root)
+	context.Println(context.Environment.Root)
 	return nil
 }

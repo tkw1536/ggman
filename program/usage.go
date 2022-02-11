@@ -6,30 +6,31 @@ import (
 	"time"
 
 	"github.com/alessio/shellescape"
-	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman/program/usagefmt"
 )
 
+// Info contains meta-information about the current program
 type Info struct {
 	BuildVersion string
 	BuildTime    time.Time
 
-	MainName    string
-	Description string
+	MainName    string // Name of the main executable of the program
+	Description string // Description of the program
 }
 
-// FmtVersion formats version information to be shown to a human info
+// FmtVersion formats version information about the current version
+// It returns a string that should be presented to users.
 func (info Info) FmtVersion() string {
 	return fmt.Sprintf("%s version %s, built %s, using %s", info.MainName, info.BuildVersion, info.BuildTime, runtime.Version())
 }
 
 // MainUsage returns a help page about ggman
-func (p Program[Runtime, Parameters, Flags, Requirements]) MainUsage() usagefmt.Page {
+func (p Program[E, P, F, R]) MainUsage() usagefmt.Page {
 	commands := append(p.Commands(), p.Aliases()...)
 
 	return usagefmt.Page{
 		MainName:    p.Info.MainName,
-		MainOpts:    p.globalOptions(),
+		MainOpts:    globalOptions[F](),
 		Description: p.Info.Description,
 
 		SubCommands: commands,
@@ -37,17 +38,17 @@ func (p Program[Runtime, Parameters, Flags, Requirements]) MainUsage() usagefmt.
 }
 
 // CommandUsage generates the usage information about a specific command
-func (p Program[Runtime, Parameters, Flags, Requirements]) CommandUsage(cmdargs CommandArguments[Runtime, Parameters, Flags, Requirements]) usagefmt.Page {
-	Description := cmdargs.Description
+func (p Program[E, P, F, R]) CommandUsage(context Context[E, P, F, R]) usagefmt.Page {
+	Description := context.Description
 
 	return usagefmt.Page{
 		MainName: p.Info.MainName,
-		MainOpts: p.globalOptionsFor(Description.Requirements),
+		MainOpts: globalOptionsFor[F](Description.Requirements),
 
 		Description: Description.Description,
 
-		SubName: cmdargs.Arguments.Command,
-		SubOpts: usagefmt.MakeOpts(cmdargs.Parser),
+		SubName: context.Args.Command,
+		SubOpts: usagefmt.MakeOpts(context.Parser),
 
 		MetaName: Description.PosArgName,
 		MetaMin:  Description.PosArgsMin,
@@ -58,7 +59,7 @@ func (p Program[Runtime, Parameters, Flags, Requirements]) CommandUsage(cmdargs 
 }
 
 // AliasPage returns a usage page for the provided alias
-func (p Program[Runtime, Parameters, Flags, Requirements]) AliasUsage(cmdargs CommandArguments[Runtime, Parameters, Flags, Requirements], alias Alias) usagefmt.Page {
+func (p Program[E, P, F, R]) AliasUsage(context Context[E, P, F, R], alias Alias) usagefmt.Page {
 	exCmd := "`" + shellescape.QuoteCommand(append([]string{p.Info.MainName}, alias.Expansion()...)) + "`"
 	helpCmd := "`" + shellescape.QuoteCommand([]string{p.Info.MainName, alias.Command, "--help"}) + "`"
 	name := shellescape.Quote(alias.Command)
@@ -71,7 +72,7 @@ func (p Program[Runtime, Parameters, Flags, Requirements]) AliasUsage(cmdargs Co
 
 	return usagefmt.Page{
 		MainName: p.Info.MainName,
-		MainOpts: p.globalOptionsFor(cmdargs.Description.Requirements),
+		MainOpts: globalOptionsFor[F](context.Description.Requirements),
 
 		Description: description,
 
@@ -84,39 +85,4 @@ func (p Program[Runtime, Parameters, Flags, Requirements]) AliasUsage(cmdargs Co
 
 		Usage: fmt.Sprintf("Arguments to pass after %s.", exCmd),
 	}
-}
-
-var universalOpts = usagefmt.MakeOpts(flags.NewParser(&Universals{}, flags.None))
-
-// globalOptions returns all global options
-func (p Program[Runtime, Parameters, Flags, Requirements]) globalOptions() (opts []usagefmt.Opt) {
-	opts = append(opts, universalOpts...)
-	opts = append(opts, p.flagOptions()...)
-	return
-}
-
-// globalOptionsFor returns global options for the provided requirement
-func (p Program[Runtime, Parameters, Flags, Requirements]) globalOptionsFor(r Requirements) (opts []usagefmt.Opt) {
-	flags := p.flagOptions()
-
-	// filter options to be those that are allowed
-	n := 0
-	for _, opt := range flags {
-		if !r.AllowsOption(opt) {
-			continue
-		}
-		flags[n] = opt
-		n++
-	}
-	flags = flags[:n]
-
-	// add both universals and then locals
-	opts = append(opts, universalOpts...)
-	opts = append(opts, flags...)
-	return
-}
-
-// flagOptions returns the options for something
-func (p Program[Runtime, Parameters, Flags, Requirements]) flagOptions() []usagefmt.Opt {
-	return usagefmt.MakeOpts(flags.NewParser(new(Flags), flags.None))
 }

@@ -14,13 +14,15 @@ type Opt interface {
 
 	Required() bool // false
 
-	Short() []string // ["n"]
-	Long() []string  // ["number"]
+	Short() []string   // ["n"]
+	Long() []string    // ["number"]
+	FieldName() string // name of the underlying field name
 
 	Value() string // "digit"
 
 	Usage() string   // "A digit used within something"
 	Default() string // "42"
+
 }
 
 // NewOpt returns a new Arg based on an Option
@@ -54,6 +56,10 @@ func (o opt) Long() []string {
 		return nil
 	}
 	return []string{long}
+}
+
+func (o opt) FieldName() string {
+	return o.Option.Field().Name
 }
 
 // Value returns the name of the argument
