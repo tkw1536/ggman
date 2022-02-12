@@ -25,23 +25,23 @@ func TestPage_String(t *testing.T) {
 			fields{
 				MainName: "cmd",
 				MainOpts: []Opt{
-					FakeOpt{
-						required: true,
+					{
+						Required: true,
 
-						short: []string{"g"},
-						long:  []string{"global"},
+						Short: []string{"g"},
+						Long:  []string{"global"},
 
-						value: "name",
-						usage: "A global argument",
-						dflt:  "",
+						Value:   "name",
+						Usage:   "A global argument",
+						Default: "",
 					},
-					FakeOpt{
-						required: false,
+					{
+						Required: false,
 
-						short: []string{"q"},
-						long:  []string{"quiet"},
-						usage: "Be quiet",
-						dflt:  "false",
+						Short:   []string{"q"},
+						Long:    []string{"quiet"},
+						Usage:   "Be quiet",
+						Default: "false",
 					},
 				},
 				Description: "Do something interesting",
@@ -54,45 +54,45 @@ func TestPage_String(t *testing.T) {
 			fields{
 				MainName: "cmd",
 				MainOpts: []Opt{
-					FakeOpt{
-						required: true,
+					{
+						Required: true,
 
-						short: []string{"g"},
-						long:  []string{"global"},
+						Short: []string{"g"},
+						Long:  []string{"global"},
 
-						value: "name",
-						usage: "A global argument",
-						dflt:  "",
+						Value:   "name",
+						Usage:   "A global argument",
+						Default: "",
 					},
-					FakeOpt{
-						required: false,
+					{
+						Required: false,
 
-						short: []string{"q"},
-						long:  []string{"quiet"},
-						usage: "Be quiet",
-						dflt:  "false",
+						Short:   []string{"q"},
+						Long:    []string{"quiet"},
+						Usage:   "Be quiet",
+						Default: "false",
 					},
 				},
 				Description: "Do something local",
 				SubName:     "sub",
 				SubOpts: []Opt{
-					FakeOpt{
-						required: true,
+					{
+						Required: true,
 
-						short: []string{"d"},
-						long:  []string{"dud"},
+						Short: []string{"d"},
+						Long:  []string{"dud"},
 
-						value: "dud",
-						usage: "A local argument",
-						dflt:  "",
+						Value:   "dud",
+						Usage:   "A local argument",
+						Default: "",
 					},
-					FakeOpt{
-						required: false,
+					{
+						Required: false,
 
-						short: []string{"s"},
-						long:  []string{"silent"},
-						usage: "Be silent",
-						dflt:  "true",
+						Short:   []string{"s"},
+						Long:    []string{"silent"},
+						Usage:   "Be silent",
+						Default: "true",
 					},
 				},
 				MetaName: "op",

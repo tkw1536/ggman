@@ -12,33 +12,33 @@ func TestFmtSpecShort(t *testing.T) {
 	}{
 		{
 			"long only optional option",
-			FakeOpt{long: []string{"long"}},
+			Opt{Long: []string{"long"}},
 			"[--long]",
 		},
 		{
 			"short and long optional option",
-			FakeOpt{short: []string{"s"}, long: []string{"long"}},
+			Opt{Short: []string{"s"}, Long: []string{"long"}},
 			"[--long|-s]",
 		},
 		{
 			"short and long named optional option",
-			FakeOpt{value: "name", short: []string{"s"}, long: []string{"long"}},
+			Opt{Value: "name", Short: []string{"s"}, Long: []string{"long"}},
 			"[--long|-s name]",
 		},
 
 		{
 			"long only required option",
-			FakeOpt{long: []string{"long"}, required: true},
+			Opt{Long: []string{"long"}, Required: true},
 			"--long",
 		},
 		{
 			"short and long required option",
-			FakeOpt{short: []string{"s"}, long: []string{"long"}, required: true},
+			Opt{Short: []string{"s"}, Long: []string{"long"}, Required: true},
 			"--long|-s",
 		},
 		{
 			"short and long named required option",
-			FakeOpt{value: "name", short: []string{"s"}, long: []string{"long"}, required: true},
+			Opt{Value: "name", Short: []string{"s"}, Long: []string{"long"}, Required: true},
 			"--long|-s name",
 		},
 	}
@@ -59,17 +59,17 @@ func TestFmtSpecLong(t *testing.T) {
 	}{
 		{
 			"long only option",
-			FakeOpt{long: []string{"long"}},
+			Opt{Long: []string{"long"}},
 			"--long",
 		},
 		{
 			"short and long option",
-			FakeOpt{short: []string{"s"}, long: []string{"long"}},
+			Opt{Short: []string{"s"}, Long: []string{"long"}},
 			"-s, --long",
 		},
 		{
 			"short and long named option",
-			FakeOpt{value: "name", short: []string{"s"}, long: []string{"long"}},
+			Opt{Value: "name", Short: []string{"s"}, Long: []string{"long"}},
 			"-s, --long name",
 		},
 	}
@@ -90,22 +90,22 @@ func TestFmtMessage(t *testing.T) {
 	}{
 		{
 			"long only option",
-			FakeOpt{usage: "a long option", long: []string{"long"}},
+			Opt{Usage: "a long option", Long: []string{"long"}},
 			"\n\n   --long\n      a long option",
 		},
 		{
 			"short and long option",
-			FakeOpt{usage: "a long or short option", short: []string{"s"}, long: []string{"long"}},
+			Opt{Usage: "a long or short option", Short: []string{"s"}, Long: []string{"long"}},
 			"\n\n   -s, --long\n      a long or short option",
 		},
 		{
 			"short and long named option",
-			FakeOpt{usage: "this one is named", value: "name", short: []string{"s"}, long: []string{"long"}},
+			Opt{Usage: "this one is named", Value: "name", Short: []string{"s"}, Long: []string{"long"}},
 			"\n\n   -s, --long name\n      this one is named",
 		},
 		{
 			"short and long named option with default",
-			FakeOpt{usage: "this one is named", value: "name", short: []string{"s"}, long: []string{"long"}, dflt: "default"},
+			Opt{Usage: "this one is named", Value: "name", Short: []string{"s"}, Long: []string{"long"}, Default: "default"},
 			"\n\n   -s, --long name\n      this one is named (default default)",
 		},
 	}

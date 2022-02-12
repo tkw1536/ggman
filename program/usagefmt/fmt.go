@@ -56,18 +56,18 @@ func FmtSpecLong(opt Opt) string {
 // optionalBraces indicates if braces should be placed around the argument if it is optional.
 func spec(builder *strings.Builder, opt Opt, sep string, longFirst bool, optionalBraces bool) {
 	// if the argument is optional put braces around it!
-	if optionalBraces && !opt.Required() {
+	if optionalBraces && !opt.Required {
 		builder.WriteString("[")
 		defer builder.WriteString("]")
 	}
 
 	// collect long and short arguments and combine them
-	la := text.SliceCopy(opt.Long())
+	la := text.SliceCopy(opt.Long)
 	for k, v := range la {
 		la[k] = "--" + v
 	}
 
-	sa := text.SliceCopy(opt.Short())
+	sa := text.SliceCopy(opt.Short)
 	for k, v := range sa {
 		sa[k] = "-" + v
 	}
@@ -82,7 +82,7 @@ func spec(builder *strings.Builder, opt Opt, sep string, longFirst bool, optiona
 	text.Join(builder, args, sep)
 
 	// write the value (if any)
-	if value := opt.Value(); value != "" {
+	if value := opt.Value; value != "" {
 		builder.WriteRune(' ')
 		builder.WriteString(value)
 	}
@@ -108,8 +108,8 @@ func Message(builder *strings.Builder, opt Opt) {
 	SpecLong(builder, opt)
 	builder.WriteString(usageMsg2)
 
-	builder.WriteString(opt.Usage())
-	if dflt := opt.Default(); dflt != "" {
+	builder.WriteString(opt.Usage)
+	if dflt := opt.Default; dflt != "" {
 		builder.WriteString(" (default ")
 		builder.WriteString(dflt)
 		builder.WriteString(")")

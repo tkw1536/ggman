@@ -161,9 +161,9 @@ func ValidateAllowedOptions[F any](r Requirement[F], args Arguments[F]) error {
 			continue
 		}
 
-		v := fVal.FieldByName(opt.FieldName())
+		v := fVal.FieldByName(opt.FieldName)
 		if !v.IsZero() { // flag was set!
-			name := opt.Long()
+			name := opt.Long
 			if len(name) == 0 {
 				name = []string{""}
 			}
