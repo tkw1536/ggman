@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/tkw1536/ggman/internal/stream"
 	"github.com/tkw1536/ggman/internal/text"
 	"github.com/tkw1536/ggman/program/exit"
 )
@@ -49,13 +48,13 @@ const ioDefaultWrap = 80
 // It furthermore wraps output as set by wrap.
 func NewIOStream(Stdout, Stderr io.Writer, Stdin io.Reader, wrap int) IOStream {
 	if Stdout == nil {
-		Stdout = stream.Null
+		Stdout = Null
 	}
 	if Stderr == nil {
-		Stderr = stream.Null
+		Stderr = Null
 	}
 	if Stdin == nil {
-		Stdin = stream.Null
+		Stdin = Null
 	}
 	if wrap == 0 {
 		wrap = ioDefaultWrap
