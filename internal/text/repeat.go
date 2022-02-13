@@ -2,7 +2,6 @@ package text
 
 import (
 	"io"
-	"strings"
 )
 
 // Join writes the elements of elem into writer, seperated by sep.
@@ -34,32 +33,32 @@ func Join(writer io.Writer, elems []string, sep string) (n int, err error) {
 	return
 }
 
-// RepeatJoin writes s, followed by (count -1) instances of sep + s into builder.
+// RepeatJoin writes s, followed by (count -1) instances of sep + s into w.
 // It returns the number of runes written and a nil error.
 //
 // When count <= 0, no instances of s or sep are written into count.
-func RepeatJoin(builder *strings.Builder, s, sep string, count int) (n int, err error) {
+func RepeatJoin(w io.Writer, s, sep string, count int) (n int, err error) {
 	if count <= 0 {
 		return
 	}
 
 	n = len(s)*count + len(sep)*(count-1)
-	builder.Grow(n)
+	Grow(w, n)
 
-	builder.WriteString(s)
-	Repeat(builder, sep+s, count-1)
+	io.WriteString(w, s)
+	Repeat(w, sep+s, count-1)
 
 	return
 }
 
-// Repeat writes count instances of s into builder.
+// Repeat writes count instances of s into w.
 // It returns the number of runes written and a nil error.
 // When count would cause an overflow, calls panic().
 //
 // It is similar to strings.Repeat, but writes into an existing builder without allocating a new one.
 //
 // When s is empty or count <= 0, no instances of s are written.
-func Repeat(builder *strings.Builder, s string, count int) (n int, err error) {
+func Repeat(w io.Writer, s string, count int) (n int, err error) {
 	// this function has been adapted from strings.Repeat
 	// with the only significant change being that we track an additional offset in builder!
 
@@ -71,19 +70,16 @@ func Repeat(builder *strings.Builder, s string, count int) (n int, err error) {
 		panic("Repeat: Repeat count causes overflow")
 	}
 
+	// grow the buffer by the overall number of bytes needed
 	n = len(s) * count
-	builder.Grow(n)
+	Grow(w, n)
 
-	off := builder.Len()
-	builder.WriteString(s)
-
-	// as opposed to strings.Repeat, we need to take care of an offset
-	for l := len(s); l < n; l = builder.Len() - off {
-		if l > n/2 {
-			builder.WriteString(builder.String()[off : n-l+off])
-			break
+	// write the string into w repeatedly
+	// only compute the number of bytes written if something goes wrong
+	for i := 0; i < count; i++ {
+		if m, err := io.WriteString(w, s); err != nil {
+			return len(s)*i + m, err
 		}
-		builder.WriteString(builder.String()[off:])
 	}
 
 	return

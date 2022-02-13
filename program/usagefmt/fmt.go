@@ -2,6 +2,7 @@
 package usagefmt
 
 import (
+	"io"
 	"strconv"
 	"strings"
 	"sync"
@@ -14,17 +15,17 @@ var builderPool = &sync.Pool{
 	New: func() interface{} { return new(strings.Builder) },
 }
 
-// SpecShort writes a short specification of the option into builder.
+// SpecShort writes a short specification of the option into w.
 // It is of the form '--flag|-f value'.
 // SpecShort adds braces around the argument if it is optional.
-func SpecShort(builder *strings.Builder, opt Opt) {
-	spec(builder, opt, "|", true, true)
+func SpecShort(w io.Writer, opt Opt) {
+	spec(w, opt, "|", true, true)
 }
 
 // SpecLong writes a long specification of the option into builder.
 // It is of the form '-f, --flag value'.
-func SpecLong(builder *strings.Builder, opt Opt) {
-	spec(builder, opt, ", ", false, false)
+func SpecLong(w io.Writer, opt Opt) {
+	spec(w, opt, ", ", false, false)
 }
 
 // FmtSpecShort is like SpecShort, but returns a string
@@ -54,11 +55,11 @@ func FmtSpecLong(opt Opt) string {
 // sep indicates how to seperate arguments.
 // longFirst indicates that long argument names should be listed before short arguments.
 // optionalBraces indicates if braces should be placed around the argument if it is optional.
-func spec(builder *strings.Builder, opt Opt, sep string, longFirst bool, optionalBraces bool) {
+func spec(w io.Writer, opt Opt, sep string, longFirst bool, optionalBraces bool) {
 	// if the argument is optional put braces around it!
 	if optionalBraces && !opt.Required {
-		builder.WriteString("[")
-		defer builder.WriteString("]")
+		io.WriteString(w, "[")
+		defer io.WriteString(w, "]")
 	}
 
 	// collect long and short arguments and combine them
@@ -79,12 +80,12 @@ func spec(builder *strings.Builder, opt Opt, sep string, longFirst bool, optiona
 	} else {
 		args = append(sa, la...)
 	}
-	text.Join(builder, args, sep)
+	text.Join(w, args, sep)
 
 	// write the value (if any)
 	if value := opt.Value; value != "" {
-		builder.WriteRune(' ')
-		builder.WriteString(value)
+		io.WriteString(w, " ")
+		io.WriteString(w, value)
 	}
 }
 
@@ -98,24 +99,24 @@ const (
 	usageMsg3 = ""
 )
 
-// Message writes a long message describing the argument to builder
+// Message writes a long message describing the argument to w.
 // It is of the form '-f, --flag ARG' and 'DESCRIPTION (default DEFAULT)'
 //
 // This function is implicity tested via other tests.
-func Message(builder *strings.Builder, opt Opt) {
+func Message(w io.Writer, opt Opt) {
 
-	builder.WriteString(usageMsg1)
-	SpecLong(builder, opt)
-	builder.WriteString(usageMsg2)
+	io.WriteString(w, usageMsg1)
+	SpecLong(w, opt)
+	io.WriteString(w, usageMsg2)
 
-	builder.WriteString(opt.Usage)
+	io.WriteString(w, opt.Usage)
 	if dflt := opt.Default; dflt != "" {
-		builder.WriteString(" (default ")
-		builder.WriteString(dflt)
-		builder.WriteString(")")
+		io.WriteString(w, " (default ")
+		io.WriteString(w, dflt)
+		io.WriteString(w, ")")
 	}
 
-	builder.WriteString(usageMsg3)
+	io.WriteString(w, usageMsg3)
 }
 
 // FmtMessage is like Message, but returns a string
@@ -133,14 +134,14 @@ func FmtMessage(opt Opt) string {
 // See SpecPositional.
 const DefaultPositionalName = "ARGUMENT"
 
-// SpecPositional creates a spec for a positional argument e.g. "arg [arg...]" and writes it to builder.
+// SpecPositional creates a spec for a positional argument e.g. "arg [arg...]" and writes it to w.
 //
 // name is the name of the named argument, min and max are the minimum and maximum respectively.
 // when name is the empty string, uses DefaultPositional.
 //
 // min must be non-negative. max must be bigger than min or less than 0.
 // when max is 0, assumes that the argument can be repeated indefinitly.
-func SpecPositional(builder *strings.Builder, name string, min, max int) {
+func SpecPositional(w io.Writer, name string, min, max int) {
 	extra := max - min // extra is the number of optional argument
 
 	if min < 0 || (max > 0 && extra < 0) { // invalid arguments
@@ -157,22 +158,22 @@ func SpecPositional(builder *strings.Builder, name string, min, max int) {
 	}
 
 	// arg arg arg
-	text.RepeatJoin(builder, name, " ", min)
+	text.RepeatJoin(w, name, " ", min)
 	if min > 0 && extra != 0 {
-		builder.WriteString(" ")
+		io.WriteString(w, " ")
 	}
 
 	if max < 0 {
 		// [arg ...]
-		builder.WriteString("[")
-		builder.WriteString(name)
-		builder.WriteString(" ...]")
+		io.WriteString(w, "[")
+		io.WriteString(w, name)
+		io.WriteString(w, " ...]")
 		return
 	}
 
 	// [arg [arg]]
-	text.RepeatJoin(builder, "["+name, " ", extra)
-	text.Repeat(builder, "]", extra)
+	text.RepeatJoin(w, "["+name, " ", extra)
+	text.Repeat(w, "]", extra)
 }
 
 // FmtSpecPositional is like SpecPositional except that it returns a string.

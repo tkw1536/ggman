@@ -7,8 +7,8 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/sema"
-	"github.com/tkw1536/ggman/internal/stream"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/stream"
 )
 
 // Exec is the 'ggman exec' command.
