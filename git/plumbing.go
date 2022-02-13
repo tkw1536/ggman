@@ -12,7 +12,7 @@ import (
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/tkw1536/ggman/internal/text"
+	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/program/stream"
 )
 
@@ -432,7 +432,7 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject interface{}, name string
 	remotes := cfg.Remotes[remote.Config().Name]
 
 	// if they haven't changed, we can return immediatly
-	if text.SliceEquals(remotes.URLs, urls) {
+	if slice.Equals(remotes.URLs, urls) {
 		return nil
 	}
 

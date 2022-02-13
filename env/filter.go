@@ -7,7 +7,7 @@ import (
 
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/pattern"
-	"github.com/tkw1536/ggman/internal/text"
+	"github.com/tkw1536/ggman/internal/slice"
 )
 
 // Filter is a predicate that scores repositories inside an environment.
@@ -64,7 +64,7 @@ type PathFilter struct {
 // Score checks if a repository at clonePath matches this filter, and if so returns 1.
 // See Filter.Score.
 func (pf PathFilter) Score(env Env, clonePath string) float64 {
-	if text.SliceMatchesAny(pf.Paths, func(p string) bool {
+	if slice.MatchesAny(pf.Paths, func(p string) bool {
 		return path.Contains(p, clonePath)
 	}) {
 		return 1
@@ -165,7 +165,7 @@ func (or DisjunctionFilter) Candidates() []string {
 	}
 
 	// remove duplicates from the result
-	return text.RemoveDuplicates(candidates)
+	return slice.RemoveDuplicates(candidates)
 }
 
 // TODO: Do we need tests for this?

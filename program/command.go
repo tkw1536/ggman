@@ -2,9 +2,9 @@ package program
 
 import (
 	"reflect"
-	"sort"
 
 	"github.com/jessevdk/go-flags"
+	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/program/exit"
 	"github.com/tkw1536/ggman/program/usagefmt"
 )
@@ -114,7 +114,7 @@ func (p Program[E, P, F, R]) Commands() []string {
 	for cmd := range p.commands {
 		commands = append(commands, cmd)
 	}
-	sort.Strings(commands)
+	slice.Sort(commands)
 	return commands
 }
 

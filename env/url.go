@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/internal/text"
 	"github.com/tkw1536/ggman/internal/url"
 )
@@ -133,7 +134,7 @@ func (url URL) IsLocal() bool {
 func (url URL) Components() []string {
 	// First split the path into components split by '/'.
 	// and remove a '.git' from the last part.
-	parts := text.RemoveEmpty(strings.Split(url.Path, "/"))
+	parts := slice.RemoveZeros(strings.Split(url.Path, "/"))
 	lastPart := len(parts) - 1
 	if lastPart >= 0 {
 		parts[lastPart] = strings.TrimSuffix(parts[lastPart], ".git")

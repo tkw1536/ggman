@@ -5,12 +5,12 @@ import (
 	"path"
 	"path/filepath"
 	"reflect"
-	"sort"
 	"testing"
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/ggman/program/stream"
 )
@@ -611,8 +611,8 @@ func Test_gogit_GetBranches(t *testing.T) {
 			}
 
 			// sort for testcases
-			sort.Strings(gotBranches)
-			sort.Strings(tt.wantBranches)
+			slice.Sort(gotBranches)
+			slice.Sort(tt.wantBranches)
 
 			if !reflect.DeepEqual(gotBranches, tt.wantBranches) {
 				t.Errorf("gogit.GetBranches() = %v, want %v", gotBranches, tt.wantBranches)

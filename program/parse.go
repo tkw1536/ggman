@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman/internal/text"
+	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/program/exit"
 )
 
@@ -117,7 +117,7 @@ func (context *Context[E, P, F, R]) Parse(command Command[E, P, F, R], arguments
 	// - the custom flag(s)
 	// - the right number of arguments
 
-	if text.SliceContainsAny(context.Args.Pos, "--help", "-h", "help") {
+	if slice.ContainsAny(context.Args.Pos, "--help", "-h", "help") {
 		context.Args.Universals.Help = true
 		return nil
 	}

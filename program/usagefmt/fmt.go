@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/internal/text"
 )
 
@@ -63,12 +64,12 @@ func spec(w io.Writer, opt Opt, sep string, longFirst bool, optionalBraces bool)
 	}
 
 	// collect long and short arguments and combine them
-	la := text.SliceCopy(opt.Long)
+	la := slice.Copy(opt.Long)
 	for k, v := range la {
 		la[k] = "--" + v
 	}
 
-	sa := text.SliceCopy(opt.Short)
+	sa := slice.Copy(opt.Short)
 	for k, v := range sa {
 		sa[k] = "-" + v
 	}

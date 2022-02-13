@@ -1,11 +1,11 @@
-package text
+package slice
 
 import (
 	"reflect"
 	"testing"
 )
 
-func TestSliceContainsAny(t *testing.T) {
+func TestContainsAny(t *testing.T) {
 	type args struct {
 		haystack []string
 		needles  []string
@@ -42,13 +42,13 @@ func TestSliceContainsAny(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := SliceContainsAny(tt.args.haystack, tt.args.needles...); got != tt.want {
-				t.Errorf("SliceContainsAny() = %v, want %v", got, tt.want)
+			if got := ContainsAny(tt.args.haystack, tt.args.needles...); got != tt.want {
+				t.Errorf("ContainsAny() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
-func TestSliceMatchesAny(t *testing.T) {
+func TestMatchesAny(t *testing.T) {
 
 	// p makes one predicate for each element in haystack
 	p := func(haystack ...string) (fs []func(string) bool) {
@@ -97,14 +97,14 @@ func TestSliceMatchesAny(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := SliceMatchesAny(tt.args.haystack, tt.args.predicates...); got != tt.want {
-				t.Errorf("SliceMatchesAny() = %v, want %v", got, tt.want)
+			if got := MatchesAny(tt.args.haystack, tt.args.predicates...); got != tt.want {
+				t.Errorf("MatchesAny() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestSliceEquals(t *testing.T) {
+func TestEquals(t *testing.T) {
 	type args struct {
 		first  []string
 		second []string
@@ -133,14 +133,14 @@ func TestSliceEquals(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := SliceEquals(tt.args.first, tt.args.second); got != tt.want {
-				t.Errorf("SliceEquals() = %v, want %v", got, tt.want)
+			if got := Equals(tt.args.first, tt.args.second); got != tt.want {
+				t.Errorf("Equals() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestSliceCopy(t *testing.T) {
+func TestCopy(t *testing.T) {
 	type args struct {
 		slice []string
 	}
@@ -154,8 +154,60 @@ func TestSliceCopy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := SliceCopy(tt.args.slice); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SliceCopy() = %v, want %v", got, tt.want)
+			if got := Copy(tt.args.slice); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Copy() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRemoveZeros(t *testing.T) {
+	type args struct {
+		s []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		{"remove from the nil slice", args{nil}, nil},
+		{"remove from the empty array", args{[]string{}}, []string{}},
+		{"remove from some places", args{[]string{"", "x", "y", "", "z"}}, []string{"x", "y", "z"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RemoveZeros(tt.args.s); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("RemoveZeros() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func BenchmarkRemoveZeros(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		RemoveZeros[struct{}](nil)
+		RemoveZeros([]string{})
+		RemoveZeros([]string{"", "x", "y", "", "z"})
+	}
+}
+
+func TestRemoveDuplicates(t *testing.T) {
+	type args struct {
+		s []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		{"nil slice", args{nil}, nil},
+		{"no duplicates", args{[]string{"a", "b", "c", "d"}}, []string{"a", "b", "c", "d"}},
+		{"some duplicates", args{[]string{"b", "c", "c", "d", "a", "b", "c", "d"}}, []string{"a", "b", "c", "d"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RemoveDuplicates(tt.args.s); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("RemoveDuplicates() = %v, want %v", got, tt.want)
 			}
 		})
 	}

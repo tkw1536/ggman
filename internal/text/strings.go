@@ -2,7 +2,6 @@
 package text
 
 import (
-	"sort"
 	"strings"
 )
 
@@ -31,56 +30,4 @@ func SplitAfter(s, sep string) (prefix, suffix string) {
 		return s, ""
 	}
 	return s[:index], s[index+len(sep):]
-}
-
-// RemoveEmpty returns a slice that is like s, but with empty strings removed.
-// This function will invalidate the previous value of s.
-//
-// It is recommended to store the return value of this function in the original variable.
-// The call should look something like:
-//
-//  s = RemoveEmpty(s)
-//
-func RemoveEmpty(s []string) []string {
-
-	// Because t is backed by the same slice as s, this function will never re-allocate.
-	// Furthermore, because strings are immutable, copying data over is cheap.
-
-	t := s[:0]
-	for _, v := range s {
-		if v == "" {
-			continue
-		}
-		t = append(t, v)
-	}
-	return t
-}
-
-// RemoveDuplicates removes duplicates in s and sorts the result.
-// This function will invalidate the previous value of s.
-//
-// It is recommended to store the return value of this function in the original variable.
-// The call should look something like:
-//
-//  s = RemoveDuplicates(s)
-//
-func RemoveDuplicates(s []string) []string {
-	if len(s) == 0 {
-		return s
-	}
-
-	// adapted from https://github.com/golang/go/wiki/SliceTricks#in-place-deduplicate-comparable
-	sort.Strings(s)
-
-	j := 0
-	for i := 1; i < len(s); i++ {
-		if s[j] == s[i] {
-			continue
-		}
-		j++
-
-		s[j] = s[i]
-	}
-
-	return s[:j+1]
 }

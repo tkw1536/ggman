@@ -1,7 +1,7 @@
 package program
 
 import (
-	"sort"
+	"github.com/tkw1536/ggman/internal/slice"
 )
 
 // Alias represents an alias for a command.
@@ -65,6 +65,6 @@ func (p Program[Runtime, Parameters, Flags, Requirements]) Aliases() []string {
 	for alias := range p.aliases {
 		aliases = append(aliases, alias)
 	}
-	sort.Strings(aliases)
+	slice.Sort(aliases)
 	return aliases
 }

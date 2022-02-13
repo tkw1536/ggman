@@ -4,12 +4,12 @@ package walker
 import (
 	"errors"
 	"io/fs"
-	"sort"
 	"sync"
 	"sync/atomic"
 
 	"github.com/tkw1536/ggman/internal/record"
 	"github.com/tkw1536/ggman/internal/sema"
+	"github.com/tkw1536/ggman/internal/slice"
 )
 
 // Walker is an object that can recursively scan a directory for subdirectories
@@ -160,9 +160,7 @@ func (w *Walker) Walk() error {
 		}
 
 		// sort the slice
-		sort.Slice(results, func(i, j int) bool {
-			return results[i].LessThan(results[j])
-		})
+		slice.SortFunc(results, func(i, j walkResult) bool { return i.LessThan(j) })
 
 		// store the real (textual) results
 		w.results = make([]string, len(results))

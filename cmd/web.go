@@ -3,12 +3,12 @@ package cmd
 import (
 	"fmt"
 	"path/filepath"
-	"sort"
 	"strings"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
+	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/program/exit"
 
 	"github.com/pkg/browser"
@@ -101,9 +101,7 @@ func FmtWebBuiltInBaseNames() string {
 	}
 
 	// sort them, we don't care about stability
-	sort.Slice(bases, func(i, j int) bool {
-		return bases[i] < bases[j]
-	})
+	slice.Sort(bases)
 
 	// and return
 	return strings.Join(bases, ", ")
