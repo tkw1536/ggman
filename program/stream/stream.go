@@ -1,4 +1,4 @@
-// Packate stream defines input and output streams of programs
+// Packate stream defines input and output streams.
 package stream
 
 import (
