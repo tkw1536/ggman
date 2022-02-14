@@ -7,6 +7,7 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/meta"
 )
 
 // Clone is the 'ggman clone' command.
@@ -28,16 +29,18 @@ func (*clone) BeforeRegister(program *ggman.Program) {}
 
 func (*clone) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "clone",
+		Command:     "clone",
 		Description: "Clone a repository into a path described by 'ggman where'",
 
 		SkipUnknownOptions: true,
 
-		PosArgsMin: 1,
-		PosArgsMax: -1,
-		PosArgName: "ARG",
+		Positional: meta.Positional{
+			Value:       "ARG",
+			Description: "URL of repository and arguments to pass to 'git clone'",
 
-		PosArgDescription: "URL of repository and arguments to pass to 'git clone'",
+			Min: 1,
+			Max: -1,
+		},
 
 		Requirements: env.Requirement{
 			NeedsRoot:    true,

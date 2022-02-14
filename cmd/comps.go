@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/tkw1536/ggman"
+	"github.com/tkw1536/ggman/program/meta"
 )
 
 // Comps is the 'ggman comps' command.
@@ -16,15 +17,16 @@ func (comps) BeforeRegister(program *ggman.Program) {}
 
 func (comps) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "comps",
+		Command:     "comps",
 		Description: "Print the components of a URL",
 
-		PosArgsMin: 1,
-		PosArgsMax: 1,
+		Positional: meta.Positional{
+			Value:       "URL",
+			Description: "URL to use",
 
-		PosArgName: "URL",
-
-		PosArgDescription: "URL to use",
+			Min: 1,
+			Max: 1,
+		},
 	}
 }
 

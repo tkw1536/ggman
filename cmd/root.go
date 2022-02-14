@@ -17,7 +17,7 @@ func (root) BeforeRegister(program *ggman.Program) {}
 
 func (root) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "root",
+		Command:     "root",
 		Description: "Print the ggman root folder. ",
 
 		Requirements: env.Requirement{

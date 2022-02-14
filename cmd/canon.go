@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/program/meta"
 )
 
 // Canon is the 'ggman canon' command.
@@ -17,13 +18,14 @@ func (canon) BeforeRegister(program *ggman.Program) {}
 
 func (canon) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "canon",
+		Command:     "canon",
 		Description: "Print the canonical version of a URL",
 
-		PosArgsMin: 1,
-		PosArgsMax: 2,
-
-		PosArgDescription: "URL and optional CANSPEC of repository",
+		Positional: meta.Positional{
+			Description: "URL and optional CANSPEC of repository",
+			Min:         1,
+			Max:         2,
+		},
 	}
 }
 

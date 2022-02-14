@@ -7,6 +7,7 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/meta"
 )
 
 // these define the ggman-specific program types
@@ -23,11 +24,11 @@ type Arguments = program.Arguments[ggmanFlags]
 type Description = program.Description[ggmanFlags, ggmanRequirements]
 
 // info contains information about the ggman program
-var info = program.Info{
+var info = meta.Info{
 	BuildVersion: constants.BuildVersion,
 	BuildTime:    constants.BuildTime,
 
-	MainName:    "ggman",
+	Executable:  "ggman",
 	Description: fmt.Sprintf("ggman manages local git repositories\n\nggman version %s\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.", constants.BuildVersion),
 }
 

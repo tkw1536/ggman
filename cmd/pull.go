@@ -17,7 +17,7 @@ func (pull) BeforeRegister(program *ggman.Program) {}
 
 func (pull) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "pull",
+		Command:     "pull",
 		Description: "Run 'git pull' on locally cloned repositories",
 
 		Requirements: env.Requirement{

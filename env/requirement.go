@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/tkw1536/ggman/program"
-	"github.com/tkw1536/ggman/program/usagefmt"
+	"github.com/tkw1536/ggman/program/meta"
 )
 
 // Requirement represents a set of requirements on the Environment.
@@ -20,13 +20,13 @@ type Requirement struct {
 	NeedsCanFile bool
 }
 
-// AllowsOption checks if the provided option is allowed by this option
-func (req Requirement) AllowsOption(opt usagefmt.Opt) bool {
+// AllowsFlag checks if the provided option is allowed by this option
+func (req Requirement) AllowsFlag(flag meta.Flag) bool {
 	return req.AllowsFilter
 }
 
 func (req Requirement) Validate(args program.Arguments[Flags]) error {
-	return program.ValidateAllowedOptions[Flags](req, args)
+	return program.ValidateAllowedFlags[Flags](req, args)
 }
 
 // reflect access to the arguments type

@@ -4,6 +4,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/meta"
 )
 
 // FindBranch is the 'ggman find-branch' command.
@@ -22,15 +23,15 @@ func (findBranch) BeforeRegister(program *ggman.Program) {}
 
 func (f *findBranch) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "find-branch",
+		Command:     "find-branch",
 		Description: "List repositories containing a specific branch",
 
-		PosArgsMin: 1,
-		PosArgsMax: 1,
-
-		PosArgName: "BRANCH",
-
-		PosArgDescription: "Name of branch to find",
+		Positional: meta.Positional{
+			Value:       "BRANCH",
+			Description: "Name of branch to find",
+			Min:         1,
+			Max:         1,
+		},
 
 		Requirements: env.Requirement{
 			NeedsRoot: true,

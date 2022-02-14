@@ -23,7 +23,7 @@ func (relocate) BeforeRegister(program *ggman.Program) {}
 
 func (r *relocate) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "relocate",
+		Command:     "relocate",
 		Description: "Move locally cloned repositories into locations as per 'ggman where'. ",
 
 		Requirements: env.Requirement{

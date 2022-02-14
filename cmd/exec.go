@@ -8,6 +8,7 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/sema"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/meta"
 	"github.com/tkw1536/ggman/program/stream"
 )
 
@@ -47,13 +48,15 @@ func (*exe) BeforeRegister(program *ggman.Program) {}
 
 func (*exe) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "exec",
+		Command:     "exec",
 		Description: "Execute a command for all repositories",
 
+		Positional: meta.Positional{
+			Value: "ARGS",
+			Min:   1,
+			Max:   -1,
+		},
 		SkipUnknownOptions: true,
-		PosArgsMin:         1,
-		PosArgsMax:         -1,
-		PosArgName:         "ARGS",
 
 		Requirements: env.Requirement{
 			AllowsFilter: true,

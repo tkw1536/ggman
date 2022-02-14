@@ -20,7 +20,7 @@ func (sweep) BeforeRegister(program *ggman.Program) {}
 
 func (sweep) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "sweep",
+		Command:     "sweep",
 		Description: "Find empty folders in the project folder. ",
 
 		Requirements: env.Requirement{

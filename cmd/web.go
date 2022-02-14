@@ -10,6 +10,7 @@ import (
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/meta"
 
 	"github.com/pkg/browser"
 )
@@ -126,14 +127,16 @@ func (uw *urlweb) Description() ggman.Description {
 	}
 
 	return ggman.Description{
-		Name:        Name,
+		Command:     Name,
 		Description: Description,
 
-		PosArgsMin: 0,
-		PosArgsMax: 1,
-		PosArgName: "BASE",
+		Positional: meta.Positional{
+			Value:       "BASE",
+			Description: fmt.Sprintf(stringWebBaseUsage, urlwebBuiltinBaseNames),
 
-		PosArgDescription: fmt.Sprintf(stringWebBaseUsage, urlwebBuiltinBaseNames),
+			Min: 0,
+			Max: 1,
+		},
 
 		Requirements: env.Requirement{
 			NeedsRoot: true,

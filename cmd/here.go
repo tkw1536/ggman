@@ -20,7 +20,7 @@ func (here) BeforeRegister(program *ggman.Program) {}
 
 func (h *here) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "here",
+		Command:     "here",
 		Description: "Print the root path to the repository in the current repository. ",
 
 		Requirements: env.Requirement{

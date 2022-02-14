@@ -3,6 +3,7 @@ package program
 
 import (
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/meta"
 	"github.com/tkw1536/ggman/program/stream"
 )
 
@@ -25,7 +26,7 @@ import (
 type Program[E any, P any, F any, R Requirement[F]] struct {
 	// Meta-information about the current program
 	// Used to generate help and version pages
-	Info Info
+	Info meta.Info
 
 	// The NewEnvironment function associated is used to create a new environment.
 	// The returned error may be nil or of type exit.Error.

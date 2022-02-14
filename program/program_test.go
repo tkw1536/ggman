@@ -15,6 +15,7 @@ import (
 	"github.com/tkw1536/ggman/internal/text"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/meta"
 	"github.com/tkw1536/ggman/program/stream"
 )
 
@@ -164,7 +165,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "not enough arguments for fake",
 			args:       []string{"fake"},
-			options:    tDescription{PosArgsMin: 1, PosArgsMax: 2},
+			options:    tDescription{Positional: meta.Positional{Min: 1, Max: 2}},
 			wantStderr: "Wrong number of arguments: 'fake' takes between 1 and 2 arguments.\n",
 			wantCode:   4,
 		},
@@ -172,7 +173,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with unknown argument (not allowed)",
 			args:       []string{"fake", "--argument-not-declared"},
-			options:    tDescription{PosArgsMin: 0, PosArgsMax: -1},
+			options:    tDescription{Positional: meta.Positional{Min: 0, Max: -1}},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "",
 			wantStderr: "Error parsing flags: unknown flag `argument-not-declared'\n",
@@ -182,7 +183,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with unknown argument (allowed)",
 			args:       []string{"fake", "--argument-not-declared"},
-			options:    tDescription{PosArgsMin: 0, PosArgsMax: -1, SkipUnknownOptions: true},
+			options:    tDescription{Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "Got filter: \nGot arguments: --argument-not-declared\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
@@ -192,7 +193,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' without filter",
 			args:       []string{"fake", "hello", "world"},
-			options:    tDescription{PosArgsMin: 1, PosArgsMax: 2},
+			options:    tDescription{Positional: meta.Positional{Min: 1, Max: 2}},
 			wantStdout: "Got filter: \nGot arguments: hello,world\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
 			wantCode:   0,
@@ -200,7 +201,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' without filter",
 			args:       []string{"fake", "hello", "world"},
-			options:    tDescription{PosArgsMin: 1, PosArgsMax: 2},
+			options:    tDescription{Positional: meta.Positional{Min: 1, Max: 2}},
 			wantStdout: "Got filter: \nGot arguments: hello,world\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
 			wantCode:   0,
@@ -217,7 +218,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with needsroot and root",
 			args:       []string{"fake", "hello", "world"},
-			options:    tDescription{Requirements: env.Requirement{NeedsRoot: true}, PosArgsMin: 1, PosArgsMax: 2},
+			options:    tDescription{Requirements: env.Requirement{NeedsRoot: true}, Positional: meta.Positional{Min: 1, Max: 2}},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "Got filter: \nGot arguments: hello,world\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
@@ -226,7 +227,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with filter but not allowed",
 			args:       []string{"--for", "example", "fake", "hello", "world"},
-			options:    tDescription{PosArgsMin: 1, PosArgsMax: 2},
+			options:    tDescription{Positional: meta.Positional{Min: 1, Max: 2}},
 			wantStderr: "Wrong number of arguments: 'fake' takes no '--for' argument.\n",
 			wantCode:   4,
 		},
@@ -243,7 +244,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with filter",
 			args:       []string{"--for", "example", "fake", "hello", "world"},
-			options:    tDescription{Requirements: env.Requirement{AllowsFilter: true}, PosArgsMin: 1, PosArgsMax: 2},
+			options:    tDescription{Requirements: env.Requirement{AllowsFilter: true}, Positional: meta.Positional{Min: 1, Max: 2}},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "Got filter: example\nGot arguments: hello,world\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
@@ -266,7 +267,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with path (working)",
 			args:       []string{"--path", "real", "fake", "hello", "world"},
-			options:    tDescription{Requirements: env.Requirement{AllowsFilter: true}, PosArgsMin: 1, PosArgsMax: 2},
+			options:    tDescription{Requirements: env.Requirement{AllowsFilter: true}, Positional: meta.Positional{Min: 1, Max: 2}},
 			variables:  env.Variables{GGROOT: root},
 			workdir:    root,
 			wantStdout: "Got filter: \nGot arguments: hello,world\nwrite to stdout\n",
@@ -277,7 +278,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with non-global here argument",
 			args:       []string{"--", "fake", "--here"},
-			options:    tDescription{PosArgsMin: 0, PosArgsMax: -1, SkipUnknownOptions: true},
+			options:    tDescription{Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "Got filter: \nGot arguments: --here\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
@@ -287,7 +288,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with parsed short argument",
 			args:       []string{"fake", "-o", "message"},
-			options:    tDescription{PosArgsMin: 0, PosArgsMax: -1, SkipUnknownOptions: true},
+			options:    tDescription{Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "Got filter: \nGot arguments: \nmessage\n",
 			wantStderr: "write to stderr\n",
@@ -297,7 +298,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with non-parsed short argument",
 			args:       []string{"fake", "--", "--s", "message"},
-			options:    tDescription{PosArgsMin: 0, PosArgsMax: -1, SkipUnknownOptions: true},
+			options:    tDescription{Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "Got filter: \nGot arguments: --s,message\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
@@ -307,7 +308,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with parsed long argument",
 			args:       []string{"fake", "--stdout", "message"},
-			options:    tDescription{PosArgsMin: 0, PosArgsMax: -1, SkipUnknownOptions: true},
+			options:    tDescription{Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "Got filter: \nGot arguments: \nmessage\n",
 			wantStderr: "write to stderr\n",
@@ -317,7 +318,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with non-parsed long argument",
 			args:       []string{"fake", "--", "--stdout", "message"},
-			options:    tDescription{PosArgsMin: 0, PosArgsMax: -1, SkipUnknownOptions: true},
+			options:    tDescription{Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "Got filter: \nGot arguments: --stdout,message\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
@@ -327,7 +328,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with failure ",
 			args:       []string{"fake", "fail"},
-			options:    tDescription{PosArgsMin: 1, PosArgsMax: 2},
+			options:    tDescription{Positional: meta.Positional{Min: 1, Max: 2}},
 			wantStdout: "Got filter: \nGot arguments: fail\nwrite to stdout\n",
 			wantStderr: "write to stderr\nTest Failure\n",
 			wantCode:   1,
@@ -362,7 +363,7 @@ func TestProgram_Main(t *testing.T) {
 				Command: "fake",
 			},
 
-			options:    tDescription{PosArgsMin: 0, PosArgsMax: -1},
+			options:    tDescription{Positional: meta.Positional{Min: 0, Max: -1}},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "Got filter: \nGot arguments: hello,world\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
@@ -379,7 +380,7 @@ func TestProgram_Main(t *testing.T) {
 				Args:    []string{"hello"},
 			},
 
-			options:    tDescription{PosArgsMin: 0, PosArgsMax: -1},
+			options:    tDescription{Positional: meta.Positional{Min: 0, Max: -1}},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "Got filter: \nGot arguments: hello,world\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
@@ -396,7 +397,7 @@ func TestProgram_Main(t *testing.T) {
 				Args:    []string{"hello"},
 			},
 
-			options:    tDescription{PosArgsMin: 0, PosArgsMax: -1},
+			options:    tDescription{Positional: meta.Positional{Min: 0, Max: -1}},
 			variables:  env.Variables{GGROOT: root},
 			wantStdout: "Got filter: \nGot arguments: hello,world\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
@@ -472,7 +473,7 @@ type echoCommand struct {
 
 func (e echoCommand) BeforeRegister(program *tProgram) {}
 func (e echoCommand) Description() tDescription {
-	e.description.Name = e.name
+	e.description.Command = e.name
 	return e.description
 }
 func (e echoCommand) AfterParse() error { return nil }

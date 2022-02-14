@@ -22,7 +22,7 @@ func (lsr) BeforeRegister(program *ggman.Program) {}
 
 func (l *lsr) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "lsr",
+		Command:     "lsr",
 		Description: "List remote URLs to all locally cloned repositories. ",
 
 		Requirements: env.Requirement{

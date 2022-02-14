@@ -9,6 +9,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/meta"
 )
 
 // Link is the 'ggman link' command.
@@ -22,16 +23,16 @@ func (link) BeforeRegister(program *ggman.Program) {}
 
 func (link) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "link",
+		Command:     "link",
 		Description: "Symlink a repository into the local repository structure. ",
 
-		PosArgsMin: 1,
-		PosArgsMax: 1,
+		Positional: meta.Positional{
+			Value:       "PATH",
+			Description: "Path of repository to symlink",
 
-		PosArgName: "PATH",
-
-		PosArgDescription: "Path of repository to symlink",
-
+			Min: 1,
+			Max: 1,
+		},
 		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},

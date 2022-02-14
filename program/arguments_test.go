@@ -7,6 +7,7 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/meta"
 )
 
 var errParseArgsNeedOneArgument = program.ErrParseArgsNeedOneArgument
@@ -123,15 +124,15 @@ func TestContext_checkPositionalCount(t *testing.T) {
 	tests := []struct {
 		name string
 
-		options   tDescription
-		arguments tArguments
+		Positional meta.Positional
+		arguments  tArguments
 
 		wantErr string
 	}{
 		// taking 0 args
 		{
 			"no arguments",
-			tDescription{PosArgsMin: 0, PosArgsMax: 0},
+			meta.Positional{Min: 0, Max: 0},
 			tArguments{Command: "example", Pos: []string{}},
 			"",
 		},
@@ -139,19 +140,19 @@ func TestContext_checkPositionalCount(t *testing.T) {
 		// taking 1 arg
 		{
 			"one argument, too few",
-			tDescription{PosArgsMin: 1, PosArgsMax: 1},
+			meta.Positional{Min: 1, Max: 1},
 			tArguments{Command: "example", Pos: []string{}},
 			"Wrong number of arguments: 'example' takes exactly 1 argument(s). ",
 		},
 		{
 			"one argument, exactly enough",
-			tDescription{PosArgsMin: 1, PosArgsMax: 1},
+			meta.Positional{Min: 1, Max: 1},
 			tArguments{Command: "example", Pos: []string{"world"}},
 			"",
 		},
 		{
 			"one argument, too many",
-			tDescription{PosArgsMin: 1, PosArgsMax: 1},
+			meta.Positional{Min: 1, Max: 1},
 			tArguments{Command: "example", Pos: []string{"hello", "world"}},
 			"Wrong number of arguments: 'example' takes exactly 1 argument(s). ",
 		},
@@ -159,25 +160,25 @@ func TestContext_checkPositionalCount(t *testing.T) {
 		// taking 1 or 2 args
 		{
 			"1-2 arguments, too few",
-			tDescription{PosArgsMin: 1, PosArgsMax: 2},
+			meta.Positional{Min: 1, Max: 2},
 			tArguments{Command: "example", Pos: []string{}},
 			"Wrong number of arguments: 'example' takes between 1 and 2 arguments. ",
 		},
 		{
 			"1-2 arguments, enough",
-			tDescription{PosArgsMin: 1, PosArgsMax: 2},
+			meta.Positional{Min: 1, Max: 2},
 			tArguments{Command: "example", Pos: []string{"world"}},
 			"",
 		},
 		{
 			"1-2 arguments, enough (2)",
-			tDescription{PosArgsMin: 1, PosArgsMax: 2},
+			meta.Positional{Min: 1, Max: 2},
 			tArguments{Command: "example", Pos: []string{"hello", "world"}},
 			"",
 		},
 		{
 			"1-2 arguments, too many",
-			tDescription{PosArgsMin: 1, PosArgsMax: 2},
+			meta.Positional{Min: 1, Max: 2},
 			tArguments{Command: "example", Pos: []string{"hello", "world", "you"}},
 			"Wrong number of arguments: 'example' takes between 1 and 2 arguments. ",
 		},
@@ -185,25 +186,25 @@ func TestContext_checkPositionalCount(t *testing.T) {
 		// taking 2 args
 		{
 			"two arguments, too few",
-			tDescription{PosArgsMin: 2, PosArgsMax: 2},
+			meta.Positional{Min: 2, Max: 2},
 			tArguments{Command: "example", Pos: []string{}},
 			"Wrong number of arguments: 'example' takes exactly 2 argument(s). ",
 		},
 		{
 			"two arguments, too few (2)",
-			tDescription{PosArgsMin: 2, PosArgsMax: 2},
+			meta.Positional{Min: 2, Max: 2},
 			tArguments{Command: "example", Pos: []string{"world"}},
 			"Wrong number of arguments: 'example' takes exactly 2 argument(s). ",
 		},
 		{
 			"two arguments, enough",
-			tDescription{PosArgsMin: 2, PosArgsMax: 2},
+			meta.Positional{Min: 2, Max: 2},
 			tArguments{Command: "example", Pos: []string{"hello", "world"}},
 			"",
 		},
 		{
 			"two arguments, too many",
-			tDescription{PosArgsMin: 2, PosArgsMax: 2},
+			meta.Positional{Min: 2, Max: 2},
 			tArguments{Command: "example", Pos: []string{"hello", "world", "you"}},
 			"Wrong number of arguments: 'example' takes exactly 2 argument(s). ",
 		},
@@ -211,19 +212,19 @@ func TestContext_checkPositionalCount(t *testing.T) {
 		// at least one argument
 		{
 			"at least 1 arguments, not enough",
-			tDescription{PosArgsMin: 1, PosArgsMax: -1},
+			meta.Positional{Min: 1, Max: -1},
 			tArguments{Command: "example", Pos: []string{}},
 			"Wrong number of arguments: 'example' takes at least 1 argument(s). ",
 		},
 		{
 			"at least 1 arguments, enough",
-			tDescription{PosArgsMin: 1, PosArgsMax: -1},
+			meta.Positional{Min: 1, Max: -1},
 			tArguments{Command: "example", Pos: []string{"hello"}},
 			"",
 		},
 		{
 			"at least 1 arguments, enough (2)",
-			tDescription{PosArgsMin: 1, PosArgsMax: -1},
+			meta.Positional{Min: 1, Max: -1},
 			tArguments{Command: "example", Pos: []string{"hello", "cruel", "world"}},
 			"",
 		},
@@ -231,8 +232,10 @@ func TestContext_checkPositionalCount(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			context := &tContext{
-				Args:        tt.arguments,
-				Description: tt.options,
+				Args: tt.arguments,
+				Description: tDescription{
+					Positional: tt.Positional,
+				},
 			}
 			err := context.CheckPositionalCount()
 			gotErr := ""

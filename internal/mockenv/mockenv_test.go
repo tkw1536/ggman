@@ -10,6 +10,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
+	"github.com/tkw1536/ggman/program/meta"
 )
 
 // recordingT records a message passed to Errorf()
@@ -77,8 +78,10 @@ func (mockEnvRunCommand) BeforeRegister(program *ggman.Program) {}
 
 func (mockEnvRunCommand) Description() ggman.Description {
 	return ggman.Description{
-		Name:       "fake",
-		PosArgsMax: -1,
+		Command: "fake",
+		Positional: meta.Positional{
+			Max: -1,
+		},
 		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},

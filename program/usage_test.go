@@ -6,7 +6,7 @@ import (
 
 	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
+	"github.com/tkw1536/ggman/program/meta"
 )
 
 // fakeCommand represents a dummy command with the given name
@@ -15,15 +15,15 @@ type fakeCommand string
 var _ tCommand = (fakeCommand)("")
 
 func (fakeCommand) BeforeRegister(program *tProgram) {}
-func (f fakeCommand) Description() tDescription      { return tDescription{Name: string(f)} }
+func (f fakeCommand) Description() tDescription      { return tDescription{Command: string(f)} }
 func (fakeCommand) AfterParse() error                { panic("fakeCommand: not implemented") }
 func (fakeCommand) Run(tContext) error               { panic("fakeCommand: not implemented") }
 
-var testInfo = program.Info{
+var testInfo = meta.Info{
 	BuildVersion: "42.0.0",
 	BuildTime:    time.Unix(0, 0).UTC(),
 
-	MainName:    "exe",
+	Executable:  "exe",
 	Description: "something something dark side",
 }
 
@@ -55,12 +55,9 @@ func TestProgram_CommandUsage(t *testing.T) {
 	}{}, flags.Default)
 
 	type fields struct {
-		Description      string
-		Environment      env.Requirement
-		MinArgs          int
-		MaxArgs          int
-		Metavar          string
-		UsageDescription string
+		Description string
+		Environment env.Requirement
+		Positional  meta.Positional
 	}
 	type args struct {
 		command string
@@ -73,42 +70,42 @@ func TestProgram_CommandUsage(t *testing.T) {
 	}{
 		{
 			"command without args and allowing filter",
-			fields{Environment: env.Requirement{AllowsFilter: true}, UsageDescription: "usage"},
+			fields{Environment: env.Requirement{AllowsFilter: true}, Positional: meta.Positional{Description: "usage"}},
 			args{"a"},
 			"Usage: exe [--help|-h] [--version|-v] [--for|-f filter] [--no-fuzzy-filter|-n] [--here|-H] [--path|-P] [--dirty|-d] [--clean|-c] [--synced|-s] [--unsynced|-u] [--tarnished|-t] [--pristine|-p] [--] a [--bool|-b random] [--int dummy]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -f, --for filter\n      Filter list of repositories to apply COMMAND to by filter. Filter can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url\n\n   -n, --no-fuzzy-filter\n      Disable fuzzy matching for filters\n\n   -H, --here\n      Filter the list of repositories to apply COMMAND to only contain repository in the current directory or subtree. Alias for '-p .'\n\n   -P, --path\n      Filter the list of repositories to apply COMMAND to only contain repositories in or under the specified path. May be used multiple times\n\n   -d, --dirty\n      List only repositories with uncommited changes\n\n   -c, --clean\n      List only repositories without uncommited changes\n\n   -s, --synced\n      List only repositories which are up-to-date with remote\n\n   -u, --unsynced\n      List only repositories not up-to-date with remote\n\n   -t, --tarnished\n      List only repositories which are dirty or unsynced\n\n   -p, --pristine\n      List only repositories which are clean and synced\n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)\n\n   \n      usage",
 		},
 
 		{
 			"command without args and not allowing filter",
-			fields{Environment: env.Requirement{}, UsageDescription: "usage", Metavar: "META"},
+			fields{Environment: env.Requirement{}, Positional: meta.Positional{Description: "usage", Value: "META"}},
 			args{"a"},
 			"Usage: exe [--help|-h] [--version|-v] [--] a [--bool|-b random] [--int dummy]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)\n\n   \n      usage",
 		},
 
 		{
 			"command with max finite args",
-			fields{Environment: env.Requirement{}, MaxArgs: 4, UsageDescription: "usage", Metavar: "META"},
+			fields{Environment: env.Requirement{}, Positional: meta.Positional{Max: 4, Description: "usage", Value: "META"}},
 			args{"a"},
 			"Usage: exe [--help|-h] [--version|-v] [--] a [--bool|-b random] [--int dummy] [--] [META [META [META [META]]]]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)\n\n   [META [META [META [META]]]]\n      usage",
 		},
 
 		{
 			"command with finite args",
-			fields{Environment: env.Requirement{}, MinArgs: 1, MaxArgs: 2, UsageDescription: "usage", Metavar: "META"},
+			fields{Environment: env.Requirement{}, Positional: meta.Positional{Min: 1, Max: 2, Description: "usage", Value: "META"}},
 			args{"a"},
 			"Usage: exe [--help|-h] [--version|-v] [--] a [--bool|-b random] [--int dummy] [--] META [META]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)\n\n   META [META]\n      usage",
 		},
 
 		{
 			"command with infinite args",
-			fields{Environment: env.Requirement{}, MinArgs: 1, MaxArgs: -1, UsageDescription: "usage", Metavar: "META"},
+			fields{Environment: env.Requirement{}, Positional: meta.Positional{Min: 1, Max: -1, Description: "usage", Value: "META"}},
 			args{"a"},
 			"Usage: exe [--help|-h] [--version|-v] [--] a [--bool|-b random] [--int dummy] [--] META [META ...]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)\n\n   META [META ...]\n      usage",
 		},
 
 		{
 			"command with description",
-			fields{Description: "A fake command", Environment: env.Requirement{}, MinArgs: 1, MaxArgs: -1, UsageDescription: "usage", Metavar: "META"},
+			fields{Description: "A fake command", Environment: env.Requirement{}, Positional: meta.Positional{Min: 1, Max: -1, Description: "usage", Value: "META"}},
 			args{"a"},
 			"Usage: exe [--help|-h] [--version|-v] [--] a [--bool|-b random] [--int dummy] [--] META [META ...]\n\nA fake command\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)\n\n   META [META ...]\n      usage",
 		},
@@ -123,12 +120,9 @@ func TestProgram_CommandUsage(t *testing.T) {
 				Parser: parser, // TODO: Fix public / private issue
 
 				Description: tDescription{
-					Description:       tt.fields.Description,
-					Requirements:      tt.fields.Environment,
-					PosArgsMin:        tt.fields.MinArgs,
-					PosArgsMax:        tt.fields.MaxArgs,
-					PosArgName:        tt.fields.Metavar,
-					PosArgDescription: tt.fields.UsageDescription,
+					Description:  tt.fields.Description,
+					Requirements: tt.fields.Environment,
+					Positional:   tt.fields.Positional,
 				},
 			}
 			if gotUsage := program.CommandUsage(context).String(); gotUsage != tt.wantUsage {

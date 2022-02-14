@@ -23,7 +23,7 @@ func (fix) BeforeRegister(program *ggman.Program) {}
 
 func (f *fix) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "fix",
+		Command:     "fix",
 		Description: "Canonicalizes remote URLs for cloned repositories. ",
 		Requirements: env.Requirement{
 			NeedsRoot:    true,

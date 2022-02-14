@@ -6,7 +6,7 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/program/exit"
-	"github.com/tkw1536/ggman/program/usagefmt"
+	"github.com/tkw1536/ggman/program/meta"
 )
 
 // Command represents a command associated with a program.
@@ -56,20 +56,16 @@ type Command[E any, P any, F any, R Requirement[F]] interface {
 
 // Description describes a command, and specifies any potential requirements.
 type Description[F any, R Requirement[F]] struct {
-	// Name and Description of this command.
+	// Command holds  and Description of this command.
 	//
-	// Name must not be taken by any other command registered with the corresponding program.
+	// Command must not be taken by any other command registered with the corresponding program.
 	// Description is only used in the help page.
-	Name        string
+	Command     string
 	Description string
 
-	SkipUnknownOptions bool // do not complain about unkown options and add the to positionals instead
+	Positional meta.Positional // positional information
 
-	// description of the positional arguments this command takes in addition to the regular option parsing.
-	PosArgName        string // used only in help page, defaults to "ARGUMENT"
-	PosArgDescription string // used only in help page, human readable
-	PosArgsMin        int    // minimum number of positional arguments taken >= 0
-	PosArgsMax        int    // maximal number of positional arguments taken, set to -1 for unlimited arguments
+	SkipUnknownOptions bool // do not complain about unknown options and add the to positionals instead
 
 	// Requirements on the environment to be able to run the command
 	Requirements R
@@ -77,9 +73,9 @@ type Description[F any, R Requirement[F]] struct {
 
 // Requirement describes a requirement on a type of Flags F.
 type Requirement[F any] interface {
-	// AllowsOption checks if the provided option may be passed to fullfill this requirement
+	// AllowsFlag checks if the provided flag may be passed to fullfill this requirement
 	// By default it is used only for help page generation, and may be inaccurate.
-	AllowsOption(option usagefmt.Opt) bool
+	AllowsFlag(flag meta.Flag) bool
 
 	// Validate validates if this requirement is fullfilled for the provided global flags.
 	// It should return either nil, or an error of type exit.Error.
@@ -99,7 +95,7 @@ func (p *Program[R, P, Flags, Requirements]) Register(c Command[R, P, Flags, Req
 
 	c.BeforeRegister(p)
 
-	Name := c.Description().Name
+	Name := c.Description().Command
 
 	if _, ok := p.commands[Name]; ok {
 		panic("Register(): Command already registered")
@@ -121,7 +117,7 @@ func (p Program[E, P, F, R]) Commands() []string {
 // FmtCommands returns a human readable string describing the commands.
 // See also Commands.
 func (p Program[E, P, F, R]) FmtCommands() string {
-	return usagefmt.FmtCommands(p.Commands())
+	return meta.JoinCommands(p.Commands())
 }
 
 // CloneCommand returns a new Command that behaves exactly like Command.
@@ -149,21 +145,21 @@ var errTakesNoArgument = exit.Error{
 	Message:  "Wrong number of arguments: '%s' takes no '%s' argument. ",
 }
 
-// Validate validates that every option O in F either passes the AllowsOption method of the given requirement, or has the zero value.
-// If this is not the case returns an error of type ValidateAllowedOptions.
+// Validate validates that every flag f in args.flags either passes the AllowsOption method of the given requirement, or has the zero value.
+// If this is not the case returns an error of type ValidateAllowedFlags.
 //
 // This function is intended to be used to implement the validate method of a Requirement.
-func ValidateAllowedOptions[F any](r Requirement[F], args Arguments[F]) error {
+func ValidateAllowedFlags[F any](r Requirement[F], args Arguments[F]) error {
 	fVal := reflect.ValueOf(args.Flags)
 
-	for _, opt := range globalFlags[F]() {
-		if r.AllowsOption(opt) {
+	for _, flag := range globalFlags[F]() {
+		if r.AllowsFlag(flag) {
 			continue
 		}
 
-		v := fVal.FieldByName(opt.FieldName)
+		v := fVal.FieldByName(flag.FieldName)
 		if !v.IsZero() { // flag was set!
-			name := opt.Long
+			name := flag.Long
 			if len(name) == 0 {
 				name = []string{""}
 			}
@@ -175,36 +171,36 @@ func ValidateAllowedOptions[F any](r Requirement[F], args Arguments[F]) error {
 
 }
 
-var universalOpts = usagefmt.MakeOpts(flags.NewParser(&Universals{}, flags.None))
+var universalOpts = meta.AllFlags(flags.NewParser(&Universals{}, flags.None))
 
 // globalOptions returns a list of global options for a command with the provided flag type
-func globalOptions[F any]() (opts []usagefmt.Opt) {
-	opts = append(opts, universalOpts...)
-	opts = append(opts, globalFlags[F]()...)
+func globalOptions[F any]() (flags []meta.Flag) {
+	flags = append(flags, universalOpts...)
+	flags = append(flags, globalFlags[F]()...)
 	return
 }
 
-// globalOptions returns a list of global options for a command with the provided flag type
-func globalOptionsFor[F any](r Requirement[F]) (opts []usagefmt.Opt) {
+// globalFlagsFor returns a list of global options for a command with the provided flag type
+func globalFlagsFor[F any](r Requirement[F]) (flags []meta.Flag) {
 	// filter options to be those that are allowed
-	flags := globalFlags[F]()
+	gFlags := globalFlags[F]()
 	n := 0
-	for _, opt := range flags {
-		if !r.AllowsOption(opt) {
+	for _, flag := range gFlags {
+		if !r.AllowsFlag(flag) {
 			continue
 		}
-		flags[n] = opt
+		gFlags[n] = flag
 		n++
 	}
-	flags = flags[:n]
+	gFlags = gFlags[:n]
 
 	// concat universal flags and normal flags
-	opts = append(opts, universalOpts...)
-	opts = append(opts, flags...)
+	flags = append(flags, universalOpts...)
+	flags = append(flags, gFlags...)
 	return
 }
 
 // globalFlags returns a list of flags for the provided flag type.
-func globalFlags[F any]() []usagefmt.Opt {
-	return usagefmt.MakeOpts(flags.NewParser(new(F), flags.None))
+func globalFlags[F any]() []meta.Flag {
+	return meta.AllFlags(flags.NewParser(new(F), flags.None))
 }

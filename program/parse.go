@@ -206,8 +206,8 @@ var errParseTakesBetweenArguments = exit.Error{
 // When the wrong number of arguments is passed, returns an error of type Error.
 func (context Context[E, P, F, R]) CheckPositionalCount() error {
 	// TODO: Public because test!
-	min := context.Description.PosArgsMin
-	max := context.Description.PosArgsMax
+	min := context.Description.Positional.Min
+	max := context.Description.Positional.Max
 
 	argc := len(context.Args.Pos)
 

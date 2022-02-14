@@ -24,7 +24,7 @@ func (*ls) BeforeRegister(program *ggman.Program) {}
 
 func (l *ls) Description() ggman.Description {
 	return ggman.Description{
-		Name:        "ls",
+		Command:     "ls",
 		Description: "List local paths to all locally cloned repositories. ",
 
 		Requirements: env.Requirement{
