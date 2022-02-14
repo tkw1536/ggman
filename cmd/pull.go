@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/program"
@@ -39,11 +36,11 @@ var errPullCustom = ggman.Error{
 }
 
 func (pull) Run(context program.Context) error {
-	hasError := false
+	var hasError bool
 	for _, repo := range context.Env.Repos() {
 		context.Printf("Pulling %q\n", repo)
 		if e := context.Git.Pull(context.IOStream, repo); e != nil {
-			fmt.Fprintln(os.Stderr, e.Error())
+			context.EPrintf("%s\n", e)
 			hasError = true
 		}
 	}
