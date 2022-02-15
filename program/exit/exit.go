@@ -36,6 +36,7 @@ const (
 
 	// ExitInvalidEnvironment indicates that the environment for the ggman command is setup incorrectly.
 	// This typically means that the CANFILE or GGROOT is configured incorrectly, but could also indicate a different error.
+	// TODO: Remove this code or make it more generic
 	ExitInvalidEnvironment ExitCode = 5
 
 	// ExitInvalidRepo indicates that the user attempted to perform an operation on an invalid repository.

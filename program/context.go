@@ -19,8 +19,7 @@ type Context[E any, P any, F any, R Requirement[F]] struct {
 	// Environment holds the environment for this command.
 	Environment E
 
-	// TODO: This should not be public
-	Parser *flags.Parser // internal parser for the arguments being invoked
+	parser *flags.Parser // internal parser for the arguments being invoked
 }
 
 // Arguments represent a set of command-independent arguments passed to a command.
@@ -28,8 +27,8 @@ type Context[E any, P any, F any, R Requirement[F]] struct {
 //
 // Command line argument are annotated using syntax provided by "github.com/jessevdk/go-flags".
 type Arguments[F any] struct {
-	Universals Universals
-	Flags      F
+	Universals Universals `group:"universals"`
+	Flags      F          `group:"flags"`
 
 	Command string   // command to run
 	Pos     []string // positional arguments

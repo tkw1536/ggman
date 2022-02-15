@@ -22,15 +22,14 @@ func (p Program[E, P, F, R]) MainUsage() meta.Meta {
 
 // CommandUsage generates the usage information about a specific command
 func (p Program[E, P, F, R]) CommandUsage(context Context[E, P, F, R]) meta.Meta {
-
 	return meta.Meta{
 		Executable:  p.Info.Executable,
 		GlobalFlags: globalFlagsFor[F](context.Description.Requirements),
 
 		Description: context.Description.Description,
 
-		Command:      context.Args.Command,
-		CommandFlags: meta.AllFlags(context.Parser),
+		Command:      context.Description.Command,
+		CommandFlags: meta.AllFlags(context.parser),
 
 		Positional: context.Description.Positional,
 	}

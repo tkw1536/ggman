@@ -81,6 +81,7 @@ type Requirement[F any] interface {
 	// It should return either nil, or an error of type exit.Error.
 	//
 	// Validate does not take into account AllowsOption, see ValidateAllowedOptions.
+	// TODO: Make this take context
 	Validate(arguments Arguments[F]) error
 }
 

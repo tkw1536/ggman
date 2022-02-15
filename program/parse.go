@@ -9,7 +9,8 @@ import (
 	"github.com/tkw1536/ggman/program/exit"
 )
 
-var ErrParseArgsNeedOneArgument = exit.Error{ // TODO: Public because test
+// TODO: fix error message
+var errParseArgsNeedOneArgument = exit.Error{
 	ExitCode: exit.ExitGeneralArguments,
 	Message:  "Unable to parse arguments: Need at least one argument. Use `ggman license` to view licensing information.",
 }
@@ -58,7 +59,7 @@ func (args *Arguments[Flags]) Parse(argv []string) error {
 		case args.Universals.Help || args.Universals.Version:
 			return nil
 		default:
-			return ErrParseArgsNeedOneArgument
+			return errParseArgsNeedOneArgument
 		}
 	}
 
@@ -122,7 +123,7 @@ func (context *Context[E, P, F, R]) Parse(command Command[E, P, F, R], arguments
 		return nil
 	}
 
-	if err := context.CheckFilterArgument(); err != nil {
+	if err := context.checkFilterArgument(); err != nil {
 		return err
 	}
 
@@ -130,7 +131,7 @@ func (context *Context[E, P, F, R]) Parse(command Command[E, P, F, R], arguments
 		return err
 	}
 
-	if err := context.CheckPositionalCount(); err != nil {
+	if err := context.checkPositionalCount(); err != nil {
 		return err
 	}
 
@@ -152,7 +153,7 @@ func (context *Context[E, P, F, R]) prepare(command Command[E, P, F, R], argumen
 	if context.Description.SkipUnknownOptions {
 		options |= flags.IgnoreUnknown
 	}
-	context.Parser = makeFlagsParser(command, options)
+	context.parser = makeFlagsParser(command, options)
 }
 
 var errParseFlagSet = exit.Error{
@@ -165,7 +166,7 @@ var errParseFlagSet = exit.Error{
 //
 // When an error occurs, returns an error of type Error.
 func (context *Context[E, P, F, R]) parseFlags() (err error) {
-	context.Args.Pos, err = context.Parser.ParseArgs(context.Args.Pos)
+	context.Args.Pos, err = context.parser.ParseArgs(context.Args.Pos)
 
 	// catch the help error
 	if flagErr, ok := err.(*flags.Error); ok && flagErr.Type == flags.ErrHelp {
@@ -181,63 +182,24 @@ func (context *Context[E, P, F, R]) parseFlags() (err error) {
 	return err
 }
 
-var errParseTakesExactlyArguments = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "Wrong number of arguments: '%s' takes exactly %d argument(s). ",
-}
-
-var errParseTakesNoArguments = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "Wrong number of arguments: '%s' takes no arguments. ",
-}
-
-var errParseTakesMinArguments = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "Wrong number of arguments: '%s' takes at least %d argument(s). ",
-}
-
-var errParseTakesBetweenArguments = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "Wrong number of arguments: '%s' takes between %d and %d arguments. ",
-}
-
-// checkPositionalCount checks that the correct number of arguments was passed to this command.
-// This function implicitly assumes that Options, Arguments and Argv are set appropriatly.
-// When the wrong number of arguments is passed, returns an error of type Error.
-func (context Context[E, P, F, R]) CheckPositionalCount() error {
-	// TODO: Public because test!
-	min := context.Description.Positional.Min
-	max := context.Description.Positional.Max
-
-	argc := len(context.Args.Pos)
-
-	// If we are outside the range for the arguments, we reset the counter to 0
-	// and return the appropriate error message.
-	//
-	// - we always need to be more than the minimum
-	// - we need to be below the max if the maximum is not unlimited
-	if argc < min || ((max != -1) && (argc > max)) {
-		switch {
-		case min == max && min == 0: // 0 arguments, but some given
-			return errParseTakesNoArguments.WithMessageF(context.Args.Command)
-		case min == max: // exact number of arguments is wrong
-			return errParseTakesExactlyArguments.WithMessageF(context.Args.Command, min)
-		case max == -1: // less than min arguments
-			return errParseTakesMinArguments.WithMessageF(context.Args.Command, min)
-		default: // between set number of arguments
-			return errParseTakesBetweenArguments.WithMessageF(context.Args.Command, min, max)
-		}
-	}
-
-	return nil
-}
-
 // checkFilterArgument checks that any filter argument (like --for) which is not allowed is not passed.
 // It expects argument passing to have occured.
 //
 // When filter arguments are allowed, immediatly returns nil.
 // When filter arguments are not allowed returns an error of type Error iff the check fails.
-func (context Context[E, P, F, R]) CheckFilterArgument() error {
-	// TODO: public because test!
+func (context Context[E, P, F, R]) checkFilterArgument() error {
 	return context.Description.Requirements.Validate(context.Args)
+}
+
+var errParseArgCount = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
+	Message:  "Wrong number of positional arguments for %s: %s",
+}
+
+func (context Context[E, P, F, R]) checkPositionalCount() error {
+	err := context.Description.Positional.Validate(len(context.Args.Pos))
+	if err != nil {
+		return errParseArgCount.WithMessageF(context.Args.Command, err)
+	}
+	return nil
 }
