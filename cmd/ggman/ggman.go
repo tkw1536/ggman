@@ -142,6 +142,12 @@ func init() {
 	}
 }
 
+// an error when nor arguments are provided.
+var errNoArgumentsProvided = exit.Error{
+	ExitCode: exit.ExitGeneralArguments,
+	Message:  "Need at least one argument. Use `ggman license` to view licensing information. ",
+}
+
 func main() {
 	// recover from calls to panic(), and exit the program appropriatly.
 	// This has to be in the main() function because any of the library functions might be broken.
@@ -153,6 +159,15 @@ func main() {
 			exit.ExitPanic.Return()
 		}
 	}()
+
+	// when there are no arguments then parsing argument *will* fail
+	//
+	// we don't need to even bother with the rest of the program
+	// just immediatly return a custom error message.
+	if len(os.Args) == 1 {
+		errNoArgumentsProvided.Return()
+		return
+	}
 
 	// execute the main program with the real environment!
 	err := ggmanExe.Main(stream.FromEnv(), env.EnvironmentParameters{
