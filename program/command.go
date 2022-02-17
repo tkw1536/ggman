@@ -34,7 +34,6 @@ type Command[E any, P any, F any, R Requirement[F]] interface {
 	// Run runs this command in the given context.
 	//
 	// It is called only once and must return either nil or an error of type Error.
-	// TODO: Rename this to main!
 	Run(context Context[E, P, F, R]) error
 
 	// BeforeRegister is called right before this command is registered with a program.
@@ -56,16 +55,13 @@ type Command[E any, P any, F any, R Requirement[F]] interface {
 
 // Description describes a command, and specifies any potential requirements.
 type Description[F any, R Requirement[F]] struct {
-	// Command holds  and Description of this command.
-	//
+	// Command and Description the name and human-readable description of this command.
 	// Command must not be taken by any other command registered with the corresponding program.
-	// Description is only used in the help page.
 	Command     string
 	Description string
 
-	Positional meta.Positional // positional information
-
-	SkipUnknownOptions bool // do not complain about unknown options and add the to positionals instead
+	// Positional holds information about positional arguments for this command.
+	Positional meta.Positional
 
 	// Requirements on the environment to be able to run the command
 	Requirements R

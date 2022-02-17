@@ -34,16 +34,6 @@ const (
 	// ExitCommandArguments indicates that the user attempted to pass invalid command-specific arguments to a ggman subcommand.
 	ExitCommandArguments ExitCode = 4
 
-	// ExitInvalidEnvironment indicates that the environment for the ggman command is setup incorrectly.
-	// This typically means that the CANFILE or GGROOT is configured incorrectly, but could also indicate a different error.
-	// TODO: Remove this code or make it more generic
-	ExitInvalidEnvironment ExitCode = 5
-
-	// ExitInvalidRepo indicates that the user attempted to perform an operation on an invalid repository.
-	// TODO: Move me to ggman
-	// This typically means that the current directory is not inside GGROOT.
-	ExitInvalidRepo ExitCode = 6
-
 	// ExitPanic indicates that the go code called panic() inside the executation of the ggman program.
 	// This typically implies a bug inside a program.
 	ExitPanic ExitCode = 255

@@ -38,7 +38,7 @@ func (lsr) AfterParse() error {
 
 var errInvalidCanfile = exit.Error{
 	Message:  "Invalid CANFILE found. ",
-	ExitCode: exit.ExitInvalidEnvironment,
+	ExitCode: env.ExitInvalidEnvironment,
 }
 
 func (l lsr) Run(context ggman.Context) error {

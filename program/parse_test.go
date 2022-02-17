@@ -107,44 +107,44 @@ func Test_parseFlagNames(t *testing.T) {
 	}
 }
 
-func TestArguments_checkFilterArgument(t *testing.T) {
+func TestArguments_checkRequirements(t *testing.T) {
 
 	// define requirements to allow only the Global1 (or any) arguments
-	reqOne := ttRequirements(func(flag meta.Flag) bool {
+	reqOne := tRequirements(func(flag meta.Flag) bool {
 		return flag.FieldName == "Global1"
 	})
 
 	// define requirements to allow anything
-	reqAny := ttRequirements(func(flag meta.Flag) bool { return true })
+	reqAny := tRequirements(func(flag meta.Flag) bool { return true })
 
 	tests := []struct {
 		name  string
-		reqs  ttRequirements
-		flags ttFlags
+		reqs  tRequirements
+		flags tFlags
 
 		wantErr string
 	}{
 		{
 			"global not allowed, global not given",
 			reqOne,
-			ttFlags{},
+			tFlags{},
 			"",
 		},
 		{
 			"global not allowed, global given",
 			reqOne,
-			ttFlags{GlobalOne: "global1"},
+			tFlags{GlobalOne: "global1"},
 			"Wrong number of arguments: 'echo' takes no '--global-one' argument. ",
 		},
 
 		{
 			"global allowed, global not given",
-			reqAny, ttFlags{},
+			reqAny, tFlags{},
 			"",
 		},
 		{
 			"global allowed, global given",
-			reqAny, ttFlags{GlobalOne: "global1"},
+			reqAny, tFlags{GlobalOne: "global1"},
 			"",
 		},
 	}
@@ -159,19 +159,19 @@ func TestArguments_checkFilterArgument(t *testing.T) {
 					Flags:   tt.flags,
 				},
 			}
-			err := context.checkFilterArgument()
+			err := context.checkRequirements()
 			gotErr := ""
 			if err != nil {
 				gotErr = err.Error()
 			}
 			if gotErr != tt.wantErr {
-				t.Errorf("Context.checkFilterArgument() error = %q, wantErr %q", err, tt.wantErr)
+				t.Errorf("Context.checkRequirements() error = %q, wantErr %q", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestArguments_Parse(t *testing.T) {
+func TestArguments_parseP(t *testing.T) {
 	type args struct {
 		argv []string
 	}
@@ -209,18 +209,18 @@ func TestArguments_Parse(t *testing.T) {
 		{"global flag without command (1)", args{[]string{"-a", "stuff"}}, iArguments{}, errParseArgsNeedOneArgument},
 		{"global flag without command (2)", args{[]string{"--global-one", "stuff"}}, iArguments{}, errParseArgsNeedOneArgument},
 
-		{"global flag with command (1)", args{[]string{"-a", "stuff", "cmd"}}, iArguments{Command: "cmd", Flags: ttFlags{GlobalOne: "stuff"}, Pos: []string{}}, nil},
-		{"global flag with command (2)", args{[]string{"--global-one", "stuff", "cmd"}}, iArguments{Command: "cmd", Flags: ttFlags{GlobalOne: "stuff"}, Pos: []string{}}, nil},
+		{"global flag with command (1)", args{[]string{"-a", "stuff", "cmd"}}, iArguments{Command: "cmd", Flags: tFlags{GlobalOne: "stuff"}, Pos: []string{}}, nil},
+		{"global flag with command (2)", args{[]string{"--global-one", "stuff", "cmd"}}, iArguments{Command: "cmd", Flags: tFlags{GlobalOne: "stuff"}, Pos: []string{}}, nil},
 
-		{"global flag with command and arguments (1)", args{[]string{"--global-two", "stuff", "cmd", "a1", "a2"}}, iArguments{Command: "cmd", Flags: ttFlags{GlobalTwo: "stuff"}, Pos: []string{"a1", "a2"}}, nil},
-		{"global flag with command and arguments (2)", args{[]string{"-b", "stuff", "cmd", "a1", "a2"}}, iArguments{Command: "cmd", Flags: ttFlags{GlobalTwo: "stuff"}, Pos: []string{"a1", "a2"}}, nil},
+		{"global flag with command and arguments (1)", args{[]string{"--global-two", "stuff", "cmd", "a1", "a2"}}, iArguments{Command: "cmd", Flags: tFlags{GlobalTwo: "stuff"}, Pos: []string{"a1", "a2"}}, nil},
+		{"global flag with command and arguments (2)", args{[]string{"-b", "stuff", "cmd", "a1", "a2"}}, iArguments{Command: "cmd", Flags: tFlags{GlobalTwo: "stuff"}, Pos: []string{"a1", "a2"}}, nil},
 
 		{"global looking flag", args{[]string{"--not-a-global-flag", "stuff", "command"}}, iArguments{}, errParseArgsUnknownError.WithMessageF("unknown flag `not-a-global-flag'")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var args iArguments
-			err := args.Parse(tt.args.argv)
+			err := args.parseP(tt.args.argv)
 
 			// turn wantErr into a string
 			var wantErr string
@@ -236,7 +236,7 @@ func TestArguments_Parse(t *testing.T) {
 
 			// compare error messages
 			if wantErr != gotErr {
-				t.Errorf("Arguments.Parse() error = %#v, wantErr %#v", err, tt.wantErr)
+				t.Errorf("Arguments.parseP() error = %#v, wantErr %#v", err, tt.wantErr)
 			}
 
 			if tt.wantErr != nil { // ignore checks when an error is returned; we don't care
@@ -244,7 +244,7 @@ func TestArguments_Parse(t *testing.T) {
 			}
 
 			if !reflect.DeepEqual(args, tt.wantParsed) {
-				t.Errorf("Arguments.Parse() args = %#v, wantArgs %#v", args, &tt.wantParsed)
+				t.Errorf("Arguments.parseP() args = %#v, wantArgs %#v", args, &tt.wantParsed)
 			}
 		})
 	}

@@ -27,7 +27,7 @@ func NewRuntime(params env.EnvironmentParameters, context Context) (*env.Env, er
 }
 
 var errNotADirectory = exit.Error{
-	ExitCode: exit.ExitInvalidRepo,
+	ExitCode: env.ExitInvalidRepo,
 	Message:  "Not a directory: %q",
 }
 

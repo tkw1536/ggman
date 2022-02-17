@@ -9,7 +9,6 @@ import (
 
 func TestProgram_MainUsage(t *testing.T) {
 	program := makeProgram()
-	program.Info = ttInfo
 
 	program.Register(makeEchoCommand("a"))
 	program.Register(makeEchoCommand("c"))
@@ -24,17 +23,15 @@ func TestProgram_MainUsage(t *testing.T) {
 
 func TestProgram_CommandUsage(t *testing.T) {
 
-	program := iProgram{
-		Info: ttInfo,
-	}
+	program := makeProgram()
 
 	// define requirements to allow only the Global1 (or any) arguments
-	reqOne := ttRequirements(func(flag meta.Flag) bool {
+	reqOne := tRequirements(func(flag meta.Flag) bool {
 		return flag.FieldName == "Global1"
 	})
 
 	// define requirements to allow anything
-	reqAny := ttRequirements(func(flag meta.Flag) bool { return true })
+	reqAny := tRequirements(func(flag meta.Flag) bool { return true })
 
 	parser := flags.NewParser(&struct {
 		Boolean bool `short:"b" value-name:"random" long:"bool" description:"a random boolean argument with short"`
@@ -44,7 +41,7 @@ func TestProgram_CommandUsage(t *testing.T) {
 	type args struct {
 		Command     string
 		Description string
-		Requirement ttRequirements
+		Requirement tRequirements
 		Positional  meta.Positional
 	}
 	tests := []struct {
@@ -95,7 +92,7 @@ func TestProgram_CommandUsage(t *testing.T) {
 					Command: tt.args.Command,
 				},
 
-				parser: parser, // TODO: Fix public / private issue
+				commandParser: parser,
 
 				Description: iDescription{
 					Command:      tt.args.Command,

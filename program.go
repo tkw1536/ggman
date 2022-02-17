@@ -32,7 +32,7 @@ var info = meta.Info{
 	Description: fmt.Sprintf("ggman manages local git repositories\n\nggman version %s\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.", constants.BuildVersion),
 }
 
-var ErrParseArgsNeedTwoAfterFor = exit.Error{ // TODO: Public because test
+var errParseArgsNeedTwoAfterFor = exit.Error{ // TODO: Public because test
 	ExitCode: exit.ExitGeneralArguments,
 	Message:  "Unable to parse arguments: At least two arguments needed after 'for' keyword. ",
 }
@@ -59,7 +59,7 @@ func NewProgram() (p Program) {
 
 	p.RegisterKeyword("for", func(args *Arguments) error {
 		if len(args.Pos) < 2 {
-			return ErrParseArgsNeedTwoAfterFor
+			return errParseArgsNeedTwoAfterFor
 		}
 		args.Flags.Filters = append(args.Flags.Filters, args.Pos[0])
 		args.Command = args.Pos[1]

@@ -32,14 +32,14 @@ func (*clone) Description() ggman.Description {
 		Command:     "clone",
 		Description: "Clone a repository into a path described by 'ggman where'",
 
-		SkipUnknownOptions: true,
-
 		Positional: meta.Positional{
 			Value:       "ARG",
 			Description: "URL of repository and arguments to pass to 'git clone'",
 
 			Min: 1,
 			Max: -1,
+
+			IncludeUnknown: true,
 		},
 
 		Requirements: env.Requirement{

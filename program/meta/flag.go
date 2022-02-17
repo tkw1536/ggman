@@ -71,6 +71,11 @@ func NewFlag(option *flags.Option) (flag Flag) {
 //
 // This function is untested.
 func AllFlags(parser *flags.Parser) []Flag {
+	// if there are no flags to be passed, then return immediatly.
+	if parser == nil {
+		return nil
+	}
+
 	// collect all the options
 	var options []*flags.Option
 	groups := parser.Groups()

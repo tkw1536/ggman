@@ -9,10 +9,9 @@ import (
 	"github.com/tkw1536/ggman/program/exit"
 )
 
-// TODO: fix error message
 var errParseArgsNeedOneArgument = exit.Error{
 	ExitCode: exit.ExitGeneralArguments,
-	Message:  "Unable to parse arguments: Need at least one argument. Use `ggman license` to view licensing information.",
+	Message:  "Unable to parse arguments: Need at least one argument. ",
 }
 
 var errParseArgsUnknownError = exit.Error{
@@ -20,32 +19,17 @@ var errParseArgsUnknownError = exit.Error{
 	Message:  "Unable to parse arguments: %s",
 }
 
-// parser returns a new parser for the arguments
-func (args *Arguments[Flags]) parser() *flags.Parser {
-	return makeFlagsParser(args, flags.PassAfterNonOption|flags.PassDoubleDash)
-}
-
-// makeFlagsParser creates a new flags parser for data.
-// When data is nil or not a pointer to a struct, returns an empty parser.
+// parseP parses program-wide arguments.
 //
-// This function is untested.
-func makeFlagsParser(data interface{}, options flags.Options) *flags.Parser {
-	var actual interface{} = data
-	if ptrval := reflect.ValueOf(actual); data == nil || ptrval.Type().Kind() != reflect.Ptr {
-		// not a pointer to struct
-		actual = &struct{}{}
-	}
-
-	return flags.NewParser(actual, options)
-}
-
-// Parse parses arguments.
+// In particular, it *does not* parse command specific arguments.
+// Any flags are just returned as unparsed positionals.
 //
 // When parsing fails, returns an error of type Error.
-func (args *Arguments[Flags]) Parse(argv []string) error {
-	// create a parser and parse the arguments
+func (args *Arguments[Flags]) parseP(argv []string) error {
 	var err error
-	args.Pos, err = args.parser().ParseArgs(argv)
+
+	parser := flags.NewParser(args, flags.PassAfterNonOption|flags.PassDoubleDash)
+	args.Pos, err = parser.ParseArgs(argv)
 
 	// intercept unknonw flags
 	if e, ok := err.(*flags.Error); ok && e.Type == flags.ErrUnknownFlag {
@@ -103,30 +87,39 @@ func parseFlagNames(err *flags.Error) (names []string, ok bool) {
 	return
 }
 
-// Parse parses arguments from a set of parsed command arguments.
-// It also calls .Parse() with the provided arguments on the flagset
+// use prepares this context for using the provided command.
+// It expects the context.Arguments object to exist, see the parseP method of Arguments.
 //
 // It expects that neither the Help nor Version flag of Arguments are true.
 //
 // When parsing fails, returns an error of type Error.
-func (context *Context[E, P, F, R]) Parse(command Command[E, P, F, R], arguments Arguments[F]) error {
-	context.prepare(command, arguments)
+func (context *Context[E, P, F, R]) use(command Command[E, P, F, R]) error {
+	context.Description = command.Description()
 
-	// We first have to check the following (in order):
-	// - a help flag
-	// - the 'for' flag
-	// - the custom flag(s)
-	// - the right number of arguments
+	// when command is a pointer to a struct, we need to setup a parser for command specific arguments.
+	// this requires knowning about if unknown flags are treated as positional arguments or not.
+	if ptrval := reflect.TypeOf(command); command != nil && ptrval.Kind() == reflect.Ptr && ptrval.Elem().Kind() == reflect.Struct {
+		var options flags.Options = flags.PassDoubleDash | flags.HelpFlag
+		if context.Description.Positional.IncludeUnknown {
+			options |= flags.IgnoreUnknown
+		}
 
-	if slice.ContainsAny(context.Args.Pos, "--help", "-h", "help") {
+		context.commandParser = flags.NewParser(command, options)
+	}
+
+	// specifically intercept the "--help" and "-h" arguments.
+	// this prevents any kind of side effect from occuring.
+	if slice.ContainsAny(context.Args.Pos, "--help", "-h") {
 		context.Args.Universals.Help = true
 		return nil
 	}
 
-	if err := context.checkFilterArgument(); err != nil {
+	// check that the requirements for the command have been fullfilled
+	if err := context.checkRequirements(); err != nil {
 		return err
 	}
 
+	// do the actual parsing of the flags and validate that the right number of arguments has been given.
 	if err := context.parseFlags(); err != nil {
 		return err
 	}
@@ -135,25 +128,7 @@ func (context *Context[E, P, F, R]) Parse(command Command[E, P, F, R], arguments
 		return err
 	}
 
-	if err := command.AfterParse(); err != nil {
-		return err
-	}
-
 	return nil
-}
-
-// prepare prepares this CommandArguments for parsing arguments for command
-func (context *Context[E, P, F, R]) prepare(command Command[E, P, F, R], arguments Arguments[F]) {
-	// setup options and arguments!
-	context.Description = command.Description()
-	context.Args = arguments
-
-	// make a flag parser
-	var options flags.Options = flags.PassDoubleDash | flags.HelpFlag
-	if context.Description.SkipUnknownOptions {
-		options |= flags.IgnoreUnknown
-	}
-	context.parser = makeFlagsParser(command, options)
 }
 
 var errParseFlagSet = exit.Error{
@@ -166,7 +141,10 @@ var errParseFlagSet = exit.Error{
 //
 // When an error occurs, returns an error of type Error.
 func (context *Context[E, P, F, R]) parseFlags() (err error) {
-	context.Args.Pos, err = context.parser.ParseArgs(context.Args.Pos)
+	if context.commandParser == nil {
+		return
+	}
+	context.Args.Pos, err = context.commandParser.ParseArgs(context.Args.Pos)
 
 	// catch the help error
 	if flagErr, ok := err.(*flags.Error); ok && flagErr.Type == flags.ErrHelp {
@@ -182,12 +160,7 @@ func (context *Context[E, P, F, R]) parseFlags() (err error) {
 	return err
 }
 
-// checkFilterArgument checks that any filter argument (like --for) which is not allowed is not passed.
-// It expects argument passing to have occured.
-//
-// When filter arguments are allowed, immediatly returns nil.
-// When filter arguments are not allowed returns an error of type Error iff the check fails.
-func (context Context[E, P, F, R]) checkFilterArgument() error {
+func (context Context[E, P, F, R]) checkRequirements() error {
 	return context.Description.Requirements.Validate(context.Args)
 }
 

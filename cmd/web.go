@@ -171,12 +171,12 @@ func (uw *urlweb) AfterParse() error {
 }
 
 var errOutsideRepository = exit.Error{
-	ExitCode: exit.ExitInvalidRepo,
+	ExitCode: env.ExitInvalidRepo,
 	Message:  "Not inside a ggman-controlled repository. ",
 }
 
 var errNoRelativeRepository = exit.Error{
-	ExitCode: exit.ExitInvalidRepo,
+	ExitCode: env.ExitInvalidRepo,
 	Message:  "Unable to use '--relative': Not inside GGROOT",
 }
 

@@ -102,7 +102,7 @@ func NewEnv(r Requirement, params EnvironmentParameters) (*Env, error) {
 }
 
 var errMissingRoot = exit.Error{
-	ExitCode: exit.ExitInvalidEnvironment,
+	ExitCode: ExitInvalidEnvironment,
 	Message:  "Unable to find GGROOT directory. ",
 }
 
@@ -197,7 +197,7 @@ func (env *Env) LoadDefaultCANFILE() (CanFile, error) {
 }
 
 var errUnableDir = exit.Error{
-	ExitCode: exit.ExitInvalidRepo,
+	ExitCode: ExitInvalidRepo,
 	Message:  "Unable to read directory %s",
 }
 
@@ -218,13 +218,23 @@ func (env Env) Local(url URL) (string, error) {
 	return path, nil
 }
 
+const (
+	// ExitInvalidEnvironment indicates that the environment for the ggman command is setup incorrectly.
+	// This typically means that the CANFILE or GGROOT is configured incorrectly, but could also indicate a different error.
+	ExitInvalidEnvironment exit.ExitCode = 5
+
+	// ExitInvalidRepo indicates that the user attempted to perform an operation on an invalid repository.
+	// This typically means that the current directory is not inside GGROOT.
+	ExitInvalidRepo exit.ExitCode = 6
+)
+
 var errInvalidRoot = exit.Error{
-	ExitCode: exit.ExitInvalidEnvironment,
+	ExitCode: ExitInvalidEnvironment,
 	Message:  "Unable to resolve root directory: %s",
 }
 
 var errNotResolved = exit.Error{
-	ExitCode: exit.ExitInvalidRepo,
+	ExitCode: ExitInvalidRepo,
 	Message:  "Unable to resolve repository %q",
 }
 

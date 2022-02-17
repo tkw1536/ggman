@@ -59,53 +59,50 @@ func (p Program[E, P, F, R]) Main(stream stream.IOStream, params P, argv []strin
 		err = stream.Die(err)
 	}()
 
-	// parse the general arguments
-	var args Arguments[F]
-	if err := args.Parse(argv); err != nil {
+	// create a new context
+	context := Context[E, P, F, R]{
+		IOStream: stream,
+	}
+	if err := context.Args.parseP(argv); err != nil {
 		return err
 	}
 
 	// expand keywords
-	keyword, hasKeyword := p.keywords[args.Command]
+	keyword, hasKeyword := p.keywords[context.Args.Command]
 	if hasKeyword {
-		if err := keyword(&args); err != nil {
+		if err := keyword(&context.Args); err != nil {
 			return err
 		}
 	}
 
 	// handle special global flags!
 	switch {
-	case args.Universals.Help:
+	case context.Args.Universals.Help:
 		stream.StdoutWriteWrap(p.MainUsage().String())
 		return nil
-	case args.Universals.Version:
+	case context.Args.Universals.Version:
 		stream.StdoutWriteWrap(p.Info.FmtVersion())
 		return nil
 	}
 
-	// expand the command (if any)
-	alias, hasAlias := p.aliases[args.Command]
+	// expand the alias (if any)
+	alias, hasAlias := p.aliases[context.Args.Command]
 	if hasAlias {
-		args.Command, args.Pos = alias.Invoke(args.Pos)
+		context.Args.Command, context.Args.Pos = alias.Invoke(context.Args.Pos)
 	}
 
 	// load the command if we have it
-	command, hasCommand := p.commands[args.Command]
+	command, hasCommand := p.commands[context.Args.Command]
 	if !hasCommand {
 		return errProgramUnknownCommand.WithMessageF(p.FmtCommands())
 	}
 
-	// create a new context and make an environment for it
-	context := Context[E, P, F, R]{
-		IOStream: stream,
-	}
-
-	// parse the command arguments
-	if err := context.Parse(command, args); err != nil {
+	// make the context use the given command
+	if err := context.use(command); err != nil {
 		return err
 	}
 
-	// special cases of arguments
+	// write out help information (if given)
 	if context.Args.Universals.Help {
 		if hasAlias {
 			stream.StdoutWriteWrap(p.AliasUsage(context, alias).String())
@@ -113,6 +110,11 @@ func (p Program[E, P, F, R]) Main(stream stream.IOStream, params P, argv []strin
 		}
 		stream.StdoutWriteWrap(p.CommandUsage(context).String())
 		return nil
+	}
+
+	// call the AfterParse hook
+	if err := command.AfterParse(); err != nil {
+		return err
 	}
 
 	// create the environment
@@ -127,9 +129,4 @@ func (p Program[E, P, F, R]) Main(stream stream.IOStream, params P, argv []strin
 var errProgramUnknownCommand = exit.Error{
 	ExitCode: exit.ExitUnknownCommand,
 	Message:  "Unknown command. Must be one of %s. ",
-}
-
-var errInitContext = exit.Error{
-	ExitCode: exit.ExitInvalidEnvironment,
-	Message:  "Unable to initialize context: %s",
 }

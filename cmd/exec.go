@@ -53,10 +53,12 @@ func (*exe) Description() ggman.Description {
 
 		Positional: meta.Positional{
 			Value: "ARGS",
-			Min:   1,
-			Max:   -1,
+
+			Min: 1,
+			Max: -1,
+
+			IncludeUnknown: true,
 		},
-		SkipUnknownOptions: true,
 
 		Requirements: env.Requirement{
 			AllowsFilter: true,

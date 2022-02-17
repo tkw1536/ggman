@@ -20,15 +20,13 @@ import (
 // It is reused across the test suite, however there is no versioning guarantee.
 // It may change in a future revision of the test suite.
 
-// TODO: Remove double t
-
 // Environment of each command is a single string value.
 // Parameters to initialize each command is also a string value.
-type ttEnvironment string
-type ttParameters string
+type tEnvironment string
+type tParameters string
 
 func makeEchoCommand(name string) iCommand {
-	return ttCommand{
+	return tCommand{
 		desc: iDescription{
 			Command: name,
 			Positional: meta.Positional{
@@ -50,48 +48,45 @@ func makeEchoCommand(name string) iCommand {
 func makeProgram() iProgram {
 	return iProgram{
 		NewEnvironment: iNewEnvironment,
+		Info: meta.Info{
+			BuildVersion: "42.0.0",
+			BuildTime:    time.Unix(0, 0).UTC(),
+
+			Executable:  "exe",
+			Description: "something something dark side",
+		},
 	}
 }
 
 // iNewEnvivoment implements new environment for parameters
-func iNewEnvironment(params ttParameters, context iContext) (ttEnvironment, error) {
-	return ttEnvironment(string(params)), nil
+func iNewEnvironment(params tParameters, context iContext) (tEnvironment, error) {
+	return tEnvironment(string(params)), nil
 }
 
 // tFlags holds a set of dummy global flags.
-type ttFlags struct {
+type tFlags struct {
 	GlobalOne string `short:"a" long:"global-one"`
 	GlobalTwo string `short:"b" long:"global-two"`
 }
 
 // tRequirements is the implementation of the AllowsFlag function
-type ttRequirements func(flag meta.Flag) bool
+type tRequirements func(flag meta.Flag) bool
 
-func (t ttRequirements) AllowsFlag(flag meta.Flag) bool { return t(flag) }
-func (t ttRequirements) Validate(args Arguments[ttFlags]) error {
-	return ValidateAllowedFlags[ttFlags](t, args)
+func (t tRequirements) AllowsFlag(flag meta.Flag) bool { return t(flag) }
+func (t tRequirements) Validate(args Arguments[tFlags]) error {
+	return ValidateAllowedFlags[tFlags](t, args)
 }
 
 // instiantiated types for the test suite
-type iProgram = Program[ttEnvironment, ttParameters, ttFlags, ttRequirements]
-type iCommand = Command[ttEnvironment, ttParameters, ttFlags, ttRequirements]
-type iContext = Context[ttEnvironment, ttParameters, ttFlags, ttRequirements]
-type iArguments = Arguments[ttFlags]
-type iDescription = Description[ttFlags, ttRequirements]
+type iProgram = Program[tEnvironment, tParameters, tFlags, tRequirements]
+type iCommand = Command[tEnvironment, tParameters, tFlags, tRequirements]
+type iContext = Context[tEnvironment, tParameters, tFlags, tRequirements]
+type iArguments = Arguments[tFlags]
+type iDescription = Description[tFlags, tRequirements]
 
-// ttCommand represents a sample test suite command.
+// tCommand represents a sample test suite command.
 // It runs the associated private functions, or prints an info message to stdout.
-
-// TODO: Move ttInfo inside makeProgram
-var ttInfo = meta.Info{
-	BuildVersion: "42.0.0",
-	BuildTime:    time.Unix(0, 0).UTC(),
-
-	Executable:  "exe",
-	Description: "something something dark side",
-}
-
-type ttCommand struct {
+type tCommand struct {
 	StdoutMsg string `short:"o" long:"stdout" value-name:"message" default:"write to stdout"`
 	StderrMsg string `short:"e" long:"stderr" value-name:"message" default:"write to stderr"`
 
@@ -101,24 +96,24 @@ type ttCommand struct {
 	run            func(context iContext) error
 }
 
-func (t ttCommand) BeforeRegister(program *iProgram) {
+func (t tCommand) BeforeRegister(program *iProgram) {
 	if t.beforeRegister == nil {
 		fmt.Println("BeforeRegister()")
 		return
 	}
 	t.beforeRegister()
 }
-func (t ttCommand) Description() iDescription {
+func (t tCommand) Description() iDescription {
 	return t.desc
 }
-func (t ttCommand) AfterParse() error {
+func (t tCommand) AfterParse() error {
 	if t.afterParse == nil {
 		fmt.Println("AfterParse()")
 		return nil
 	}
 	return t.afterParse()
 }
-func (t ttCommand) Run(ctx iContext) error {
+func (t tCommand) Run(ctx iContext) error {
 	if t.run == nil {
 		fmt.Println("Run()")
 		return nil
@@ -140,18 +135,18 @@ func TestProgram_Main(t *testing.T) {
 	stream := stream.NewIOStream(&stdoutBuffer, &stderrBuffer, nil, wrapLength)
 
 	// define requirements to allow only the Global1 (or any) arguments
-	reqOne := ttRequirements(func(flag meta.Flag) bool {
+	reqOne := tRequirements(func(flag meta.Flag) bool {
 		return flag.FieldName == "Global1"
 	})
 
 	// define requirements to allow anything
-	reqAny := ttRequirements(func(flag meta.Flag) bool { return true })
+	reqAny := tRequirements(func(flag meta.Flag) bool { return true })
 
 	tests := []struct {
 		name       string
 		args       []string
 		desc       iDescription
-		parameters ttParameters
+		parameters tParameters
 
 		// alias to register (if any)
 		alias Alias
@@ -164,10 +159,11 @@ func TestProgram_Main(t *testing.T) {
 		wantStderr string
 		wantCode   uint8
 	}{
+
 		{
 			name:       "no arguments",
 			args:       []string{},
-			wantStderr: "Unable to parse arguments: Need at least one argument. Use `ggman license` to\nview licensing information.\n",
+			wantStderr: "Unable to parse arguments: Need at least one argument.\n",
 			wantCode:   3,
 		},
 
@@ -272,7 +268,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with unknown argument (not allowed)",
 			args:       []string{"fake", "--argument-not-declared"},
-			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: false},
+			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1, IncludeUnknown: false}},
 			wantStdout: "",
 			wantStderr: "Error parsing flags: unknown flag `argument-not-declared'\n",
 			wantCode:   4,
@@ -281,7 +277,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with unknown argument (allowed)",
 			args:       []string{"fake", "--argument-not-declared"},
-			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
+			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1, IncludeUnknown: true}},
 			wantStdout: "Got Flags: { }\nGot Pos: [--argument-not-declared]\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
 			wantCode:   0,
@@ -330,7 +326,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with non-global argument with identical name",
 			args:       []string{"--", "fake", "--global-one"},
-			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
+			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1, IncludeUnknown: true}},
 			wantStdout: "Got Flags: { }\nGot Pos: [--global-one]\nwrite to stdout\n",
 			wantStderr: "write to stderr\n", //
 			wantCode:   0,
@@ -339,7 +335,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with parsed short argument",
 			args:       []string{"fake", "-o", "message"},
-			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
+			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1, IncludeUnknown: true}},
 			wantStdout: "Got Flags: { }\nGot Pos: []\nmessage\n",
 			wantStderr: "write to stderr\n",
 			wantCode:   0,
@@ -348,7 +344,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with non-parsed short argument",
 			args:       []string{"fake", "--", "--s", "message"},
-			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
+			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1, IncludeUnknown: true}},
 			wantStdout: "Got Flags: { }\nGot Pos: [--s message]\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
 			wantCode:   0,
@@ -357,7 +353,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with parsed long argument",
 			args:       []string{"fake", "--stdout", "message"},
-			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
+			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1, IncludeUnknown: true}},
 			wantStdout: "Got Flags: { }\nGot Pos: []\nmessage\n",
 			wantStderr: "write to stderr\n",
 			wantCode:   0,
@@ -366,7 +362,7 @@ func TestProgram_Main(t *testing.T) {
 		{
 			name:       "'fake' with non-parsed long argument",
 			args:       []string{"fake", "--", "--stdout", "message"},
-			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1}, SkipUnknownOptions: true},
+			desc:       iDescription{Requirements: reqAny, Positional: meta.Positional{Min: 0, Max: -1, IncludeUnknown: true}},
 			wantStdout: "Got Flags: { }\nGot Pos: [--stdout message]\nwrite to stdout\n",
 			wantStderr: "write to stderr\n",
 			wantCode:   0,
@@ -455,10 +451,9 @@ func TestProgram_Main(t *testing.T) {
 			stderrBuffer.Reset()
 
 			program := makeProgram()
-			program.Info = ttInfo
 
 			tt.desc.Command = "fake"
-			fake := &ttCommand{
+			fake := &tCommand{
 				desc:           tt.desc,
 				beforeRegister: func() error { return nil },
 				afterParse:     func() error { return nil },

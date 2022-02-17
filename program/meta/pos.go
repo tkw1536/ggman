@@ -13,10 +13,14 @@ type Positional struct {
 	Value       string // defaults to "ARGUMENT"
 	Description string
 
-	// Minimal and Maximum number of times the positonal argument might be passed.
+	// Min and Max indicate how many positional arguments are expected for this command.
 	// Min must be >= 0. Max must be either Min, or -1.
 	// Max == -1 inidicates an unlimited number of repeats.
 	Min, Max int
+
+	// IncludeUnknown causes unknown flags to be parsed as positional arguments.
+	// When IncludeUnknown in false, unknown flags produce an error instead.
+	IncludeUnknown bool
 }
 
 // defaultPositionalValue is the default name used for a positional argument.

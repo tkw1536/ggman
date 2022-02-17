@@ -11,6 +11,7 @@ type Context[E any, P any, F any, R Requirement[F]] struct {
 	// IOStream describes the input and output the command reads from and writes to.
 	stream.IOStream
 
+	// Args holds arguments passed to this command.
 	Args Arguments[F]
 
 	// Description is the description of the command being invoked
@@ -19,7 +20,8 @@ type Context[E any, P any, F any, R Requirement[F]] struct {
 	// Environment holds the environment for this command.
 	Environment E
 
-	parser *flags.Parser // internal parser for the arguments being invoked
+	// commandParser holds a parser that parsed argument passe to the command itself
+	commandParser *flags.Parser
 }
 
 // Arguments represent a set of command-independent arguments passed to a command.
