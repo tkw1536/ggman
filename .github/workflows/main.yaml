@@ -3,7 +3,7 @@ name: CI
 on: [push, pull_request]
 
 env:
-  GO_VERSION: '1.18.0-beta2' # '^1.18'
+  GO_VERSION: '1.18.0-rc1' # '^1.18'
   GO_STABLE: 'false' # 'true'
 
 jobs:
