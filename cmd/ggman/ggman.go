@@ -160,17 +160,20 @@ func main() {
 		}
 	}()
 
+	streams := stream.FromEnv()
+
 	// when there are no arguments then parsing argument *will* fail
 	//
 	// we don't need to even bother with the rest of the program
 	// just immediatly return a custom error message.
 	if len(os.Args) == 1 {
+		streams.Die(errNoArgumentsProvided)
 		errNoArgumentsProvided.Return()
 		return
 	}
 
 	// execute the main program with the real environment!
-	err := ggmanExe.Main(stream.FromEnv(), env.Parameters{
+	err := ggmanExe.Main(streams, env.Parameters{
 		Variables: env.ReadVariables(),
 		Plumbing:  nil,
 		Workdir:   "",
