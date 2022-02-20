@@ -58,9 +58,8 @@ func (env Env) Normalization() path.Normalization {
 	}
 }
 
-// EnvironmentParameters represent additional parameters to create a new environment.
-// TODO: rename me!
-type EnvironmentParameters struct {
+// Parameters represent additional parameters to create a new environment.
+type Parameters struct {
 	Variables
 	Workdir  string
 	Plumbing git.Plumbing
@@ -78,7 +77,7 @@ type EnvironmentParameters struct {
 // If r.AllowsFilter is true, a filter may be passed via the filter argument.
 //
 // This function is untested.
-func NewEnv(r Requirement, params EnvironmentParameters) (*Env, error) {
+func NewEnv(r Requirement, params Parameters) (*Env, error) {
 	env := &Env{
 		Git:     git.NewGitFromPlumbing(params.Plumbing, params.PATH),
 		Vars:    params.Variables,

@@ -8,7 +8,7 @@ import (
 )
 
 // NewRuntime makes a new runtime for ggman
-func NewRuntime(params env.EnvironmentParameters, context Context) (*env.Env, error) {
+func NewRuntime(params env.Parameters, context Context) (*env.Env, error) {
 	// create a new environment
 	env, err := env.NewEnv(context.Description.Requirements, params)
 	if err != nil {

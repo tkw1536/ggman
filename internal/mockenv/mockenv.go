@@ -152,7 +152,7 @@ func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, ar
 	stream := stream.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader, 0)
 
 	// run the code
-	err := exit.AsError(fakeggman.Main(stream, env.EnvironmentParameters{
+	err := exit.AsError(fakeggman.Main(stream, env.Parameters{
 		Variables: mock.vars,
 		Plumbing:  mock.plumbing,
 		Workdir:   workdir,

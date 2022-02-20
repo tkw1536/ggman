@@ -13,7 +13,7 @@ import (
 // these define the ggman-specific program types
 // none of these are strictly needed, they're just around for convenience
 type ggmanRuntime = *env.Env
-type ggmanParameters = env.EnvironmentParameters
+type ggmanParameters = env.Parameters
 type ggmanRequirements = env.Requirement
 type ggmanFlags = env.Flags
 
@@ -32,14 +32,14 @@ var info = meta.Info{
 	Description: fmt.Sprintf("ggman manages local git repositories\n\nggman version %s\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.", constants.BuildVersion),
 }
 
-var errParseArgsNeedTwoAfterFor = exit.Error{ // TODO: Public because test
+var errParseArgsNeedTwoAfterFor = exit.Error{
 	ExitCode: exit.ExitGeneralArguments,
 	Message:  "Unable to parse arguments: At least two arguments needed after 'for' keyword. ",
 }
 
 // NewProgram returns a new ggman program
 func NewProgram() (p Program) {
-	p.NewEnvironment = func(params env.EnvironmentParameters, context Context) (*env.Env, error) {
+	p.NewEnvironment = func(params env.Parameters, context Context) (*env.Env, error) {
 		rt, err := NewRuntime(params, context)
 		return rt, err
 	}
