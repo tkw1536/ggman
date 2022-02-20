@@ -39,10 +39,7 @@ var errParseArgsNeedTwoAfterFor = exit.Error{
 
 // NewProgram returns a new ggman program
 func NewProgram() (p Program) {
-	p.NewEnvironment = func(params env.Parameters, context Context) (*env.Env, error) {
-		rt, err := NewRuntime(params, context)
-		return rt, err
-	}
+	p.NewEnvironment = NewRuntime
 	p.Info = info
 
 	p.RegisterKeyword("help", func(args *Arguments) error {
