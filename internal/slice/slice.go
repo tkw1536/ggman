@@ -51,33 +51,47 @@ func Copy[T any](slice []T) []T {
 	return clone
 }
 
-// RemoveZeros returns a slice that is like s, but with zeroed values removed.
-// This function will invalidate the previous value of s.
+// FilterI filters a slice in-place using pred.
 //
-// It is recommended to store the return value of this function i-n the original variable.
-// The call should look something like:
+// This means that it creates a new slice using the same backing array of slice that only contains values
+// for which pred(v) returns True.
 //
-//  s = RemoveZeros(s)
+// This trivially invalidates the old value of slice.
+// As such the result value should typically be assigned to the input value.
+// For example:
 //
-func RemoveZeros[T comparable](s []T) []T {
-	// Because t is backed by the same slice as s, this function will never re-allocate.
-	// Copying over data is reasonably cheap, as opposed to other approaches.
-
-	// zeroT is used to compare if a value is zero by:
-	//  v == zeroT
-	// an alternative implementation might be:
-	// 	reflect.ValueOf(v).IsZero()
-	// but that is more expensive.
-	var zeroT T
-
-	t := s[:0]
-	for _, v := range s {
-		if zeroT == v {
+//   s = FilterI(s, pred)
+func FilterI[T any](slice []T, pred func(T) bool) []T {
+	// create a new result slice
+	result := slice[:0]
+	for _, v := range slice {
+		if !pred(v) {
 			continue
 		}
-		t = append(t, v)
+		result = append(result, v)
 	}
-	return t
+
+	// zero out all the now unused values of T
+	// this prevents memory leaks
+	var zeroT T
+	for i := len(result); i < len(slice); i++ {
+		slice[i] = zeroT
+	}
+
+	// and return the result slice!
+	return result
+}
+
+// RemoveZeros removes zero values from s in-place.
+//
+// This trivially invalidates the old value of slice.
+// As such the result value should typically be assigned to the input value.
+// For example:
+//
+//   s = RemoveZeros(s)
+func RemoveZeros[T comparable](s []T) []T {
+	var zeroT T
+	return FilterI(s, func(v T) bool { return v != zeroT })
 }
 
 // RemoveDuplicates removes duplicates in s.
