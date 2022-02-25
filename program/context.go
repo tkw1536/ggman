@@ -20,7 +20,7 @@ type Context[E any, P any, F any, R Requirement[F]] struct {
 	// Environment holds the environment for this command.
 	Environment E
 
-	// commandParser holds a parser that parsed argument passe to the command itself
+	// commandParser holds a parser that parsed argument passed to the command itself
 	commandParser *flags.Parser
 }
 
