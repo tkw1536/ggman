@@ -109,3 +109,23 @@ func TestProgram_CommandUsage(t *testing.T) {
 		})
 	}
 }
+
+func TestProgram_AliasUsage(t *testing.T) {
+	program := makeProgram()
+	program.Register(makeEchoCommand("a"))
+
+	alias := Alias{Name: "nice", Command: "a", Args: []string{"nice", "command"}, Description: "Do one nice thing"}
+	program.RegisterAlias(alias)
+
+	context := iContext{
+		Description: iDescription{
+			Requirements: func(flag meta.Flag) bool { return true },
+		},
+	}
+
+	got := program.AliasUsage(context, alias)
+	want := meta.Meta{Executable: "exe", Command: "nice", Description: "Do one nice thing\n\nAlias for `exe a nice command`. See `exe a --help` for detailed help page about a. ", GlobalFlags: []meta.Flag{{FieldName: "Help", Short: []string{"h"}, Long: []string{"help"}, Required: false, Value: "", Usage: "Print a help message and exit", Default: ""}, {FieldName: "Version", Short: []string{"v"}, Long: []string{"version"}, Required: false, Value: "", Usage: "Print a version message and exit", Default: ""}, {FieldName: "GlobalOne", Short: []string{"a"}, Long: []string{"global-one"}, Required: false, Value: "", Usage: "", Default: ""}, {FieldName: "GlobalTwo", Short: []string{"b"}, Long: []string{"global-two"}, Required: false, Value: "", Usage: "", Default: ""}}, CommandFlags: []meta.Flag(nil), Positional: meta.Positional{Value: "ARG", Description: "Arguments to pass after `exe a nice command`.", Min: 0, Max: -1, IncludeUnknown: false}, Commands: []string(nil)}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Program.AliasUsage() = %#v, want %#v", got, want)
+	}
+}
