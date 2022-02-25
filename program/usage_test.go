@@ -1,6 +1,7 @@
 package program
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/jessevdk/go-flags"
@@ -14,10 +15,10 @@ func TestProgram_MainUsage(t *testing.T) {
 	program.Register(makeEchoCommand("c"))
 	program.Register(makeEchoCommand("b"))
 
-	got := program.MainUsage().String()
-	want := "Usage: exe [--help|-h] [--version|-v] [--global-one|-a] [--global-two|-b] [--] COMMAND [ARGS...]\n\nsomething something dark side\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -a, --global-one\n      \n\n   -b, --global-two\n      \n\n   COMMAND [ARGS...]\n      Command to call. One of \"a\", \"b\", \"c\". See individual commands for more help."
-	if got != want {
-		t.Errorf("Program.MainUsage() = %q, want %q", got, want)
+	got := program.MainUsage()
+	want := meta.Meta{Executable: "exe", Command: "", Description: "something something dark side", GlobalFlags: []meta.Flag{{FieldName: "Help", Short: []string{"h"}, Long: []string{"help"}, Required: false, Value: "", Usage: "Print a help message and exit", Default: ""}, {FieldName: "Version", Short: []string{"v"}, Long: []string{"version"}, Required: false, Value: "", Usage: "Print a version message and exit", Default: ""}, {FieldName: "GlobalOne", Short: []string{"a"}, Long: []string{"global-one"}, Required: false, Value: "", Usage: "", Default: ""}, {FieldName: "GlobalTwo", Short: []string{"b"}, Long: []string{"global-two"}, Required: false, Value: "", Usage: "", Default: ""}}, CommandFlags: []meta.Flag(nil), Positional: meta.Positional{Value: "", Description: "", Min: 0, Max: 0, IncludeUnknown: false}, Commands: []string{"a", "b", "c"}}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Program.MainUsage() = %#v, want %#v", got, want)
 	}
 }
 
@@ -45,44 +46,44 @@ func TestProgram_CommandUsage(t *testing.T) {
 		Positional  meta.Positional
 	}
 	tests := []struct {
-		name      string
-		args      args
-		wantUsage string
+		name string
+		args args
+		want meta.Meta
 	}{
 		{
 			"command without args and allowing all globals",
 			args{Command: "cmd", Requirement: reqAny, Positional: meta.Positional{}},
-			"Usage: exe [--help|-h] [--version|-v] [--global-one|-a] [--global-two|-b] [--] cmd [--bool|-b random] [--int dummy]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\n   -a, --global-one\n      \n\n   -b, --global-two\n      \n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)",
+			meta.Meta{Executable: "exe", Command: "cmd", Description: "", GlobalFlags: []meta.Flag{{FieldName: "Help", Short: []string{"h"}, Long: []string{"help"}, Required: false, Value: "", Usage: "Print a help message and exit", Default: ""}, {FieldName: "Version", Short: []string{"v"}, Long: []string{"version"}, Required: false, Value: "", Usage: "Print a version message and exit", Default: ""}, {FieldName: "GlobalOne", Short: []string{"a"}, Long: []string{"global-one"}, Required: false, Value: "", Usage: "", Default: ""}, {FieldName: "GlobalTwo", Short: []string{"b"}, Long: []string{"global-two"}, Required: false, Value: "", Usage: "", Default: ""}}, CommandFlags: []meta.Flag{{FieldName: "Boolean", Short: []string{"b"}, Long: []string{"bool"}, Required: false, Value: "random", Usage: "a random boolean argument with short", Default: ""}, {FieldName: "Int", Short: []string(nil), Long: []string{"int"}, Required: false, Value: "dummy", Usage: "a dummy integer flag", Default: "12"}}, Positional: meta.Positional{Value: "", Description: "", Min: 0, Max: 0, IncludeUnknown: false}, Commands: []string(nil)},
 		},
 
 		{
 			"command without args and allowing only global1",
 			args{Command: "cmd", Requirement: reqOne, Positional: meta.Positional{Description: "usage", Value: "META"}},
-			"Usage: exe [--help|-h] [--version|-v] [--] cmd [--bool|-b random] [--int dummy]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)\n\n   \n      usage",
+			meta.Meta{Executable: "exe", Command: "cmd", Description: "", GlobalFlags: []meta.Flag{{FieldName: "Help", Short: []string{"h"}, Long: []string{"help"}, Required: false, Value: "", Usage: "Print a help message and exit", Default: ""}, {FieldName: "Version", Short: []string{"v"}, Long: []string{"version"}, Required: false, Value: "", Usage: "Print a version message and exit", Default: ""}}, CommandFlags: []meta.Flag{{FieldName: "Boolean", Short: []string{"b"}, Long: []string{"bool"}, Required: false, Value: "random", Usage: "a random boolean argument with short", Default: ""}, {FieldName: "Int", Short: []string(nil), Long: []string{"int"}, Required: false, Value: "dummy", Usage: "a dummy integer flag", Default: "12"}}, Positional: meta.Positional{Value: "META", Description: "usage", Min: 0, Max: 0, IncludeUnknown: false}, Commands: []string(nil)},
 		},
 
 		{
 			"command with max finite args",
 			args{Command: "cmd", Requirement: reqOne, Positional: meta.Positional{Max: 4, Description: "usage", Value: "META"}},
-			"Usage: exe [--help|-h] [--version|-v] [--] cmd [--bool|-b random] [--int dummy] [--] [META [META [META [META]]]]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)\n\n   [META [META [META [META]]]]\n      usage",
+			meta.Meta{Executable: "exe", Command: "cmd", Description: "", GlobalFlags: []meta.Flag{{FieldName: "Help", Short: []string{"h"}, Long: []string{"help"}, Required: false, Value: "", Usage: "Print a help message and exit", Default: ""}, {FieldName: "Version", Short: []string{"v"}, Long: []string{"version"}, Required: false, Value: "", Usage: "Print a version message and exit", Default: ""}}, CommandFlags: []meta.Flag{{FieldName: "Boolean", Short: []string{"b"}, Long: []string{"bool"}, Required: false, Value: "random", Usage: "a random boolean argument with short", Default: ""}, {FieldName: "Int", Short: []string(nil), Long: []string{"int"}, Required: false, Value: "dummy", Usage: "a dummy integer flag", Default: "12"}}, Positional: meta.Positional{Value: "META", Description: "usage", Min: 0, Max: 4, IncludeUnknown: false}, Commands: []string(nil)},
 		},
 
 		{
 			"command with finite args",
 			args{Command: "cmd", Requirement: reqOne, Positional: meta.Positional{Min: 1, Max: 2, Description: "usage", Value: "META"}},
-			"Usage: exe [--help|-h] [--version|-v] [--] cmd [--bool|-b random] [--int dummy] [--] META [META]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)\n\n   META [META]\n      usage",
+			meta.Meta{Executable: "exe", Command: "cmd", Description: "", GlobalFlags: []meta.Flag{{FieldName: "Help", Short: []string{"h"}, Long: []string{"help"}, Required: false, Value: "", Usage: "Print a help message and exit", Default: ""}, {FieldName: "Version", Short: []string{"v"}, Long: []string{"version"}, Required: false, Value: "", Usage: "Print a version message and exit", Default: ""}}, CommandFlags: []meta.Flag{{FieldName: "Boolean", Short: []string{"b"}, Long: []string{"bool"}, Required: false, Value: "random", Usage: "a random boolean argument with short", Default: ""}, {FieldName: "Int", Short: []string(nil), Long: []string{"int"}, Required: false, Value: "dummy", Usage: "a dummy integer flag", Default: "12"}}, Positional: meta.Positional{Value: "META", Description: "usage", Min: 1, Max: 2, IncludeUnknown: false}, Commands: []string(nil)},
 		},
 
 		{
 			"command with infinite args",
 			args{Command: "cmd", Requirement: reqOne, Positional: meta.Positional{Min: 1, Max: -1, Description: "usage", Value: "META"}},
-			"Usage: exe [--help|-h] [--version|-v] [--] cmd [--bool|-b random] [--int dummy] [--] META [META ...]\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)\n\n   META [META ...]\n      usage",
+			meta.Meta{Executable: "exe", Command: "cmd", Description: "", GlobalFlags: []meta.Flag{{FieldName: "Help", Short: []string{"h"}, Long: []string{"help"}, Required: false, Value: "", Usage: "Print a help message and exit", Default: ""}, {FieldName: "Version", Short: []string{"v"}, Long: []string{"version"}, Required: false, Value: "", Usage: "Print a version message and exit", Default: ""}}, CommandFlags: []meta.Flag{{FieldName: "Boolean", Short: []string{"b"}, Long: []string{"bool"}, Required: false, Value: "random", Usage: "a random boolean argument with short", Default: ""}, {FieldName: "Int", Short: []string(nil), Long: []string{"int"}, Required: false, Value: "dummy", Usage: "a dummy integer flag", Default: "12"}}, Positional: meta.Positional{Value: "META", Description: "usage", Min: 1, Max: -1, IncludeUnknown: false}, Commands: []string(nil)},
 		},
 
 		{
 			"command with description",
 			args{Command: "cmd", Description: "A fake command", Requirement: reqOne, Positional: meta.Positional{Min: 1, Max: -1, Description: "usage", Value: "META"}},
-			"Usage: exe [--help|-h] [--version|-v] [--] cmd [--bool|-b random] [--int dummy] [--] META [META ...]\n\nA fake command\n\nGlobal Arguments:\n\n   -h, --help\n      Print a help message and exit\n\n   -v, --version\n      Print a version message and exit\n\nCommand Arguments:\n\n   -b, --bool random\n      a random boolean argument with short\n\n   --int dummy\n      a dummy integer flag (default 12)\n\n   META [META ...]\n      usage",
+			meta.Meta{Executable: "exe", Command: "cmd", Description: "A fake command", GlobalFlags: []meta.Flag{{FieldName: "Help", Short: []string{"h"}, Long: []string{"help"}, Required: false, Value: "", Usage: "Print a help message and exit", Default: ""}, {FieldName: "Version", Short: []string{"v"}, Long: []string{"version"}, Required: false, Value: "", Usage: "Print a version message and exit", Default: ""}}, CommandFlags: []meta.Flag{{FieldName: "Boolean", Short: []string{"b"}, Long: []string{"bool"}, Required: false, Value: "random", Usage: "a random boolean argument with short", Default: ""}, {FieldName: "Int", Short: []string(nil), Long: []string{"int"}, Required: false, Value: "dummy", Usage: "a dummy integer flag", Default: "12"}}, Positional: meta.Positional{Value: "META", Description: "usage", Min: 1, Max: -1, IncludeUnknown: false}, Commands: []string(nil)},
 		},
 	}
 	for _, tt := range tests {
@@ -101,8 +102,9 @@ func TestProgram_CommandUsage(t *testing.T) {
 					Requirements: tt.args.Requirement,
 				},
 			}
-			if gotUsage := program.CommandUsage(context).String(); gotUsage != tt.wantUsage {
-				t.Errorf("Program.CommandUsage() = %q\n\n, want %q", gotUsage, tt.wantUsage)
+			got := program.CommandUsage(context)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Program.CommandUsage() = %#v, want %v", got, tt.want)
 			}
 		})
 	}
