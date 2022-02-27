@@ -8,8 +8,8 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
-	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/lib/slice"
 	"github.com/tkw1536/ggman/program/meta"
 
 	"github.com/pkg/browser"

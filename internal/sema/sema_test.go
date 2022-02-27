@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/program/lib/testlib"
 )
 
 func ExampleNewSemaphore() {
@@ -140,7 +140,7 @@ func ExampleNewSemaphore_panic() {
 	sema := NewSemaphore(2)
 
 	// an unlock without a corresponding unlock will always panic
-	didPanic, value := testutil.DoesPanic(func() {
+	didPanic, value := testlib.DoesPanic(func() {
 		sema.Unlock()
 	})
 	if !didPanic {

@@ -10,8 +10,9 @@ import (
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/program/lib/slice"
+	"github.com/tkw1536/ggman/program/lib/testlib"
 	"github.com/tkw1536/ggman/program/stream"
 )
 
@@ -28,10 +29,10 @@ func Test_gogit_IsRepository(t *testing.T) {
 	existingRepo, _ := testutil.NewTestRepo(t)
 
 	// make an empty folder
-	emptyFolder := testutil.TempDirAbs(t)
+	emptyFolder := testlib.TempDirAbs(t)
 
 	// create a new folder that is deleted
-	deletedFolder := filepath.Join(testutil.TempDirAbs(t), "noexist")
+	deletedFolder := filepath.Join(testlib.TempDirAbs(t), "noexist")
 
 	type args struct {
 		localPath string
@@ -69,10 +70,10 @@ func Test_gogit_IsRepositoryUnsafe(t *testing.T) {
 	existingRepo, _ := testutil.NewTestRepo(t)
 
 	// make an empty folder
-	emptyFolder := testutil.TempDirAbs(t)
+	emptyFolder := testlib.TempDirAbs(t)
 
 	// create a new folder that is deleted
-	deletedFolder := filepath.Join(testutil.TempDirAbs(t), "noexist")
+	deletedFolder := filepath.Join(testlib.TempDirAbs(t), "noexist")
 
 	type args struct {
 		localPath string
@@ -176,14 +177,14 @@ func Test_gogit_GetRemotes(t *testing.T) {
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
-	cloneA := testutil.TempDirAbs(t)
+	cloneA := testlib.TempDirAbs(t)
 	if _, err := git.PlainClone(cloneA, false, &git.CloneOptions{URL: remote}); err != nil {
 		panic(err)
 	}
 
 	// clone the 'cloneA' repository into 'cloneB'.
 	// This will create an origin remote pointing to 'cloneA'
-	cloneB := testutil.TempDirAbs(t)
+	cloneB := testlib.TempDirAbs(t)
 	repo, err := git.PlainClone(cloneB, false, &git.CloneOptions{URL: cloneA})
 	if err != nil {
 		panic(err)
@@ -252,14 +253,14 @@ func Test_gogit_GetCanonicalRemote(t *testing.T) {
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
-	cloneA := testutil.TempDirAbs(t)
+	cloneA := testlib.TempDirAbs(t)
 	if _, err := git.PlainClone(cloneA, false, &git.CloneOptions{URL: remote}); err != nil {
 		panic(err)
 	}
 
 	// clone the 'cloneA' repository into 'cloneB'.
 	// This will create an origin remote pointing to 'cloneA'
-	cloneB := testutil.TempDirAbs(t)
+	cloneB := testlib.TempDirAbs(t)
 	repo, err := git.PlainClone(cloneB, false, &git.CloneOptions{URL: cloneA})
 	if err != nil {
 		panic(err)
@@ -332,7 +333,7 @@ func Test_gogit_SetRemoteURLs(t *testing.T) {
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	// clone the remote repository into 'clone'
-	clone := testutil.TempDirAbs(t)
+	clone := testlib.TempDirAbs(t)
 	repo, err := git.PlainClone(clone, false, &git.CloneOptions{URL: remote})
 	if err != nil {
 		panic(err)
@@ -400,7 +401,7 @@ func Test_gogit_Clone(t *testing.T) {
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	t.Run("cloning a repository", func(t *testing.T) {
-		clone := testutil.TempDirAbs(t)
+		clone := testlib.TempDirAbs(t)
 
 		err := gg.Clone(stream.FromNil(), remote, clone)
 		if err != nil {
@@ -413,7 +414,7 @@ func Test_gogit_Clone(t *testing.T) {
 	})
 
 	t.Run("cloning a repository with arguments is not supported", func(t *testing.T) {
-		clone := testutil.TempDirAbs(t)
+		clone := testlib.TempDirAbs(t)
 
 		err := gg.Clone(stream.FromNil(), remote, clone, "--branch", "main")
 		if err != ErrArgumentsUnsupported {
@@ -439,14 +440,14 @@ func Test_gogit_Fetch(t *testing.T) {
 	_, commitA := testutil.CommitTestFiles(upstreamRepo, map[string]string{"commita.txt": "Commit A"})
 
 	// clone upstream@commitA to the remote
-	remote := testutil.TempDirAbs(t)
+	remote := testlib.TempDirAbs(t)
 	remoteRepo, err := git.PlainClone(remote, false, &git.CloneOptions{URL: upstream})
 	if err != nil {
 		panic(err)
 	}
 
 	// clone remote to the local clone
-	clone := testutil.TempDirAbs(t)
+	clone := testlib.TempDirAbs(t)
 	cloneRepo, err := git.PlainClone(clone, false, &git.CloneOptions{URL: remote})
 	if err != nil {
 		panic(err)
@@ -523,7 +524,7 @@ func Test_gogit_Pull(t *testing.T) {
 	testutil.CommitTestFiles(originRepo, map[string]string{"commita.txt": "Commit A"})
 
 	// clone remote to the local clone
-	clone := testutil.TempDirAbs(t)
+	clone := testlib.TempDirAbs(t)
 	cloneRepo, err := git.PlainClone(clone, false, &git.CloneOptions{URL: origin})
 	if err != nil {
 		panic(err)
@@ -715,7 +716,7 @@ func Test_gogit_IsSync(t *testing.T) {
 	testutil.CommitTestFiles(upstreamRepo, map[string]string{"dummy.txt": "I am an updated dummy file. "})
 
 	// a downstream clone that is one commit behind!
-	downstreamBehind := testutil.TempDirAbs(t)
+	downstreamBehind := testlib.TempDirAbs(t)
 	behindRepo, err := git.PlainClone(downstreamBehind, false, &git.CloneOptions{
 		URL: upstream,
 	})
@@ -734,13 +735,13 @@ func Test_gogit_IsSync(t *testing.T) {
 	}
 
 	// a downstream repository that is in sync
-	downstreamOK := testutil.TempDirAbs(t)
+	downstreamOK := testlib.TempDirAbs(t)
 	if _, err := git.PlainClone(downstreamOK, false, &git.CloneOptions{URL: upstream}); err != nil {
 		panic(err)
 	}
 
 	// a downstream clone that is behind
-	downstreamAhead := testutil.TempDirAbs(t)
+	downstreamAhead := testlib.TempDirAbs(t)
 	aheadRepo, err := git.PlainClone(downstreamAhead, false, &git.CloneOptions{URL: upstream})
 	if err != nil {
 		panic(err)

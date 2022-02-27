@@ -19,6 +19,7 @@ import (
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/ggman/program"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/lib/testlib"
 	"github.com/tkw1536/ggman/program/stream"
 )
 
@@ -41,7 +42,7 @@ type MockEnv struct {
 
 // NewMockEnv creates a new MockEnv for testing ggman programs.
 func NewMockEnv(t *testing.T) *MockEnv {
-	root := testutil.TempDirAbs(t)
+	root := testlib.TempDirAbs(t)
 
 	local := filepath.Join(root, "local")
 	if err := os.Mkdir(local, os.ModePerm); err != nil {

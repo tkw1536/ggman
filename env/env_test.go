@@ -9,16 +9,17 @@ import (
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/program/lib/testlib"
 )
 
 func TestEnv_LoadDefaultRoot(t *testing.T) {
 
 	// nopdir does not have a 'Projects' subdirectory
-	nopdir := testutil.TempDirAbs(t)
+	nopdir := testlib.TempDirAbs(t)
 	pnopdir := filepath.Join(nopdir, "Projects")
 
 	// pdir has a 'Projects' subdirectory
-	pdir := testutil.TempDirAbs(t)
+	pdir := testlib.TempDirAbs(t)
 	ppdir := filepath.Join(pdir, "Projects")
 
 	if err := os.Mkdir(ppdir, os.ModePerm); err != nil {
@@ -26,7 +27,7 @@ func TestEnv_LoadDefaultRoot(t *testing.T) {
 	}
 
 	// nodir doesn't exist
-	nodir := filepath.Join(testutil.TempDirAbs(t), "noexist")
+	nodir := filepath.Join(testlib.TempDirAbs(t), "noexist")
 
 	tests := []struct {
 		name     string
@@ -67,11 +68,11 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 	var sampleCanFile CanFile = []CanLine{{"", canLineContent}}
 
 	// edir is an empty directory without a canFile
-	edir := testutil.TempDirAbs(t)
+	edir := testlib.TempDirAbs(t)
 	noggmanfile := filepath.Join(edir, ".ggman")
 
 	// ddir is a directory with a '.ggman' file
-	ddir := testutil.TempDirAbs(t)
+	ddir := testlib.TempDirAbs(t)
 	ggmanfile := filepath.Join(ddir, ".ggman")
 	os.WriteFile(ggmanfile, []byte(canLineContent), os.ModePerm)
 
@@ -105,7 +106,7 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 }
 
 func TestEnv_Local_Exact(t *testing.T) {
-	root := testutil.TempDirAbs(t)
+	root := testlib.TempDirAbs(t)
 
 	// make the 'HELLO' directory, to ensure that it already exists
 	os.MkdirAll(filepath.Join(root, "server.com", "HELLO"), os.ModePerm|os.ModeDir)
@@ -165,7 +166,7 @@ func TestEnv_Local_Exact(t *testing.T) {
 }
 
 func TestEnv_At(t *testing.T) {
-	root := testutil.TempDirAbs(t)
+	root := testlib.TempDirAbs(t)
 
 	// group/repo contains a repository
 	group := filepath.Join(root, "group")
@@ -217,7 +218,7 @@ func TestEnv_At(t *testing.T) {
 }
 
 func TestEnv_AtRoot(t *testing.T) {
-	root := testutil.TempDirAbs(t)
+	root := testlib.TempDirAbs(t)
 
 	// group/repo contains a repository
 	group := filepath.Join(root, "group")
@@ -265,7 +266,7 @@ func TestEnv_AtRoot(t *testing.T) {
 }
 
 func TestEnv_ScanRepos(t *testing.T) {
-	root := testutil.TempDirAbs(t)
+	root := testlib.TempDirAbs(t)
 
 	// make a dir with parents and turn it into git
 	mkgit := func(s string) {
@@ -362,7 +363,7 @@ func TestEnv_ScanRepos(t *testing.T) {
 }
 
 func TestEnv_ScanRepos_fuzzy(t *testing.T) {
-	root := testutil.TempDirAbs(t)
+	root := testlib.TempDirAbs(t)
 
 	// make a dir with parents and turn it into git
 	mkgit := func(s string) {

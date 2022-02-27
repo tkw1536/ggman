@@ -8,6 +8,7 @@ import (
 	"github.com/go-git/go-git/v5/config"
 	gggit "github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/program/lib/testlib"
 	"github.com/tkw1536/ggman/program/stream"
 )
 
@@ -34,7 +35,7 @@ func TestMappedPlumbing_Forward(t *testing.T) {
 	}
 
 	t.Run("does-not-exist", func(t *testing.T) {
-		if panics, _ := testutil.DoesPanic(func() { mp.Forward("does-not-exist") }); !panics {
+		if panics, _ := testlib.DoesPanic(func() { mp.Forward("does-not-exist") }); !panics {
 			t.Errorf("Expected MappedPlumbing.Forward() to panic")
 		}
 	})
@@ -63,7 +64,7 @@ func TestMappedPlumbing_Backward(t *testing.T) {
 	}
 
 	t.Run("does-not-exist", func(t *testing.T) {
-		if panics, _ := testutil.DoesPanic(func() { mp.Backward("does-not-exist") }); !panics {
+		if panics, _ := testlib.DoesPanic(func() { mp.Backward("does-not-exist") }); !panics {
 			t.Errorf("Expected MappedPlumbing.Backward() to panic")
 		}
 	})
@@ -96,14 +97,14 @@ func Test_MappedPlumbing_GetRemotes(t *testing.T) {
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
-	cloneA := testutil.TempDirAbs(t)
+	cloneA := testlib.TempDirAbs(t)
 	if _, err := git.PlainClone(cloneA, false, &git.CloneOptions{URL: remote}); err != nil {
 		panic(err)
 	}
 
 	// clone the 'cloneA' repository into 'cloneB'.
 	// This will create an origin remote pointing to 'cloneA'
-	cloneB := testutil.TempDirAbs(t)
+	cloneB := testlib.TempDirAbs(t)
 	repo, err := git.PlainClone(cloneB, false, &git.CloneOptions{URL: cloneA})
 	if err != nil {
 		panic(err)
@@ -186,7 +187,7 @@ func Test_MappedPlumbing_SetRemoteURLs(t *testing.T) {
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	// clone the remote repository into 'clone'
-	clone := testutil.TempDirAbs(t)
+	clone := testlib.TempDirAbs(t)
 	repo, err := git.PlainClone(clone, false, &git.CloneOptions{URL: remote})
 	if err != nil {
 		panic(err)
@@ -270,14 +271,14 @@ func Test_MappedPlumbing_GetCanonicalRemote(t *testing.T) {
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
-	cloneA := testutil.TempDirAbs(t)
+	cloneA := testlib.TempDirAbs(t)
 	if _, err := git.PlainClone(cloneA, false, &git.CloneOptions{URL: remote}); err != nil {
 		panic(err)
 	}
 
 	// clone the 'cloneA' repository into 'cloneB'.
 	// This will create an origin remote pointing to 'cloneA'
-	cloneB := testutil.TempDirAbs(t)
+	cloneB := testlib.TempDirAbs(t)
 	repo, err := git.PlainClone(cloneB, false, &git.CloneOptions{URL: cloneA})
 	if err != nil {
 		panic(err)
@@ -357,7 +358,7 @@ func Test_MappedPlumbing_Clone(t *testing.T) {
 	mp.URLMap[mappedRemote] = remote
 
 	t.Run("cloning a repository", func(t *testing.T) {
-		clone := testutil.TempDirAbs(t)
+		clone := testlib.TempDirAbs(t)
 
 		err := mp.Clone(stream.FromNil(), mappedRemote, clone)
 		if err != nil {

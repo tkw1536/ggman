@@ -4,9 +4,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/tkw1536/ggman/internal/slice"
-	"github.com/tkw1536/ggman/internal/text"
+	"github.com/tkw1536/ggman/internal/split"
 	"github.com/tkw1536/ggman/internal/url"
+	"github.com/tkw1536/ggman/program/lib/slice"
 )
 
 // URL represents a URL to a single git repository.
@@ -34,7 +34,7 @@ func ParseURL(s string) (repo URL) {
 	s = strings.ReplaceAll(s, "\\", "/") // windows
 
 	// Trim off a leading scheme (as seperated by '://') and (if it is valid) store it.
-	scheme, rest := text.SplitBefore(s, "://")
+	scheme, rest := split.Before(s, "://")
 	if url.IsValidURLScheme(scheme) {
 		repo.Scheme = scheme
 		s = rest
@@ -45,8 +45,8 @@ func ParseURL(s string) (repo URL) {
 	// However most URLs will not have an '@' sign, so we can save allocating an extra variable and the function call.
 	if strings.ContainsRune(s, '@') {
 		var auth string
-		auth, s = text.SplitBefore(s, "@")
-		repo.User, repo.Password = text.SplitAfter(auth, ":")
+		auth, s = split.Before(s, "@")
+		repo.User, repo.Password = split.After(auth, ":")
 	}
 
 	// Finally, we check if the remainder contains a ':'.
@@ -54,13 +54,13 @@ func ParseURL(s string) (repo URL) {
 	// The second form is only allowed if we have some kind of scheme.
 	// If there is no ':', we can straightforwardly split after the first '/'
 	if strings.ContainsRune(s, ':') {
-		repo.HostName, s = text.SplitBefore(s, ":")
+		repo.HostName, s = split.Before(s, ":")
 
 		// if we have a scheme, then we have to parse everything after ':' as a port.
 		// This only works if the port is valid.
 		if repo.Scheme != "" {
 			var err error
-			port, rest := text.SplitAfter(s, "/")
+			port, rest := split.After(s, "/")
 			if repo.Port, err = url.ParsePort(port); err == nil {
 				s = rest
 			}
@@ -70,7 +70,7 @@ func ParseURL(s string) (repo URL) {
 		return
 	}
 
-	repo.HostName, repo.Path = text.SplitAfter(s, "/")
+	repo.HostName, repo.Path = split.After(s, "/")
 	return
 }
 
@@ -167,7 +167,7 @@ func (url URL) Canonical(cspec string) (canonical string) {
 	components := url.Components()
 
 	// split into prefix and suffix
-	prefix, suffix := text.SplitAfter(cspec, "$")
+	prefix, suffix := split.After(cspec, "$")
 
 	prefix = specReplace.ReplaceAllStringFunc(prefix, func(s string) string {
 		// if everything is empty, return the string as is

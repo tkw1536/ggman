@@ -7,11 +7,11 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/path"
-	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/program/lib/testlib"
 )
 
 func TestScan(t *testing.T) {
-	base := testutil.TempDirAbs(t)
+	base := testlib.TempDirAbs(t)
 
 	// setup a directory structure for testing.
 	// Make mkdir and symlink utility methods for this.

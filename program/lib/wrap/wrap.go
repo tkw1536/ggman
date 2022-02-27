@@ -1,4 +1,5 @@
-package text
+// Package wrap provides facilities to wrap text
+package wrap
 
 import (
 	"bufio"
@@ -6,6 +7,8 @@ import (
 	"strings"
 	"sync"
 	"unicode"
+
+	"github.com/tkw1536/ggman/program/lib/text"
 )
 
 var newLine = []byte("\n")
@@ -77,7 +80,7 @@ func (w Wrapper) write(prefix, line string) (n int, err error) {
 			return
 		}
 
-		m, err := Join(w.Writer, words, " ")
+		m, err := text.Join(w.Writer, words, " ")
 		n += m
 		return n, err
 	}
@@ -107,7 +110,7 @@ func (w Wrapper) write(prefix, line string) (n int, err error) {
 		if len(words) > wc {
 			ll++
 		}
-		Grow(w.Writer, ll+len(prefix))
+		text.Grow(w.Writer, ll+len(prefix))
 
 		m, err := io.WriteString(w.Writer, prefix)
 		n += m
@@ -147,20 +150,6 @@ func (w Wrapper) write(prefix, line string) (n int, err error) {
 	}
 
 	return n, nil
-}
-
-// Grow is anything that can grow its' internal buffer
-type Grower interface {
-	Grow(length int)
-}
-
-// Grow calls w.Grow() when w implements Grower.
-func Grow(w io.Writer, n int) {
-	grower, canGrow := w.(Grower)
-	if !canGrow {
-		return
-	}
-	grower.Grow(n)
 }
 
 var wrapperPool = &sync.Pool{

@@ -7,7 +7,7 @@ import (
 
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/pattern"
-	"github.com/tkw1536/ggman/internal/slice"
+	"github.com/tkw1536/ggman/program/lib/slice"
 )
 
 // Filter is a predicate that scores repositories inside an environment.

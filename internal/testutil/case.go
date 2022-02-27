@@ -6,13 +6,15 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/tkw1536/ggman/program/lib/testlib"
 )
 
 // CaseSensitive checks if temporary directories exist on a case-sensitive file system.
 //
 // This function is untested due to unpredictability of runtime environment.
 func CaseSensitive(t *testing.T) bool {
-	temp := TempDirAbs(t)
+	temp := testlib.TempDirAbs(t)
 
 	// create lower case
 	lower := filepath.Join(temp, "test")

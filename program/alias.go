@@ -1,7 +1,7 @@
 package program
 
 import (
-	"github.com/tkw1536/ggman/internal/slice"
+	"github.com/tkw1536/ggman/program/lib/slice"
 )
 
 // Alias represents an alias for a command.

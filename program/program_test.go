@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/ggman/internal/text"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/lib/testlib"
+	"github.com/tkw1536/ggman/program/lib/wrap"
 	"github.com/tkw1536/ggman/program/meta"
 	"github.com/tkw1536/ggman/program/stream"
 )
@@ -47,7 +47,6 @@ func makeEchoCommand(name string) iCommand {
 // makeProgram creates a new program and registers an echo command with it.
 func makeProgram() iProgram {
 	return iProgram{
-		NewEnvironment: iNewEnvironment,
 		Info: meta.Info{
 			BuildVersion: "42.0.0",
 			BuildTime:    time.Unix(0, 0).UTC(),
@@ -56,11 +55,6 @@ func makeProgram() iProgram {
 			Description: "something something dark side",
 		},
 	}
-}
-
-// iNewEnvivoment implements new environment for parameters
-func iNewEnvironment(params tParameters, context iContext) (tEnvironment, error) {
-	return tEnvironment(string(params)), nil
 }
 
 // tFlags holds a set of dummy global flags.
@@ -122,7 +116,7 @@ func (t tCommand) Run(ctx iContext) error {
 }
 
 func TestProgram_Main(t *testing.T) {
-	root := testutil.TempDirAbs(t)
+	root := testlib.TempDirAbs(t)
 	if err := os.Mkdir(filepath.Join(root, "real"), os.ModeDir&os.ModePerm); err != nil {
 		panic(err)
 	}
@@ -493,7 +487,7 @@ func TestProgram_Main(t *testing.T) {
 
 			// wrap if requested
 			if tt.wrapOut {
-				tt.wantStdout = text.WrapString(wrapLength, tt.wantStdout)
+				tt.wantStdout = wrap.WrapString(wrapLength, tt.wantStdout)
 			}
 
 			if gotStdout != tt.wantStdout {
@@ -502,7 +496,7 @@ func TestProgram_Main(t *testing.T) {
 
 			// wrap if requested
 			if tt.wrapError {
-				tt.wantStderr = text.WrapString(wrapLength, tt.wantStderr)
+				tt.wantStderr = wrap.WrapString(wrapLength, tt.wantStderr)
 			}
 
 			if gotStderr != tt.wantStderr {

@@ -1,3 +1,4 @@
+// Package text provides functions similar to strings.Join, but based on writers as opposed to strings
 package text
 
 import (

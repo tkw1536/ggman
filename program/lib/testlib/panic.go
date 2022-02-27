@@ -1,4 +1,4 @@
-package testutil
+package testlib
 
 // DoesPanic runs f and checks if it panicked or not.
 // When f does panic, returns the recovered value.

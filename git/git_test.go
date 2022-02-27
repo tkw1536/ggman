@@ -16,13 +16,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/program/lib/testlib"
 )
 
 func TestNewGitFromPlumbing(t *testing.T) {
 
 	// create a temporary file
-	dir := testutil.TempDirAbs(t)
+	dir := testlib.TempDirAbs(t)
 
 	// no path => use a gogit
 	if _, isgogit := NewGitFromPlumbing(nil, "").Plumbing().(*gogit); !isgogit {

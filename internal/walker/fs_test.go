@@ -5,11 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/program/lib/testlib"
 )
 
 func Test_IsDirectory(t *testing.T) {
-	dir := testutil.TempDirAbs(t)
+	dir := testlib.TempDirAbs(t)
 
 	// make a symlink to a directory
 	dirlink := filepath.Join(dir, "dirlink")

@@ -10,6 +10,7 @@ import (
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/tkw1536/ggman/program/lib/testlib"
 )
 
 // NewTestRepo creates a new (empty) repository for testing purposes.
@@ -19,7 +20,7 @@ import (
 func NewTestRepo(t *testing.T) (clonePath string, repo *git.Repository) {
 
 	// first create a new temporary directory to put the git repository in
-	clonePath = TempDirAbs(t)
+	clonePath = testlib.TempDirAbs(t)
 
 	// then actually do a git PlainInit
 	repo = NewTestRepoAt(clonePath, "")

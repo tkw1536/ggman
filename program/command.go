@@ -4,8 +4,8 @@ import (
 	"reflect"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman/internal/slice"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/lib/slice"
 	"github.com/tkw1536/ggman/program/meta"
 )
 

@@ -28,8 +28,11 @@ type Program[E any, P any, F any, R Requirement[F]] struct {
 	// Used to generate help and version pages
 	Info meta.Info
 
-	// The NewEnvironment function associated is used to create a new environment.
-	// The returned error may be nil or of type exit.Error.
+	// The NewEnvironment function is used to create a new environment.
+	// The returned error must be nil or of type exit.Error.
+	//
+	// NewEnvironment may be nil, in which case a new environment is assumed to be
+	// the zero value of type E.
 	NewEnvironment func(params P, context Context[E, P, F, R]) (E, error)
 
 	// Commands, Keywords, and Aliases associated with this program.
@@ -118,12 +121,22 @@ func (p Program[E, P, F, R]) Main(stream stream.IOStream, params P, argv []strin
 	}
 
 	// create the environment
-	if context.Environment, err = p.NewEnvironment(params, context); err != nil {
+	if context.Environment, err = p.makeEnvironment(params, context); err != nil {
 		return err
 	}
 
 	// do the command!
 	return command.Run(context)
+}
+
+// makeEnvironment creates a new environment for the given command.
+func (p Program[E, P, F, R]) makeEnvironment(params P, context Context[E, P, F, R]) (E, error) {
+	if p.NewEnvironment == nil {
+		var zeroE E
+		return zeroE, nil
+	}
+
+	return p.NewEnvironment(params, context)
 }
 
 var errProgramUnknownCommand = exit.Error{

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/tkw1536/ggman/internal/text"
+	"github.com/tkw1536/ggman/program/lib/text"
 )
 
 // Positional holds meta-information about a positional argument.

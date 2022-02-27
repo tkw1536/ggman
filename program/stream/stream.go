@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/tkw1536/ggman/internal/text"
 	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/program/lib/wrap"
 )
 
 // IOStream represents a set of input and output streams commonly associated to a process.
@@ -73,7 +73,7 @@ var newLine = []byte("\n")
 //  io.Stdout.Write([]byte(s + "\n"))
 // but wrapped at a reasonable length
 func (io IOStream) StdoutWriteWrap(s string) (int, error) {
-	n, err := text.WriteString(io.Stdout, io.wrap, s)
+	n, err := wrap.WriteString(io.Stdout, io.wrap, s)
 	if err != nil {
 		return n, err
 	}
@@ -86,7 +86,7 @@ func (io IOStream) StdoutWriteWrap(s string) (int, error) {
 //  io.Stdout.Write([]byte(s + "\n"))
 // but wrapped at length Wrap.
 func (io IOStream) StderrWriteWrap(s string) (int, error) {
-	n, err := text.WriteString(io.Stderr, io.wrap, s)
+	n, err := wrap.WriteString(io.Stderr, io.wrap, s)
 	if err != nil {
 		return n, err
 	}

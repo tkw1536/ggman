@@ -9,10 +9,11 @@ import (
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/pattern"
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/program/lib/testlib"
 )
 
 func setupFilterTest(t *testing.T) (root, exampleClonePath, otherClonePath string) {
-	root = testutil.TempDirAbs(t)
+	root = testlib.TempDirAbs(t)
 
 	exampleClonePath = filepath.Join(root, "example")
 	if testutil.NewTestRepoAt(exampleClonePath, "") == nil {
@@ -310,7 +311,7 @@ func TestPatternFilter_String(t *testing.T) {
 }
 
 func TestPatternFilter_Score(t *testing.T) {
-	root := testutil.TempDirAbs(t)
+	root := testlib.TempDirAbs(t)
 
 	abc := filepath.Join(root, "a", "b", "c")
 	abcdef := filepath.Join(root, "a", "b", "c", "d", "e", "f")
@@ -322,7 +323,7 @@ func TestPatternFilter_Score(t *testing.T) {
 		panic("NewTestRepoAt() returned nil")
 	}
 
-	other := testutil.TempDirAbs(t)
+	other := testlib.TempDirAbs(t)
 
 	otherabc := filepath.Join(other, "a", "b", "c")
 	if testutil.NewTestRepoAt(otherabc, "/a/b/c") == nil {

@@ -1,10 +1,10 @@
-package text
+package split
 
 import (
 	"testing"
 )
 
-func TestSplitBefore(t *testing.T) {
+func TestBefore(t *testing.T) {
 	type args struct {
 		s   string
 		sep string
@@ -21,26 +21,26 @@ func TestSplitBefore(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotPrefix, gotSuffix := SplitBefore(tt.args.s, tt.args.sep)
+			gotPrefix, gotSuffix := Before(tt.args.s, tt.args.sep)
 			if gotPrefix != tt.wantPrefix {
-				t.Errorf("SplitBefore() gotPrefix = %v, want %v", gotPrefix, tt.wantPrefix)
+				t.Errorf("Before() gotPrefix = %v, want %v", gotPrefix, tt.wantPrefix)
 			}
 			if gotSuffix != tt.wantSuffix {
-				t.Errorf("SplitBefore() gotSuffix = %v, want %v", gotSuffix, tt.wantSuffix)
+				t.Errorf("Before() gotSuffix = %v, want %v", gotSuffix, tt.wantSuffix)
 			}
 		})
 	}
 }
 
-func Benchmark_SplitBefore(b *testing.B) {
+func Benchmark_Before(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		SplitBefore("a;b", ";")
-		SplitBefore("a;b;c", ";")
-		SplitBefore("aaa", ";")
+		Before("a;b", ";")
+		Before("a;b;c", ";")
+		Before("aaa", ";")
 	}
 }
 
-func TestSplitAfter(t *testing.T) {
+func TestAfter(t *testing.T) {
 	type args struct {
 		s   string
 		sep string
@@ -57,21 +57,21 @@ func TestSplitAfter(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotPrefix, gotSuffix := SplitAfter(tt.args.s, tt.args.sep)
+			gotPrefix, gotSuffix := After(tt.args.s, tt.args.sep)
 			if gotPrefix != tt.wantPrefix {
-				t.Errorf("SplitAfterTwo() gotPrefix = %v, want %v", gotPrefix, tt.wantPrefix)
+				t.Errorf("After() gotPrefix = %v, want %v", gotPrefix, tt.wantPrefix)
 			}
 			if gotSuffix != tt.wantSuffix {
-				t.Errorf("SplitAfterTwo() gotSuffix = %v, want %v", gotSuffix, tt.wantSuffix)
+				t.Errorf("After() gotSuffix = %v, want %v", gotSuffix, tt.wantSuffix)
 			}
 		})
 	}
 }
 
-func Benchmark_SplitAfter(b *testing.B) {
+func Benchmark_After(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		SplitAfter("a;b", ";")
-		SplitAfter("a;b;c", ";")
-		SplitAfter("aaa", ";")
+		After("a;b", ";")
+		After("a;b;c", ";")
+		After("aaa", ";")
 	}
 }

@@ -9,7 +9,7 @@ import (
 
 	"github.com/tkw1536/ggman/internal/record"
 	"github.com/tkw1536/ggman/internal/sema"
-	"github.com/tkw1536/ggman/internal/slice"
+	"github.com/tkw1536/ggman/program/lib/slice"
 )
 
 // Walker is an object that can recursively scan a directory for subdirectories

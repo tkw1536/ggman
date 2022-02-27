@@ -6,12 +6,13 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/program/lib/testlib"
 )
 
 func TestJoinNormalized(t *testing.T) {
 
 	// create subdirectory for testing
-	root := testutil.TempDirAbs(t)
+	root := testlib.TempDirAbs(t)
 	exactD := filepath.Join(root, "exact")
 	os.Mkdir(exactD, os.ModePerm|os.ModeDir)
 
@@ -141,7 +142,7 @@ func TestJoinNormalized_both(t *testing.T) {
 	}
 
 	// create subdirectory for testing
-	root := testutil.TempDirAbs(t)
+	root := testlib.TempDirAbs(t)
 
 	lcBothD := filepath.Join(root, "both")
 	os.Mkdir(lcBothD, os.ModePerm|os.ModeDir)
