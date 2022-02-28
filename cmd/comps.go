@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/program/meta"
+	"github.com/tkw1536/ggman/goprogram/meta"
 )
 
 // Comps is the 'ggman comps' command.

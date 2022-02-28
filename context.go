@@ -2,7 +2,7 @@ package ggman
 
 import (
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program"
+	program "github.com/tkw1536/ggman/goprogram"
 )
 
 // URLV returns the ith parameters as a url.

@@ -1,4 +1,4 @@
-package program
+package goprogram
 
 import (
 	"bytes"
@@ -9,11 +9,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tkw1536/ggman/program/exit"
-	"github.com/tkw1536/ggman/program/lib/testlib"
-	"github.com/tkw1536/ggman/program/lib/wrap"
-	"github.com/tkw1536/ggman/program/meta"
-	"github.com/tkw1536/ggman/program/stream"
+	"github.com/tkw1536/ggman/goprogram/exit"
+	"github.com/tkw1536/ggman/goprogram/lib/testlib"
+	"github.com/tkw1536/ggman/goprogram/lib/wrap"
+	"github.com/tkw1536/ggman/goprogram/meta"
+	"github.com/tkw1536/ggman/goprogram/stream"
 )
 
 // This file contains dummy implementations of everything required to assemble a program.

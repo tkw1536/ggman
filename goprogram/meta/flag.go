@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman/program/lib/slice"
-	"github.com/tkw1536/ggman/program/lib/text"
+	"github.com/tkw1536/ggman/goprogram/lib/slice"
+	"github.com/tkw1536/ggman/goprogram/lib/text"
 )
 
 // Flag holds meta-information about a single flag of a command.

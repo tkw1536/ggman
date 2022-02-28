@@ -15,12 +15,12 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	gggit "github.com/tkw1536/ggman/git"
+	program "github.com/tkw1536/ggman/goprogram"
+	"github.com/tkw1536/ggman/goprogram/exit"
+	"github.com/tkw1536/ggman/goprogram/lib/testlib"
+	"github.com/tkw1536/ggman/goprogram/stream"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/ggman/program"
-	"github.com/tkw1536/ggman/program/exit"
-	"github.com/tkw1536/ggman/program/lib/testlib"
-	"github.com/tkw1536/ggman/program/stream"
 )
 
 // TODO: Consider generalizing this part of the test suite.

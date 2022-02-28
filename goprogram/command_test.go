@@ -1,10 +1,10 @@
-package program
+package goprogram
 
 import (
 	"reflect"
 	"testing"
 
-	"github.com/tkw1536/ggman/program/stream"
+	"github.com/tkw1536/ggman/goprogram/stream"
 )
 
 // Register a command for a program.

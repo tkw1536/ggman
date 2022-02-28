@@ -8,7 +8,7 @@ import (
 	"sync"
 	"unicode"
 
-	"github.com/tkw1536/ggman/program/lib/text"
+	"github.com/tkw1536/ggman/goprogram/lib/text"
 )
 
 var newLine = []byte("\n")

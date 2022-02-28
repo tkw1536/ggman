@@ -7,9 +7,9 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/tkw1536/ggman/goprogram/lib/slice"
 	"github.com/tkw1536/ggman/internal/record"
 	"github.com/tkw1536/ggman/internal/sema"
-	"github.com/tkw1536/ggman/program/lib/slice"
 )
 
 // Walker is an object that can recursively scan a directory for subdirectories

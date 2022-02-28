@@ -1,12 +1,12 @@
-package program
+package goprogram
 
 import (
 	"reflect"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman/program/exit"
-	"github.com/tkw1536/ggman/program/lib/slice"
-	"github.com/tkw1536/ggman/program/meta"
+	"github.com/tkw1536/ggman/goprogram/exit"
+	"github.com/tkw1536/ggman/goprogram/lib/slice"
+	"github.com/tkw1536/ggman/goprogram/meta"
 )
 
 // Command represents a command associated with a program.

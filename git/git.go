@@ -16,7 +16,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/tkw1536/ggman/program/stream"
+	"github.com/tkw1536/ggman/goprogram/stream"
 )
 
 // Git represents a wrapper around a Plumbing instance.

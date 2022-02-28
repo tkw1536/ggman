@@ -1,10 +1,10 @@
-package program
+package goprogram
 
 import (
 	"fmt"
 
 	"github.com/alessio/shellescape"
-	"github.com/tkw1536/ggman/program/meta"
+	"github.com/tkw1536/ggman/goprogram/meta"
 )
 
 // MainUsage returns a help page about ggman

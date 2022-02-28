@@ -1,4 +1,4 @@
-package program
+package goprogram
 
 // Keywords are special "commands" that manipulate arguments before execution.
 //

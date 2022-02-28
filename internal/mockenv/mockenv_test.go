@@ -9,8 +9,8 @@ import (
 	"github.com/alessio/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/goprogram/meta"
 	"github.com/tkw1536/ggman/internal/path"
-	"github.com/tkw1536/ggman/program/meta"
 )
 
 // recordingT records a message passed to Errorf()

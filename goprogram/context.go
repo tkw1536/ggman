@@ -1,8 +1,8 @@
-package program
+package goprogram
 
 import (
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman/program/stream"
+	"github.com/tkw1536/ggman/goprogram/stream"
 )
 
 // Context represents an execution environment for a command.

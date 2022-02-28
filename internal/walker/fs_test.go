@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tkw1536/ggman/program/lib/testlib"
+	"github.com/tkw1536/ggman/goprogram/lib/testlib"
 )
 
 func Test_IsDirectory(t *testing.T) {

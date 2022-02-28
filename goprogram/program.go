@@ -1,10 +1,10 @@
 // Package program provides a program abstraction that can be used to create programs
-package program
+package goprogram
 
 import (
-	"github.com/tkw1536/ggman/program/exit"
-	"github.com/tkw1536/ggman/program/meta"
-	"github.com/tkw1536/ggman/program/stream"
+	"github.com/tkw1536/ggman/goprogram/exit"
+	"github.com/tkw1536/ggman/goprogram/meta"
+	"github.com/tkw1536/ggman/goprogram/stream"
 )
 
 // Program represents an executable program.

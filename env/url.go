@@ -4,9 +4,9 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/tkw1536/ggman/goprogram/lib/slice"
 	"github.com/tkw1536/ggman/internal/split"
 	"github.com/tkw1536/ggman/internal/url"
-	"github.com/tkw1536/ggman/program/lib/slice"
 )
 
 // URL represents a URL to a single git repository.

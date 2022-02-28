@@ -5,7 +5,7 @@ import (
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/program/exit"
+	"github.com/tkw1536/ggman/goprogram/exit"
 )
 
 // Fix is the 'ggman fix' command.

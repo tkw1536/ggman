@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tkw1536/ggman/program/lib/testlib"
+	"github.com/tkw1536/ggman/goprogram/lib/testlib"
 )
 
 // CaseSensitive checks if temporary directories exist on a case-sensitive file system.

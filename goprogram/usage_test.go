@@ -1,11 +1,11 @@
-package program
+package goprogram
 
 import (
 	"reflect"
 	"testing"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/tkw1536/ggman/program/meta"
+	"github.com/tkw1536/ggman/goprogram/meta"
 )
 
 func TestProgram_MainUsage(t *testing.T) {

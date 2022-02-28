@@ -1,7 +1,7 @@
-package program
+package goprogram
 
 import (
-	"github.com/tkw1536/ggman/program/lib/slice"
+	"github.com/tkw1536/ggman/goprogram/lib/slice"
 )
 
 // Alias represents an alias for a command.
