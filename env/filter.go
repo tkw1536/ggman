@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/tkw1536/ggman/goprogram/lib/slice"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/pattern"
+	"github.com/tkw1536/goprogram/lib/slice"
 )
 
 // Filter is a predicate that scores repositories inside an environment.

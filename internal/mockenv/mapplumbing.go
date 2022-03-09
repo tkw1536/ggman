@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/ggman/goprogram/stream"
+	"github.com/tkw1536/goprogram/stream"
 )
 
 // MappedPlumbing is a version of a git.Plumbing that runs all URLs via a translation mapping.

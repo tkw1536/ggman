@@ -8,9 +8,9 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/ggman/goprogram/exit"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/walker"
+	"github.com/tkw1536/goprogram/exit"
 )
 
 // Env represents an environment to be used by ggman.

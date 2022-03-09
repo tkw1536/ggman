@@ -6,10 +6,10 @@ import (
 	"github.com/alessio/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/goprogram/exit"
-	"github.com/tkw1536/ggman/goprogram/meta"
-	"github.com/tkw1536/ggman/goprogram/stream"
 	"github.com/tkw1536/ggman/internal/sema"
+	"github.com/tkw1536/goprogram/exit"
+	"github.com/tkw1536/goprogram/meta"
+	"github.com/tkw1536/goprogram/stream"
 )
 
 // Exec is the 'ggman exec' command.

@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/ggman/goprogram/lib/testlib"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/goprogram/lib/testlib"
 )
 
 func TestEnv_LoadDefaultRoot(t *testing.T) {

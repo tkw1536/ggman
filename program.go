@@ -5,9 +5,9 @@ import (
 
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
-	program "github.com/tkw1536/ggman/goprogram"
-	"github.com/tkw1536/ggman/goprogram/exit"
-	"github.com/tkw1536/ggman/goprogram/meta"
+	program "github.com/tkw1536/goprogram"
+	"github.com/tkw1536/goprogram/exit"
+	"github.com/tkw1536/goprogram/meta"
 )
 
 // these define the ggman-specific program types

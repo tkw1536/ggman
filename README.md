@@ -399,8 +399,8 @@ ggman comes with the following builtin aliases:
 
 ### 1.14.0 (Upcoming)
 
-- move to ggman `1.18`
-- refactor `program` package to use type-parameters and not depend on ggman
+- move to go `1.18`
+- refactor `program` package into external `goprogram` package, using type-parameters and not depend on ggman
 - add `--to` and `--local` flags to `ggman clone`
 - fix `ggman pull` not respecting input / output streams
 - README and documentation rework

@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/goprogram/exit"
+	"github.com/tkw1536/goprogram/exit"
 )
 
 // Lsr is the 'ggman lsr' command.

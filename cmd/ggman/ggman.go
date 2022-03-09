@@ -28,7 +28,7 @@
 //
 // Disable fuzzy filter matching. See Environment section below.
 //
-// See the Arguments type of the github.com/tkw1536/ggman/goprogram package for more details of argument parsing.
+// See the Arguments type of the github.com/tkw1536/goprogram package for more details of argument parsing.
 //
 // Subcommands and their Arguments
 //
@@ -100,9 +100,9 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/cmd"
 	"github.com/tkw1536/ggman/env"
-	program "github.com/tkw1536/ggman/goprogram"
-	"github.com/tkw1536/ggman/goprogram/exit"
-	"github.com/tkw1536/ggman/goprogram/stream"
+	program "github.com/tkw1536/goprogram"
+	"github.com/tkw1536/goprogram/exit"
+	"github.com/tkw1536/goprogram/stream"
 )
 
 // the main ggman program that will contain everything

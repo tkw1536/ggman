@@ -10,7 +10,7 @@ import (
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/tkw1536/ggman/goprogram/lib/testlib"
+	"github.com/tkw1536/goprogram/lib/testlib"
 )
 
 // NewTestRepo creates a new (empty) repository for testing purposes.

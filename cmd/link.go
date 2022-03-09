@@ -8,8 +8,8 @@ import (
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/goprogram/exit"
-	"github.com/tkw1536/ggman/goprogram/meta"
+	"github.com/tkw1536/goprogram/exit"
+	"github.com/tkw1536/goprogram/meta"
 )
 
 // Link is the 'ggman link' command.

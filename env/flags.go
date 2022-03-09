@@ -2,10 +2,10 @@ package env
 
 import (
 	"github.com/pkg/errors"
-	program "github.com/tkw1536/ggman/goprogram"
-	"github.com/tkw1536/ggman/goprogram/exit"
-	"github.com/tkw1536/ggman/goprogram/meta"
 	"github.com/tkw1536/ggman/internal/walker"
+	program "github.com/tkw1536/goprogram"
+	"github.com/tkw1536/goprogram/exit"
+	"github.com/tkw1536/goprogram/meta"
 )
 
 // Flags represents a set of filter flags used for the ggman program.
