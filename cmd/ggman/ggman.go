@@ -100,7 +100,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/cmd"
 	"github.com/tkw1536/ggman/env"
-	program "github.com/tkw1536/goprogram"
+	"github.com/tkw1536/goprogram"
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/goprogram/stream"
 )
@@ -135,7 +135,7 @@ func init() {
 	}
 
 	// register all the aliases to the program
-	for _, a := range []program.Alias{
+	for _, a := range []goprogram.Alias{
 		{Name: "git", Command: "exec", Args: []string{"git"}, Description: "Execute a git command using a native 'git' executable. "},
 	} {
 		ggmanExe.RegisterAlias(a)

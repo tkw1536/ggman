@@ -2,10 +2,10 @@ package ggman
 
 import (
 	"github.com/tkw1536/ggman/env"
-	program "github.com/tkw1536/goprogram"
+	"github.com/tkw1536/goprogram"
 )
 
 // URLV returns the ith parameters as a url.
-func URLV[R any, P any, Flags any, Requirements program.Requirement[Flags]](context program.Context[R, P, Flags, Requirements], i int) env.URL {
+func URLV[E any, P any, F any, R goprogram.Requirement[F]](context goprogram.Context[E, P, F, R], i int) env.URL {
 	return env.ParseURL(context.Args.Pos[i])
 }

@@ -3,12 +3,12 @@ package env
 import (
 	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman/internal/walker"
-	program "github.com/tkw1536/goprogram"
+	"github.com/tkw1536/goprogram"
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/goprogram/meta"
 )
 
-// Flags represents a set of filter flags used for the ggman program.
+// Flags represents a set of filter flags used for the ggman goprogram.
 type Flags struct {
 	Filters       []string `short:"f" long:"for" value-name:"filter" description:"Filter list of repositories to apply COMMAND to by filter. Filter can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url"`
 	NoFuzzyFilter bool     `short:"n" long:"no-fuzzy-filter" description:"Disable fuzzy matching for filters"`
@@ -130,6 +130,6 @@ func (req Requirement) AllowsFlag(flag meta.Flag) bool {
 	return req.AllowsFilter
 }
 
-func (req Requirement) Validate(args program.Arguments[Flags]) error {
-	return program.ValidateAllowedFlags[Flags](req, args)
+func (req Requirement) Validate(args goprogram.Arguments[Flags]) error {
+	return goprogram.ValidateAllowedFlags[Flags](req, args)
 }

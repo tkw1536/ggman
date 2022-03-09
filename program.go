@@ -5,7 +5,7 @@ import (
 
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
-	program "github.com/tkw1536/goprogram"
+	"github.com/tkw1536/goprogram"
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/goprogram/meta"
 )
@@ -17,11 +17,11 @@ type ggmanParameters = env.Parameters
 type ggmanRequirements = env.Requirement
 type ggmanFlags = env.Flags
 
-type Program = program.Program[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
-type Command = program.Command[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
-type Context = program.Context[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
-type Arguments = program.Arguments[ggmanFlags]
-type Description = program.Description[ggmanFlags, ggmanRequirements]
+type Program = goprogram.Program[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
+type Command = goprogram.Command[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
+type Context = goprogram.Context[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
+type Arguments = goprogram.Arguments[ggmanFlags]
+type Description = goprogram.Description[ggmanFlags, ggmanRequirements]
 
 // info contains information about the ggman program
 var info = meta.Info{
