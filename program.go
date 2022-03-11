@@ -32,6 +32,25 @@ var info = meta.Info{
 	Description: fmt.Sprintf("ggman manages local git repositories\n\nggman version %s\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.", constants.BuildVersion),
 }
 
+// newEnvironment makes a new runtime for ggman
+func newEnvironment(params env.Parameters, context Context) (env.Env, error) {
+	// create a new environment
+	e, err := env.NewEnv(context.Description.Requirements, params)
+	if err != nil {
+		return env.Env{}, err
+	}
+
+	// setup a filter for it!
+	f, err := env.NewFilter(context.Args.Flags, &e)
+	if err != nil {
+		return e, err
+	}
+	e.Filter = f
+
+	return e, nil
+
+}
+
 var errParseArgsNeedTwoAfterFor = exit.Error{
 	ExitCode: exit.ExitGeneralArguments,
 	Message:  "Unable to parse arguments: At least two arguments needed after 'for' keyword. ",
@@ -39,7 +58,7 @@ var errParseArgsNeedTwoAfterFor = exit.Error{
 
 // NewProgram returns a new ggman program
 func NewProgram() (p Program) {
-	p.NewEnvironment = NewRuntime
+	p.NewEnvironment = newEnvironment
 	p.Info = info
 
 	p.RegisterKeyword("help", func(args *Arguments) error {
