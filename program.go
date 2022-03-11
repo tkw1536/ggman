@@ -12,14 +12,14 @@ import (
 
 // these define the ggman-specific program types
 // none of these are strictly needed, they're just around for convenience
-type ggmanRuntime = *env.Env
+type ggmanEnv = env.Env
 type ggmanParameters = env.Parameters
 type ggmanRequirements = env.Requirement
 type ggmanFlags = env.Flags
 
-type Program = goprogram.Program[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
-type Command = goprogram.Command[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
-type Context = goprogram.Context[ggmanRuntime, ggmanParameters, ggmanFlags, ggmanRequirements]
+type Program = goprogram.Program[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]
+type Command = goprogram.Command[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]
+type Context = goprogram.Context[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]
 type Arguments = goprogram.Arguments[ggmanFlags]
 type Description = goprogram.Description[ggmanFlags, ggmanRequirements]
 

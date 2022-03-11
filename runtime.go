@@ -5,17 +5,17 @@ import (
 )
 
 // NewRuntime makes a new runtime for ggman
-func NewRuntime(params env.Parameters, context Context) (*env.Env, error) {
+func NewRuntime(params env.Parameters, context Context) (env.Env, error) {
 	// create a new environment
 	e, err := env.NewEnv(context.Description.Requirements, params)
 	if err != nil {
-		return nil, err
+		return env.Env{}, err
 	}
 
 	// setup a filter for it!
-	f, err := env.NewFilter(context.Args.Flags, e)
+	f, err := env.NewFilter(context.Args.Flags, &e)
 	if err != nil {
-		return nil, err
+		return e, err
 	}
 	e.Filter = f
 

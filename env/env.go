@@ -77,8 +77,8 @@ type Parameters struct {
 // If r.AllowsFilter is true, a filter may be passed via the filter argument.
 //
 // This function is untested.
-func NewEnv(r Requirement, params Parameters) (*Env, error) {
-	env := &Env{
+func NewEnv(r Requirement, params Parameters) (Env, error) {
+	env := Env{
 		Git:     git.NewGitFromPlumbing(params.Plumbing, params.PATH),
 		Vars:    params.Variables,
 		Filter:  NoFilter,
@@ -87,13 +87,13 @@ func NewEnv(r Requirement, params Parameters) (*Env, error) {
 
 	if r.NeedsRoot || r.AllowsFilter { // AllowsFilter implies NeedsRoot
 		if err := env.LoadDefaultRoot(); err != nil {
-			return nil, err
+			return Env{}, err
 		}
 	}
 
 	if r.NeedsCanFile {
 		if _, err := env.LoadDefaultCANFILE(); err != nil {
-			return nil, err
+			return Env{}, err
 		}
 	}
 
