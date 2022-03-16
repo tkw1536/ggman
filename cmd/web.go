@@ -9,8 +9,8 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/lib/slice"
 	"github.com/tkw1536/goprogram/meta"
+	"golang.org/x/exp/slices"
 
 	"github.com/pkg/browser"
 )
@@ -102,7 +102,7 @@ func FmtWebBuiltInBaseNames() string {
 	}
 
 	// sort them, we don't care about stability
-	slice.Sort(bases)
+	slices.Sort(bases)
 
 	// and return
 	return strings.Join(bases, ", ")

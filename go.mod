@@ -10,7 +10,8 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
-	github.com/tkw1536/goprogram v0.0.1
+	github.com/tkw1536/goprogram v0.0.2
+	golang.org/x/exp v0.0.0-20220314205449-43aec2f8a4e7
 )
 
 require (

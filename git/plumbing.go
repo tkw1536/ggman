@@ -9,10 +9,10 @@ import (
 	"runtime"
 
 	"github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/tkw1536/goprogram/lib/slice"
 	"github.com/tkw1536/goprogram/stream"
 )
 
@@ -432,7 +432,7 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject interface{}, name string
 	remotes := cfg.Remotes[remote.Config().Name]
 
 	// if they haven't changed, we can return immediatly
-	if slice.Equals(remotes.URLs, urls) {
+	if slices.Equal(remotes.URLs, urls) {
 		return nil
 	}
 

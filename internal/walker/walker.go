@@ -9,7 +9,7 @@ import (
 
 	"github.com/tkw1536/ggman/internal/record"
 	"github.com/tkw1536/ggman/internal/sema"
-	"github.com/tkw1536/goprogram/lib/slice"
+	"golang.org/x/exp/slices"
 )
 
 // Walker is an object that can recursively scan a directory for subdirectories
@@ -160,7 +160,7 @@ func (w *Walker) Walk() error {
 		}
 
 		// sort the slice
-		slice.SortFunc(results, func(i, j walkResult) bool { return i.LessThan(j) })
+		slices.SortFunc(results, func(i, j walkResult) bool { return i.LessThan(j) })
 
 		// store the real (textual) results
 		w.results = make([]string, len(results))

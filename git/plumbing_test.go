@@ -11,9 +11,9 @@ import (
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/goprogram/lib/slice"
 	"github.com/tkw1536/goprogram/lib/testlib"
 	"github.com/tkw1536/goprogram/stream"
+	"golang.org/x/exp/slices"
 )
 
 func Test_gogit_IsRepository(t *testing.T) {
@@ -612,8 +612,8 @@ func Test_gogit_GetBranches(t *testing.T) {
 			}
 
 			// sort for testcases
-			slice.Sort(gotBranches)
-			slice.Sort(tt.wantBranches)
+			slices.Sort(gotBranches)
+			slices.Sort(tt.wantBranches)
 
 			if !reflect.DeepEqual(gotBranches, tt.wantBranches) {
 				t.Errorf("gogit.GetBranches() = %v, want %v", gotBranches, tt.wantBranches)
