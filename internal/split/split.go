@@ -10,14 +10,11 @@ import (
 //
 // See also After.
 func Before(s, sep string) (prefix, suffix string) {
-	// a perfectly valid implementation of this function could make use of strings.Split or strings.SplitN()
-	// but both of those allocate an array, and we do not need that here because we have a special situation.
-	// It's much more efficient to just check the index of the seperator and trim the string if found.
-	index := strings.Index(s, sep)
-	if index == -1 {
+	prefix, suffix, found := strings.Cut(s, sep)
+	if !found {
 		return "", s
 	}
-	return s[:index], s[index+len(sep):]
+	return prefix, suffix
 }
 
 // After splits the string s into a part before a seperator, called the prefix, and a part after the seperator, called the suffix.
@@ -25,9 +22,6 @@ func Before(s, sep string) (prefix, suffix string) {
 //
 // See also Before.
 func After(s, sep string) (prefix, suffix string) {
-	index := strings.Index(s, sep)
-	if index == -1 {
-		return s, ""
-	}
-	return s[:index], s[index+len(sep):]
+	prefix, suffix, _ = strings.Cut(s, sep)
+	return
 }
