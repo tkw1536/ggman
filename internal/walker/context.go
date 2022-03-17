@@ -2,114 +2,101 @@ package walker
 
 import (
 	"io/fs"
-	"sync"
+
+	"github.com/tkw1536/goprogram/lib/slice"
 )
 
-// WalkContext represents the current state of a Walk.
+// context implements WalkerContext
+type context[S any] struct {
+	w *Walker[S] // walker this context comes from
+
+	root FS       // the root filesystem
+	path []string // path to the current node
+
+	node     FS     // current node
+	nodePath string // name of the current node
+
+	snapshot S // snapshot data carried for the current node
+}
+
 //
-// Any instance of WalkContext should not be retained past any callback it is passed in.
-type WalkContext interface {
-	// Root node this instance of the scan started from
-	Root() FS
+// create / delete
+//
 
-	// Current node being operated on
-	Node() FS
-
-	// Path to the current node
-	NodePath() string
-
-	// Path from the root node to this node
-	Path() []string
-
-	// Depth of this node, equivalent to len(Path())
-	Depth() int
-
-	// Update the snapshot corresponding to the current context
-	Snapshot(update func(snapshot any) (value any))
-
-	// Mark the current node as a result with the given priority.
-	// May be called multiple times, in which case the node is marked as a result multiple times.
-	Mark(prio float64)
+// getCtx fetches a new (uninitialized) context from the walker-specific context pool.
+// it is guaranteed to be empty and have a nil context
+func (w *Walker[S]) getCtx() *context[S] {
+	return w.ctxPool.Get().(*context[S])
 }
 
-var walkContextPool = sync.Pool{
-	New: func() any {
-		return new(walkContext)
-	},
+// returnCtx returns a context to the walker-specific context pool.
+// the context is reset before it is put back.
+func (w *Walker[S]) returnCtx(ctx *context[S]) {
+	ctx.w = nil
+	ctx.root = nil
+	ctx.node = nil
+	ctx.nodePath = ""
+	ctx.path = nil
+
+	var nilSnapshot S
+	ctx.snapshot = nilSnapshot
+
+	w.ctxPool.Put(ctx)
 }
 
-// walkContext implements WalkContext
-type walkContext struct {
-	w *Walker
-
-	root FS
-
-	node     FS
-	nodePath string
-
-	path     []string
-	snapshot any
-}
-
-func (w *Walker) newContext(root FS) *walkContext {
-	ctx := walkContextPool.Get().(*walkContext)
+// newContext initializes a new context from the context-specific pool
+func (w *Walker[S]) newContext(root FS) *context[S] {
+	ctx := w.getCtx()
 
 	ctx.w = w
 
 	ctx.root = root
-
 	ctx.node = root
-	ctx.nodePath = "" // never used!
-
-	ctx.path = nil
-	ctx.snapshot = nil
 
 	return ctx
 }
 
-func (w walkContext) sub(entry fs.DirEntry) *walkContext {
-	sub := walkContextPool.Get().(*walkContext)
+// sub creates a new sub-context for the given
+func (w *context[S]) sub(entry fs.DirEntry) *context[S] {
+	sub := w.w.getCtx()
 
 	sub.w = w.w
 	sub.root = w.root
 
 	// create a new sub-path; which will allocate a new path for the child
-	sub.path = make([]string, len(w.path)+1)
-	copy(sub.path, w.path)
-	sub.path[len(w.path)] = entry.Name()
+	sub.path = slice.Copy(w.path)
+	sub.path = append(w.path, entry.Name())
 
+	// return a new node
 	sub.node = w.node.Sub(w.nodePath, entry)
-	sub.snapshot = nil
 
 	return sub
 }
 
-func (w walkContext) Root() FS {
+func (w context[S]) Root() FS {
 	return w.root
 }
 
-func (w walkContext) Node() FS {
+func (w context[S]) Node() FS {
 	return w.node
 }
 
-func (w walkContext) NodePath() string {
+func (w context[S]) NodePath() string {
 	return w.nodePath
 }
 
-func (w walkContext) Path() []string {
-	path := make([]string, len(w.path))
-	copy(path, w.path)
-	return path
+func (w context[S]) Path() []string {
+	return slice.Copy(w.path)
 }
 
-func (w walkContext) Depth() int {
+func (w context[S]) Depth() int {
 	return len(w.path)
 }
 
-func (w walkContext) Mark(prio float64) {
+func (w context[S]) Mark(prio float64) {
 	w.w.reportResult(w.nodePath, prio)
 }
 
-func (w *walkContext) Snapshot(update func(snapshot any) any) {
+func (w *context[S]) Snapshot(update func(snapshot S) S) {
 	w.snapshot = update(w.snapshot)
 }

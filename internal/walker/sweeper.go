@@ -11,7 +11,7 @@ import "io/fs"
 //  err := scanner.Walk();
 //	results := scanner.Results()
 func Sweep(Visit SweepProcess, Params Params) ([]string, error) {
-	scanner := Walker{
+	scanner := Walker[bool]{
 		Process: Visit,
 		Params:  Params,
 	}
@@ -34,7 +34,7 @@ func Sweep(Visit SweepProcess, Params Params) ([]string, error) {
 // SweepProcess implements Process and can be used with Walk.
 type SweepProcess func(path string, root FS, depth int) (stop bool)
 
-func (v SweepProcess) Visit(context WalkContext) (shouldRecurse bool, err error) {
+func (v SweepProcess) Visit(context WalkContext[bool]) (shouldRecurse bool, err error) {
 	var shouldStop bool
 	if v != nil {
 		shouldStop = v(context.NodePath(), context.Root(), context.Depth())
@@ -42,12 +42,11 @@ func (v SweepProcess) Visit(context WalkContext) (shouldRecurse bool, err error)
 	if shouldStop {
 		return false, nil
 	}
-	context.Snapshot(func(snapshot any) (value any) { return true })
+	context.Snapshot(func(snapshot bool) bool { return true })
 	return true, nil // we should recurse!
 }
-func (SweepProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContext) (action Step, err error) {
-	context.Snapshot(func(snapshot any) (value any) {
-		isEmpty := snapshot.(bool)
+func (SweepProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContext[bool]) (action Step, err error) {
+	context.Snapshot(func(isEmpty bool) bool {
 		if !valid {
 			// non-directory => we are not empty!
 			isEmpty = false
@@ -65,10 +64,8 @@ func (SweepProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContex
 	return action, nil
 }
 
-func (SweepProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext) (err error) {
-	context.Snapshot(func(snapshot any) any {
-		isEmpty := snapshot.(bool)
-
+func (SweepProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext[bool]) (err error) {
+	context.Snapshot(func(isEmpty bool) bool {
 		// this directory remains empty iff all child directories are empty
 		if !(resultOK && resultValue.(bool)) {
 			isEmpty = false
@@ -79,9 +76,8 @@ func (SweepProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK
 	return nil
 }
 
-func (SweepProcess) AfterVisit(context WalkContext) (err error) {
-	context.Snapshot(func(snapshot any) any {
-		isEmpty := snapshot.(bool)
+func (SweepProcess) AfterVisit(context WalkContext[bool]) (err error) {
+	context.Snapshot(func(isEmpty bool) bool {
 		if isEmpty {
 			context.Mark(float64(context.Depth()))
 		}

@@ -9,16 +9,25 @@ import (
 
 	"github.com/tkw1536/ggman/internal/record"
 	"github.com/tkw1536/ggman/internal/sema"
+	"github.com/tkw1536/goprogram/lib/slice"
 	"golang.org/x/exp/slices"
 )
 
-// Walker is an object that can recursively scan a directory for subdirectories
-// and return those determined by a used.
+// Walker is an object that can recursively operate on all subdirectories of a directory and score those matching a specific criterion.
+// The criterion is determined by the Process parameter.
 //
-// A cursor uses concurrent operations when possible, as determiend by Callbacks
+// Process also determines if the process can operate on multiple directories concurrently.
+// Parameters determine the initial root directorie(s) to start with, and what level of concurrency the walker may make use of.
 //
-// Each Walker may be used only once; it may not in and of itself be used concurrently
-type Walker struct {
+// Each Walker may be used only once.
+// A typical use of a walker looks like:
+//
+//  w := Walker{/* ... */}
+//  if err := w.Walk(); err != nil {
+//    return err
+//  }
+//  results, scores := w.Results(), w.Scores()
+type Walker[S any] struct {
 	state uint32 // 0 => initial, 1 => in Walk(), 2 => done
 
 	record record.Record // contains visited nodes
@@ -29,11 +38,13 @@ type Walker struct {
 	errChan    chan error      // contains error in the buffer
 	resultChan chan walkResult // contains results temporarily
 
-	results []string  // results
-	scores  []float64 // scores
+	ctxPool *sync.Pool // pool for *context[S] objects
+
+	results []string
+	scores  []float64
 
 	Params  Params
-	Process Process
+	Process Process[S]
 }
 
 // Params are parameters for a walk across a filesystem
@@ -55,10 +66,11 @@ type Params struct {
 	BufferSize int
 }
 
-// Process represents a walking process of a walker
+// Process determines the behavior of a Walker.
 //
-// Processes should not retain references to VisitContexts beyond the invocation of the function
-type Process interface {
+// Each process may hold intermediate state of type S.
+// Processes should not retain references to VisitContexts (or state) beyond the invocation of each method.
+type Process[S any] interface {
 	// Visit is called for every node that is being visited.
 	// It is the first function called for each node.
 	//
@@ -79,20 +91,20 @@ type Process interface {
 	//
 	// Err is any error that may occur, and should typically be nil.
 	// An error immediatly cause iteration on this node to be aborted, and the first error of any node will be returned to the caller of Walk.
-	Visit(context WalkContext) (shouldVisitChildren bool, err error)
+	Visit(context WalkContext[S]) (shouldVisitChildren bool, err error)
 
 	// VisitChild is called to determine if and how a child node should be processed.
 	//
 	// A child entry is valid if it can be recursivly processed (i.e. is a directory).
 	//
 	// When child is valid, it determines how the child should be processed; otherwise action is ignored.
-	VisitChild(child fs.DirEntry, valid bool, context WalkContext) (action Step, err error)
+	VisitChild(child fs.DirEntry, valid bool, context WalkContext[S]) (action Step, err error)
 
 	// AfterVisitChild is called after a child has been visited syncronously.
 	//
 	// It is passed to special values, the returned snapshot (as returned from AfterVisit / Visit) and if the child was processed properly.
 	// The child was processed improperly when any of the Process functions on it returned an error, listing a directory failed, or it was already processed before (loop detection). In these cases resultValue is nil.
-	AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext) (err error)
+	AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext[S]) (err error)
 
 	// AfterVisit is called after all children have been visited (or scheduled to be visited).
 	// It is not called for the case where Visit returns shouldVisitChildren = false.
@@ -100,7 +112,7 @@ type Process interface {
 	// result can be used to mark the current node, see also Visit.
 	//
 	// The returnValue returned from AfterVisit is passed to parent(s) if any.
-	AfterVisit(context WalkContext) (err error)
+	AfterVisit(context WalkContext[S]) (err error)
 }
 
 // Step describes how a child node should be processed
@@ -117,17 +129,52 @@ const (
 	DoConcurrent
 )
 
+// WalkContext represents the current state of a Walker.
+// It may additionally hold a snapshotted state of type S.
+//
+// Any instance of WalkContext should not be retained past any method it is passed to.
+type WalkContext[S any] interface {
+	// Root node this instance of the scan started from
+	Root() FS
+
+	// Current node being operated on
+	Node() FS
+
+	// Path to the current node
+	NodePath() string
+
+	// Path from the root node to this node
+	Path() []string
+
+	// Depth of this node, equivalent to len(Path())
+	Depth() int
+
+	// Update the snapshot corresponding to the current context
+	Snapshot(update func(snapshot S) (value S))
+
+	// Mark the current node as a result with the given priority.
+	// May be called multiple times, in which case the node is marked as a result multiple times.
+	Mark(prio float64)
+}
+
 // Walk begins recursively walking the directory tree starting at the roots defined in Config.
 //
 // Walk must be called at most once for each Walker and will panic() if called multiple times.
 //
 // This function is untested because the tests for Scan and Sweep suffice.
-func (w *Walker) Walk() error {
+func (w *Walker[S]) Walk() error {
 	// state of the walker
 	if !atomic.CompareAndSwapUint32(&w.state, 0, 1) {
 		panic("Walker.Walk(): Attempted reuse")
 	}
 	defer atomic.StoreUint32(&w.state, 2)
+
+	// setup a pool for new contexts
+	w.ctxPool = &sync.Pool{
+		New: func() any {
+			return new(context[S])
+		},
+	}
 
 	// configure concurrency
 	w.semaphore = sema.NewSemaphore(w.Params.MaxParallel)
@@ -185,18 +232,18 @@ func (w *Walker) Walk() error {
 }
 
 // walkRoot starts a walk through the provided root
-func (w *Walker) walkRoot(root FS) {
+func (w *Walker[S]) walkRoot(root FS) {
 	w.semaphore.Lock()
 	defer w.semaphore.Unlock()
 
 	ctx := w.newContext(root)
-	defer walkContextPool.Put(ctx)
+	defer w.returnCtx(ctx)
 
 	w.walk(true, ctx)
 }
 
 // walk walks recursively through the provided context
-func (w *Walker) walk(sync bool, ctx *walkContext) (ok bool) {
+func (w *Walker[S]) walk(sync bool, ctx *context[S]) (ok bool) {
 	defer w.wg.Done()
 
 	if !sync {
@@ -255,14 +302,14 @@ func (w *Walker) walk(sync bool, ctx *walkContext) (ok bool) {
 			w.wg.Done()
 		case action == DoConcurrent:
 			// work asyncronously and discard the parent!
-			go func(cctx *walkContext) {
-				defer walkContextPool.Put(cctx)
+			go func(cctx *context[S]) {
+				defer w.returnCtx(cctx)
 				w.walk(false, cctx)
 			}(ctx.sub(entry))
 		case action == DoSync:
 			// run the child processing!
-			ok, value := func(cctx *walkContext) (bool, any) {
-				defer walkContextPool.Put(cctx)
+			ok, value := func(cctx *context[S]) (bool, any) {
+				defer w.returnCtx(cctx)
 
 				ok := w.walk(true, cctx)
 				return ok, cctx.snapshot
@@ -288,13 +335,13 @@ func (w *Walker) walk(sync bool, ctx *walkContext) (ok bool) {
 
 // reportResults reports the given node as a result.
 // might block until a slot in the results is available.
-func (w *Walker) reportResult(node string, score float64) {
+func (w *Walker[S]) reportResult(node string, score float64) {
 	w.resultChan <- walkResult{Node: node, Score: score}
 }
 
 // reportErrors reports the provided error to the caller of Walk()
 // When another error has already occured, does nothing
-func (w *Walker) reportError(err error) {
+func (w *Walker[S]) reportError(err error) {
 	select {
 	case w.errChan <- err:
 	default:
@@ -306,28 +353,24 @@ func (w *Walker) reportError(err error) {
 // Each call to result returns a new copy of the results.
 //
 // Results expects the Scan() function to have returned, and will panic if this is not the case.
-func (w *Walker) Results() []string {
+func (w *Walker[S]) Results() []string {
 	if atomic.LoadUint32(&w.state) != 2 {
 		panic("Walker.Walk(): Results() called before Walk() returned")
 	}
 
-	results := make([]string, len(w.results))
-	copy(results, w.results)
-	return results
+	return slice.Copy(w.results)
 }
 
 // Scores returns the scores which have been marked as a result.
 // They are returned in the same order as Results()
 //
 // Results expects the Scan() function to have returned, and will panic if this is not the case.
-func (w *Walker) Scores() []float64 {
+func (w *Walker[S]) Scores() []float64 {
 	if atomic.LoadUint32(&w.state) != 2 {
 		panic("Walker.Walk(): Scores() called before Walk() returned")
 	}
 
-	scores := make([]float64, len(w.scores))
-	copy(scores, w.scores)
-	return scores
+	return slice.Copy(w.scores)
 }
 
 var ErrUnknownAction = errors.New("Process.BeforeChild(): Unknown action")

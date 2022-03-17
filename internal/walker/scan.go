@@ -12,7 +12,7 @@ import "io/fs"
 //  err := scanner.Walk();
 //	results := scanner.Results()
 func Scan(Visit ScanProcess, Params Params) ([]string, error) {
-	scanner := Walker{
+	scanner := Walker[struct{}]{
 		Process: Visit,
 		Params:  Params,
 	}
@@ -36,7 +36,7 @@ func Scan(Visit ScanProcess, Params Params) ([]string, error) {
 // ScanProcess implements Process and can be used with Walk
 type ScanProcess func(path string, root FS, depth int) (score float64, cont bool)
 
-func (v ScanProcess) Visit(context WalkContext) (shouldVisitChildren bool, err error) {
+func (v ScanProcess) Visit(context WalkContext[struct{}]) (shouldVisitChildren bool, err error) {
 	match, cont := float64(0), true
 	if v != nil {
 		match, cont = v(context.NodePath(), context.Root(), context.Depth())
@@ -47,15 +47,15 @@ func (v ScanProcess) Visit(context WalkContext) (shouldVisitChildren bool, err e
 	return cont, nil
 }
 
-func (ScanProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContext) (action Step, err error) {
+func (ScanProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContext[struct{}]) (action Step, err error) {
 	return DoConcurrent, nil
 }
 
-func (ScanProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext) (err error) {
+func (ScanProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext[struct{}]) (err error) {
 	return nil
 }
 
-func (ScanProcess) AfterVisit(context WalkContext) (err error) {
+func (ScanProcess) AfterVisit(context WalkContext[struct{}]) (err error) {
 	return nil
 }
 
