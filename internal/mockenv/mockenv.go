@@ -166,7 +166,7 @@ var regexGGROOT = regexp.MustCompile(`.?\$\{GGROOT( [^\}]+)?\}.?`)
 
 // TestingT is an interface around TestingT
 type TestingT interface {
-	Errorf(format string, args ...interface{})
+	Errorf(format string, args ...any)
 }
 
 // AssertOutput asserts that the standard error or output returned by Run() is equal to one of wants.

@@ -18,7 +18,7 @@ type recordingT struct {
 	message string
 }
 
-func (f *recordingT) Errorf(format string, args ...interface{}) {
+func (f *recordingT) Errorf(format string, args ...any) {
 	f.message = fmt.Sprintf(format, args...)
 }
 

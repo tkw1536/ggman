@@ -42,11 +42,11 @@ func (v SweepProcess) Visit(context WalkContext) (shouldRecurse bool, err error)
 	if shouldStop {
 		return false, nil
 	}
-	context.Snapshot(func(snapshot interface{}) (value interface{}) { return true })
+	context.Snapshot(func(snapshot any) (value any) { return true })
 	return true, nil // we should recurse!
 }
 func (SweepProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContext) (action Step, err error) {
-	context.Snapshot(func(snapshot interface{}) (value interface{}) {
+	context.Snapshot(func(snapshot any) (value any) {
 		isEmpty := snapshot.(bool)
 		if !valid {
 			// non-directory => we are not empty!
@@ -65,8 +65,8 @@ func (SweepProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContex
 	return action, nil
 }
 
-func (SweepProcess) AfterVisitChild(child fs.DirEntry, resultValue interface{}, resultOK bool, context WalkContext) (err error) {
-	context.Snapshot(func(snapshot interface{}) interface{} {
+func (SweepProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext) (err error) {
+	context.Snapshot(func(snapshot any) any {
 		isEmpty := snapshot.(bool)
 
 		// this directory remains empty iff all child directories are empty
@@ -80,7 +80,7 @@ func (SweepProcess) AfterVisitChild(child fs.DirEntry, resultValue interface{}, 
 }
 
 func (SweepProcess) AfterVisit(context WalkContext) (err error) {
-	context.Snapshot(func(snapshot interface{}) interface{} {
+	context.Snapshot(func(snapshot any) any {
 		isEmpty := snapshot.(bool)
 		if isEmpty {
 			context.Mark(float64(context.Depth()))

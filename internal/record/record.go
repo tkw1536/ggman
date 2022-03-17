@@ -22,7 +22,7 @@ type Record struct {
 // Otherwise returns false.
 //
 // Record is an atomic operation and can be safely called concurrently.
-func (r *Record) Record(v interface{}) (recorded bool) {
+func (r *Record) Record(v any) (recorded bool) {
 	_, recorded = r.records.LoadOrStore(v, struct{}{})
 	return
 }
@@ -30,7 +30,7 @@ func (r *Record) Record(v interface{}) (recorded bool) {
 // Recorded checks and returns if the value v has been recorded.
 //
 // Recorded is an atomic operation and can be safely called concurrently.
-func (r *Record) Recorded(v interface{}) (visited bool) {
+func (r *Record) Recorded(v any) (visited bool) {
 	_, visited = r.records.Load(v)
 	return
 }

@@ -51,7 +51,7 @@ func (ScanProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContext
 	return DoConcurrent, nil
 }
 
-func (ScanProcess) AfterVisitChild(child fs.DirEntry, resultValue interface{}, resultOK bool, context WalkContext) (err error) {
+func (ScanProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext) (err error) {
 	return nil
 }
 

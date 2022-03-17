@@ -48,7 +48,7 @@ func (mp MappedPlumbing) Clone(stream stream.IOStream, remoteURI, clonePath stri
 }
 
 // GetRemotes calls GetRemotes() on the underlying Plumbing and translates the returned URLs.
-func (mp MappedPlumbing) GetRemotes(clonePath string, repoObject interface{}) (remotes map[string][]string, err error) {
+func (mp MappedPlumbing) GetRemotes(clonePath string, repoObject any) (remotes map[string][]string, err error) {
 	remotes, err = mp.Plumbing.GetRemotes(clonePath, repoObject)
 	for k := range remotes {
 		for i := range remotes[k] {
@@ -59,7 +59,7 @@ func (mp MappedPlumbing) GetRemotes(clonePath string, repoObject interface{}) (r
 }
 
 // GetCanonicalRemote calls GetCanonicalRemote() on the underlying Plumbing and translates all returned urls.
-func (mp MappedPlumbing) GetCanonicalRemote(clonePath string, repoObject interface{}) (name string, urls []string, err error) {
+func (mp MappedPlumbing) GetCanonicalRemote(clonePath string, repoObject any) (name string, urls []string, err error) {
 	name, urls, err = mp.Plumbing.GetCanonicalRemote(clonePath, repoObject)
 	for i := range urls {
 		urls[i] = mp.Backward(urls[i])
@@ -68,7 +68,7 @@ func (mp MappedPlumbing) GetCanonicalRemote(clonePath string, repoObject interfa
 }
 
 // SetRemoteURLs translates urls and calls SetRemoteURLs() on the underlying Plumbing.
-func (mp MappedPlumbing) SetRemoteURLs(clonePath string, repoObject interface{}, name string, urls []string) (err error) {
+func (mp MappedPlumbing) SetRemoteURLs(clonePath string, repoObject any, name string, urls []string) (err error) {
 	for i := range urls {
 		urls[i] = mp.Forward(urls[i])
 	}

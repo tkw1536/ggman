@@ -92,7 +92,7 @@ type Process interface {
 	//
 	// It is passed to special values, the returned snapshot (as returned from AfterVisit / Visit) and if the child was processed properly.
 	// The child was processed improperly when any of the Process functions on it returned an error, listing a directory failed, or it was already processed before (loop detection). In these cases resultValue is nil.
-	AfterVisitChild(child fs.DirEntry, resultValue interface{}, resultOK bool, context WalkContext) (err error)
+	AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext) (err error)
 
 	// AfterVisit is called after all children have been visited (or scheduled to be visited).
 	// It is not called for the case where Visit returns shouldVisitChildren = false.
@@ -261,7 +261,7 @@ func (w *Walker) walk(sync bool, ctx *walkContext) (ok bool) {
 			}(ctx.sub(entry))
 		case action == DoSync:
 			// run the child processing!
-			ok, value := func(cctx *walkContext) (bool, interface{}) {
+			ok, value := func(cctx *walkContext) (bool, any) {
 				defer walkContextPool.Put(cctx)
 
 				ok := w.walk(true, cctx)

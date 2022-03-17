@@ -25,7 +25,7 @@ type WalkContext interface {
 	Depth() int
 
 	// Update the snapshot corresponding to the current context
-	Snapshot(update func(snapshot interface{}) (value interface{}))
+	Snapshot(update func(snapshot any) (value any))
 
 	// Mark the current node as a result with the given priority.
 	// May be called multiple times, in which case the node is marked as a result multiple times.
@@ -33,7 +33,7 @@ type WalkContext interface {
 }
 
 var walkContextPool = sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		return new(walkContext)
 	},
 }
@@ -48,7 +48,7 @@ type walkContext struct {
 	nodePath string
 
 	path     []string
-	snapshot interface{}
+	snapshot any
 }
 
 func (w *Walker) newContext(root FS) *walkContext {
@@ -110,6 +110,6 @@ func (w walkContext) Mark(prio float64) {
 	w.w.reportResult(w.nodePath, prio)
 }
 
-func (w *walkContext) Snapshot(update func(snapshot interface{}) interface{}) {
+func (w *walkContext) Snapshot(update func(snapshot any) any) {
 	w.snapshot = update(w.snapshot)
 }
