@@ -33,7 +33,7 @@ type Walker[S any] struct {
 	record record.Record // contains visited nodes
 
 	wg        sync.WaitGroup // tracks which scanning processes are
-	semaphore sync.Locker    // tracks how many scanners are alive
+	semaphore sema.Semaphore // tracks how many scanners are alive
 
 	errChan    chan error      // contains error in the buffer
 	resultChan chan walkResult // contains results temporarily
