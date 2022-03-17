@@ -5,18 +5,9 @@ import "sync"
 
 // NewSemaphore creates a new semaphore with the provided limit.
 //
-// A semaphore is a sync.Locker which guards a finite resource (of value limit).
-// The resource can be aquired using a call to Lock() and released using a call to Unlock().
-//
 // A semaphore with limit = 1 is a *sync.Mutex.
-// Semaphores with limit <= 0 implement Lock and Unlock as no-ops.
-//
-// Calls to Lock() block until resources in the semaphore are available.
-// Calls to Unlock() never block.
-//
-// Calls to Unlock() when the resource is at value limit are a programming error.
-// They may cause a runtime panic or an error.
-func NewSemaphore(limit int) sync.Locker {
+// Semaphores with limit <= 0 implement Lock, TryLock and Unlock as no-ops that return immediatly.
+func NewSemaphore(limit int) Semaphore {
 	switch {
 	case limit <= 0:
 		return fakeLocker{}
@@ -25,6 +16,30 @@ func NewSemaphore(limit int) sync.Locker {
 	default:
 		return semaphore(make(chan struct{}, limit))
 	}
+}
+
+// Semaphore represents a guards of a finite resource with a specific limit.
+// The resource can be acquired using a call to Lock() and released using a call to Unlock().
+//
+// See also NewSemaphore and sync.Locker.
+type Semaphore interface {
+
+	// Lock atomically acquires a unit of the guarded resource.
+	// When the resource is not available, it blocks until such a resource is available.
+	Lock()
+
+	// TryLock attempts to atomically aquire the resource without locking.
+	// When it suceeds, it returns true, otherwise it returns false.
+	//
+	// Calls to TryLock() never block; they always return immediatly.
+	TryLock() bool
+
+	// Unlock releases one unit of the resource that has been previously acquired.
+	// Calls to Unlock() never block.
+	//
+	// Calls to Unlock() without an acquired resource are a programming error;
+	// they may produce a panic() or a runtime error.
+	Unlock()
 }
 
 // semaphore can implement a semiphore of limit >= 2
@@ -38,6 +53,15 @@ func (s semaphore) Lock() {
 	s <- struct{}{}
 }
 
+func (s semaphore) TryLock() bool {
+	select {
+	case s <- struct{}{}:
+		return true
+	default:
+		return false
+	}
+}
+
 func (s semaphore) Unlock() {
 	select {
 	case <-s:
@@ -49,5 +73,6 @@ func (s semaphore) Unlock() {
 // fakeLocker locks and unlocks
 type fakeLocker struct{}
 
-func (fakeLocker) Lock()   {}
-func (fakeLocker) Unlock() {}
+func (fakeLocker) Lock()         {}
+func (fakeLocker) Unlock()       {}
+func (fakeLocker) TryLock() bool { return true }

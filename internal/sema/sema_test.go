@@ -220,3 +220,33 @@ func BenchmarkNewSemaphore_contested(b *testing.B) {
 		sema.Unlock()
 	}
 }
+
+func TestNewSemaphore_TryLock(t *testing.T) {
+	N := 1000
+
+	for limit := 1; limit < N; limit++ {
+		t.Run(fmt.Sprintf("limit = %d", limit), func(t *testing.T) {
+			sema := NewSemaphore(limit)
+
+			// lock the semaphore limit times!
+			for j := 0; j < limit; j++ {
+				if !sema.TryLock() {
+					t.Errorf("TryLock() = false, but wanted true")
+				}
+			}
+
+			// no resources available => TryLock() fails!
+			if sema.TryLock() {
+				t.Errorf("TryLock() = true, but wanted false")
+			}
+
+			// make it available again
+			sema.Unlock()
+
+			// now it should be available again!
+			if !sema.TryLock() {
+				t.Errorf("TryLock() = false, but wanted true")
+			}
+		})
+	}
+}
