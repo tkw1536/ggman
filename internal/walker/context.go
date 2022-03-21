@@ -3,7 +3,7 @@ package walker
 import (
 	"io/fs"
 
-	"github.com/tkw1536/goprogram/lib/slice"
+	"golang.org/x/exp/slices"
 )
 
 // context implements WalkerContext
@@ -64,7 +64,7 @@ func (w *context[S]) sub(entry fs.DirEntry) *context[S] {
 	sub.root = w.root
 
 	// create a new sub-path; which will allocate a new path for the child
-	sub.path = slice.Copy(w.path)
+	sub.path = slices.Clone(w.path)
 	sub.path = append(w.path, entry.Name())
 
 	// return a new node
@@ -86,7 +86,7 @@ func (w context[S]) NodePath() string {
 }
 
 func (w context[S]) Path() []string {
-	return slice.Copy(w.path)
+	return slices.Clone(w.path)
 }
 
 func (w context[S]) Depth() int {

@@ -9,7 +9,6 @@ import (
 
 	"github.com/tkw1536/ggman/internal/record"
 	"github.com/tkw1536/ggman/internal/sema"
-	"github.com/tkw1536/goprogram/lib/slice"
 	"golang.org/x/exp/slices"
 )
 
@@ -358,7 +357,7 @@ func (w *Walker[S]) Results() []string {
 		panic("Walker.Walk(): Results() called before Walk() returned")
 	}
 
-	return slice.Copy(w.results)
+	return slices.Clone(w.results)
 }
 
 // Scores returns the scores which have been marked as a result.
@@ -370,7 +369,7 @@ func (w *Walker[S]) Scores() []float64 {
 		panic("Walker.Walk(): Scores() called before Walk() returned")
 	}
 
-	return slice.Copy(w.scores)
+	return slices.Clone(w.scores)
 }
 
 var ErrUnknownAction = errors.New("Process.BeforeChild(): Unknown action")
