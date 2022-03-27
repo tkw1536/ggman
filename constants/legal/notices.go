@@ -1,7 +1,7 @@
 package legal
 
 // ===========================================================================================================
-// This file was generated automatically at 17-03-2022 23:51:38 using gogenlicense.
+// This file was generated automatically at 27-03-2022 11:57:50 using gogenlicense.
 // Do not edit manually, as changes may be overwritten.
 // ===========================================================================================================
 
@@ -1375,7 +1375,7 @@ package legal
 // Generation
 //
 // This variable and the associated documentation have been automatically generated using the 'gogenlicense' tool.
-// It was last updated at 17-03-2022 23:51:38.
+// It was last updated at 27-03-2022 11:57:50.
 //
 var Notices string
 
