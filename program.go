@@ -5,23 +5,9 @@ import (
 
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/goprogram"
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/goprogram/meta"
 )
-
-// these define the ggman-specific program types
-// none of these are strictly needed, they're just around for convenience
-type ggmanEnv = env.Env
-type ggmanParameters = env.Parameters
-type ggmanRequirements = env.Requirement
-type ggmanFlags = env.Flags
-
-type Program = goprogram.Program[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]
-type Command = goprogram.Command[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]
-type Context = goprogram.Context[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]
-type Arguments = goprogram.Arguments[ggmanFlags]
-type Description = goprogram.Description[ggmanFlags, ggmanRequirements]
 
 // info contains information about the ggman program
 var info = meta.Info{
