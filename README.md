@@ -397,7 +397,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.14.0 (Upcoming)
+### 1.15.0 (Upcoming)
+
+### 1.14.0 (Released [Mar 27 2022](https://github.com/tkw1536/ggman/releases/tag/v1.14.0))
 
 - move to go `1.18`
 - refactor `program` package into external `goprogram` package, using type-parameters and not depend on ggman
