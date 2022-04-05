@@ -237,6 +237,36 @@ func (gg gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, extr
 	return err
 }
 
+func (gg gitgit) Fetch(stream stream.IOStream, clonePath string, cache any) error {
+	cmd := exec.Command(gg.gitPath, "fetch", "--all")
+	cmd.Dir = clonePath
+	cmd.Stdin = stream.Stdin
+	cmd.Stdout = stream.Stdout
+	cmd.Stderr = stream.Stderr
+
+	// run the underlying command, but treat ExitError specially by turning it into a ExitError
+	err := cmd.Run()
+	if exitError, isExitError := err.(*exec.ExitError); isExitError {
+		err = ExitError{error: err, Code: exitError.ExitCode()}
+	}
+	return err
+}
+
+func (gg gitgit) Pull(stream stream.IOStream, clonePath string, cache any) error {
+	cmd := exec.Command(gg.gitPath, "pull")
+	cmd.Dir = clonePath
+	cmd.Stdin = stream.Stdin
+	cmd.Stdout = stream.Stdout
+	cmd.Stderr = stream.Stderr
+
+	// run the underlying command, but treat ExitError specially by turning it into a ExitError
+	err := cmd.Run()
+	if exitError, isExitError := err.(*exec.ExitError); isExitError {
+		err = ExitError{error: err, Code: exitError.ExitCode()}
+	}
+	return err
+}
+
 func (gg gitgit) IsDirty(clonePath string, cache any) (dirty bool, err error) {
 	cmd := exec.Command(gg.gitPath, "diff", "--quiet")
 	cmd.Dir = clonePath

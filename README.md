@@ -397,7 +397,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.15.0 (Upcoming)
+### 1.14.1 (Upcoming)
+
+- `ggman fetch`, `ggman pull`: Use native git when available 
 
 ### 1.14.0 (Released [Mar 27 2022](https://github.com/tkw1536/ggman/releases/tag/v1.14.0))
 
