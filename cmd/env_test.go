@@ -6,7 +6,7 @@ import (
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
-func TestCommandRoot(t *testing.T) {
+func TestCommandEnv(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	tests := []struct {
@@ -24,7 +24,7 @@ func TestCommandRoot(t *testing.T) {
 			[]string{"env", "--list"},
 
 			0,
-			"BUILDTIME\nGGROOT\nGIT\nPWD\nVERSION\n",
+			"GGMAN_TIME\nGGMAN_VERSION\nGGROOT\nGIT\nPWD\n",
 			"",
 		},
 		{
@@ -33,7 +33,7 @@ func TestCommandRoot(t *testing.T) {
 			[]string{"env", "--describe"},
 
 			0,
-			"BUILDTIME: version of go this program was built with\nGGROOT: root folder all ggman repositories will be cloned to\nGIT: path to the native git\nPWD: current working directory\nVERSION: current ggman version\n",
+			"GGMAN_TIME: the time this version of ggman was built\nGGMAN_VERSION: the version of ggman this version is\nGGROOT: root folder all ggman repositories will be cloned to\nGIT: path to the native git\nPWD: current working directory\n",
 			"",
 		},
 

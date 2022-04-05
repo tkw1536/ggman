@@ -42,15 +42,15 @@ var allVariables = []UserVariable{
 	},
 
 	{
-		Key:         "VERSION",
-		Description: "current ggman version",
+		Key:         "GGMAN_VERSION",
+		Description: "the version of ggman this version is",
 		Get: func(e Env, i meta.Info) string {
 			return i.BuildVersion
 		},
 	},
 	{
-		Key:         "BUILDTIME",
-		Description: "version of go this program was built with",
+		Key:         "GGMAN_TIME",
+		Description: "the time this version of ggman was built",
 		Get: func(e Env, i meta.Info) string {
 			return i.BuildTime.String()
 		},

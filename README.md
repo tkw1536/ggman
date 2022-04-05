@@ -69,6 +69,9 @@ However having `git` in `$PATH` allows for more efficient operations in some cas
 
 Furthermore, if you have a custom `.ssh/config` on your system, the `git`-less setup may not be fully supported.
 You should install a native `git` executable on your system.
+
+To check if a running ggman installation has found a `git` executable, run `ggman env --raw git`.
+If one is found, it will print the path to it.
 ### configuring `ggman`
 
 ggman is easy to configure. 
