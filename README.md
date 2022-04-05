@@ -64,8 +64,11 @@ You can then either manually place them in your `$PATH`, or type `make install` 
 
 #### Optional Dependencies
 
-The compiled `ggman` binary does not depend on any external software. Nonetheless, having`git` in `$PATH` allows for more efficient operations in some cases. 
+The compiled `ggman` binary does not depend on any external software. 
+However having `git` in `$PATH` allows for more efficient operations in some cases. 
 
+Furthermore, if you have a custom `.ssh/config` on your system, the `git`-less setup may not be fully supported.
+You should install a native `git` executable on your system.
 ### configuring `ggman`
 
 ggman is easy to configure. 
@@ -160,7 +163,7 @@ The command is split into several sub-commands, which are described below.
 
 It manages all git repositories inside a given root directory, and automatically sets up new repositories relative to the URLs they are cloned from. 
 The root folder defaults to `~/Projects` but can be customized using the `$GGROOT` environment variable. 
-The root directory can be echoed using the command `ggman root`. 
+The root directory can be echoed using the command alias `ggman root`. 
 
 For example, when `ggman` clones a repository `https://github.com/hello/world.git`, this would automatically end up in `$GGROOT/github.com/hello/world`. 
 This works not only for `github.com` urls, but for any kind of url. 
@@ -388,18 +391,32 @@ Sometimes it is useful to run an arbitrary command over all the known git reposi
 This can be achieved using the `ggman exec` command.
 It simply takes a command as an argument and runs it in each repository.
 
+### 'ggman env'
+
+To debug and inspect the current environment of the ggman command the `ggman env` command can be used.
+The environment exposed consists of a set of variables representing the state.
+Use `ggman env --list` to see a list of variables.
+Use `ggman env --describe` to see their corresponding human-readable descriptions.
+Use `ggman env --raw` to print the raw values of these variables in the same order.
+Use `ggman env` without any arguments to print escaped (variable, value) pairs.
+
+You can also provide a list of variables as arguments to list only those variables.
+For instance: `ggman env --raw GGROOT` will print the unescaped, raw value of the GGROOT environment variable.
+Variables are matched case-insensitive.
+
 ### Command Aliases
 
 ggman comes with the following builtin aliases:
 
 - `ggman git` behaves exactly like `ggman exec git`
-
+- `ggman root` behaves exactly like `ggman env --raw GGROOT` (for backwards compatibility)
 
 ## Changelog
 
 ### 1.14.1 (Upcoming)
 
-- `ggman fetch`, `ggman pull`: Use native git when available 
+- add `ggman env` command to print information about ggman
+- use native git when available in `ggman fetch`, `ggman pull`
 
 ### 1.14.0 (Released [Mar 27 2022](https://github.com/tkw1536/ggman/releases/tag/v1.14.0))
 

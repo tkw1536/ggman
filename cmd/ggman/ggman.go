@@ -125,7 +125,7 @@ func init() {
 		cmd.Lsr,
 		cmd.Pull,
 		cmd.Relocate,
-		cmd.Root,
+		cmd.Env,
 		cmd.Sweep,
 		cmd.URL,
 		cmd.Web,
@@ -137,6 +137,7 @@ func init() {
 	// register all the aliases to the program
 	for _, a := range []goprogram.Alias{
 		{Name: "git", Command: "exec", Args: []string{"git"}, Description: "Execute a git command using a native 'git' executable. "},
+		{Name: "root", Command: "env", Args: []string{"GGROOT"}, Description: "Print the ggman root folder. "},
 	} {
 		ggmanExe.RegisterAlias(a)
 	}

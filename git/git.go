@@ -118,6 +118,9 @@ type Git interface {
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
 	IsSync(clonePath string) (sycned bool, err error)
+
+	// GitPath returns the path to the git executable being used, if any.
+	GitPath() string
 }
 
 // NewGitFromPlumbing creates a new Git wrapping a specific Plumbing.
@@ -337,4 +340,14 @@ func (impl *dfltGitWrapper) IsSync(clonePath string) (dirty bool, err error) {
 	}
 
 	return impl.git.IsSync(clonePath, repoObject)
+}
+
+func (impl *dfltGitWrapper) GitPath() string {
+	impl.ensureInit()
+
+	gitgit, isGitGit := impl.git.(*gitgit)
+	if !isGitGit {
+		return ""
+	}
+	return gitgit.gitPath
 }
