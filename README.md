@@ -418,10 +418,12 @@ ggman comes with the following builtin aliases:
 
 ### 1.15.0 (Upcoming)
 
-- output cloning progress on standard error
+
 - add `--from-file` argument that reads `--for` arguments from a file
 - add `ggman env` command to print information about ggman
 - use native git when available in `ggman fetch`, `ggman pull`
+- make built-in git `fetch`, `pull` and `clone` progress on standard error
+- minor fixes
 
 ### 1.14.0 (Released [Mar 27 2022](https://github.com/tkw1536/ggman/releases/tag/v1.14.0))
 
