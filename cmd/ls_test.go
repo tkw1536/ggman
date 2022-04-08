@@ -26,7 +26,7 @@ func TestCommandLs(t *testing.T) {
 	serverRepo := mock.Clone("user@server.com/repo", "server.com", "user", "repo")
 	glHelloWorld := mock.Clone("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
-	inputFile := filepath.Join(ghHelloWorld, "..", "..", "..", "file.txt")
+	inputFile := mock.Resolve("file.txt")
 	if err := os.WriteFile(inputFile, []byte(testInputFile), os.ModePerm); err != nil {
 		panic(err)
 	}
