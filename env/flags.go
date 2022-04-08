@@ -36,15 +36,7 @@ func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
 	// generate pattern filters for the "--for" arguments
 	clauses := make([]Filter, len(flags.For))
 	for i, pat := range flags.For {
-
-		// check if 'pat' represents the root of a repository
-		if repo, err := env.AtRoot(pat); err == nil && repo != "" {
-			clauses[i] = PathFilter{Paths: []string{repo}}
-			continue
-		}
-
-		// create a normal pattern filter
-		clauses[i] = NewPatternFilter(pat, !flags.NoFuzzyFilter)
+		clauses[i] = env.NewForFilter(pat, !flags.NoFuzzyFilter)
 	}
 
 	// here filter: alias for --path .
@@ -55,19 +47,9 @@ func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
 	// for each of the candidate paths, add a path filter
 	pf := PathFilter{Paths: make([]string, len(flags.Path))}
 	for i, p := range flags.Path {
-		var err error
-		pf.Paths[i], _, err = env.At(p) // try to use the current repository first.
+		pf.Paths[i], err = env.ResolvePathFilter(p)
 		if err != nil {
-			// filter sub-repositories under this repo!
-			pf.Paths[i], err = env.Abs(p)
-			if err != nil {
-				return nil, errors.Wrapf(err, "Unable to resolve path: %q", p)
-			}
-
-			// make sure it is actually a directory!
-			if ok, err := walker.IsDirectory(pf.Paths[i], true); err != nil || !ok {
-				return nil, errNotADirectory.WithMessageF(p)
-			}
+			return nil, err
 		}
 	}
 
@@ -107,6 +89,47 @@ func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
 			Tarnished: flags.Tarnished,
 			Pristine:  flags.Pristine,
 		}
+	}
+
+	return
+}
+
+// NewForFilter creates a new 'for' filter for this environment.
+//
+// A 'for' filter may be either:
+//   - a (relative or absolute) path to the root of a repository (see env.AtRoot)
+//	 - a repository url or pattern (see NewPatternFilter)
+func (env Env) NewForFilter(filter string, fuzzy bool) Filter {
+	// check if 'pat' represents the root of a repository
+	if repo, err := env.AtRoot(filter); err == nil && repo != "" {
+		return PathFilter{Paths: []string{repo}}
+	}
+
+	// create a normal pattern filter
+	return NewPatternFilter(filter, fuzzy)
+}
+
+// ResolvePathFilter resolves and validates p for use within a PathFilter.
+//
+// p must be an existing absolute absolute or relative path pointing to:
+//   - a repository directory (see env.At)
+//   - a (possibly nested) directory containing repositories
+func (env Env) ResolvePathFilter(p string) (path string, err error) {
+	// a repository directly
+	path, _, err = env.At(p)
+	if err == nil {
+		return
+	}
+
+	// sub-repositories contained in a path
+	path, err = env.Abs(p)
+	if err != nil {
+		return "", errors.Wrapf(err, "Unable to resolve path: %q", p)
+	}
+
+	// must be a directory!
+	if ok, err := walker.IsDirectory(path, true); err != nil || !ok {
+		return "", errNotADirectory.WithMessageF(p)
 	}
 
 	return
