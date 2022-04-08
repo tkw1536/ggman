@@ -8,10 +8,10 @@ import (
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
-const testInputFile = `
+var testInputFile = `
 ; this and the following lines are ignored
 # gitlab.com/hello/world
-user@server.com/repo
+` + filepath.Join("server.com", "user", "repo") + `
 
 // blank lines too
 
