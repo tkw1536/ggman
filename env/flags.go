@@ -10,7 +10,7 @@ import (
 
 // Flags represents a set of filter flags used for the ggman goprogram.
 type Flags struct {
-	Filters       []string `short:"f" long:"for" value-name:"filter" description:"Filter list of repositories to apply COMMAND to by filter. Filter can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url"`
+	For           []string `short:"f" long:"for" value-name:"filter" description:"Filter list of repositories to apply COMMAND to by filter. Filter can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url"`
 	NoFuzzyFilter bool     `short:"n" long:"no-fuzzy-filter" description:"Disable fuzzy matching for filters"`
 
 	Here bool     `short:"H" long:"here" description:"Filter the list of repositories to apply COMMAND to only contain repository in the current directory or subtree. Alias for '-p .'"`
@@ -34,8 +34,8 @@ var errNotADirectory = exit.Error{
 // NewFilter creates a new filter corresponding to the given Flags and Environment.
 func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
 	// generate pattern filters for the "--for" arguments
-	clauses := make([]Filter, len(flags.Filters))
-	for i, pat := range flags.Filters {
+	clauses := make([]Filter, len(flags.For))
+	for i, pat := range flags.For {
 
 		// check if 'pat' represents the root of a repository
 		if repo, err := env.AtRoot(pat); err == nil && repo != "" {

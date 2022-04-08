@@ -63,7 +63,7 @@ func NewProgram() (p Program) {
 		if len(args.Pos) < 2 {
 			return errParseArgsNeedTwoAfterFor
 		}
-		args.Flags.Filters = append(args.Flags.Filters, args.Pos[0])
+		args.Flags.For = append(args.Flags.For, args.Pos[0])
 		args.Command = args.Pos[1]
 		args.Pos = args.Pos[2:]
 
