@@ -494,7 +494,7 @@ func (gogit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraarg
 	}
 
 	// run a plain git clone but intercept all errors
-	_, err := git.PlainClone(clonePath, false, &git.CloneOptions{URL: remoteURI, Progress: stream.Stdout})
+	_, err := git.PlainClone(clonePath, false, &git.CloneOptions{URL: remoteURI, Progress: stream.Stderr})
 	if err != nil {
 		err = ExitError{error: errors.Wrap(err, "Unable clone repository"), Code: 1}
 	}
@@ -515,7 +515,7 @@ func (gogit) Fetch(stream stream.IOStream, clonePath string, cache any) (err err
 	// fetch all of the remotes for this repository
 	for _, remote := range remotes {
 		// fetch and write out an 'already up-to-date'
-		err = remote.Fetch(&git.FetchOptions{Progress: stream.Stdout})
+		err = remote.Fetch(&git.FetchOptions{Progress: stream.Stderr})
 		err = ignoreErrUpToDate(stream, err)
 
 		// fail on other errors
@@ -540,7 +540,7 @@ func (gogit) Pull(stream stream.IOStream, clonePath string, cache any) (err erro
 	}
 
 	// do a git pull, and ignore error already up-to-date
-	err = w.Pull(&git.PullOptions{Progress: stream.Stdout})
+	err = w.Pull(&git.PullOptions{Progress: stream.Stderr})
 	err = ignoreErrUpToDate(stream, err)
 	if err != nil {
 		err = errors.Wrap(err, "Unable to pull")

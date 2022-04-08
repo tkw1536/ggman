@@ -33,7 +33,7 @@ func TestCommandFetch(t *testing.T) {
 			[]string{"fetch"},
 
 			0,
-			"Fetching " + escapedClonePath + "\nEnumerating objects: 3, done.\nCounting objects:  33% (1/3)\rCounting objects:  66% (2/3)\rCounting objects: 100% (3/3)\rCounting objects: 100% (3/3), done.\nCompressing objects:  50% (1/2)\rCompressing objects: 100% (2/2)\rCompressing objects: 100% (2/2), done.\nTotal 3 (delta 0), reused 0 (delta 0), pack-reused 0\n",
+			"Fetching " + escapedClonePath + "\n",
 			"",
 		},
 

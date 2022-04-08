@@ -35,7 +35,7 @@ type MockEnv struct {
 	remoteRoot string
 
 	vars     env.Variables
-	plumbing MappedPlumbing
+	plumbing DevPlumbing
 
 	remoteCounter int
 }
@@ -57,9 +57,11 @@ func NewMockEnv(t *testing.T) *MockEnv {
 		localRoot:  local,
 		remoteRoot: remote,
 
-		plumbing: MappedPlumbing{
+		plumbing: DevPlumbing{
 			Plumbing: gggit.NewPlumbing(),
-			URLMap:   make(map[string]string),
+
+			SilenceStderr: true,
+			URLMap:        make(map[string]string),
 		},
 
 		vars: env.Variables{

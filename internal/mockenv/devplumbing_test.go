@@ -12,9 +12,9 @@ import (
 	"github.com/tkw1536/goprogram/stream"
 )
 
-func TestMappedPlumbing_Forward(t *testing.T) {
+func TestDevPlumbing_Forward(t *testing.T) {
 
-	mp := &MappedPlumbing{URLMap: make(map[string]string)}
+	mp := &DevPlumbing{URLMap: make(map[string]string)}
 	mp.URLMap["forward-a"] = "backward-a"
 	mp.URLMap["forward-b"] = "backward-b"
 
@@ -29,21 +29,21 @@ func TestMappedPlumbing_Forward(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := mp.Forward(tt.url); got != tt.want {
-				t.Errorf("MappedPlumbing.Forward() = %v, want %v", got, tt.want)
+				t.Errorf("DevPlumbing.Forward() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 
 	t.Run("does-not-exist", func(t *testing.T) {
 		if panics, _ := testlib.DoesPanic(func() { mp.Forward("does-not-exist") }); !panics {
-			t.Errorf("Expected MappedPlumbing.Forward() to panic")
+			t.Errorf("Expected DevPlumbing.Forward() to panic")
 		}
 	})
 }
 
-func TestMappedPlumbing_Backward(t *testing.T) {
+func TestDevPlumbing_Backward(t *testing.T) {
 
-	mp := &MappedPlumbing{URLMap: make(map[string]string)}
+	mp := &DevPlumbing{URLMap: make(map[string]string)}
 	mp.URLMap["forward-a"] = "backward-a"
 	mp.URLMap["forward-b"] = "backward-b"
 
@@ -58,22 +58,22 @@ func TestMappedPlumbing_Backward(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := mp.Backward(tt.url); got != tt.want {
-				t.Errorf("MappedPlumbing.Backward() = %v, want %v", got, tt.want)
+				t.Errorf("DevPlumbing.Backward() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 
 	t.Run("does-not-exist", func(t *testing.T) {
 		if panics, _ := testlib.DoesPanic(func() { mp.Backward("does-not-exist") }); !panics {
-			t.Errorf("Expected MappedPlumbing.Backward() to panic")
+			t.Errorf("Expected DevPlumbing.Backward() to panic")
 		}
 	})
 }
 
-func Test_MappedPlumbing_GetRemotes(t *testing.T) {
+func Test_DevPlumbing_GetRemotes(t *testing.T) {
 	// This test has been adapted from Test_gogit_GetRemotes.
 
-	mp := &MappedPlumbing{
+	mp := &DevPlumbing{
 		Plumbing: gggit.NewPlumbing(),
 		URLMap:   make(map[string]string),
 	}
@@ -164,10 +164,10 @@ func Test_MappedPlumbing_GetRemotes(t *testing.T) {
 	})
 }
 
-func Test_MappedPlumbing_SetRemoteURLs(t *testing.T) {
+func Test_DevPlumbing_SetRemoteURLs(t *testing.T) {
 	// This test has been adapted from Test_gogit_SetRemoteURLs.
 
-	mp := &MappedPlumbing{
+	mp := &DevPlumbing{
 		Plumbing: gggit.NewPlumbing(),
 		URLMap:   make(map[string]string),
 	}
@@ -249,10 +249,10 @@ func Test_MappedPlumbing_SetRemoteURLs(t *testing.T) {
 	})
 }
 
-func Test_MappedPlumbing_GetCanonicalRemote(t *testing.T) {
+func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
 	// This test has been adapted from Test_gogit_GetCanonicalRemote.
 
-	mp := &MappedPlumbing{
+	mp := &DevPlumbing{
 		Plumbing: gggit.NewPlumbing(),
 		URLMap:   make(map[string]string),
 	}
@@ -343,9 +343,9 @@ func Test_MappedPlumbing_GetCanonicalRemote(t *testing.T) {
 	})
 }
 
-func Test_MappedPlumbing_Clone(t *testing.T) {
+func Test_DevPlumbing_Clone(t *testing.T) {
 	// This test has been adapted from Test_gogit_Clone.
-	mp := &MappedPlumbing{
+	mp := &DevPlumbing{
 		Plumbing: gggit.NewPlumbing(),
 		URLMap:   make(map[string]string),
 	}
