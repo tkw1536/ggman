@@ -49,8 +49,11 @@ jobs:
           make generate
       - name: Run 'make all'
         run: make all
-      - name: Upload executables
-        uses: actions/upload-artifact@v2
+      - name: Upload Releases
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: Binaries
-          path: dist/*
+          files: |
+            dist/ggman
+            dist/ggman_mac
+            dist/ggman.exe

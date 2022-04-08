@@ -423,6 +423,7 @@ ggman comes with the following builtin aliases:
 - add `ggman env` command to print information about ggman
 - use native git when available in `ggman fetch`, `ggman pull`
 - make built-in git `fetch`, `pull` and `clone` progress on standard error
+- automatically upload releases from GitHub actions
 - minor fixes
 
 ### 1.14.0 (Released [Mar 27 2022](https://github.com/tkw1536/ggman/releases/tag/v1.14.0))
