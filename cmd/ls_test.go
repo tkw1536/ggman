@@ -8,12 +8,28 @@ import (
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
+const testInputFile = `
+; this and the following lines are ignored
+# gitlab.com/hello/world
+user@server.com/repo
+
+// blank lines too
+
+https://github.com/hello/world.git
+
+`
+
 func TestCommandLs(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	ghHelloWorld := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
 	serverRepo := mock.Clone("user@server.com/repo", "server.com", "user", "repo")
 	glHelloWorld := mock.Clone("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+
+	inputFile := filepath.Join(ghHelloWorld, "..", "..", "..", "file.txt")
+	if err := os.WriteFile(inputFile, []byte(testInputFile), os.ModePerm); err != nil {
+		panic(err)
+	}
 
 	// make glHelloWorldDirty
 	if err := os.WriteFile(filepath.Join(glHelloWorld, "dirty"), []byte{}, os.ModePerm); err != nil {
@@ -246,6 +262,16 @@ func TestCommandLs(t *testing.T) {
 
 			0,
 			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n",
+
+			"",
+		},
+		{
+			"list from input file",
+			"",
+			[]string{"--from-file", inputFile, "ls"},
+
+			0,
+			"${GGROOT github.com hello world}\n${GGROOT server.com user repo}\n",
 
 			"",
 		},

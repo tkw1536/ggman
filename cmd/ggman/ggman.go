@@ -19,7 +19,7 @@
 //
 // Instead of running a subcommand, print version information to STDOUT and exit.
 //
-//  --for filter, -f filter, --here, -H, --path, -P, --dirty, -d, --clean, -c,
+//  --for filter, -f filter, -i file, --from-file file, --here, -H, --path, -P, --dirty, -d, --clean, -c,
 //  --synced, -s, --unsynced, -u, --pristine, -p, --tarnished, -t
 //
 // Apply FILTER to list of repositories. See Environment section below.
@@ -61,6 +61,11 @@
 // This can be achieved using the '--for' flag, which will match to any component of the url.
 // This matching is fuzzy by default, by the fuzzyness can be disabled by passing the '--no-fuzzy-filter' flag.
 // The '--for' flag also matches (relative or absolute) filesystem paths, as well as full clone URLs.
+//
+// A list of '--for' patterns or paths can also be read from a file name by using the '--from-file' argument.
+// This functions exactly as if one would provide a path via a --for argument except that it is read from a file.
+// Each filter should be on it's own line.
+// Lines are trimmed for whitespace, and blank lines or lines starting with ';', '//' or '#' are ignored.
 //
 // Furthermore the '--path' flag can be used to match the repository inside of or contained inside the provided directories.
 // '--here' is an alias for '--path .'. The '--path' flag can be provided multiple times.

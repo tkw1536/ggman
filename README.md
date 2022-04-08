@@ -416,8 +416,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.14.1 (Upcoming)
+### 1.15.0 (Upcoming)
 
+- add `--from-file` argument that reads `--for` arguments from a file
 - add `ggman env` command to print information about ggman
 - use native git when available in `ggman fetch`, `ggman pull`
 

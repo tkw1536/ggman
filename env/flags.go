@@ -1,6 +1,10 @@
 package env
 
 import (
+	"bufio"
+	"os"
+	"strings"
+
 	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman/internal/walker"
 	"github.com/tkw1536/goprogram/exit"
@@ -9,6 +13,7 @@ import (
 // Flags represents a set of filter flags used for the ggman goprogram.
 type Flags struct {
 	For           []string `short:"f" long:"for" value-name:"filter" description:"Filter list of repositories to apply COMMAND to by filter. Filter can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url"`
+	FromFile      []string `short:"i" long:"from-file" value-name:"file" description:"Filter list of repositories to apply COMMAND to by filters in file. File should contain one filter per line, with common comment chars being ignored. "`
 	NoFuzzyFilter bool     `short:"n" long:"no-fuzzy-filter" description:"Disable fuzzy matching for filters"`
 
 	Here bool     `short:"H" long:"here" description:"Filter the list of repositories to apply COMMAND to only contain repository in the current directory or subtree. Alias for '-p .'"`
@@ -35,6 +40,15 @@ func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
 	clauses := make([]Filter, len(flags.For))
 	for i, pat := range flags.For {
 		clauses[i] = env.NewForFilter(pat, !flags.NoFuzzyFilter)
+	}
+
+	// read filters from file
+	for _, p := range flags.FromFile {
+		filters, err := env.NewFromFileFilter(p, !flags.NoFuzzyFilter)
+		if err != nil {
+			return nil, err
+		}
+		clauses = append(clauses, filters...)
 	}
 
 	// here filter: alias for --path .
@@ -107,6 +121,43 @@ func (env Env) NewForFilter(filter string, fuzzy bool) Filter {
 	return NewPatternFilter(filter, fuzzy)
 }
 
+// NewFromFileFilter creates a list of filters from the file at path.
+//
+// To create a filter, p is opened and each (whitespace-trimmed) line is passed to env.NewForFilter.
+// Blank lines, or those starting with ';', '//' or '#' are ignored.
+func (env Env) NewFromFileFilter(p string, fuzzy bool) (filters []Filter, err error) {
+	// resolve the path
+	path, err := env.Abs(p)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Unable to resolve path %q", p)
+	}
+
+	// open the file
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Unable to open path %q", p)
+	}
+	defer file.Close()
+
+	// read each line
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		// ignore blank or comment lines
+		if line == "" || line[0] == ';' || line[0] == '#' || strings.HasPrefix(line, "//") {
+			continue
+		}
+		filters = append(filters, env.NewForFilter(line, fuzzy))
+	}
+
+	if err = scanner.Err(); err != nil {
+		return nil, errors.Wrapf(err, "Unable to read file %q", p)
+	}
+
+	return filters, nil
+}
+
 // ResolvePathFilter resolves and validates p for use within a PathFilter.
 //
 // p must be an existing absolute absolute or relative path pointing to:
@@ -122,7 +173,7 @@ func (env Env) ResolvePathFilter(p string) (path string, err error) {
 	// sub-repositories contained in a path
 	path, err = env.Abs(p)
 	if err != nil {
-		return "", errors.Wrapf(err, "Unable to resolve path: %q", p)
+		return "", errors.Wrapf(err, "Unable to resolve path %q", p)
 	}
 
 	// must be a directory!
