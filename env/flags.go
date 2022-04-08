@@ -3,9 +3,7 @@ package env
 import (
 	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman/internal/walker"
-	"github.com/tkw1536/goprogram"
 	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/meta"
 )
 
 // Flags represents a set of filter flags used for the ggman goprogram.
@@ -133,26 +131,4 @@ func (env Env) ResolvePathFilter(p string) (path string, err error) {
 	}
 
 	return
-}
-
-// Requirement represents a set of requirements on the Environment.
-type Requirement struct {
-	// Does the environment require a root directory?
-	NeedsRoot bool
-
-	// Does the environment allow filtering?
-	// AllowsFilter implies NeedsRoot.
-	AllowsFilter bool
-
-	// Does the environment require a CanFile?
-	NeedsCanFile bool
-}
-
-// AllowsFlag checks if the provided option is allowed by this option
-func (req Requirement) AllowsFlag(flag meta.Flag) bool {
-	return req.AllowsFilter
-}
-
-func (req Requirement) Validate(args goprogram.Arguments[Flags]) error {
-	return goprogram.ValidateAllowedFlags[Flags](req, args)
 }
