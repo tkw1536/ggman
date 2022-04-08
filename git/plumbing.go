@@ -295,6 +295,12 @@ func (gogit) Init() error {
 }
 
 func (gogit) IsRepository(localPath string) (repoObject any, isRepo bool) {
+	defer func() {
+		if recover() != nil {
+			repoObject = nil
+			isRepo = false
+		}
+	}()
 	repoObject, err := git.PlainOpen(localPath)
 	return repoObject, err == nil
 }
