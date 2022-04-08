@@ -416,8 +416,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.15.0 (Upcoming)
+### 1.16.0 (Upcoming)
 
+### 1.15.0 (Released [Apr 8 2022](https://github.com/tkw1536/ggman/releases/tag/v1.15.0))
 
 - add `--from-file` argument that reads `--for` arguments from a file
 - add `ggman env` command to print information about ggman
