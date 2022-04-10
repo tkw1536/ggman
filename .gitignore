@@ -14,3 +14,7 @@ dist/
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# ignore the go.work file, so that we don't use it at work
+go.work
+go.work.sum
