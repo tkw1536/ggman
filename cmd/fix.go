@@ -33,10 +33,6 @@ func (f *fix) Description() ggman.Description {
 	}
 }
 
-func (fix) AfterParse() error {
-	return nil
-}
-
 var errFixCustom = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }

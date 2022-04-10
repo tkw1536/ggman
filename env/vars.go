@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/mitchellh/go-homedir"
+	"github.com/tkw1536/goprogram/lib/reflectx"
 )
 
 // Variables represents the values of specific environment variables.
@@ -35,20 +36,21 @@ type Variables struct {
 // variableEnvNames holds a mapping from reflect-field-indexes in Variables to os.GetEnv() names
 var variablesEnvNames map[int]string
 
+// initialize variablesEnvNames
 func init() {
-	// iterate over all the fields for Variables
-	rT := reflect.TypeOf((*Variables)(nil)).Elem()
-	nF := rT.NumField()
-	variablesEnvNames = make(map[int]string, nF)
-	for i := 0; i < nF; i++ {
+	tVariables := reflectx.TypeOf[Variables]()
+	variablesEnvNames = make(map[int]string, tVariables.NumField())
+
+	reflectx.IterateFields(tVariables, func(field reflect.StructField, index int) (cancel bool) {
 		// check if we have the `env` tag
 		// and store it in variablesEnvNames
-		env, ok := rT.Field(i).Tag.Lookup("env")
+		env, ok := field.Tag.Lookup("env")
 		if !ok {
-			continue
+			return
 		}
-		variablesEnvNames[i] = env
-	}
+		variablesEnvNames[index] = env
+		return
+	})
 }
 
 // ReadVariables reads Variables from the operating system

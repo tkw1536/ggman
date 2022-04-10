@@ -32,10 +32,6 @@ func (l *lsr) Description() ggman.Description {
 	}
 }
 
-func (lsr) AfterParse() error {
-	return nil
-}
-
 var errInvalidCanfile = exit.Error{
 	Message:  "Invalid CANFILE found. ",
 	ExitCode: env.ExitInvalidEnvironment,

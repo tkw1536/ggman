@@ -8,7 +8,7 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/sema"
 	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/meta"
+	"github.com/tkw1536/goprogram/parser"
 	"github.com/tkw1536/goprogram/stream"
 )
 
@@ -37,6 +37,11 @@ import (
 var Exec ggman.Command = &exe{}
 
 type exe struct {
+	Positionals struct {
+		Exe  string   `positional-arg-name:"EXE" required:"1-1" description:"Program to execute"`
+		Args []string `positional-arg-name:"ARG"  description:"Arguments to pass to program"`
+	} `positional-args:"true"`
+
 	Parallel int  `short:"p" long:"parallel" default:"1" description:"number of commands to run in parallel, 0 for no limit"`
 	Simulate bool `short:"s" long:"simulate" description:"Instead of actually running a command, print a bash script that would run them."`
 	NoRepo   bool `short:"n" long:"no-repo" description:"Do not print name of repos command is being run in"`
@@ -50,13 +55,7 @@ func (*exe) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "exec",
 		Description: "Execute a command for all repositories",
-
-		Positional: meta.Positional{
-			Value: "ARGS",
-
-			Min: 1,
-			Max: -1,
-
+		ParserConfig: parser.Config{
 			IncludeUnknown: true,
 		},
 
@@ -110,7 +109,7 @@ var ErrExecFatal = exit.Error{
 }
 
 func (e *exe) runRepo(context ggman.Context, repo string) error {
-	cmd := exec.Command(context.Args.Pos[0], context.Args.Pos[1:]...)
+	cmd := exec.Command(e.Positionals.Exe, e.Positionals.Args...)
 	cmd.Dir = repo
 
 	// setup standard output / input, using either the environment
@@ -161,7 +160,7 @@ func (e *exe) runSimulate(context ggman.Context) (err error) {
 	}
 	context.Println("")
 
-	exec := shellescape.QuoteCommand(context.Args.Pos)
+	exec := shellescape.QuoteCommand(append([]string{e.Positionals.Exe}, e.Positionals.Args...))
 
 	// iterate over each repository
 	// then print each of the commands to be run!

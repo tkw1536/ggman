@@ -4,7 +4,6 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/meta"
 )
 
 // FindBranch is the 'ggman find-branch' command.
@@ -16,6 +15,9 @@ import (
 var FindBranch ggman.Command = &findBranch{}
 
 type findBranch struct {
+	Positionals struct {
+		Branch string `required:"1-1" positional-arg-name:"BRANCH" description:"Name of branch to find"`
+	} `positional-args:"true"`
 	ExitCode bool `short:"e" long:"exit-code" description:"Exit with Status Code 1 when no repositories with provided branch exist"`
 }
 
@@ -26,21 +28,10 @@ func (f *findBranch) Description() ggman.Description {
 		Command:     "find-branch",
 		Description: "List repositories containing a specific branch",
 
-		Positional: meta.Positional{
-			Value:       "BRANCH",
-			Description: "Name of branch to find",
-			Min:         1,
-			Max:         1,
-		},
-
 		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},
 	}
-}
-
-func (findBranch) AfterParse() error {
-	return nil
 }
 
 var errFindBranchCustom = exit.Error{
@@ -51,7 +42,7 @@ func (f findBranch) Run(context ggman.Context) error {
 	foundRepo := false
 	for _, repo := range context.Environment.Repos() {
 		// check if the repository has the branch!
-		hasBranch, err := context.Environment.Git.ContainsBranch(repo, context.Args.Pos[0])
+		hasBranch, err := context.Environment.Git.ContainsBranch(repo, f.Positionals.Branch)
 		if err != nil {
 			panic(err)
 		}

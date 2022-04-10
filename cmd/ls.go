@@ -34,10 +34,6 @@ func (l *ls) Description() ggman.Description {
 	}
 }
 
-func (*ls) AfterParse() error {
-	return nil
-}
-
 var errLSExitFlag = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }

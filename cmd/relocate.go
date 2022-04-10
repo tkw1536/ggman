@@ -34,10 +34,6 @@ func (r *relocate) Description() ggman.Description {
 	}
 }
 
-func (relocate) AfterParse() error {
-	return nil
-}
-
 var errUnableMoveCreateParent = exit.Error{
 	Message:  "Unable to create parent directory for destination: %s",
 	ExitCode: exit.ExitGeneric,

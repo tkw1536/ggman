@@ -47,26 +47,25 @@ func NewProgram() (p Program) {
 	p.NewEnvironment = newEnvironment
 	p.Info = info
 
-	p.RegisterKeyword("help", func(args *Arguments) error {
+	p.RegisterKeyword("help", func(args *Arguments, pos *[]string) error {
 		args.Command = ""
 		args.Universals.Help = true
 		return nil
 	})
 
-	p.RegisterKeyword("version", func(args *Arguments) error {
+	p.RegisterKeyword("version", func(args *Arguments, pos *[]string) error {
 		args.Command = ""
 		args.Universals.Version = true
 		return nil
 	})
 
-	p.RegisterKeyword("for", func(args *Arguments) error {
-		if len(args.Pos) < 2 {
+	p.RegisterKeyword("for", func(args *Arguments, pos *[]string) error {
+		if len(*pos) < 2 {
 			return errParseArgsNeedTwoAfterFor
 		}
-		args.Flags.For = append(args.Flags.For, args.Pos[0])
-		args.Command = args.Pos[1]
-		args.Pos = args.Pos[2:]
-
+		args.Flags.For = append(args.Flags.For, (*pos)[0])
+		args.Command = (*pos)[1]
+		*pos = (*pos)[2:]
 		return nil
 	})
 

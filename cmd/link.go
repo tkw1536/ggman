@@ -9,15 +9,18 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/meta"
 )
 
 // Link is the 'ggman link' command.
 //
 // The 'ggman link' symlinks the repository in the path passed as the first argument where it would have been cloned to inside 'ggman root'.
-var Link ggman.Command = link{}
+var Link ggman.Command = &link{}
 
-type link struct{}
+type link struct {
+	Positionals struct {
+		Path string `positional-arg-name:"PATH" required:"1-1" description:"Path of repository to symlink"`
+	} `positional-args:"true"`
+}
 
 func (link) BeforeRegister(program *ggman.Program) {}
 
@@ -26,21 +29,10 @@ func (link) Description() ggman.Description {
 		Command:     "link",
 		Description: "Symlink a repository into the local repository structure. ",
 
-		Positional: meta.Positional{
-			Value:       "PATH",
-			Description: "Path of repository to symlink",
-
-			Min: 1,
-			Max: 1,
-		},
 		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},
 	}
-}
-
-func (link) AfterParse() error {
-	return nil
 }
 
 var errLinkDoesNotExist = exit.Error{
@@ -63,10 +55,10 @@ var errLinkUnknown = exit.Error{
 	Message:  "Unknown linking error: %s",
 }
 
-func (link) Run(context ggman.Context) error {
+func (l *link) Run(context ggman.Context) error {
 	// make sure that the path is absolute
 	// to avoid relative symlinks
-	from, e := context.Environment.Abs(context.Args.Pos[0])
+	from, e := context.Environment.Abs(l.Positionals.Path)
 	if e != nil {
 		return errLinkDoesNotExist
 	}

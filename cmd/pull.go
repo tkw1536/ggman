@@ -27,10 +27,6 @@ func (pull) Description() ggman.Description {
 	}
 }
 
-func (pull) AfterParse() error {
-	return nil
-}
-
 var errPullCustom = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }

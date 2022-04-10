@@ -10,7 +10,6 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
-	"github.com/tkw1536/goprogram/meta"
 )
 
 // recordingT records a message passed to Errorf()
@@ -72,28 +71,29 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 }
 
 // mockEnvRunCommand
-type mockEnvRunCommand struct{}
+type mockEnvRunCommand struct {
+	Positional struct {
+		Argv []string
+	} `positional-args:"true"`
+}
 
 func (mockEnvRunCommand) BeforeRegister(program *ggman.Program) {}
 
 func (mockEnvRunCommand) Description() ggman.Description {
 	return ggman.Description{
 		Command: "fake",
-		Positional: meta.Positional{
-			Max: -1,
-		},
 		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},
 	}
 }
 func (mockEnvRunCommand) AfterParse() error { return nil }
-func (mockEnvRunCommand) Run(context ggman.Context) error {
+func (me mockEnvRunCommand) Run(context ggman.Context) error {
 	clonePath := filepath.Join(context.Environment.Root, "server.com", "repo")
 	remote, _ := context.Environment.Git.GetRemote(clonePath)
 
 	fmt.Fprintf(context.Stdout, "path=%s remote=%s\n", clonePath, remote)
-	fmt.Fprintf(context.Stderr, "got args: %v\n", context.Args.Pos)
+	fmt.Fprintf(context.Stderr, "got args: %v\n", me.Positional.Argv)
 
 	return nil
 }
@@ -106,7 +106,7 @@ func TestMockEnv_Run(t *testing.T) {
 	mock.Register(repo)
 	clonePath := mock.Install(repo, "server.com", "repo")
 
-	cmd := ggman.Command(mockEnvRunCommand{})
+	cmd := ggman.Command(&mockEnvRunCommand{})
 
 	tests := []struct {
 		name       string

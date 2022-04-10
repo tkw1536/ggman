@@ -27,10 +27,6 @@ func (fetch) Description() ggman.Description {
 	}
 }
 
-func (fetch) AfterParse() error {
-	return nil
-}
-
 var errFetchCustom = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }

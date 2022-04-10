@@ -21,10 +21,6 @@ func (license) Description() ggman.Description {
 	}
 }
 
-func (license) AfterParse() error {
-	return nil
-}
-
 func (license) Run(context ggman.Context) error {
 	context.Printf(stringLicenseInfo, ggman.License, legal.Notices)
 	return nil

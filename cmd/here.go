@@ -29,10 +29,6 @@ func (h *here) Description() ggman.Description {
 	}
 }
 
-func (here) AfterParse() error {
-	return nil
-}
-
 func (h here) Run(context ggman.Context) error {
 	root, worktree, err := context.Environment.At(".")
 	if err != nil {

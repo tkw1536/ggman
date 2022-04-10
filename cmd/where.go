@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/goprogram/meta"
 )
 
 // Where is the 'ggman where' command.
@@ -13,9 +12,13 @@ import (
 // Each segment of the path correesponding to a component of the repository url.
 //
 // This command does not perform any interactions with the remote repository or the local disk, in particular it does not require access to the remote repository or require it to be installed.
-var Where ggman.Command = where{}
+var Where ggman.Command = &where{}
 
-type where struct{}
+type where struct {
+	Positionals struct {
+		URL string `required:"1-1" positional-arg-name:"URL" description:"Remote repository URL to use"`
+	} `positional-args:"true"`
+}
 
 func (where) BeforeRegister(program *ggman.Program) {}
 
@@ -24,26 +27,14 @@ func (where) Description() ggman.Description {
 		Command:     "where",
 		Description: "Print the location where a repository would be cloned to",
 
-		Positional: meta.Positional{
-			Value:       "URL",
-			Description: "Remote repository URL to use",
-
-			Min: 1,
-			Max: 1,
-		},
-
 		Requirements: env.Requirement{
 			NeedsRoot: true,
 		},
 	}
 }
 
-func (where) AfterParse() error {
-	return nil
-}
-
-func (where) Run(context ggman.Context) error {
-	localPath, err := context.Environment.Local(ggman.URLV(context, 0))
+func (w *where) Run(context ggman.Context) error {
+	localPath, err := context.Environment.Local(env.ParseURL(w.Positionals.URL))
 	if err != nil {
 		return err
 	}

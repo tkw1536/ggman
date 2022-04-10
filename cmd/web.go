@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -9,7 +8,6 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/meta"
 	"golang.org/x/exp/slices"
 
 	"github.com/pkg/browser"
@@ -70,6 +68,11 @@ func (u *url) BeforeRegister(program *ggman.Program) {
 type urlweb struct {
 	isWebCommand bool // if true, execute the web command; else the url command
 
+	// TODO: Add a --list flag for predefined urls
+	Positionals struct {
+		Base string `positional-arg-name:"BASE" description:"If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls"`
+	} `positional-args:"true"`
+
 	ForceRepoHere bool `short:"f" long:"force-repo-here" description:"Pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url"`
 	Branch        bool `short:"b" long:"branch" description:"If provided, include the HEAD reference in the resolved URL"`
 	Tree          bool `short:"t" long:"tree" description:"If provided, additionally use the HEAD reference and relative path to the root of the git worktree"`
@@ -108,7 +111,7 @@ func FmtWebBuiltInBaseNames() string {
 	return strings.Join(bases, ", ")
 }
 
-var stringWebBaseUsage = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s"
+// var stringWebBaseUsage = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s"
 
 func (uw *urlweb) Description() ggman.Description {
 
@@ -129,14 +132,6 @@ func (uw *urlweb) Description() ggman.Description {
 	return ggman.Description{
 		Command:     Name,
 		Description: Description,
-
-		Positional: meta.Positional{
-			Value:       "BASE",
-			Description: fmt.Sprintf(stringWebBaseUsage, urlwebBuiltinBaseNames),
-
-			Min: 0,
-			Max: 1,
-		},
 
 		Requirements: env.Requirement{
 			NeedsRoot: true,
@@ -206,8 +201,8 @@ func (uw urlweb) Run(context ggman.Context) error {
 		base := "https://" + url.HostName
 
 		// if we have a base argument, we need to use it
-		if len(context.Args.Pos) > 0 {
-			base = context.Args.Pos[0]
+		if len(uw.Positionals.Base) > 0 {
+			base = uw.Positionals.Base
 
 			// lookup in builtins
 			if builtIn, ok := WebBuiltInBases[base]; ok {

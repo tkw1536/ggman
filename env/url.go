@@ -28,6 +28,11 @@ type URL struct {
 	Path string // e.g. "hello/world.git"
 }
 
+func (u *URL) UnmarshalFlag(value string) error {
+	*u = ParseURL(value)
+	return nil
+}
+
 // ParseURL parses a URL without any namespaces.
 // See ParseURLNamespace.
 func ParseURL(s string) (repo URL) {

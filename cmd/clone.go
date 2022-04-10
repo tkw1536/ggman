@@ -7,7 +7,7 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/meta"
+	"github.com/tkw1536/goprogram/parser"
 )
 
 // Clone is the 'ggman clone' command.
@@ -20,6 +20,10 @@ import (
 var Clone ggman.Command = &clone{}
 
 type clone struct {
+	Positional struct {
+		URL  string   `required:"1-1" positional-arg-name:"URL" description:"URL of repository and arguments to pass to 'git clone'"`
+		Args []string `positional-arg-name:"ARG" description:"Additional arguments to pass to clone"`
+	} `positional-args:"true"`
 	Force bool   `short:"f" long:"force" description:"Don't complain when a repository already exists in the target directory"`
 	Local bool   `short:"l" long:"local" description:"Clone into an appropriately named subdirectory of the current directory"`
 	To    string `short:"t" long:"to" description:"Clone repository into specified directory"`
@@ -32,13 +36,7 @@ func (*clone) Description() ggman.Description {
 		Command:     "clone",
 		Description: "Clone a repository into a path described by 'ggman where'",
 
-		Positional: meta.Positional{
-			Value:       "ARG",
-			Description: "URL of repository and arguments to pass to 'git clone'",
-
-			Min: 1,
-			Max: -1,
-
+		ParserConfig: parser.Config{
 			IncludeUnknown: true,
 		},
 
@@ -87,21 +85,21 @@ var errCloneOther = exit.Error{
 
 func (c *clone) Run(context ggman.Context) error {
 	// grab the url to clone and make sure it is not local
-	url := ggman.URLV(context, 0)
+	url := env.ParseURL(c.Positional.URL)
 	if url.IsLocal() {
-		return errCloneLocalURI.WithMessageF(context.Args.Pos[0])
+		return errCloneLocalURI.WithMessageF(c.Positional.URL)
 	}
 
 	// find the remote and local paths to clone to / from
 	remote := context.Environment.Canonical(url)
 	local, err := c.dest(context, url)
 	if err != nil {
-		return errCloneInvalidDest.WithMessageF(context.Args.Pos[0], err)
+		return errCloneInvalidDest.WithMessageF(c.Positional.URL, err)
 	}
 
 	// do the actual cloning!
 	context.Printf("Cloning %q into %q ...\n", remote, local)
-	switch err := context.Environment.Git.Clone(context.IOStream, remote, local, context.Args.Pos[1:]...); err {
+	switch err := context.Environment.Git.Clone(context.IOStream, remote, local, c.Positional.Args...); err {
 	case nil:
 		return nil
 	case git.ErrCloneAlreadyExists:

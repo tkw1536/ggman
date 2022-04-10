@@ -29,10 +29,6 @@ func (sweep) Description() ggman.Description {
 	}
 }
 
-func (sweep) AfterParse() error {
-	return nil
-}
-
 var errSweepErr = exit.Error{
 	Message:  "Error scanning for empty directories: %s",
 	ExitCode: exit.ExitGeneric,
