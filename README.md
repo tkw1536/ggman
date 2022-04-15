@@ -359,17 +359,15 @@ is the same as `ggman web`, except that it only prints the URL to stdout.
 `ggman web` and `ggman url` also take an optional base url. 
 If it is provided, the first component of the url is replace with the given base. 
 ggman also supports a number of "default" base urls. 
+
 For example:
 
 ```
-ggman web travisci
+ggman web godoc
 ```
 
-will open the current repo on travis-ci.com. 
-The following base urls are supported:
-
-- `circle` - CircleCI
-- `travis` - TravisCI
+will open the current repo on [pkg.go.dev](https://pkg.go.dev). 
+To see a list of supported default urls, use `ggman web --list-bases`.
 
 ### 'ggman find-branch'
 
@@ -419,6 +417,7 @@ ggman comes with the following builtin aliases:
 ### 1.16.0 (Upcoming)
 
 - to new `goprogram` version (refactors positional argument parsing)
+- add `--list-bases` flag to `ggman web` and `ggman url`
 
 ### 1.15.0 (Released [Apr 8 2022](https://github.com/tkw1536/ggman/releases/tag/v1.15.0))
 

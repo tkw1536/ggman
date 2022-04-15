@@ -234,6 +234,15 @@ func TestCommandURL(t *testing.T) {
 			"git clone git@github.com/hello/world.git --branch master\n",
 			"",
 		},
+
+		{
+			"List all bases",
+			clonePath,
+			[]string{"url", "--list-bases"},
+			0,
+			"circle: https://app.circleci.com/pipelines/github\ngodoc: https://pkg.go.dev/\nlocalgodoc: http://localhost:6060/pkg/\ntravis: https://travis-ci.com\n",
+			"",
+		},
 	}
 
 	for _, tt := range tests {

@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"path/filepath"
-	"strings"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/goprogram/exit"
+	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 
 	"github.com/pkg/browser"
@@ -68,10 +68,10 @@ func (u *url) BeforeRegister(program *ggman.Program) {
 type urlweb struct {
 	isWebCommand bool // if true, execute the web command; else the url command
 
-	// TODO: Add a --list flag for predefined urls
 	Positionals struct {
-		Base string `positional-arg-name:"BASE" description:"If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls"`
+		Base string `positional-arg-name:"BASE" description:"If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined base URLs. Use '--list-bases' to see a list of predefined base URLs"`
 	} `positional-args:"true"`
+	List bool `short:"l" long:"list-bases" descrioption:"Print a list of all predefined base URLs"`
 
 	ForceRepoHere bool `short:"f" long:"force-repo-here" description:"Pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url"`
 	Branch        bool `short:"b" long:"branch" description:"If provided, include the HEAD reference in the resolved URL"`
@@ -91,27 +91,6 @@ var WebBuiltInBases = map[string]struct {
 	"godoc":      {"https://pkg.go.dev/", true},
 	"localgodoc": {"http://localhost:6060/pkg/", true},
 }
-
-var urlwebBuiltinBaseNames string = FmtWebBuiltInBaseNames()
-
-// FmtWebBuiltInBaseNames returns a formatted string with all builtin bases
-func FmtWebBuiltInBaseNames() string {
-	// create a list of bases
-	bases := make([]string, len(WebBuiltInBases))
-	var count int
-	for name := range WebBuiltInBases {
-		bases[count] = "'" + name + "'"
-		count++
-	}
-
-	// sort them, we don't care about stability
-	slices.Sort(bases)
-
-	// and return
-	return strings.Join(bases, ", ")
-}
-
-// var stringWebBaseUsage = "If provided, replace the first component with the provided base url. Alternatively you can use one of the predefined urls %s"
 
 func (uw *urlweb) Description() ggman.Description {
 
@@ -186,6 +165,11 @@ var errURLCloneAndUnsupported = exit.Error{
 }
 
 func (uw urlweb) Run(context ggman.Context) error {
+	if uw.List {
+		uw.listBases(context)
+		return nil
+	}
+
 	// get the remote url of the current repository
 	root, remote, relative, err := uw.getRemoteURL(context)
 	if err != nil {
@@ -253,6 +237,16 @@ func (uw urlweb) Run(context ggman.Context) error {
 	}
 
 	return nil
+}
+
+func (uw urlweb) listBases(context ggman.Context) {
+	bases := maps.Keys(WebBuiltInBases)
+	slices.Sort(bases)
+
+	for _, name := range bases {
+		base := WebBuiltInBases[name]
+		context.Printf("%s: %s\n", name, base.URL)
+	}
 }
 
 // getRemoteURL gets the remote url of current repository in the context
