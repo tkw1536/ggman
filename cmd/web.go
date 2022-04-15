@@ -146,7 +146,12 @@ func (uw *urlweb) AfterParse() error {
 
 var errOutsideRepository = exit.Error{
 	ExitCode: env.ExitInvalidRepo,
-	Message:  "Not inside a ggman-controlled repository. ",
+	Message:  "Not inside a ggman-controlled repository",
+}
+
+var errWebNoRemote = exit.Error{
+	ExitCode: env.ExitInvalidRepo,
+	Message:  "Repository does not have a remote",
 }
 
 var errNoRelativeRepository = exit.Error{
@@ -174,6 +179,9 @@ func (uw urlweb) Run(context ggman.Context) error {
 	root, remote, relative, err := uw.getRemoteURL(context)
 	if err != nil {
 		return err
+	}
+	if remote == "" {
+		return errWebNoRemote
 	}
 
 	var weburl string
