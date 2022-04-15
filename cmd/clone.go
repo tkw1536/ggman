@@ -49,7 +49,7 @@ func (*clone) Description() ggman.Description {
 
 var errInvalidDest = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  "Invalid destination: '--to' and '--local' may not be used together. ",
+	Message:  "Invalid destination: '--to' and '--local' may not be used together",
 }
 
 func (c *clone) AfterParse() error {
@@ -66,17 +66,17 @@ var errCloneInvalidDest = exit.Error{
 
 var errCloneLocalURI = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  "Invalid remote URI %q: Invalid scheme, not a remote path. ",
+	Message:  "Invalid remote URI %q: Invalid scheme, not a remote path",
 }
 
 var errCloneAlreadyExists = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "Unable to clone repository: Another git repository already exists in target location. ",
+	Message:  "Unable to clone repository: Another git repository already exists in target location",
 }
 
 var errCloneNoArguments = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "External 'git' not found, can not pass any additional arguments to 'git clone'. ",
+	Message:  "External 'git' not found, can not pass any additional arguments to 'git clone'",
 }
 
 var errCloneOther = exit.Error{

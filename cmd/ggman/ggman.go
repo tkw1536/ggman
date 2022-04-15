@@ -151,7 +151,7 @@ func init() {
 // an error when nor arguments are provided.
 var errNoArgumentsProvided = exit.Error{
 	ExitCode: exit.ExitGeneralArguments,
-	Message:  "Need at least one argument. Use `ggman license` to view licensing information. ",
+	Message:  "Need at least one argument. Use `ggman license` to view licensing information",
 }
 
 func main() {

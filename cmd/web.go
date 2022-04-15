@@ -161,7 +161,7 @@ var errNoRelativeRepository = exit.Error{
 
 var errWebFlagUnsupported = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  "ggman web does not support the %s flag. ",
+	Message:  "ggman web does not support the %s flag",
 }
 
 var errURLCloneAndUnsupported = exit.Error{

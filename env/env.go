@@ -102,7 +102,7 @@ func NewEnv(r Requirement, params Parameters) (Env, error) {
 
 var errMissingRoot = exit.Error{
 	ExitCode: ExitInvalidEnvironment,
-	Message:  "Unable to find GGROOT directory. ",
+	Message:  "Unable to find GGROOT directory",
 }
 
 // absRoot returns the absolute path to the root directory.

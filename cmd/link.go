@@ -27,7 +27,7 @@ func (link) BeforeRegister(program *ggman.Program) {}
 func (link) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "link",
-		Description: "Symlink a repository into the local repository structure. ",
+		Description: "Symlink a repository into the local repository structure",
 
 		Requirements: env.Requirement{
 			NeedsRoot: true,
@@ -37,17 +37,17 @@ func (link) Description() ggman.Description {
 
 var errLinkDoesNotExist = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "Unable to link repository: Can not open source repository. ",
+	Message:  "Unable to link repository: Can not open source repository",
 }
 
 var errLinkSamePath = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "Unable to link repository: Link source and target are identical. ",
+	Message:  "Unable to link repository: Link source and target are identical",
 }
 
 var errLinkAlreadyExists = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "Unable to link repository: Another directory already exists in target location. ",
+	Message:  "Unable to link repository: Another directory already exists in target location",
 }
 
 var errLinkUnknown = exit.Error{

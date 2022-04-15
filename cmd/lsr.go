@@ -33,7 +33,7 @@ func (l *lsr) Description() ggman.Description {
 }
 
 var errInvalidCanfile = exit.Error{
-	Message:  "Invalid CANFILE found. ",
+	Message:  "Invalid CANFILE found",
 	ExitCode: env.ExitInvalidEnvironment,
 }
 
