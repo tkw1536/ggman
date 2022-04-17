@@ -410,6 +410,7 @@ Variables are matched case-insensitive.
 ggman comes with the following builtin aliases:
 
 - `ggman git` behaves exactly like `ggman exec git`
+- `ggman require` behaves exactly like `ggman clone --force`
 - `ggman root` behaves exactly like `ggman env --raw GGROOT` (for backwards compatibility)
 
 ## Changelog
@@ -419,6 +420,7 @@ ggman comes with the following builtin aliases:
 - to new `goprogram` version (refactors positional argument parsing)
 - add `--list-bases` flag to `ggman web` and `ggman url`
 - don't try to open invalid URLs in `ggman web` and `ggman url`
+- add `ggman require` alias
 - remove trailing `.`s from error messages
 
 ### 1.15.0 (Released [Apr 8 2022](https://github.com/tkw1536/ggman/releases/tag/v1.15.0))

@@ -143,6 +143,7 @@ func init() {
 	for _, a := range []goprogram.Alias{
 		{Name: "git", Command: "exec", Args: []string{"git"}, Description: "Execute a git command using a native 'git' executable. "},
 		{Name: "root", Command: "env", Args: []string{"GGROOT"}, Description: "Print the ggman root folder. "},
+		{Name: "require", Command: "clone", Args: []string{"--force"}, Description: "Require a remote git repository to be installed locally. "},
 	} {
 		ggmanExe.RegisterAlias(a)
 	}
