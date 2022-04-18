@@ -23,7 +23,7 @@ func (canon) BeforeRegister(program *ggman.Program) {}
 func (canon) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "canon",
-		Description: "Print the canonical version of a URL",
+		Description: "print the canonical version of a URL",
 	}
 }
 

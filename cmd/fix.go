@@ -16,7 +16,7 @@ import (
 var Fix ggman.Command = &fix{}
 
 type fix struct {
-	Simulate bool `short:"s" long:"simulate" description:"Do not perform any canonicalization. Only print what would be done"`
+	Simulate bool `short:"s" long:"simulate" description:"do not perform any canonicalization, instead only print what would be done"`
 }
 
 func (fix) BeforeRegister(program *ggman.Program) {}
@@ -24,7 +24,7 @@ func (fix) BeforeRegister(program *ggman.Program) {}
 func (f *fix) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "fix",
-		Description: "Canonicalizes remote URLs for cloned repositories. ",
+		Description: "canonicalizes remote URLs for cloned repositories",
 		Requirements: env.Requirement{
 			NeedsRoot:    true,
 			NeedsCanFile: true,

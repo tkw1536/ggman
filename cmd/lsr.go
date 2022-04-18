@@ -15,7 +15,7 @@ import (
 var Lsr ggman.Command = &lsr{}
 
 type lsr struct {
-	Canonical bool `short:"c" long:"canonical" description:"Print canonicalized URLs"`
+	Canonical bool `short:"c" long:"canonical" description:"print canonicalized URLs"`
 }
 
 func (lsr) BeforeRegister(program *ggman.Program) {}
@@ -23,7 +23,7 @@ func (lsr) BeforeRegister(program *ggman.Program) {}
 func (l *lsr) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "lsr",
-		Description: "List remote URLs to all locally cloned repositories. ",
+		Description: "list remote URLs to all locally cloned repositories",
 
 		Requirements: env.Requirement{
 			AllowsFilter: true,
@@ -33,7 +33,7 @@ func (l *lsr) Description() ggman.Description {
 }
 
 var errInvalidCanfile = exit.Error{
-	Message:  "Invalid CANFILE found",
+	Message:  "invalid CANFILE found",
 	ExitCode: env.ExitInvalidEnvironment,
 }
 

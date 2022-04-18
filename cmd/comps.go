@@ -22,7 +22,7 @@ func (comps) BeforeRegister(program *ggman.Program) {}
 func (comps) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "comps",
-		Description: "Print the components of a URL",
+		Description: "print the components of a URL",
 	}
 }
 

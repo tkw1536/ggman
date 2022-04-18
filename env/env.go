@@ -229,12 +229,12 @@ const (
 
 var errInvalidRoot = exit.Error{
 	ExitCode: ExitInvalidEnvironment,
-	Message:  "Unable to resolve root directory: %s",
+	Message:  "unable to resolve root directory: %s",
 }
 
 var errNotResolved = exit.Error{
 	ExitCode: ExitInvalidRepo,
-	Message:  "Unable to resolve repository %q",
+	Message:  "unable to resolve repository %q",
 }
 
 // Abs returns the absolute path to path, unless it is already absolute.

@@ -180,14 +180,13 @@ func main() {
 	}
 
 	// execute the main program with the real environment!
-	err := ggmanExe.Main(streams, env.Parameters{
+	err := exit.AsError(ggmanExe.Main(streams, env.Parameters{
 		Variables: env.ReadVariables(),
 		Plumbing:  nil,
 		Workdir:   "",
-	}, os.Args[1:])
+	}, os.Args[1:]))
 
-	// return the error to the user
-	exit.AsError(err).Return()
+	err.Return()
 }
 
 const fatalPanicMessage = `Fatal Error: Panic

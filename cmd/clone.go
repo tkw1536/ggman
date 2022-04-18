@@ -22,11 +22,11 @@ var Clone ggman.Command = &clone{}
 type clone struct {
 	Positional struct {
 		URL  string   `required:"1-1" positional-arg-name:"URL" description:"URL of repository and arguments to pass to 'git clone'"`
-		Args []string `positional-arg-name:"ARG" description:"Additional arguments to pass to clone"`
+		Args []string `positional-arg-name:"ARG" description:"additional arguments to pass to clone"`
 	} `positional-args:"true"`
-	Force bool   `short:"f" long:"force" description:"Don't complain when a repository already exists in the target directory"`
-	Local bool   `short:"l" long:"local" description:"Clone into an appropriately named subdirectory of the current directory"`
-	To    string `short:"t" long:"to" description:"Clone repository into specified directory"`
+	Force bool   `short:"f" long:"force" description:"don't complain when a repository already exists in the target directory"`
+	Local bool   `short:"l" long:"local" description:"clone into an appropriately named subdirectory of the current directory"`
+	To    string `short:"t" long:"to" description:"clone repository into specified directory"`
 }
 
 func (*clone) BeforeRegister(program *ggman.Program) {}
@@ -34,7 +34,7 @@ func (*clone) BeforeRegister(program *ggman.Program) {}
 func (*clone) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "clone",
-		Description: "Clone a repository into a path described by 'ggman where'",
+		Description: "clone a repository into a path described by 'ggman where'",
 
 		ParserConfig: parser.Config{
 			IncludeUnknown: true,
@@ -49,7 +49,7 @@ func (*clone) Description() ggman.Description {
 
 var errInvalidDest = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  "Invalid destination: '--to' and '--local' may not be used together",
+	Message:  "invalid destination: '--to' and '--local' may not be used together",
 }
 
 func (c *clone) AfterParse() error {
@@ -61,17 +61,17 @@ func (c *clone) AfterParse() error {
 
 var errCloneInvalidDest = exit.Error{
 	ExitCode: exit.ExitGeneralArguments,
-	Message:  "Unable to determine local destination for %q: %s",
+	Message:  "unable to determine local destination for %q: %s",
 }
 
 var errCloneLocalURI = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  "Invalid remote URI %q: Invalid scheme, not a remote path",
+	Message:  "invalid remote URI %q: invalid scheme, not a remote path",
 }
 
 var errCloneAlreadyExists = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "Unable to clone repository: Another git repository already exists in target location",
+	Message:  "unable to clone repository: another git repository already exists in target location",
 }
 
 var errCloneNoArguments = exit.Error{

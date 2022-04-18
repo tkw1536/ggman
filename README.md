@@ -421,7 +421,7 @@ ggman comes with the following builtin aliases:
 - add `--list-bases` flag to `ggman web` and `ggman url`
 - don't try to open invalid URLs in `ggman web` and `ggman url`
 - add `ggman require` alias
-- remove trailing `.`s from error messages
+- make documentation strings more consistent
 
 ### 1.15.0 (Released [Apr 8 2022](https://github.com/tkw1536/ggman/releases/tag/v1.15.0))
 

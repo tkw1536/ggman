@@ -18,7 +18,7 @@ func (fetch) BeforeRegister(program *ggman.Program) {}
 func (fetch) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "fetch",
-		Description: "Run 'git fetch --all' on locally cloned repositories",
+		Description: "run 'git fetch --all' on locally cloned repositories",
 
 		Requirements: env.Requirement{
 			AllowsFilter: true,

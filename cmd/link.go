@@ -18,7 +18,7 @@ var Link ggman.Command = &link{}
 
 type link struct {
 	Positionals struct {
-		Path string `positional-arg-name:"PATH" required:"1-1" description:"Path of repository to symlink"`
+		Path string `positional-arg-name:"PATH" required:"1-1" description:"path of repository to symlink"`
 	} `positional-args:"true"`
 }
 
@@ -27,7 +27,7 @@ func (link) BeforeRegister(program *ggman.Program) {}
 func (link) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "link",
-		Description: "Symlink a repository into the local repository structure",
+		Description: "symlink a repository into the local repository structure",
 
 		Requirements: env.Requirement{
 			NeedsRoot: true,
@@ -37,22 +37,22 @@ func (link) Description() ggman.Description {
 
 var errLinkDoesNotExist = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "Unable to link repository: Can not open source repository",
+	Message:  "unable to link repository: can not open source repository",
 }
 
 var errLinkSamePath = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "Unable to link repository: Link source and target are identical",
+	Message:  "unable to link repository: link source and target are identical",
 }
 
 var errLinkAlreadyExists = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "Unable to link repository: Another directory already exists in target location",
+	Message:  "unable to link repository: another directory already exists in target location",
 }
 
 var errLinkUnknown = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "Unknown linking error: %s",
+	Message:  "unknown linking error: %s",
 }
 
 func (l *link) Run(context ggman.Context) error {

@@ -32,12 +32,12 @@ type _env struct {
 	info meta.Info
 
 	Positionals struct {
-		Vars []string `positional-arg-name:"VAR" description:"Print only information about specified variables"`
+		Vars []string `positional-arg-name:"VAR" description:"print only information about specified variables"`
 	} `positional-args:"true"`
 
-	List     bool `short:"l" long:"list" description:"Instead of 'name=value' pairs print only the variable"`
-	Describe bool `short:"d" long:"describe" description:"Instead of 'name=value' pairs print 'name: description' pairs describing the use of variables"`
-	Raw      bool `short:"r" long:"raw" description:"Instead of 'name=value' pairs print only the unescaped value"`
+	List     bool `short:"l" long:"list" description:"instead of 'name=value' pairs print only the variable"`
+	Describe bool `short:"d" long:"describe" description:"instead of 'name=value' pairs print 'name: description' pairs describing the use of variables"`
+	Raw      bool `short:"r" long:"raw" description:"instead of 'name=value' pairs print only the unescaped value"`
 }
 
 func (e *_env) BeforeRegister(program *ggman.Program) {
@@ -47,7 +47,7 @@ func (e *_env) BeforeRegister(program *ggman.Program) {
 func (e _env) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "env",
-		Description: "Print information about the ggman environment",
+		Description: "print information about the ggman environment",
 
 		Requirements: env.Requirement{
 			NeedsRoot: true,

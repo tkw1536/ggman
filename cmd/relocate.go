@@ -16,7 +16,7 @@ import (
 var Relocate ggman.Command = &relocate{}
 
 type relocate struct {
-	Simulate bool `short:"s" long:"simulate" description:"Only print unix-like commands to move repositories around"`
+	Simulate bool `short:"s" long:"simulate" description:"only print unix-like commands to move repositories around"`
 }
 
 func (relocate) BeforeRegister(program *ggman.Program) {}
@@ -24,7 +24,7 @@ func (relocate) BeforeRegister(program *ggman.Program) {}
 func (r *relocate) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "relocate",
-		Description: "Move locally cloned repositories into locations as per 'ggman where'. ",
+		Description: "move locally cloned repositories into locations as per 'ggman where'",
 
 		Requirements: env.Requirement{
 			NeedsRoot:    true,
@@ -35,12 +35,12 @@ func (r *relocate) Description() ggman.Description {
 }
 
 var errUnableMoveCreateParent = exit.Error{
-	Message:  "Unable to create parent directory for destination: %s",
+	Message:  "unable to create parent directory for destination: %s",
 	ExitCode: exit.ExitGeneric,
 }
 
 var errUnableToMoveRepo = exit.Error{
-	Message:  "Unable to move repository: %s",
+	Message:  "unable to move repository: %s",
 	ExitCode: exit.ExitGeneric,
 }
 

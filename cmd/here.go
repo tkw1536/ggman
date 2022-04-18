@@ -13,7 +13,7 @@ import (
 var Here ggman.Command = &here{}
 
 type here struct {
-	Tree bool `short:"t" long:"tree" description:"Also print the current HEAD reference and relative path to the root of the git worktree"`
+	Tree bool `short:"t" long:"tree" description:"also print the current HEAD reference and relative path to the root of the git worktree"`
 }
 
 func (here) BeforeRegister(program *ggman.Program) {}
@@ -21,7 +21,7 @@ func (here) BeforeRegister(program *ggman.Program) {}
 func (h *here) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "here",
-		Description: "Print the root path to the repository in the current repository. ",
+		Description: "print the root path to the repository in the current repository",
 
 		Requirements: env.Requirement{
 			NeedsRoot: true,

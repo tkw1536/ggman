@@ -16,8 +16,8 @@ import (
 var Ls ggman.Command = &ls{}
 
 type ls struct {
-	ExitCode bool `short:"e" long:"exit-code" description:"Return exit code 1 if no repositories are found"`
-	One      bool `short:"o" long:"one" description:"List at most one repository, for use in shell scripts"`
+	ExitCode bool `short:"e" long:"exit-code" description:"return exit code 1 if no repositories are found"`
+	One      bool `short:"o" long:"one" description:"list at most one repository, for use in shell scripts"`
 }
 
 func (*ls) BeforeRegister(program *ggman.Program) {}
@@ -25,7 +25,7 @@ func (*ls) BeforeRegister(program *ggman.Program) {}
 func (l *ls) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "ls",
-		Description: "List local paths to all locally cloned repositories. ",
+		Description: "list local paths to all locally cloned repositories",
 
 		Requirements: env.Requirement{
 			AllowsFilter: true,

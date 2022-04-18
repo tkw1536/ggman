@@ -21,7 +21,7 @@ func (sweep) BeforeRegister(program *ggman.Program) {}
 func (sweep) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "sweep",
-		Description: "Find empty folders in the project folder. ",
+		Description: "find empty folders in the project folder",
 
 		Requirements: env.Requirement{
 			NeedsRoot: true,
@@ -30,7 +30,7 @@ func (sweep) Description() ggman.Description {
 }
 
 var errSweepErr = exit.Error{
-	Message:  "Error scanning for empty directories: %s",
+	Message:  "error scanning for empty directories: %s",
 	ExitCode: exit.ExitGeneric,
 }
 

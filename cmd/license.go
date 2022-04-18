@@ -17,7 +17,7 @@ func (license) BeforeRegister(program *ggman.Program) {}
 func (license) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "license",
-		Description: "Print license information about ggman and exit. ",
+		Description: "print license information about ggman and exit",
 	}
 }
 

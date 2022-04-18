@@ -16,7 +16,7 @@ var Where ggman.Command = &where{}
 
 type where struct {
 	Positionals struct {
-		URL string `required:"1-1" positional-arg-name:"URL" description:"Remote repository URL to use"`
+		URL string `required:"1-1" positional-arg-name:"URL" description:"remote repository URL to use"`
 	} `positional-args:"true"`
 }
 
@@ -25,7 +25,7 @@ func (where) BeforeRegister(program *ggman.Program) {}
 func (where) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "where",
-		Description: "Print the location where a repository would be cloned to",
+		Description: "print the location where a repository would be cloned to",
 
 		Requirements: env.Requirement{
 			NeedsRoot: true,
