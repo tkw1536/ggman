@@ -415,7 +415,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.16.0 (Upcoming)
+### 1.17.0 (Upcoming)
+
+### 1.16.0 (Released [Apr 18 2022](https://github.com/tkw1536/ggman/releases/tag/v1.16.0))
 
 - to new `goprogram` version (refactors positional argument parsing)
 - add `--list-bases` flag to `ggman web` and `ggman url`
