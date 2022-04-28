@@ -12,12 +12,12 @@ import (
 
 // Flags represents a set of filter flags used for the ggman goprogram.
 type Flags struct {
-	For           []string `short:"f" long:"for" value-name:"FILTER" description:"filter list of repositories by FILTER. Filter can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url"`
-	FromFile      []string `short:"i" long:"from-file" value-name:"FILE" description:"filter list of repositories to only those matching filters in FILE. File should contain one filter per line, with common comment chars being ignored"`
+	For           []string `short:"f" long:"for" value-name:"FILTER" description:"filter list of repositories by FILTER. FILTER can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url"`
+	FromFile      []string `short:"i" long:"from-file" value-name:"FILE" description:"filter list of repositories to only those matching filters in FILE. FILE should contain one filter per line, with common comment chars being ignored"`
 	NoFuzzyFilter bool     `short:"n" long:"no-fuzzy-filter" description:"disable fuzzy matching for filters"`
 
-	Here bool     `short:"H" long:"here" description:"filter list of repositories to only contain those that are in the current directory or subtree. Alias for '-p .'"`
-	Path []string `short:"P" long:"path" description:"filter list of repositories to only contain those that are in or under the specified path. May be used multiple times"`
+	Here bool     `short:"H" long:"here" description:"filter list of repositories to only contain those that are in the current directory or subtree. alias for \"-p .\""`
+	Path []string `short:"P" long:"path" description:"filter list of repositories to only contain those that are in or under the specified path. may be used multiple times"`
 
 	Dirty bool `short:"d" long:"dirty" description:"filter list of repositories to only contain repositories with uncommited changes"`
 	Clean bool `short:"c" long:"clean" description:"filter list of repositories to only contain repositories without uncommited changes"`

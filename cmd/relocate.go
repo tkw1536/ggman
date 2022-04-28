@@ -24,7 +24,7 @@ func (relocate) BeforeRegister(program *ggman.Program) {}
 func (r *relocate) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "relocate",
-		Description: "move locally cloned repositories into locations as per 'ggman where'",
+		Description: "move locally cloned repositories into locations as per \"ggman where\"",
 
 		Requirements: env.Requirement{
 			NeedsRoot:    true,

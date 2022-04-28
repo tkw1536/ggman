@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/mockenv"
-	"github.com/tkw1536/goprogram/lib/doccheck"
+	"github.com/tkw1536/goprogram/lib/docfmt"
 )
 
 // This test runs every command once with the --help flag
@@ -18,7 +18,7 @@ func Test_main_docs(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			defer func() {
 				err := recover()
-				if ve, isVe := err.(*doccheck.CheckError); isVe {
+				if ve, isVe := err.(*docfmt.ValidationError); isVe {
 					t.Fatalf("Doccheck failure: %s", ve)
 				}
 			}()

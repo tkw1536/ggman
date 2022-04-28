@@ -15,7 +15,7 @@ var info = meta.Info{
 	BuildTime:    constants.BuildTime,
 
 	Executable:  "ggman",
-	Description: fmt.Sprintf("ggman manages local git repositories\n\nggman version %s\nggman is licensed under the terms of the MIT License.\nUse 'ggman license' to view licensing information.", constants.BuildVersion),
+	Description: fmt.Sprintf("ggman manages local git repositories\n\nggman version %s\nggman is licensed under the terms of the MIT License.\nuse 'ggman license' to view licensing information.", constants.BuildVersion),
 }
 
 // newEnvironment makes a new runtime for ggman

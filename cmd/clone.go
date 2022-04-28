@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -21,10 +22,10 @@ var Clone ggman.Command = &clone{}
 
 type clone struct {
 	Positional struct {
-		URL  string   `required:"1-1" positional-arg-name:"URL" description:"URL of repository and arguments to pass to 'git clone'"`
+		URL  string   `required:"1-1" positional-arg-name:"URL" description:"URL of repository and arguments to pass to \"git clone\""`
 		Args []string `positional-arg-name:"ARG" description:"additional arguments to pass to clone"`
 	} `positional-args:"true"`
-	Force bool   `short:"f" long:"force" description:"don't complain when a repository already exists in the target directory"`
+	Force bool   `short:"f" long:"force" description:"do not complain when a repository already exists in the target directory"`
 	Local bool   `short:"l" long:"local" description:"clone into an appropriately named subdirectory of the current directory"`
 	To    string `short:"t" long:"to" description:"clone repository into specified directory"`
 }
@@ -34,7 +35,7 @@ func (*clone) BeforeRegister(program *ggman.Program) {}
 func (*clone) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "clone",
-		Description: "clone a repository into a path described by 'ggman where'",
+		Description: "clone a repository into a path described by \"ggman where\"",
 
 		ParserConfig: parser.Config{
 			IncludeUnknown: true,
@@ -49,7 +50,7 @@ func (*clone) Description() ggman.Description {
 
 var errInvalidDest = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  "invalid destination: '--to' and '--local' may not be used together",
+	Message:  fmt.Sprintf("invalid destination: %q and %q may not be used together", "--to", "--local"),
 }
 
 func (c *clone) AfterParse() error {

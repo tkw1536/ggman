@@ -69,7 +69,7 @@ type urlweb struct {
 	isWebCommand bool // if true, execute the web command; else the url command
 
 	Positionals struct {
-		Base string `positional-arg-name:"BASE" description:"if provided, replace the first component with the provided base url. Alternatively you can use one of the predefined base URLs. Use '--list-bases' to see a list of predefined base URLs"`
+		Base string `positional-arg-name:"BASE" description:"if provided, replace the first component with the provided base url. alternatively you can use one of the predefined base URLs. use \"--list-bases\" to see a list of predefined base URLs"`
 	} `positional-args:"true"`
 	List bool `short:"l" long:"list-bases" descrioption:"print a list of all predefined base URLs"`
 
@@ -77,7 +77,7 @@ type urlweb struct {
 	Branch        bool `short:"b" long:"branch" description:"if provided, include the HEAD reference in the resolved URL"`
 	Tree          bool `short:"t" long:"tree" description:"if provided, additionally use the HEAD reference and relative path to the root of the git worktree"`
 	BaseAsPrefix  bool `short:"p" long:"prefix" description:"treat the base argument as a prefix, instead of the hostname"`
-	Clone         bool `short:"c" long:"clone" description:"if provided to the url command, print a 'git clone' command that can be used to clone the current repository"`
+	Clone         bool `short:"c" long:"clone" description:"if provided to the url command, print a \"git clone\" command that can be used to clone the current repository"`
 	ReClone       bool `short:"r" long:"reclone" description:"like clone, but uses the current remote url as opposed to the https one"`
 }
 
@@ -161,12 +161,12 @@ var errNoRelativeRepository = exit.Error{
 
 var errWebFlagUnsupported = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  "ggman web does not support the %s flag",
+	Message:  "`ggman web` does not support the %s flag",
 }
 
 var errURLCloneAndUnsupported = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  "ggman url does not support %s and %s arguments at the same time",
+	Message:  "`ggman url` does not support %s and %s arguments at the same time",
 }
 
 func (uw urlweb) Run(context ggman.Context) error {

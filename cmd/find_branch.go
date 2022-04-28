@@ -18,7 +18,7 @@ type findBranch struct {
 	Positionals struct {
 		Branch string `required:"1-1" positional-arg-name:"BRANCH" description:"name of branch to find"`
 	} `positional-args:"true"`
-	ExitCode bool `short:"e" long:"exit-code" description:"exit with Status Code 1 when no repositories with provided branch exist"`
+	ExitCode bool `short:"e" long:"exit-code" description:"exit with status code 1 when no repositories with provided branch exist"`
 }
 
 func (findBranch) BeforeRegister(program *ggman.Program) {}
