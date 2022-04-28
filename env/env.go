@@ -340,21 +340,34 @@ const reposBufferSize = 200
 // Set to 0 for unlimited.
 const reposMaxParallelScan = 0
 
+// RepoScores returns a list of local paths to all repositories in this Environment.
+// It also returns their scores along with the repositories.
+//
+// This method silently ignores all errors.
+//
+// See the ScanReposScores() method for more control.
+func (env Env) RepoScores() ([]string, []float64) {
+	// NOTE(twiesing): This function is untested, because only the score-less variant is tested.
+	repos, scores, _ := env.ScanReposScores("")
+	return repos, scores
+}
+
 // Repos returns a list of local paths to all repositories in this Environment.
 // This method silently ignores all errors.
 //
 // See the ScanRepos() method for more control.
-//
-// This function is untested, because ScanRepos() is tested.
 func (env Env) Repos() []string {
-	repos, _ := env.ScanRepos("")
+	// NOTE(twiesing): This function is untested, because ScanRepos() is tested.
+	repos, _ := env.RepoScores()
 	return repos
 }
 
-// ScanRepos scans for repositories in the provided folder that match the Filter of this environment.
-// They are returned in order of filter score.
+// ScanRepoScores scans for repositories in the provided folder that match the Filter of this environment.
+// Repositories are returned in order of their scores, which are returned in the second argument.
+//
 // When an error occurs, this function may still return a list of (incomplete) repositories along with an error.
-func (env Env) ScanRepos(folder string) ([]string, error) {
+func (env Env) ScanReposScores(folder string) ([]string, []float64, error) {
+	// NOTE(twiesing): This function is untested, only ScanRepos() itself is tested
 	if folder == "" {
 		var err error
 		folder, err = env.absRoot()
@@ -379,17 +392,29 @@ func (env Env) ScanRepos(folder string) ([]string, error) {
 		extraFS[i] = walker.NewRealFS(root, true)
 	}
 
-	return walker.Scan(func(path string, root walker.FS, depth int) (score float64, cont bool) {
-		if env.Git.IsRepositoryQuick(path) {
-			return env.Filter.Score(env, path), false // never continue even if a repository does not match
-		}
-		return walker.ScanMatch(false), true
-	}, walker.Params{
-		Root: walker.NewRealFS(folder, true),
+	scanner := &walker.Walker[struct{}]{
+		Process: walker.ScanProcess(func(path string, root walker.FS, depth int) (score float64, cont bool) {
+			if env.Git.IsRepositoryQuick(path) {
+				return env.Filter.Score(env, path), false // never continue even if a repository does not match
+			}
+			return walker.ScanMatch(false), true
+		}),
+		Params: walker.Params{
+			Root: walker.NewRealFS(folder, true),
 
-		ExtraRoots: extraFS,
+			ExtraRoots: extraFS,
 
-		BufferSize:  reposBufferSize,
-		MaxParallel: reposMaxParallelScan,
-	})
+			BufferSize:  reposBufferSize,
+			MaxParallel: reposMaxParallelScan,
+		},
+	}
+
+	err := scanner.Walk()
+	return scanner.Results(), scanner.Scores(), err
+}
+
+// ScanRepos is like ScanReposScores, but returns only the first and last return value.
+func (env Env) ScanRepos(folder string) ([]string, error) {
+	results, _, err := env.ScanReposScores(folder)
+	return results, err
 }

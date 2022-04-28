@@ -17,6 +17,7 @@ var Ls ggman.Command = &ls{}
 
 type ls struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"return exit code 1 if no repositories are found"`
+	Scores   bool `short:"s" long:"scores" description:"show scores returned from filter along with repositories"`
 	One      bool `short:"o" long:"one" description:"list at most one repository, for use in shell scripts"`
 }
 
@@ -39,11 +40,15 @@ var errLSExitFlag = exit.Error{
 }
 
 func (l *ls) Run(context ggman.Context) error {
-	repos := context.Environment.Repos()
+	repos, scores := context.Environment.RepoScores()
 	if l.One && len(repos) > 0 {
 		repos = repos[:1]
 	}
-	for _, repo := range repos {
+	for i, repo := range repos {
+		if l.Scores {
+			context.Printf("%f %s\n", scores[i], repo)
+			continue
+		}
 		context.Println(repo)
 	}
 
