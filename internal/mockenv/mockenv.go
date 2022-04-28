@@ -149,7 +149,7 @@ func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, ar
 	stderrBuffer := &bytes.Buffer{}
 
 	// create a program and run Main()
-	fakeggman := ggman.NewProgram() // TODO: This should be toplevel!
+	fakeggman := ggman.NewProgram()
 	fakeggman.Register(goprogram.CloneCommand(command))
 
 	stream := stream.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader, 0)
