@@ -12,8 +12,6 @@ var License ggman.Command = license{}
 
 type license struct{}
 
-func (license) BeforeRegister(program *ggman.Program) {}
-
 func (license) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "license",

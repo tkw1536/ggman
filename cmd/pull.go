@@ -13,8 +13,6 @@ var Pull ggman.Command = pull{}
 
 type pull struct{}
 
-func (pull) BeforeRegister(program *ggman.Program) {}
-
 func (pull) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "pull",

@@ -46,23 +46,15 @@ import (
 //
 // --reclone
 // Like the --clone flag, but instead of using a normalized url, use the exact one found in the current repository.
-var Web ggman.Command = &web{}
-
-type web struct{ urlweb }
-
-func (w *web) BeforeRegister(program *ggman.Program) {
-	w.urlweb.isWebCommand = true
+var Web ggman.Command = &urlweb{
+	isWebCommand: true,
 }
 
 // URL is the 'ggman url' command.
 //
 // The ggman url command behaves exactly like the ggman web command, except that instead of opening the URL in a webbrowser it prints it to standard output.
-var URL ggman.Command = &url{}
-
-type url struct{ urlweb }
-
-func (u *url) BeforeRegister(program *ggman.Program) {
-	u.urlweb.isWebCommand = false
+var URL ggman.Command = &urlweb{
+	isWebCommand: false,
 }
 
 type urlweb struct {
@@ -92,8 +84,7 @@ var WebBuiltInBases = map[string]struct {
 	"localgodoc": {"http://localhost:6060/pkg/", true},
 }
 
-func (uw *urlweb) Description() ggman.Description {
-
+func (uw urlweb) Description() ggman.Description {
 	var Name string
 	if uw.isWebCommand {
 		Name = "web"
@@ -118,7 +109,7 @@ func (uw *urlweb) Description() ggman.Description {
 	}
 }
 
-func (uw *urlweb) AfterParse() error {
+func (uw urlweb) AfterParse() error {
 
 	var cloneFlag string
 	if uw.Clone {

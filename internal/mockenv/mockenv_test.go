@@ -77,8 +77,6 @@ type mockEnvRunCommand struct {
 	} `positional-args:"true"`
 }
 
-func (mockEnvRunCommand) BeforeRegister(program *ggman.Program) {}
-
 func (mockEnvRunCommand) Description() ggman.Description {
 	return ggman.Description{
 		Command: "fake",

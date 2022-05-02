@@ -13,8 +13,6 @@ var Fetch ggman.Command = fetch{}
 
 type fetch struct{}
 
-func (fetch) BeforeRegister(program *ggman.Program) {}
-
 func (fetch) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "fetch",

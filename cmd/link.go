@@ -22,8 +22,6 @@ type link struct {
 	} `positional-args:"true"`
 }
 
-func (link) BeforeRegister(program *ggman.Program) {}
-
 func (link) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "link",

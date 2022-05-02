@@ -18,8 +18,6 @@ type canon struct {
 	} `positional-args:"true"`
 }
 
-func (canon) BeforeRegister(program *ggman.Program) {}
-
 func (canon) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "canon",

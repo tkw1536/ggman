@@ -19,8 +19,6 @@ type fix struct {
 	Simulate bool `short:"s" long:"simulate" description:"do not perform any canonicalization, instead only print what would be done"`
 }
 
-func (fix) BeforeRegister(program *ggman.Program) {}
-
 func (f *fix) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "fix",

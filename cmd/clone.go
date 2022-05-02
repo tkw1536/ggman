@@ -30,8 +30,6 @@ type clone struct {
 	To    string `short:"t" long:"to" description:"clone repository into specified directory"`
 }
 
-func (*clone) BeforeRegister(program *ggman.Program) {}
-
 func (*clone) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "clone",

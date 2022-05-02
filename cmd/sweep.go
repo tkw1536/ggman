@@ -16,8 +16,6 @@ var Sweep ggman.Command = sweep{}
 
 type sweep struct{}
 
-func (sweep) BeforeRegister(program *ggman.Program) {}
-
 func (sweep) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "sweep",

@@ -18,8 +18,6 @@ type lsr struct {
 	Canonical bool `short:"c" long:"canonical" description:"print canonicalized URLs"`
 }
 
-func (lsr) BeforeRegister(program *ggman.Program) {}
-
 func (l *lsr) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "lsr",

@@ -19,8 +19,6 @@ type relocate struct {
 	Simulate bool `short:"s" long:"simulate" description:"only print unix-like commands to move repositories around"`
 }
 
-func (relocate) BeforeRegister(program *ggman.Program) {}
-
 func (r *relocate) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "relocate",

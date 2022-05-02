@@ -21,8 +21,6 @@ type ls struct {
 	One      bool `short:"o" long:"one" description:"list at most one repository, for use in shell scripts"`
 }
 
-func (*ls) BeforeRegister(program *ggman.Program) {}
-
 func (l *ls) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "ls",

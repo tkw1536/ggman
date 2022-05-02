@@ -17,8 +17,6 @@ type comps struct {
 	} `positional-args:"true"`
 }
 
-func (comps) BeforeRegister(program *ggman.Program) {}
-
 func (comps) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "comps",

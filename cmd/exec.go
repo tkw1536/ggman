@@ -49,8 +49,6 @@ type exe struct {
 	Force    bool `short:"f" long:"force" description:"continue execution even if an executable returns a non-zero exit code"`
 }
 
-func (*exe) BeforeRegister(program *ggman.Program) {}
-
 func (*exe) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "exec",

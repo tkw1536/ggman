@@ -16,8 +16,6 @@ type here struct {
 	Tree bool `short:"t" long:"tree" description:"also print the current HEAD reference and relative path to the root of the git worktree"`
 }
 
-func (here) BeforeRegister(program *ggman.Program) {}
-
 func (h *here) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "here",

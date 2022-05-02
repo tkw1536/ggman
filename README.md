@@ -417,7 +417,9 @@ ggman comes with the following builtin aliases:
 
 ### 1.17.0 (Upcoming)
 
-- update to new `goprogram` and format messages accordingly
+- update to new `goprogram`
+	- format messages accordingly
+	- remove `BeforeRegister` method from commands
 - add new `--scores` flag to `ggman ls`
 
 ### 1.16.0 (Released [Apr 18 2022](https://github.com/tkw1536/ggman/releases/tag/v1.16.0))

@@ -5,7 +5,6 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/meta"
 )
 
 // Env is the 'ggman env' command.
@@ -29,8 +28,6 @@ import (
 var Env ggman.Command = &_env{}
 
 type _env struct {
-	info meta.Info
-
 	Positionals struct {
 		Vars []string `positional-arg-name:"VAR" description:"print only information about specified variables"`
 	} `positional-args:"true"`
@@ -38,10 +35,6 @@ type _env struct {
 	List     bool `short:"l" long:"list" description:"instead of \"name=value\" pairs print only the variable"`
 	Describe bool `short:"d" long:"describe" description:"instead of \"name=value\" pairs print \"name: description\" pairs describing the use of variables"`
 	Raw      bool `short:"r" long:"raw" description:"instead of \"name=value\" pairs print only the unescaped value"`
-}
-
-func (e *_env) BeforeRegister(program *ggman.Program) {
-	e.info = program.Info
 }
 
 func (e _env) Description() ggman.Description {
@@ -91,11 +84,11 @@ func (e _env) Run(context ggman.Context) error {
 		case e.List:
 			context.Println(v.Key)
 		case e.Raw:
-			context.Println(v.Get(context.Environment, e.info))
+			context.Println(v.Get(context.Environment, context.Program.Info))
 		case e.Describe:
 			context.Printf("%s: %s\n", v.Key, v.Description)
 		default:
-			value := shellescape.Quote(v.Get(context.Environment, e.info))
+			value := shellescape.Quote(v.Get(context.Environment, context.Program.Info))
 			context.Printf("%s=%s\n", v.Key, value)
 		}
 	}

@@ -17,8 +17,8 @@ import (
 	gggit "github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/goprogram"
 	"github.com/tkw1536/goprogram/exit"
+	"github.com/tkw1536/goprogram/lib/reflectx"
 	"github.com/tkw1536/goprogram/lib/testlib"
 	"github.com/tkw1536/goprogram/stream"
 )
@@ -150,7 +150,7 @@ func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, ar
 
 	// create a program and run Main()
 	fakeggman := ggman.NewProgram()
-	fakeggman.Register(goprogram.CloneCommand(command))
+	fakeggman.Register(reflectx.Copy(command, true))
 
 	stream := stream.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader, 0)
 

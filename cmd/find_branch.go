@@ -21,8 +21,6 @@ type findBranch struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"exit with status code 1 when no repositories with provided branch exist"`
 }
 
-func (findBranch) BeforeRegister(program *ggman.Program) {}
-
 func (f *findBranch) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "find-branch",

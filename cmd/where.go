@@ -20,8 +20,6 @@ type where struct {
 	} `positional-args:"true"`
 }
 
-func (where) BeforeRegister(program *ggman.Program) {}
-
 func (where) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "where",
