@@ -9,7 +9,7 @@ import (
 //
 // When invoked, it prints the components of the first argument passed to it.
 // Each component is printed on a seperate line of standard output.
-var Comps ggman.Command = &comps{}
+var Comps ggman.Command = comps{}
 
 type comps struct {
 	Positional struct {

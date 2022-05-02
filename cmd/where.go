@@ -12,7 +12,7 @@ import (
 // Each segment of the path correesponding to a component of the repository url.
 //
 // This command does not perform any interactions with the remote repository or the local disk, in particular it does not require access to the remote repository or require it to be installed.
-var Where ggman.Command = &where{}
+var Where ggman.Command = where{}
 
 type where struct {
 	Positionals struct {
@@ -31,7 +31,7 @@ func (where) Description() ggman.Description {
 	}
 }
 
-func (w *where) Run(context ggman.Context) error {
+func (w where) Run(context ggman.Context) error {
 	localPath, err := context.Environment.Local(env.ParseURL(w.Positionals.URL))
 	if err != nil {
 		return err

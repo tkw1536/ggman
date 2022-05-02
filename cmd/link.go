@@ -14,7 +14,7 @@ import (
 // Link is the 'ggman link' command.
 //
 // The 'ggman link' symlinks the repository in the path passed as the first argument where it would have been cloned to inside 'ggman root'.
-var Link ggman.Command = &link{}
+var Link ggman.Command = link{}
 
 type link struct {
 	Positionals struct {
@@ -53,7 +53,7 @@ var errLinkUnknown = exit.Error{
 	Message:  "unknown linking error: %s",
 }
 
-func (l *link) Run(context ggman.Context) error {
+func (l link) Run(context ggman.Context) error {
 	// make sure that the path is absolute
 	// to avoid relative symlinks
 	from, e := context.Environment.Abs(l.Positionals.Path)

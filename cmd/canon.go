@@ -9,7 +9,7 @@ import (
 //
 // The 'ggman canon' command prints to standard output the canonical version of the URL passed as the first argument.
 // An optional second argument determines the CANSPEC to use for canonizing the URL.
-var Canon ggman.Command = &canon{}
+var Canon ggman.Command = canon{}
 
 type canon struct {
 	Positional struct {

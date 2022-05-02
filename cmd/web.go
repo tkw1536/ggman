@@ -46,14 +46,14 @@ import (
 //
 // --reclone
 // Like the --clone flag, but instead of using a normalized url, use the exact one found in the current repository.
-var Web ggman.Command = &urlweb{
+var Web ggman.Command = urlweb{
 	isWebCommand: true,
 }
 
 // URL is the 'ggman url' command.
 //
 // The ggman url command behaves exactly like the ggman web command, except that instead of opening the URL in a webbrowser it prints it to standard output.
-var URL ggman.Command = &urlweb{
+var URL ggman.Command = urlweb{
 	isWebCommand: false,
 }
 

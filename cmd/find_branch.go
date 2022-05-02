@@ -12,7 +12,7 @@ import (
 // The remotes will be listed in dictionary order of their local installation paths.
 //   --exit-code
 // When provided, exit with code 1 if no repositories are found.
-var FindBranch ggman.Command = &findBranch{}
+var FindBranch ggman.Command = findBranch{}
 
 type findBranch struct {
 	Positionals struct {
@@ -21,7 +21,7 @@ type findBranch struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"exit with status code 1 when no repositories with provided branch exist"`
 }
 
-func (f *findBranch) Description() ggman.Description {
+func (findBranch) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "find-branch",
 		Description: "list repositories containing a specific branch",

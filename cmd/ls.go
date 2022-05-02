@@ -13,7 +13,7 @@ import (
 // When provided, exit with code 1 if no repositories are found.
 //   --one
 // List at most one repository
-var Ls ggman.Command = &ls{}
+var Ls ggman.Command = ls{}
 
 type ls struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"return exit code 1 if no repositories are found"`
@@ -21,7 +21,7 @@ type ls struct {
 	One      bool `short:"o" long:"one" description:"list at most one repository, for use in shell scripts"`
 }
 
-func (l *ls) Description() ggman.Description {
+func (ls) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "ls",
 		Description: "list local paths to all locally cloned repositories",
@@ -37,7 +37,7 @@ var errLSExitFlag = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (l *ls) Run(context ggman.Context) error {
+func (l ls) Run(context ggman.Context) error {
 	repos, scores := context.Environment.RepoScores()
 	if l.One && len(repos) > 0 {
 		repos = repos[:1]

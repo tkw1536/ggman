@@ -13,13 +13,13 @@ import (
 // The 'ggman fix' command canonicalizes the urls of all remotes of a repository.
 //   --simulate
 // Instead of writing out the changes to disk, only print what would be done.
-var Fix ggman.Command = &fix{}
+var Fix ggman.Command = fix{}
 
 type fix struct {
 	Simulate bool `short:"s" long:"simulate" description:"do not perform any canonicalization, instead only print what would be done"`
 }
 
-func (f *fix) Description() ggman.Description {
+func (fix) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "fix",
 		Description: "canonicalizes remote URLs for cloned repositories",

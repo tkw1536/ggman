@@ -13,13 +13,13 @@ import (
 // Relocate is the 'ggman relocate' command.
 //
 // Relocate moves all repositories to the location where they should be moved to if they had been cloned with 'ggman clone'.
-var Relocate ggman.Command = &relocate{}
+var Relocate ggman.Command = relocate{}
 
 type relocate struct {
 	Simulate bool `short:"s" long:"simulate" description:"only print unix-like commands to move repositories around"`
 }
 
-func (r *relocate) Description() ggman.Description {
+func (relocate) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "relocate",
 		Description: "move locally cloned repositories into locations as per \"ggman where\"",

@@ -25,7 +25,7 @@ import (
 //
 //  --raw
 // Instead of printing "name=value" pairs, print only the raw, unescaped value.
-var Env ggman.Command = &_env{}
+var Env ggman.Command = _env{}
 
 type _env struct {
 	Positionals struct {
@@ -37,7 +37,7 @@ type _env struct {
 	Raw      bool `short:"r" long:"raw" description:"instead of \"name=value\" pairs print only the unescaped value"`
 }
 
-func (e _env) Description() ggman.Description {
+func (_env) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "env",
 		Description: "print information about the ggman environment",

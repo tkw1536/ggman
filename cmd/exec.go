@@ -34,7 +34,7 @@ import (
 //   --force
 // Continue execution of programs, even if one returns a non-zero exit code.
 // 'exec' will still return code 0 as the final exit code.
-var Exec ggman.Command = &exe{}
+var Exec ggman.Command = exe{}
 
 type exe struct {
 	Positionals struct {
@@ -49,7 +49,7 @@ type exe struct {
 	Force    bool `short:"f" long:"force" description:"continue execution even if an executable returns a non-zero exit code"`
 }
 
-func (*exe) Description() ggman.Description {
+func (exe) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "exec",
 		Description: "execute a command for all repositories",
@@ -69,14 +69,14 @@ var ErrExecParalllelNegative = exit.Error{
 	Message:  "argument for --parallel must be non-negative",
 }
 
-func (e *exe) AfterParse() error {
+func (e exe) AfterParse() error {
 	if e.Parallel < 0 {
 		return ErrExecParalllelNegative
 	}
 	return nil
 }
 
-func (e *exe) Run(context ggman.Context) error {
+func (e exe) Run(context ggman.Context) error {
 	if e.Simulate {
 		return e.runSimulate(context)
 	}
@@ -84,7 +84,7 @@ func (e *exe) Run(context ggman.Context) error {
 }
 
 // runReal implements ggman exec for simulate = False
-func (e *exe) runReal(context ggman.Context) error {
+func (e exe) runReal(context ggman.Context) error {
 	repos := context.Environment.Repos()
 
 	// schedule each command to be run in parallel by using a semaphore!
@@ -106,7 +106,7 @@ var ErrExecFatal = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (e *exe) runRepo(context ggman.Context, repo string) error {
+func (e exe) runRepo(context ggman.Context, repo string) error {
 	cmd := exec.Command(e.Positionals.Exe, e.Positionals.Args...)
 	cmd.Dir = repo
 
@@ -146,7 +146,7 @@ var ErrExecNoParallelSimulate = exit.Error{
 }
 
 // runSimulate runs the --simulate flag
-func (e *exe) runSimulate(context ggman.Context) (err error) {
+func (e exe) runSimulate(context ggman.Context) (err error) {
 	if e.Parallel != 1 {
 		return ErrExecNoParallelSimulate.WithMessageF(e.Parallel)
 	}

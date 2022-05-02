@@ -18,7 +18,7 @@ import (
 // It optionally takes any argument that would be passed to the normal invocation of a git command.
 //
 // When 'git' is not available on the system ggman is running on, additional arguments may not be supported.
-var Clone ggman.Command = &clone{}
+var Clone ggman.Command = clone{}
 
 type clone struct {
 	Positional struct {
@@ -30,7 +30,7 @@ type clone struct {
 	To    string `short:"t" long:"to" description:"clone repository into specified directory"`
 }
 
-func (*clone) Description() ggman.Description {
+func (clone) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "clone",
 		Description: "clone a repository into a path described by \"ggman where\"",
@@ -82,7 +82,7 @@ var errCloneOther = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (c *clone) Run(context ggman.Context) error {
+func (c clone) Run(context ggman.Context) error {
 	// grab the url to clone and make sure it is not local
 	url := env.ParseURL(c.Positional.URL)
 	if url.IsLocal() {

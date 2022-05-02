@@ -12,13 +12,13 @@ import (
 // The remotes will be listed in dictionary order of their local installation paths.
 //  --canonical
 // When provided, instead of printing the urls directly, prints the canonical remotes of all repositories
-var Lsr ggman.Command = &lsr{}
+var Lsr ggman.Command = lsr{}
 
 type lsr struct {
 	Canonical bool `short:"c" long:"canonical" description:"print canonicalized URLs"`
 }
 
-func (l *lsr) Description() ggman.Description {
+func (lsr) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "lsr",
 		Description: "list remote URLs to all locally cloned repositories",
