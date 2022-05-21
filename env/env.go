@@ -44,6 +44,10 @@ type Env struct {
 	// CanFile is the CanFile used to canonicalize repositories.
 	// See the Canonical() method.
 	CanFile CanFile
+
+	// Parameters and Requirements that were used to create this environments
+	Parameters  Parameters
+	Requirement Requirement
 }
 
 // Normalization returns the path Normalization used by this environment
@@ -83,6 +87,9 @@ func NewEnv(r Requirement, params Parameters) (Env, error) {
 		Vars:    params.Variables,
 		Filter:  NoFilter,
 		Workdir: params.Workdir,
+
+		Requirement: r,
+		Parameters:  params,
 	}
 
 	if r.NeedsRoot || r.AllowsFilter { // AllowsFilter implies NeedsRoot

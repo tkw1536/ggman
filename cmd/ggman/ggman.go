@@ -117,6 +117,7 @@ func init() {
 	// register all the known commands to the ggman program!
 	for _, c := range []ggman.Command{
 		cmd.Canon,
+		cmd.Complete,
 		cmd.Clone,
 		cmd.Comps,
 		cmd.Exec,
