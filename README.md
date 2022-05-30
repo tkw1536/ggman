@@ -422,6 +422,7 @@ ggman comes with the following builtin aliases:
 	- remove `BeforeRegister` method from commands
 	- remove unneeded pointer receivers
 - add new `--scores` flag to `ggman ls`
+- dependency updates
 
 ### 1.16.0 (Released [Apr 18 2022](https://github.com/tkw1536/ggman/releases/tag/v1.16.0))
 
