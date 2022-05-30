@@ -415,7 +415,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.17.0 (Upcoming)
+### 1.18.0 (Upcoming)
+
+### 1.17.0 (Released [May 30 2022](https://github.com/tkw1536/ggman/releases/tag/v1.17.0))
 
 - update to new `goprogram`
 	- format messages accordingly
