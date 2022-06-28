@@ -55,5 +55,6 @@ jobs:
         with:
           files: |
             dist/ggman
-            dist/ggman_mac
+            dist/ggman_mac_intel
+            dist/ggman_mac_silicon
             dist/ggman.exe
