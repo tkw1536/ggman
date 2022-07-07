@@ -57,10 +57,7 @@ Afterwards simply place it somewhere in your `$PATH`.
 
 If you do not trust pre-built binaries you can build `ggman` from source. 
 You need [`go`](https://golang.org) (version `1.18` or newer) along with `make` installed on your machine. 
-
-After cloning this repository, you can then simply type `make` and executables will be generated inside the `dist/` directory. 
-
-You can then either manually place them in your `$PATH`, or type `make install` to have it installed directly. 
+After cloning this repository, you can simply type `make install` to have ggman installed automatically 
 
 #### Optional Dependencies
 
@@ -416,6 +413,8 @@ ggman comes with the following builtin aliases:
 ## Changelog
 
 ### 1.18.0 (Upcoming)
+
+- build universal mac executables
 
 ### 1.17.0 (Released [May 30 2022](https://github.com/tkw1536/ggman/releases/tag/v1.17.0))
 
