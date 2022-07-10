@@ -119,26 +119,24 @@ ggman relocate --simulate
 
 A more thorough documentation on the commands above and how the URL to path mapping works can be found in the thorough documentation below. 
 
-### additional aliases
+### Optional: Additional shell aliases
 
-In addition to ggman (described in detail below) certain aliases can be very useful. 
-These can be added to `.bashrc` or `.zshrc` (or similar profiles) and are completely optional.
+In addition to ggman (described in detail below) certain aliases can also be very useful. 
+They can be installed into your `.zshrc` or `.bashrc` by adding the following line:
 
 ```bash
-# ggcd allows 'cd'-ing into a directory given a repository name
-# e.g ggcd github.com/hello/world will cd into the directory where the
-# 'github.com/hello/world' repository is checked out. 
-#
-# This also works with short names, e.g. "ggcd world" will cd into the first
-# repository matching "world".
-ggcd () {
-	ggman -f $1 ls --exit-code --one && cd $(ggman -f $1 ls --exit-code 2>&1)
-}
-# ggcode is like ggcd, except it opens an editor (here vscode) instead of cding. 
-ggcode () {
-	ggman -f $1 ls --exit-code && code $(ggman -f $1 ls --exit-code 2>&1)
-}
+eval "$(ggman shellrc)"
 ```
+
+#### ggcd
+
+`ggcd` allows 'cd'-ing into a directory given a repository name.
+For example, `ggcd github.com/hello/world` will cd into the directory where the `github.com/hello/world` repository is checked out. 
+This also works with any pattern matching a repository, e.g. `ggcd world` will cd into the first repository matching `world`.
+
+#### ggcode
+
+ggcode is like ggcd, except it opens an editor (here vscode) instead of cding.
 
 ## the `ggman` command
 
@@ -414,6 +412,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.18.0 (Upcoming)
 
+- move aliases to new `ggman shellrc` command 
 - build universal mac executables
 
 ### 1.17.0 (Released [May 30 2022](https://github.com/tkw1536/ggman/releases/tag/v1.17.0))

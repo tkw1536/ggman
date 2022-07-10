@@ -1,0 +1,22 @@
+package cmd
+
+import (
+	"testing"
+
+	"github.com/tkw1536/ggman/internal/mockenv"
+)
+
+func TestCommandShellRC(t *testing.T) {
+	mock := mockenv.NewMockEnv(t)
+
+	code, stdout, stderr := mock.Run(Shellrc, "", "", "shellrc")
+	if code != 0 {
+		t.Errorf("Code = %d, wantCode = %d", code, 0)
+	}
+	if stdout != shellrcSh {
+		t.Errorf("Got stdout = %s, expected = %s", stdout, shellrcSh)
+	}
+	if stderr != "" {
+		t.Errorf("Got stderr = %s, expected = %s", stderr, "")
+	}
+}

@@ -135,6 +135,7 @@ func init() {
 		cmd.URL,
 		cmd.Web,
 		cmd.Where,
+		cmd.Shellrc,
 	} {
 		ggmanExe.Register(c)
 	}
