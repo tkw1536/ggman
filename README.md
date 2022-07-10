@@ -418,6 +418,10 @@ ggman comes with the following builtin aliases:
 
 ### 1.19.0 (Upcoming)
 
+### 1.18.1 (Released [Jul 10 2022](https://github.com/tkw1536/ggman/releases/tag/v1.18.1))
+
+- fix `ggclone` alias
+
 ### 1.18.0 (Released [Jul 10 2022](https://github.com/tkw1536/ggman/releases/tag/v1.18.0))
 
 - move aliases to new `ggman shellrc` command
