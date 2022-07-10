@@ -15,9 +15,10 @@ ggcode () {
 
 # ggclone clones a repository if it does not yet exist, and then ccds into the correct directory.
 ggclone () {
-	DEST=$(ggman --no-fuzzy-filter -f "$1" ls --one)
-	if [ -n "$DEST" ] && ! [ -d "$DEST" ]; then
-		ggman clone "$@" || return 1
+	DEST="$(ggman --no-fuzzy-filter -f "$1" ls --one)"
+	if [ "$DEST" = "" ]; then
+		ggman clone "$@" || exrit $?
+		DEST="$(ggman where "$1")"
 	fi
 	echo "$DEST"
 	cd "$DEST" 
