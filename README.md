@@ -134,6 +134,12 @@ eval "$(ggman shellrc)"
 For example, `ggcd github.com/hello/world` will cd into the directory where the `github.com/hello/world` repository is checked out. 
 This also works with any pattern matching a repository, e.g. `ggcd world` will cd into the first repository matching `world`.
 
+#### ggclone
+
+`ggclone` behaves similar to `ggman clone` and `ggcd`.
+It takes the exact same arguments as `ggman clone`, but when the repository already exists in the default location does not clone it again.
+Furthermore, after finishing the clone, automatically `cd`s into the cloned repository.
+
 #### ggcode
 
 ggcode is like ggcd, except it opens an editor (here vscode) instead of cding.
@@ -412,7 +418,8 @@ ggman comes with the following builtin aliases:
 
 ### 1.18.0 (Upcoming)
 
-- move aliases to new `ggman shellrc` command 
+- move aliases to new `ggman shellrc` command
+  - add new `ggclone` alias
 - build universal mac executables
 
 ### 1.17.0 (Released [May 30 2022](https://github.com/tkw1536/ggman/releases/tag/v1.17.0))
