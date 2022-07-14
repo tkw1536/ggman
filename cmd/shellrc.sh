@@ -17,7 +17,7 @@ ggcode () {
 ggclone () {
 	DEST="$(ggman --no-fuzzy-filter -f "$1" ls --one)"
 	if [ "$DEST" = "" ]; then
-		ggman clone "$@" || exrit $?
+		ggman clone "$@" || exit $?
 		DEST="$(ggman where "$1")"
 	fi
 	echo "$DEST"
