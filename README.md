@@ -418,6 +418,8 @@ ggman comes with the following builtin aliases:
 
 ### 1.19.0 (Upcoming)
 
+- minor bugfixes and CI updates
+
 ### 1.18.2 (Released [Jul 14 2022](https://github.com/tkw1536/ggman/releases/tag/v1.18.2))
 
 - fix another `ggclone` alias issue
