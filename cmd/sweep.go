@@ -19,7 +19,7 @@ type sweep struct{}
 func (sweep) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "sweep",
-		Description: "find empty folders in the project folder",
+		Description: "find empty folders in the root folder",
 
 		Requirements: env.Requirement{
 			NeedsRoot: true,
