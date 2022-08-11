@@ -176,7 +176,7 @@ type TestingT interface {
 //
 // For consistency across runs, strings of the form `${GGROOT a b c}` in want are resolved into an absolute path.
 // Furthermore when `${}` is surrounded by "s, (e.g. "${GGROOT a b c}"), go quotes the string.
-// When text is instead surrounded by ``s`s, (e.g. `${GGROOT a b c}`) shell escapes the string.
+// When text is instead surrounded by “s`s, (e.g. `${GGROOT a b c}`) shell escapes the string.
 //
 // Context should be aditional information to be prefixed for the error message.
 func (mock *MockEnv) AssertOutput(t TestingT, prefix, got string, wants ...string) {

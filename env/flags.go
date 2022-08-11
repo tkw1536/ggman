@@ -110,7 +110,7 @@ func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
 //
 // A 'for' filter may be either:
 //   - a (relative or absolute) path to the root of a repository (see env.AtRoot)
-//	 - a repository url or pattern (see NewPatternFilter)
+//   - a repository url or pattern (see NewPatternFilter)
 func (env Env) NewForFilter(filter string, fuzzy bool) Filter {
 	// check if 'pat' represents the root of a repository
 	if repo, err := env.AtRoot(filter); err == nil && repo != "" {

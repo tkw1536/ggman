@@ -6,7 +6,8 @@ import "os"
 // It returns a function that can be used to revert the environment variables to their previous values.
 //
 // It should be called like:
-//   defer MockEnv(values)()
+//
+//	defer MockEnv(values)()
 func MockVariables(values map[string]string) (revert func()) {
 	originals := make(map[string]string, len(values))
 	for k, v := range values {

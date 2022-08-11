@@ -16,14 +16,17 @@ import (
 // To print information about a subset of variables, they can be provided as positional arguments.
 // Variables names are matched case-insensitively.
 //
-//  --list
+//	--list
+//
 // Instead of printing "name=value" pairs, print only the name.
 //
-//  --describe
+//	--describe
+//
 // Instead of printing "name=value" pairs, print "name: description" pairs.
 // The description explains what the value does.
 //
-//  --raw
+//	--raw
+//
 // Instead of printing "name=value" pairs, print only the raw, unescaped value.
 var Env ggman.Command = _env{}
 

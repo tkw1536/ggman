@@ -11,7 +11,9 @@ import (
 // Fix is the 'ggman fix' command.
 //
 // The 'ggman fix' command canonicalizes the urls of all remotes of a repository.
-//   --simulate
+//
+//	--simulate
+//
 // Instead of writing out the changes to disk, only print what would be done.
 var Fix ggman.Command = fix{}
 

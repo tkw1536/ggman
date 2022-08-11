@@ -7,9 +7,9 @@ import "io/fs"
 //
 // This function is a convenience alternative to:
 //
-//  scanner := Walker{Visit: Visit, Params: Params}
-//  err := scanner.Walk();
-//	results := scanner.Results()
+//	 scanner := Walker{Visit: Visit, Params: Params}
+//	 err := scanner.Walk();
+//		results := scanner.Results()
 func Sweep(Visit SweepProcess, Params Params) ([]string, error) {
 	scanner := Walker[bool]{
 		Process: Visit,

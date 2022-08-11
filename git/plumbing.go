@@ -24,12 +24,12 @@ import (
 //
 // For instance, to pull a repository, the following code is required:
 //
-//  plumbing.Init() // called exactly once
-//  cache, isRepo := plumbing.IsRepository("/home/user/Projects/github.com/hello/world")
-//  if !isRepo {
-//    // error, not a repository
-//  }
-//  err = plumbining.Pull(stream.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world", cache)
+//	plumbing.Init() // called exactly once
+//	cache, isRepo := plumbing.IsRepository("/home/user/Projects/github.com/hello/world")
+//	if !isRepo {
+//	  // error, not a repository
+//	}
+//	err = plumbining.Pull(stream.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world", cache)
 //
 // Such code is typically handled by a Git instance that wraps a Plumbing.
 type Plumbing interface {

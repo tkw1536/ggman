@@ -23,15 +23,24 @@ import (
 // By default, 'ggman exec' exits with the exit code as soon as the first program that does not return code 0.
 // If all programs return code 0, 'ggman exec' also exits with code 0.
 //
-//   --simulate
+//	--simulate
+//
 // Instead of actually running a command, print a bash script that would run them.
-//   --parallel
+//
+//	--parallel
+//
 // Number of commands to run in parallel, 0 for no limit
-//   --no-repo
+//
+//	--no-repo
+//
 // Do not print name of repos command is being run in.
-//   --quiet
+//
+//	--quiet
+//
 // Do not provide input or output streams to the command being run.
-//   --force
+//
+//	--force
+//
 // Continue execution of programs, even if one returns a non-zero exit code.
 // 'exec' will still return code 0 as the final exit code.
 var Exec ggman.Command = exe{}

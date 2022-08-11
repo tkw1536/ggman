@@ -25,8 +25,7 @@ import (
 // As opposed to Plumbing, which poses certain requirements and assumptions on the caller, a Git does not.
 // Using a Git can be as simple as:
 //
-//  err := git.Pull(stream.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world")
-//
+//	err := git.Pull(stream.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world")
 type Git interface {
 	// Plumbing returns the plumbing used by this git.
 	Plumbing() Plumbing

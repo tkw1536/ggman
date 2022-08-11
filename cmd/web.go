@@ -21,30 +21,41 @@ import (
 // To determine the url it uses the CANSPEC `https://^/$`, which may not work with all git hosts.
 // For instance when the url of the repository git@github.com:tkw1536/ggman.git, this will open the url https://github.com/tkw1536/ggman in a browser.
 //
-//  --force-repo-here
+//	--force-repo-here
+//
 // Instead of looking for a repository, always pretend there is one in the current directory.
 // If the current directory is outside of the ggman root, this will cause an error.
 // Use the path relative to the 'ggman root' as the URL to the repository.
-//  --tree
+//
+//	--tree
+//
 // This optional argument appends the string `/tree/$BRANCH/$PATH` to the url being opened, where $BRANCH is currently checked out branch and $PATH is the relative path from the repository root to the current folder.
 // On common Git Hosts, such as GitHub and GitLab, this shows a page of the current folder on the current branch.
-//  --branch
+//
+//	--branch
+//
 // This argument works like '--tree', except that it does not append the local path to the url.
-//  BASE
+//
+//	BASE
+//
 // An optional argument of the form 'BASE'.
 // If it is provided, the first component of the url is replace with the given base.
 // For instance, using the base 'https://pkg.go.dev' would open the current repository on the golang documentation homepage.
 // In addition to using a custom BASE, the following pre-defined bases 'travis' (TravisCI), 'circle' (CirclCI), 'godoc' (GoDoc) and 'localgodoc' (GoDoc when run on the local machine) can be used.
-//  --prefix
+//
+//	--prefix
+//
 // When provided, instead of replacing the hostname with the base, prefix it with the base instead.
 // This flag is ignored when no base is provided, or a built-in base is used.
 //
-// --clone
+//	--clone
+//
 // When provided, instead of printing only the URL, print a 'git clone' command invocation that can be used by an anonymous user to clone the current repository.
 // The clone url will always append '.git' to the web url, which may not work with every server.
 // Only compatible with the '--branch' flag, but not '--tree', '--prefix', and 'BASE'.
 //
-// --reclone
+//	--reclone
+//
 // Like the --clone flag, but instead of using a normalized url, use the exact one found in the current repository.
 var Web ggman.Command = urlweb{
 	isWebCommand: true,

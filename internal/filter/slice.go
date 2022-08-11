@@ -15,7 +15,7 @@ import (
 // As such the result value should typically be assigned to the input value.
 // For example:
 //
-//   s = Inplace(s, pred)
+//	s = Inplace(s, pred)
 func Inplace[T any](slice []T, pred func(T) bool) []T {
 	// check that we have a predicate!
 	if pred == nil {
@@ -56,7 +56,7 @@ func Inplace[T any](slice []T, pred func(T) bool) []T {
 // As such the result value should typically be assigned to the input value.
 // For example:
 //
-//   s = RemoveZeros(s)
+//	s = RemoveZeros(s)
 func RemoveZeros[T comparable](s []T) []T {
 	var zeroT T
 	return Inplace(s, func(v T) bool { return v != zeroT })
@@ -70,8 +70,7 @@ func RemoveZeros[T comparable](s []T) []T {
 // It is recommended to store the return value of this function in the original variable.
 // The call should look something like:
 //
-//  s = RemoveDuplicates(s)
-//
+//	s = RemoveDuplicates(s)
 func RemoveDuplicates[T constraints.Ordered](s []T) []T {
 	slices.Sort(s)
 	return slices.Compact(s)

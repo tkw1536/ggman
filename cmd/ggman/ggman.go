@@ -2,12 +2,12 @@
 // ggman is a golang tool that can manage all your git repositories.
 // An invocation of ggman is as follows:
 //
-//  ggman [general arguments...] SUBCOMMAND [command arguments...]
+//	ggman [general arguments...] SUBCOMMAND [command arguments...]
 //
 // Each invocation of ggman calls one subcommand.
 // Arguments passed to ggman are split into general arguments and command arguments.
 //
-// General Arguments
+// # General Arguments
 //
 // General Arguments are supported by every call to 'ggman'. The following arguments are supported:
 //
@@ -15,22 +15,22 @@
 //
 // Instead of running a subcommand, print a short usage dialog to STDOUT and exit.
 //
-//  --version, -v
+//	--version, -v
 //
 // Instead of running a subcommand, print version information to STDOUT and exit.
 //
-//  --for filter, -f filter, -i file, --from-file file, --here, -H, --path, -P, --dirty, -d, --clean, -c,
-//  --synced, -s, --unsynced, -u, --pristine, -p, --tarnished, -t
+//	--for filter, -f filter, -i file, --from-file file, --here, -H, --path, -P, --dirty, -d, --clean, -c,
+//	--synced, -s, --unsynced, -u, --pristine, -p, --tarnished, -t
 //
 // Apply FILTER to list of repositories. See Environment section below.
 //
-//  --no-fuzzy-filter, -n
+//	--no-fuzzy-filter, -n
 //
 // Disable fuzzy filter matching. See Environment section below.
 //
 // See the Arguments type of the github.com/tkw1536/goprogram package for more details of argument parsing.
 //
-// Subcommands and their Arguments
+// # Subcommands and their Arguments
 //
 // Each subcommand is defined as a single variable (and private associated struct) in the github.com/tkw1536/ggman/cmd package.
 //
@@ -40,7 +40,7 @@
 // In addition to subcommand specific commands, one can also use the 'help' argument safely with each subcommand.
 // Using this has the effect of printing a short usage message to the command line, instead of running the command.
 //
-// Environment
+// # Environment
 //
 // ggman manages all git repositories inside a given root directory, and automatically sets up new repositories relative to the URLs they are cloned from.
 // This root folder defaults to '$HOME/Projects' but can be customized using the 'GGROOT' environment variable.
@@ -78,9 +78,12 @@
 //
 // On 'github.com' and multiple other providers, it is usually possible to clone repositories via multiple urls.
 // For example, the repository at https://github.com/hello/world can be cloned using both
-//  git clone https://github.com/hello/world.git
+//
+//	git clone https://github.com/hello/world.git
+//
 // and
-//  git clone git@github.com:hello/world.git
+//
+//	git clone git@github.com:hello/world.git
 //
 // Usually the latter url is prefered to make use of SSH authentication.
 // This avoids having to repeatedly type a password.
@@ -90,7 +93,7 @@
 //
 // See Package github.com/tkw1536/ggman/env for more information about repository urls and the environment.
 //
-// Exit Code
+// # Exit Code
 //
 // When a subcommand succeeds, ggman exits with code 0.
 // When something goes wrong, it instead exits with a non-zero exit code.

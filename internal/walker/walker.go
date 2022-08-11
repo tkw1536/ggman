@@ -21,11 +21,11 @@ import (
 // Each Walker may be used only once.
 // A typical use of a walker looks like:
 //
-//  w := Walker{/* ... */}
-//  if err := w.Walk(); err != nil {
-//    return err
-//  }
-//  results, scores := w.Results(), w.Scores()
+//	w := Walker{/* ... */}
+//	if err := w.Walk(); err != nil {
+//	  return err
+//	}
+//	results, scores := w.Results(), w.Scores()
 type Walker[S any] struct {
 	state uint32 // 0 => initial, 1 => in Walk(), 2 => done
 

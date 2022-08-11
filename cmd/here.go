@@ -8,7 +8,9 @@ import (
 // Here is the 'ggman here' command.
 //
 // 'ggman here' prints the path to the root of the repository in the current working directory to standard output.
-//   --tree
+//
+//	--tree
+//
 // When provided, also print the relative path from the root of the repository to the current path.
 var Here ggman.Command = here{}
 

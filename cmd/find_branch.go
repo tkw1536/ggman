@@ -10,7 +10,9 @@ import (
 //
 // The 'find-branch' command lists all repositories that contain a branch with the provided name.
 // The remotes will be listed in dictionary order of their local installation paths.
-//   --exit-code
+//
+//	--exit-code
+//
 // When provided, exit with code 1 if no repositories are found.
 var FindBranch ggman.Command = findBranch{}
 

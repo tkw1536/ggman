@@ -64,11 +64,10 @@ const AuthorEmail = "jane.doe@example.com"
 // When the map is nil, a default dummy file will be used instead.
 // The commit will appear to have been authored from a bogus author and have a bogus commit message.
 //
-// The function returns the worktree of the repository and the commit hash produced
+// # The function returns the worktree of the repository and the commit hash produced
 //
 // The files will be written out to disk.
 // If an error occurs, panic() is called.
-//
 func CommitTestFiles(repo *git.Repository, files map[string]string) (*git.Worktree, plumbing.Hash) {
 	// get the worktree of the repository
 	// and the root directory
