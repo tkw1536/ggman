@@ -418,6 +418,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.19.0 (Upcoming)
 
+- update to `goprogram` 0.0.8
 - minor bugfixes and CI updates
 
 ### 1.18.2 (Released [Jul 14 2022](https://github.com/tkw1536/ggman/releases/tag/v1.18.2))
