@@ -26,7 +26,8 @@ type clone struct {
 		Args []string `positional-arg-name:"ARG" description:"additional arguments to pass to clone"`
 	} `positional-args:"true"`
 	Force bool   `short:"f" long:"force" description:"do not complain when a repository already exists in the target directory"`
-	Local bool   `short:"l" long:"local" description:"clone into an appropriately named subdirectory of the current directory"`
+	Local bool   `short:"l" long:"local" description:"alias of \"--here\""`
+	Here  bool   `long:"here" description:"clone into an appropriately named subdirectory of the current directory"`
 	To    string `short:"t" long:"to" description:"clone repository into specified directory"`
 }
 
@@ -48,11 +49,11 @@ func (clone) Description() ggman.Description {
 
 var errInvalidDest = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  fmt.Sprintf("invalid destination: %q and %q may not be used together", "--to", "--local"),
+	Message:  fmt.Sprintf("invalid destination: %q and %q may not be used together", "--to", "--here"),
 }
 
 func (c *clone) AfterParse() error {
-	if c.Local && c.To != "" {
+	if (c.Here || c.Local) && c.To != "" {
 		return errInvalidDest
 	}
 	return nil
@@ -118,7 +119,7 @@ var errCloneNoComps = errors.New("unable to find components of URI")
 
 // dest returns the destination path to clone the repository into
 func (c clone) dest(context ggman.Context, url env.URL) (string, error) {
-	if c.Local { // clone into directory named automatically
+	if c.Here || c.Local { // clone into directory named automatically
 		comps := url.Components()
 		if len(comps) == 0 {
 			return "", errCloneNoComps

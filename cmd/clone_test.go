@@ -10,6 +10,7 @@ func TestCommandClone(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	mock.Register("https://github.com/hello/world.git", "git@github.com:hello/world.git")
+	mock.Register("https://github.com/hello/world2.git", "git@github.com:hello/world2.git")
 
 	tests := []struct {
 		name    string
@@ -41,6 +42,15 @@ func TestCommandClone(t *testing.T) {
 			"",
 		},
 		{
+			"clone repository into here path",
+			mock.Resolve(),
+			[]string{"clone", "--here", "https://github.com/hello/world2.git"},
+
+			0,
+			"Cloning \"git@github.com:hello/world2.git\" into \"${GGROOT world2}\" ...\n",
+			"",
+		},
+		{
 			"clone repository into specific path",
 			mock.Resolve(),
 			[]string{"clone", "--to", "somewhere", "https://github.com/hello/world.git"},
@@ -52,11 +62,11 @@ func TestCommandClone(t *testing.T) {
 		{
 			"clone repository into invalid path path",
 			mock.Resolve(),
-			[]string{"clone", "--local", "--to", "somewhere", "https://github.com/hello/world.git"},
+			[]string{"clone", "--here", "--to", "somewhere", "https://github.com/hello/world.git"},
 
 			4,
 			"",
-			"Invalid destination: \"--to\" and \"--local\" may not be used together\n",
+			"Invalid destination: \"--to\" and \"--here\" may not be used together\n",
 		},
 		{
 			"clone existing repository",

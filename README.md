@@ -418,6 +418,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.19.0 (Upcoming)
 
+- rename `--local` flag to `--here` in `ggman clone`
 - update to `goprogram` 0.0.8
 - minor bugfixes and CI updates
 
