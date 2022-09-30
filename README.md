@@ -418,6 +418,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.19.0 (Upcoming)
 
+- `ggman exec` display output in parallel when running in parallel
 - rename `--local` flag to `--here` in `ggman clone`
 - update to `goprogram` 0.0.9
 - minor bugfixes and CI updates
