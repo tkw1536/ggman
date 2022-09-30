@@ -9,6 +9,7 @@ import (
 	"github.com/tkw1536/ggman/internal/sema"
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/goprogram/parser"
+	"github.com/tkw1536/goprogram/status"
 	"github.com/tkw1536/goprogram/stream"
 )
 
@@ -29,7 +30,8 @@ import (
 //
 //	--parallel
 //
-// Number of commands to run in parallel, 0 for no limit
+// Number of commands to run in parallel, 0 for no limit.
+// Output will be shown on different status lines, except when parallel == 1.
 //
 //	--no-repo
 //
@@ -96,15 +98,31 @@ func (e exe) Run(context ggman.Context) error {
 func (e exe) runReal(context ggman.Context) error {
 	repos := context.Environment.Repos()
 
+	statusIO := e.Parallel != 1 && !e.Quiet
+
+	var st *status.Status
+	if statusIO {
+		st = status.NewWithCompat(context.IOStream.Stdout, 0)
+		st.Start()
+		defer st.Stop()
+	}
+
 	// schedule each command to be run in parallel by using a semaphore!
 	return sema.Schedule(func(i int) error {
 		repo := repos[i]
 
-		if !e.NoRepo {
-			context.EPrintln(repo)
+		io := context.IOStream
+		if statusIO {
+			line := st.OpenLine(repo+": ", "")
+			defer line.Close()
+			io = io.Streams(line, line, nil, 0).NonInteractive()
 		}
 
-		return e.runRepo(context, repo)
+		if !e.NoRepo && !statusIO {
+			io.EPrintln(repo)
+		}
+
+		return e.runRepo(io, repo)
 	}, len(repos), sema.Concurrency{
 		Limit: e.Parallel,
 		Force: e.Force,
@@ -115,16 +133,16 @@ var ErrExecFatal = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
-func (e exe) runRepo(context ggman.Context, repo string) error {
+func (e exe) runRepo(io stream.IOStream, repo string) error {
 	cmd := exec.Command(e.Positionals.Exe, e.Positionals.Args...)
 	cmd.Dir = repo
 
 	// setup standard output / input, using either the environment
 	// or be quiet
 	if !e.Quiet {
-		cmd.Stdin = context.Stdin
-		cmd.Stdout = context.Stdout
-		cmd.Stderr = context.Stderr
+		cmd.Stdin = io.Stdin
+		cmd.Stdout = io.Stdout
+		cmd.Stderr = io.Stderr
 	} else {
 		cmd.Stdin = stream.Null
 		cmd.Stdout = stream.Null
