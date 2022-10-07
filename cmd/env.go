@@ -5,6 +5,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"
+	"github.com/tkw1536/goprogram/lib/collection"
 )
 
 // Env is the 'ggman env' command.
@@ -105,14 +106,18 @@ func (e _env) variables(context ggman.Context) ([]env.UserVariable, error) {
 		return env.GetUserVariables(), nil
 	}
 
-	// names provided => make sure each exists
-	variables := make([]env.UserVariable, len(e.Positionals.Vars))
-	var ok bool
-	for i, name := range e.Positionals.Vars {
-		variables[i], ok = env.GetUserVariable(name)
-		if !ok {
-			return nil, errEnvInvalidVar.WithMessageF(name)
+	var invalid string
+	variables := collection.MapSlice(e.Positionals.Vars, func(name string) env.UserVariable {
+		value, ok := env.GetUserVariable(name)
+		if !ok && invalid != "" { // store an invalid name!
+			invalid = name
 		}
+		return value
+	})
+
+	if invalid != "" {
+		return nil, errEnvInvalidVar.WithMessageF(invalid)
 	}
+
 	return variables, nil
 }

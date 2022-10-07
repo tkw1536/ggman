@@ -189,8 +189,7 @@ func (e exe) runSimulate(context ggman.Context) (err error) {
 
 	// iterate over each repository
 	// then print each of the commands to be run!
-	repos := context.Environment.Repos()
-	for _, repo := range repos {
+	for _, repo := range context.Environment.Repos() {
 		context.Printf("cd %s\n", shellescape.Quote(repo))
 		if !e.NoRepo {
 			context.Printf("echo %s\n", shellescape.Quote(repo))
