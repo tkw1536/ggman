@@ -148,17 +148,17 @@ func (uw urlweb) AfterParse() error {
 
 var errOutsideRepository = exit.Error{
 	ExitCode: env.ExitInvalidRepo,
-	Message:  "Not inside a ggman-controlled repository",
+	Message:  "not inside a ggman-controlled repository",
 }
 
 var errWebNoRemote = exit.Error{
 	ExitCode: env.ExitInvalidRepo,
-	Message:  "Repository does not have a remote",
+	Message:  "repository does not have a remote",
 }
 
 var errNoRelativeRepository = exit.Error{
 	ExitCode: env.ExitInvalidRepo,
-	Message:  "Unable to use '--relative': Not inside GGROOT",
+	Message:  "unable to use `--relative`: not inside GGROOT",
 }
 
 var errWebFlagUnsupported = exit.Error{

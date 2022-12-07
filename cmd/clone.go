@@ -76,7 +76,7 @@ var errCloneAlreadyExists = exit.Error{
 
 var errCloneNoArguments = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "External 'git' not found, can not pass any additional arguments to 'git clone'",
+	Message:  "external `git` not found, can not pass any additional arguments to `git clone`",
 }
 
 var errCloneOther = exit.Error{

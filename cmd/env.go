@@ -53,12 +53,12 @@ func (_env) Description() ggman.Description {
 }
 
 var errEnvInvalidVar = exit.Error{
-	Message:  "Unknown environment variable %q",
+	Message:  "unknown environment variable %q",
 	ExitCode: exit.ExitCommandArguments,
 }
 
 var errModesIncompatible = exit.Error{
-	Message:  "At most one of '--raw', '--list' and '--describe' may be given",
+	Message:  "at most one of `--raw`, `--list` and `--describe` may be given",
 	ExitCode: exit.ExitCommandArguments,
 }
 

@@ -102,7 +102,7 @@ func NewEnv(r Requirement, params Parameters) (Env, error) {
 
 var errMissingRoot = exit.Error{
 	ExitCode: ExitInvalidEnvironment,
-	Message:  "Unable to find GGROOT directory",
+	Message:  "unable to find GGROOT directory",
 }
 
 // absRoot returns the absolute path to the root directory.
@@ -197,7 +197,7 @@ func (env *Env) LoadDefaultCANFILE() (CanFile, error) {
 
 var errUnableDir = exit.Error{
 	ExitCode: ExitInvalidRepo,
-	Message:  "Unable to read directory %s",
+	Message:  "unable to read directory %s",
 }
 
 // Local returns the path that a repository named URL should be cloned to.

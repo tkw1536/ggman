@@ -39,7 +39,7 @@ func newEnvironment(params env.Parameters, context Context) (env.Env, error) {
 
 var errParseArgsNeedTwoAfterFor = exit.Error{
 	ExitCode: exit.ExitGeneralArguments,
-	Message:  "unable to parse arguments: at least two arguments needed after 'for' keyword",
+	Message:  "unable to parse arguments: at least two arguments needed after `for' keyword",
 }
 
 // NewProgram returns a new ggman program

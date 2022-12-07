@@ -77,7 +77,7 @@ func (exe) Description() ggman.Description {
 
 var ErrExecParalllelNegative = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  "argument for --parallel must be non-negative",
+	Message:  "argument for `--parallel` must be non-negative",
 }
 
 func (e exe) AfterParse() error {
@@ -169,7 +169,7 @@ func (e exe) runRepo(io stream.IOStream, repo string) error {
 
 var ErrExecNoParallelSimulate = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  "--simulate expects --parallel to be 1, but got %d",
+	Message:  "`--simulate` expects `--parallel` to be 1, but got %d",
 }
 
 // runSimulate runs the --simulate flag
