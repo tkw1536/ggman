@@ -423,6 +423,7 @@ ggman comes with the following builtin aliases:
 - rename `--local` flag to `--here` in `ggman clone`
 - update to `goprogram` 0.0.17
 - minor bugfixes and CI updates
+- update copyright year
 
 ### 1.18.2 (Released [Jul 14 2022](https://github.com/tkw1536/ggman/releases/tag/v1.18.2))
 
