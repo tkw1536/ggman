@@ -36,7 +36,7 @@ func (u *URL) UnmarshalFlag(value string) error {
 // ParseURL parses a URL without any namespaces.
 // See ParseURLNamespace.
 func ParseURL(s string) (repo URL) {
-	s = strings.ReplaceAll(s, "\\", "/") // windows
+	s = normPath(s)
 
 	// Trim off a leading scheme (as seperated by '://') and (if it is valid) store it.
 	scheme, rest := split.Before(s, "://")
@@ -104,25 +104,30 @@ func ParseURL(s string) (repo URL) {
 //
 // For windows compatibility, '\\' is replaced by '/' in the input string.
 func ParseURLContext(s string, namespaces map[string]string) (repo URL) {
-	s = strings.ReplaceAll(s, "\\", "/") // windows
+	s = normPath(s)
 
-	// check for and subsitute in all the namespaces
-	// we need to check the long form first,
+	// substiute the namespaces beforehand
+	// check the long form before the short form
 	for ns, expansion := range namespaces {
-		nsLong := ns + "://"
-		if strings.HasPrefix(s, nsLong) {
-			s = expansion + s[len(nsLong):]
+		if v, ok := strings.CutPrefix(s, ns+"://"); ok {
+			s = expansion + v
 			break
 		}
 
-		nsShort := ns + ":"
-		if strings.HasPrefix(s, nsShort) {
-			s = expansion + s[len(nsShort):]
+		if v, ok := strings.CutPrefix(s, ns+":"); ok {
+			s = expansion + v
 			break
 		}
 	}
 
 	return ParseURL(s)
+}
+
+var windowsReplacer = strings.NewReplacer("\\", "/")
+
+// normPath normalizes a path to use the same seperator on windows systems
+func normPath(s string) string {
+	return windowsReplacer.Replace(s)
 }
 
 // IsLocal checks if this URL looks like a local URL.
