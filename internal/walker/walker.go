@@ -37,7 +37,7 @@ type Walker[S any] struct {
 	errChan    chan error      // contains error in the buffer
 	resultChan chan walkResult // contains results temporarily
 
-	ctxPool *sync.Pool // pool for *context[S] objects
+	ctxPool sync.Pool // pool for *context[S] objects
 
 	results []string
 	scores  []float64
@@ -169,10 +169,8 @@ func (w *Walker[S]) Walk() error {
 	defer atomic.StoreUint32(&w.state, 2)
 
 	// setup a pool for new contexts
-	w.ctxPool = &sync.Pool{
-		New: func() any {
-			return new(context[S])
-		},
+	w.ctxPool.New = func() any {
+		return new(context[S])
 	}
 
 	// configure concurrency
@@ -181,8 +179,6 @@ func (w *Walker[S]) Walk() error {
 	// create channels for result & error
 	w.resultChan = make(chan walkResult, w.Params.BufferSize)
 	w.errChan = make(chan error, 1)
-
-	w.wg = sync.WaitGroup{}
 
 	// scan the root
 	w.wg.Add(1)
