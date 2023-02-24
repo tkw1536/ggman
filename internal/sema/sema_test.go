@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tkw1536/goprogram/lib/testlib"
+	"github.com/tkw1536/pkglib/testlib"
 )
 
 func ExampleNewSemaphore() {

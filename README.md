@@ -421,7 +421,7 @@ ggman comes with the following builtin aliases:
 - update to go 1.20
 - `ggman exec` display output in parallel when running in parallel
 - rename `--local` flag to `--here` in `ggman clone`
-- update to `goprogram` 0.0.17
+- update to `goprogram` 0.3.0
 - minor bugfixes and CI updates
 - update copyright year
 

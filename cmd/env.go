@@ -5,7 +5,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/lib/collection"
+	"github.com/tkw1536/pkglib/collection"
 )
 
 // Env is the 'ggman env' command.

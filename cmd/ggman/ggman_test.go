@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/mockenv"
-	"github.com/tkw1536/goprogram/lib/docfmt"
+	"github.com/tkw1536/pkglib/docfmt"
 )
 
 // This test runs every command once with the --help flag

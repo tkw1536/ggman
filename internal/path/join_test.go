@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/goprogram/lib/testlib"
+	"github.com/tkw1536/pkglib/testlib"
 )
 
 func TestJoinNormalized(t *testing.T) {

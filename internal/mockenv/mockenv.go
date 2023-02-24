@@ -18,9 +18,9 @@ import (
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/lib/reflectx"
-	"github.com/tkw1536/goprogram/lib/testlib"
 	"github.com/tkw1536/goprogram/stream"
+	"github.com/tkw1536/pkglib/reflectx"
+	"github.com/tkw1536/pkglib/testlib"
 )
 
 // TODO: Consider generalizing this part of the test suite.

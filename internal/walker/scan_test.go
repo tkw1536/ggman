@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/path"
-	"github.com/tkw1536/goprogram/lib/testlib"
+	"github.com/tkw1536/pkglib/testlib"
 )
 
 func TestScan(t *testing.T) {

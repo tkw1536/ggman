@@ -5,7 +5,7 @@ import (
 	"reflect"
 
 	"github.com/mitchellh/go-homedir"
-	"github.com/tkw1536/goprogram/lib/reflectx"
+	"github.com/tkw1536/pkglib/reflectx"
 )
 
 // Variables represents the values of specific environment variables.

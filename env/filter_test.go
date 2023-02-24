@@ -9,7 +9,7 @@ import (
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/pattern"
 	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/goprogram/lib/testlib"
+	"github.com/tkw1536/pkglib/testlib"
 )
 
 func setupFilterTest(t *testing.T) (root, exampleClonePath, otherClonePath string) {
