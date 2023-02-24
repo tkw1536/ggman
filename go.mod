@@ -29,7 +29,7 @@ require (
 	github.com/jessevdk/go-flags v1.5.0 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
-	github.com/pjbgf/sha1cd v0.2.3 // indirect
+	github.com/pjbgf/sha1cd v0.2.4-0.20230222002128-3b4a15815fd6 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/skeema/knownhosts v1.1.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
