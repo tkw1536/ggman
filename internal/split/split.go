@@ -10,11 +10,10 @@ import (
 //
 // See also After.
 func Before(s, sep string) (prefix, suffix string) {
-	prefix, suffix, found := strings.Cut(s, sep)
-	if !found {
-		return "", s
+	if i := strings.Index(s, sep); i >= 0 {
+		return s[:i], s[i+len(sep):]
 	}
-	return prefix, suffix
+	return "", s
 }
 
 // After splits the string s into a part before a seperator, called the prefix, and a part after the seperator, called the suffix.
@@ -22,6 +21,8 @@ func Before(s, sep string) (prefix, suffix string) {
 //
 // See also Before.
 func After(s, sep string) (prefix, suffix string) {
-	prefix, suffix, _ = strings.Cut(s, sep)
-	return
+	if i := strings.Index(s, sep); i >= 0 {
+		return s[:i], s[i+len(sep):]
+	}
+	return s, ""
 }
