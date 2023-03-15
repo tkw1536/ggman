@@ -110,7 +110,7 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram"
 	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/stream"
+	"github.com/tkw1536/pkglib/stream"
 )
 
 // the main ggman program that will contain everything
@@ -178,7 +178,7 @@ func main() {
 	// we don't need to even bother with the rest of the program
 	// just immediatly return a custom error message.
 	if len(os.Args) == 1 {
-		streams.Die(errNoArgumentsProvided)
+		exit.Die(streams, errNoArgumentsProvided)
 		errNoArgumentsProvided.Return()
 		return
 	}

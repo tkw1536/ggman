@@ -13,7 +13,7 @@ import (
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/tkw1536/goprogram/stream"
+	"github.com/tkw1536/pkglib/stream"
 )
 
 // Plumbing is an interface that represents a working internal implementation of git.

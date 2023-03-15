@@ -9,8 +9,8 @@ import (
 	"github.com/tkw1536/ggman/internal/sema"
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/goprogram/parser"
-	"github.com/tkw1536/goprogram/status"
-	"github.com/tkw1536/goprogram/stream"
+	"github.com/tkw1536/pkglib/status"
+	"github.com/tkw1536/pkglib/stream"
 )
 
 // Exec is the 'ggman exec' command.
