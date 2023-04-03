@@ -29,7 +29,7 @@ var builderPool = sync.Pool{
 	},
 }
 
-// JoinNormalized is similar to filepath.Join, except that it takes an additional normalization argumebnt
+// JoinNormalized is similar to filepath.Join, except that it takes an additional normalization argument
 //
 // If any sub-path of the result path already has a sibling path that is case-fold-equal, uses this instead of creating a new path.
 // When an exact match for the path exists, always uses the exact match.

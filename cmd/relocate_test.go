@@ -1,16 +1,29 @@
 package cmd
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
 func TestCommandRelocate(t *testing.T) {
+	symlink := func(oldname, newname string) {
+		err := os.Symlink(oldname, newname)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	mock := mockenv.NewMockEnv(t)
 
 	mock.Clone("https://github.com/right/directory.git", "github.com", "right", "directory")
 	mock.Clone("https://github.com/correct/directory.git", "github.com", "incorrect", "directory")
+
+	// link in an external repository in the right place
+	external1 := mock.Clone("https://github.com/right/external1.git", "..", "external-path-1")
+	symlink(external1, mock.Resolve(filepath.Join("github.com", "right", "external1")))
 
 	tests := []struct {
 		name    string

@@ -7,6 +7,7 @@ import (
 	"github.com/alessio/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/goprogram/exit"
 )
 
@@ -55,11 +56,11 @@ func (r relocate) Run(context ggman.Context) error {
 		}
 
 		// if it is the same, don't move it
-		if gotPath == shouldPath {
+		if path.SameFile(gotPath, shouldPath) {
 			continue
 		}
 
-		parentPath := filepath.Join(shouldPath, "..")
+		parentPath := filepath.Dir(shouldPath)
 
 		// print what is being done
 		context.Printf("mkdir -p %s\n", shellescape.Quote(parentPath))
