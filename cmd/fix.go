@@ -41,7 +41,7 @@ func (f fix) Run(context ggman.Context) error {
 	simulate := f.Simulate
 
 	hasError := false
-	for _, repo := range context.Environment.Repos() {
+	for _, repo := range context.Environment.Repos(true) {
 		var initialMessage sync.Once // send an initial log message to the user, once
 
 		if e := context.Environment.Git.UpdateRemotes(repo, func(url, remoteName string) (string, error) {

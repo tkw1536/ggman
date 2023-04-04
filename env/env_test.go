@@ -347,7 +347,7 @@ func TestEnv_ScanRepos(t *testing.T) {
 
 				Filter: NewPatternFilter(tt.Filter, false),
 			}
-			got, err := env.ScanRepos(root)
+			got, err := env.ScanRepos(root, true)
 			wantErr := false
 			if (err != nil) != wantErr {
 				t.Errorf("Env.ScanRepos() error = %v, wantErr %v", err, wantErr)
@@ -420,7 +420,7 @@ func TestEnv_ScanRepos_fuzzy(t *testing.T) {
 
 				Filter: NewPatternFilter(tt.Filter, true),
 			}
-			got, err := env.ScanRepos(root)
+			got, err := env.ScanRepos(root, true)
 			wantErr := false
 			if (err != nil) != wantErr {
 				t.Errorf("Env.ScanRepos() error = %v, wantErr %v", err, wantErr)

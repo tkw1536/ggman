@@ -13,8 +13,9 @@ type context[S any] struct {
 	root FS       // the root filesystem
 	path []string // path to the current node
 
-	node     FS     // current node
-	nodePath string // name of the current node
+	node      FS     // current node
+	nodePath  string // (unresolved) path to the current node
+	rNodePath string // (resolved) path to the current node
 
 	snapshot S // snapshot data carried for the current node
 }
@@ -36,6 +37,7 @@ func (w *Walker[S]) returnCtx(ctx *context[S]) {
 	ctx.root = nil
 	ctx.node = nil
 	ctx.nodePath = ""
+	ctx.rNodePath = ""
 	ctx.path = nil
 
 	var nilSnapshot S
@@ -68,7 +70,7 @@ func (w *context[S]) sub(entry fs.DirEntry) *context[S] {
 	sub.path = append(w.path, entry.Name())
 
 	// return a new node
-	sub.node = w.node.Sub(w.nodePath, entry)
+	sub.node = w.node.Sub(w.nodePath, w.rNodePath, entry)
 
 	return sub
 }
@@ -94,7 +96,7 @@ func (w context[S]) Depth() int {
 }
 
 func (w context[S]) Mark(prio float64) {
-	w.w.reportResult(w.nodePath, prio)
+	w.w.reportResult(w.nodePath, w.rNodePath, prio)
 }
 
 func (w *context[S]) Snapshot(update func(snapshot S) S) {

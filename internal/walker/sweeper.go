@@ -20,7 +20,7 @@ func Sweep(Visit SweepProcess, Params Params) ([]string, error) {
 
 	// we can safely access results directly
 	// because now the walker becomes inaccessible!
-	return scanner.results, err
+	return scanner.rpaths, err
 }
 
 // SweepProcess is a function that is called once for each directory that is being sweeped.

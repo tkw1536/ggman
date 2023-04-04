@@ -12,11 +12,15 @@ import (
 //
 // See NewRealFS for a instantiating a sample implementation.
 type FS interface {
-	// Path returns the current path of this FS.
+	// Path returns the path of this FS.
+	// The path should not be normalized.
+	Path() string
+
+	// ResolvedPath returns the current path of this FS.
 	// This function will be called only once, and may perform (potentially slow) normalization.
 	//
 	// The return value is used for cycle detection, and also passed to all other functions in this interface.
-	Path() (string, error)
+	ResolvedPath() (string, error)
 
 	// Read reads the root directory of this filesystem.
 	// and returns a list of directory entries sorted by filename.
@@ -30,9 +34,10 @@ type FS interface {
 	// CanSub indicates if the given directory entry can be used as a valid FS.
 	//
 	// Sub creates a new FS for the provided entry.
+	// path and rpath are the Path() and ResolvedPath() values.
 	// Sub is only called when CanSub returns true and a nil error.
 	CanSub(path string, entry fs.DirEntry) (bool, error)
-	Sub(path string, entry fs.DirEntry) FS
+	Sub(path, rpath string, entry fs.DirEntry) FS
 }
 
 // NewRealFS returns a new filesystem rooted at path.
@@ -58,7 +63,11 @@ func (real realFS) Read(path string) ([]fs.DirEntry, error) {
 	return fs.ReadDir(os.DirFS(path), ".")
 }
 
-func (real realFS) Path() (string, error) {
+func (real realFS) Path() string {
+	return real.DirPath
+}
+
+func (real realFS) ResolvedPath() (string, error) {
 	if !real.FollowLinks {
 		return real.DirPath, nil
 	}
@@ -70,7 +79,7 @@ func (real realFS) CanSub(path string, entry fs.DirEntry) (bool, error) {
 	return IsDirectory(child, real.FollowLinks)
 }
 
-func (real realFS) Sub(path string, entry fs.DirEntry) FS {
+func (real realFS) Sub(path, rpath string, entry fs.DirEntry) FS {
 	child := filepath.Join(path, entry.Name())
 	return realFS{
 		DirPath:     child,

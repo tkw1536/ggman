@@ -42,7 +42,7 @@ var errLSExitFlag = exit.Error{
 }
 
 func (l ls) Run(context ggman.Context) error {
-	repos, scores := context.Environment.RepoScores()
+	repos, scores := context.Environment.RepoScores(true)
 	if l.One && len(repos) > 0 {
 		repos = repos[:1]
 	}

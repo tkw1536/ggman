@@ -39,8 +39,9 @@ type Walker[S any] struct {
 
 	ctxPool sync.Pool // pool for *context[S] objects
 
-	results []string
-	scores  []float64
+	paths  []string
+	rpaths []string
+	scores []float64
 
 	Params  Params
 	Process Process[S]
@@ -205,10 +206,12 @@ func (w *Walker[S]) Walk() error {
 		slices.SortFunc(results, func(i, j walkResult) bool { return i.LessThan(j) })
 
 		// store the real (textual) results
-		w.results = make([]string, len(results))
+		w.paths = make([]string, len(results))
+		w.rpaths = make([]string, len(results))
 		w.scores = make([]float64, len(results))
 		for i, r := range results {
-			w.results[i] = r.Node
+			w.paths[i] = r.NodePath
+			w.rpaths[i] = r.NodeRPath
 			w.scores[i] = r.Score
 		}
 
@@ -247,12 +250,13 @@ func (w *Walker[S]) walk(sync bool, ctx *context[S]) (ok bool) {
 	}
 
 	// get the (normalized) path
-	path, err := ctx.node.Path()
+	path, err := ctx.node.ResolvedPath()
 	if err != nil {
 		w.reportError(err)
 		return false
 	}
-	ctx.nodePath = path
+	ctx.rNodePath = path
+	ctx.nodePath = ctx.node.Path()
 
 	// bail out if we already visited this node!
 	if w.record.Record(path) {
@@ -328,10 +332,10 @@ func (w *Walker[S]) walk(sync bool, ctx *context[S]) (ok bool) {
 	return true
 }
 
-// reportResults reports the given node as a result.
+// reportResults reports the node with the given path and resolved paths.
 // might block until a slot in the results is available.
-func (w *Walker[S]) reportResult(node string, score float64) {
-	w.resultChan <- walkResult{Node: node, Score: score}
+func (w *Walker[S]) reportResult(path, rpath string, score float64) {
+	w.resultChan <- walkResult{NodePath: path, NodeRPath: rpath, Score: score}
 }
 
 // reportErrors reports the provided error to the caller of Walk()
@@ -343,17 +347,30 @@ func (w *Walker[S]) reportError(err error) {
 	}
 }
 
-// Results returns all nodes which have been marked as a result.
-// Directories are returned in sorted order; sorted first ascending by priority then by lexiographically by node.
+// Results behaves like w.Paths(true).
+//
+// DEPRECATED
+func (w *Walker[S]) Results() []string {
+	return w.Paths(true)
+}
+
+// Paths returns the path of all nodes which have been marked as a result.
+//
+// When resolved is true, returns the normalized (resolved) paths; else the non-normalized versions are returned.
+// Directories are returned in sorted order; sorted first ascending by priority then by lexiographically by resolved node path.
 // Each call to result returns a new copy of the results.
 //
-// Results expects the Scan() function to have returned, and will panic if this is not the case.
-func (w *Walker[S]) Results() []string {
+// Paths expects the Scan() function to have returned, and will panic if this is not the case.
+func (w *Walker[S]) Paths(resolved bool) []string {
 	if atomic.LoadUint32(&w.state) != 2 {
-		panic("Walker.Walk(): Results() called before Walk() returned")
+		panic("Walker.Paths(): Results() called before Walk() returned")
 	}
 
-	return slices.Clone(w.results)
+	if resolved {
+		return slices.Clone(w.rpaths)
+	} else {
+		return slices.Clone(w.paths)
+	}
 }
 
 // Scores returns the scores which have been marked as a result.
@@ -372,8 +389,9 @@ var ErrUnknownAction = errors.New("Process.BeforeChild(): Unknown action")
 
 // walkResult represents an internal result of the wlak function
 type walkResult struct {
-	Node  string
-	Score float64
+	NodePath  string
+	NodeRPath string
+	Score     float64
 }
 
 // LessThan returns true if w should occur before v when sorting a slice of walkResults
@@ -385,7 +403,7 @@ func (w walkResult) LessThan(v walkResult) bool {
 		return false
 	case w.Score > v.Score:
 		return true
-	case w.Node < v.Node:
+	case w.NodeRPath < v.NodeRPath:
 		return true
 	default:
 		return false

@@ -25,6 +25,10 @@ func TestCommandRelocate(t *testing.T) {
 	external1 := mock.Clone("https://github.com/right/external1.git", "..", "external-path-1")
 	symlink(external1, mock.Resolve(filepath.Join("github.com", "right", "external1")))
 
+	// link in an external repository in the right place
+	external2 := mock.Clone("https://github.com/right/external2.git", "..", "external-path-2")
+	symlink(external2, mock.Resolve(filepath.Join("github.com", "right", "wrong-external")))
+
 	tests := []struct {
 		name    string
 		workdir string
@@ -40,7 +44,7 @@ func TestCommandRelocate(t *testing.T) {
 			[]string{"relocate", "--simulate"},
 
 			0,
-			"mkdir -p `${GGROOT github.com correct}`\nmv `${GGROOT github.com incorrect directory}` `${GGROOT github.com correct directory}`\n",
+			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com right wrong-external}` `${GGROOT github.com right external2}`\nmkdir -p `${GGROOT github.com correct}`\nmv `${GGROOT github.com incorrect directory}` `${GGROOT github.com correct directory}`\n",
 
 			"",
 		},
@@ -51,7 +55,7 @@ func TestCommandRelocate(t *testing.T) {
 			[]string{"relocate"},
 
 			0,
-			"mkdir -p `${GGROOT github.com correct}`\nmv `${GGROOT github.com incorrect directory}` `${GGROOT github.com correct directory}`\n",
+			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com right wrong-external}` `${GGROOT github.com right external2}`\nmkdir -p `${GGROOT github.com correct}`\nmv `${GGROOT github.com incorrect directory}` `${GGROOT github.com correct directory}`\n",
 
 			"",
 		},
