@@ -416,13 +416,15 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.19.0 (Upcoming)
+### 1.20.0 (Upcoming)
+
+### 1.19.0 (Released [Apr 4 2023](https://github.com/tkw1536/ggman/releases/tag/v1.19.0))
 
 - update to go 1.20
 - `ggman exec` display output in parallel when running in parallel
 - rename `--local` flag to `--here` in `ggman clone`
 - improve `ggman relocate` behaviour with symlinks
-- update to `goprogram` 0.3.0
+- update to `goprogram` 0.3.5
 - minor bugfixes and CI updates
 - update copyright year
 
