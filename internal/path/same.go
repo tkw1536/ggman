@@ -19,8 +19,8 @@ func SameFile(path1, path2 string) bool {
 	}
 
 	// second attempt: find the directory names and base paths
-	d1, n1 := filepath.Dir(path1), filepath.Base(path1)
-	d2, n2 := filepath.Dir(path2), filepath.Base(path2)
+	d1, n1 := filepath.Split(path1)
+	d2, n2 := filepath.Split(path2)
 
 	// if we have different file names (and they don't exist)
 	// we don't need to continue
