@@ -7,8 +7,8 @@ import (
 	"github.com/alessio/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/goprogram/exit"
+	"github.com/tkw1536/pkglib/fsx"
 )
 
 // Relocate is the 'ggman relocate' command.
@@ -56,7 +56,7 @@ func (r relocate) Run(context ggman.Context) error {
 		}
 
 		// if it is the same, don't move it
-		if path.SameFile(gotPath, shouldPath) {
+		if fsx.Same(gotPath, shouldPath) {
 			continue
 		}
 
