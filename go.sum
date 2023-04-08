@@ -86,8 +86,8 @@ github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5Cc
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/tkw1536/goprogram v0.3.5 h1:S0axKo3R/vGa4zhYqYDKAZEPhAfwUSSeMtVwnAu4sNY=
 github.com/tkw1536/goprogram v0.3.5/go.mod h1:pYr4dMHOSVurbPQ4KTR0ett8XWNISbsRS6zlh9Nsxa8=
-github.com/tkw1536/pkglib v0.0.0-20230408155139-3ef777879e0f h1:sGb/t/cM2extjiArB6q0Yx1f4IK2NyZ5Kw3lP2w8Vg4=
-github.com/tkw1536/pkglib v0.0.0-20230408155139-3ef777879e0f/go.mod h1:RjPEyRcq+g1GMd3D/o7d9WCtVNXY4QZyFRs9hLlZbew=
+github.com/tkw1536/pkglib v0.0.0-20230408192227-70bc76c31830 h1:UQYSSMzlyjfrHaphvEKiI+BTahu5lx//eQwbQFd6ZaM=
+github.com/tkw1536/pkglib v0.0.0-20230408192227-70bc76c31830/go.mod h1:RjPEyRcq+g1GMd3D/o7d9WCtVNXY4QZyFRs9hLlZbew=
 github.com/xanzy/ssh-agent v0.3.3 h1:+/15pJfg/RsTxqYcX6fHqOXZwwMP+2VyYWJeWM2qQFM=
 github.com/xanzy/ssh-agent v0.3.3/go.mod h1:6dzNDKs0J9rVPHPhaGCukekBHKqfl+L3KghI1Bc68Uw=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
