@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 )
 
 // Normalization describes the normalization of a path
@@ -22,12 +21,6 @@ const (
 	// FoldPreferExactNorm is like Fold, except that it uses the exact path if it already exists
 	FoldPreferExactNorm
 )
-
-var builderPool = sync.Pool{
-	New: func() any {
-		return new(strings.Builder)
-	},
-}
 
 // JoinNormalized is similar to filepath.Join, except that it takes an additional normalization argument
 //
@@ -45,12 +38,8 @@ func joinFold(preferExact bool, base string, elem ...string) (string, error) {
 	base = filepath.Clean(base)
 	elems := filepath.Join(elem...)
 
-	// grab a new builder
-	builder := builderPool.Get().(*strings.Builder)
-	defer builderPool.Put(builder)
-
-	// make sure it's big enough
-	builder.Reset()
+	// create a new builder that is big enough
+	var builder strings.Builder
 	builder.Grow(len(elems) + 1 + len(base))
 
 	// write the base into it
