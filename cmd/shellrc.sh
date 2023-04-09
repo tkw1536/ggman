@@ -8,6 +8,11 @@ ggcd () {
 	ggman -f "$1" ls --exit-code --one && cd "$(ggman -f "$1" ls --exit-code --one 2>&1)"
 }
 
+# ggshow is like ggcd, except that is displays the 
+ggshow () {
+	REPO="$(ggman -f "$1" ls --exit-code --one 2>&1)" && ggman -f "$REPO" show --no-patch 2>&1
+}
+
 # ggcode is like ggcd, except it opens an editor (here vscode) instead of cding. 
 ggcode () {
 	ggman -f "$1" ls --exit-code --one && code "$(ggman -f "$1" ls --exit-code --one 2>&1)"

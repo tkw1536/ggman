@@ -148,6 +148,7 @@ func init() {
 		{Name: "git", Command: "exec", Args: []string{"git"}, Description: "Execute a git command using a native 'git' executable. "},
 		{Name: "root", Command: "env", Args: []string{"GGROOT"}, Description: "Print the ggman root folder. "},
 		{Name: "require", Command: "clone", Args: []string{"--force"}, Description: "Require a remote git repository to be installed locally. "},
+		{Name: "show", Command: "exec", Args: []string{"git", "-c", "core.pager=", "show", "HEAD"}, Description: "Show the most recent commit of a repository. "},
 	} {
 		ggmanExe.RegisterAlias(a)
 	}

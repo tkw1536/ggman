@@ -140,6 +140,11 @@ This also works with any pattern matching a repository, e.g. `ggcd world` will c
 It takes the exact same arguments as `ggman clone`, but when the repository already exists in the default location does not clone it again.
 Furthermore, after finishing the clone, automatically `cd`s into the cloned repository.
 
+#### ggshow
+
+ggshow is like ggcd, except that it prints the target directory and also shows the most recent `HEAD` commit.
+This requires a locally installed git.
+
 #### ggcode
 
 ggcode is like ggcd, except it opens an editor (here vscode) instead of cding.
@@ -411,12 +416,16 @@ Variables are matched case-insensitive.
 ggman comes with the following builtin aliases:
 
 - `ggman git` behaves exactly like `ggman exec git`
+- `ggman show` behaves exactly like `ggman exec git -c core.pager= show HEAD` to show the most recent HEAD commit of a repository 
 - `ggman require` behaves exactly like `ggman clone --force`
 - `ggman root` behaves exactly like `ggman env --raw GGROOT` (for backwards compatibility)
 
 ## Changelog
 
 ### 1.20.0 (Upcoming)
+
+- add `ggman show` alias to show the head commit of a repository
+- add `ggshow` utility
 
 ### 1.19.0 (Released [Apr 4 2023](https://github.com/tkw1536/ggman/releases/tag/v1.19.0))
 
