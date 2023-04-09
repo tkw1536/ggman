@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/tkw1536/ggman/internal/walker"
 	"github.com/tkw1536/goprogram/exit"
+	"github.com/tkw1536/pkglib/fsx"
 )
 
 // Flags represents a set of filter flags used for the ggman goprogram.
@@ -177,7 +177,7 @@ func (env Env) ResolvePathFilter(p string) (path string, err error) {
 	}
 
 	// must be a directory!
-	if ok, err := walker.IsDirectory(path, true); err != nil || !ok {
+	if ok, err := fsx.IsDirectory(path, true); err != nil || !ok {
 		return "", errNotADirectory.WithMessageF(p)
 	}
 

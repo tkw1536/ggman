@@ -1,14 +1,13 @@
 package cmd
 
 import (
-	"errors"
-	"io/fs"
 	"os"
 	"path/filepath"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"
+	"github.com/tkw1536/pkglib/fsx"
 )
 
 // Link is the 'ggman link' command.
@@ -80,8 +79,14 @@ func (l link) Run(context ggman.Context) error {
 	}
 
 	// make sure it doesn't exist
-	if _, e := os.Stat(to); !errors.Is(e, fs.ErrNotExist) {
-		return errLinkAlreadyExists
+	{
+		exists, err := fsx.Exists(to)
+		if err != nil {
+			return err
+		}
+		if exists {
+			return errLinkAlreadyExists
+		}
 	}
 
 	context.Printf("Linking %q -> %q\n", to, from)

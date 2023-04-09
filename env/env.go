@@ -11,6 +11,7 @@ import (
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/walker"
 	"github.com/tkw1536/goprogram/exit"
+	"github.com/tkw1536/pkglib/fsx"
 )
 
 // Env represents an environment to be used by ggman.
@@ -383,7 +384,7 @@ func (env Env) ScanReposScores(folder string, resolved bool) ([]string, []float6
 	extraRoots := Candidates(env.Filter)
 	n := 0
 	for _, path := range extraRoots {
-		if ok, err := walker.IsDirectory(path, true); err == nil && ok {
+		if ok, err := fsx.IsDirectory(path, true); err == nil && ok {
 			extraRoots[n] = path
 			n++
 		}

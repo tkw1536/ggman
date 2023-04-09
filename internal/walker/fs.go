@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/pkg/errors"
+	"github.com/tkw1536/pkglib/fsx"
 )
 
 // FS represents a file system for use by walker
@@ -76,7 +76,7 @@ func (real realFS) ResolvedPath() (string, error) {
 
 func (real realFS) CanSub(path string, entry fs.DirEntry) (bool, error) {
 	child := filepath.Join(path, entry.Name())
-	return IsDirectory(child, real.FollowLinks)
+	return fsx.IsDirectory(child, real.FollowLinks)
 }
 
 func (real realFS) Sub(path, rpath string, entry fs.DirEntry) FS {
@@ -85,32 +85,4 @@ func (real realFS) Sub(path, rpath string, entry fs.DirEntry) FS {
 		DirPath:     child,
 		FollowLinks: real.FollowLinks,
 	}
-}
-
-// IsDirectory checks if path exists and points to a directory
-// When includeLinks is true, a symlink counts as a directory.
-func IsDirectory(path string, includeLinks bool) (bool, error) {
-
-	// Stat() returns information about the referenced path by default.
-	// In case of a symlink, this means the target of the link.
-	//
-	// If we allow links, this is exactly what we want.
-	// If we don't allow links, we want information about the link itself.
-	// We thus need to use LStat().
-	var stat os.FileInfo
-	var err error
-	if includeLinks {
-		stat, err = os.Stat(path)
-	} else {
-		stat, err = os.Lstat(path)
-	}
-
-	switch {
-	case errors.Is(err, fs.ErrNotExist):
-		return false, nil
-	case err != nil:
-		return false, errors.Wrap(err, "Stat failed")
-	}
-
-	return stat.IsDir(), nil
 }

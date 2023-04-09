@@ -1,7 +1,6 @@
 package git
 
 import (
-	"io/fs"
 	"os"
 	"os/exec"
 	"path"
@@ -13,6 +12,7 @@ import (
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/tkw1536/pkglib/fsx"
 	"github.com/tkw1536/pkglib/stream"
 )
 
@@ -149,7 +149,9 @@ type Plumbing interface {
 //
 // There is no guarantee as to what plumbing is returned.
 func NewPlumbing() Plumbing {
-	gg := gogit{}
+	// NOTE(twiesing): We cast here to avoid a warning that the Init method is a noop.
+	// We want to keep it in case it does something in the future.
+	gg := Plumbing(gogit{})
 	gg.Init()
 	return gg
 }
@@ -309,13 +311,9 @@ func (gogit) IsRepositoryUnsafe(localPath string) bool {
 	// path to .git
 	gitPath := path.Join(localPath, ".git")
 
-	// check that it exists and is a folder
-	s, err := os.Stat(gitPath)
-	isNotNotExist := !errors.Is(err, fs.ErrNotExist)
-	if err != nil && isNotNotExist {
-		return false
-	}
-	return isNotNotExist && s.Mode().IsDir()
+	// check that it exists and is a directory
+	ok, _ := fsx.IsDirectory(gitPath, false)
+	return ok
 }
 
 func (gogit) GetHeadRef(clonePath string, repoObject any) (string, error) {
