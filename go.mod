@@ -11,7 +11,7 @@ require (
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
 	github.com/tkw1536/goprogram v0.3.5
-	github.com/tkw1536/pkglib v0.0.0-20230409110642-5f57240e294b
+	github.com/tkw1536/pkglib v0.0.0-20230501182828-8cb15f4fccd8
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 )
 

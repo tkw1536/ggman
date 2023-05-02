@@ -6,9 +6,9 @@ import (
 	"github.com/alessio/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/internal/sema"
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/goprogram/parser"
+	"github.com/tkw1536/pkglib/sema"
 	"github.com/tkw1536/pkglib/status"
 	"github.com/tkw1536/pkglib/stream"
 )

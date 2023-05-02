@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 
 	"github.com/tkw1536/ggman/internal/record"
-	"github.com/tkw1536/ggman/internal/sema"
+	"github.com/tkw1536/pkglib/sema"
 	"golang.org/x/exp/slices"
 )
 
@@ -175,7 +175,7 @@ func (w *Walker[S]) Walk() error {
 	}
 
 	// configure concurrency
-	w.semaphore = sema.NewSemaphore(w.Params.MaxParallel)
+	w.semaphore = sema.New(w.Params.MaxParallel)
 
 	// create channels for result & error
 	w.resultChan = make(chan walkResult, w.Params.BufferSize)
