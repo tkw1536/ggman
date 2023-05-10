@@ -29,7 +29,7 @@ all: dist
 .PHONY: all install test lint testdeps clean deps dist generate
 
 $(BINARY_NAME): deps
-	$(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS)" -o $(BINARY_NAME) $(GGMAN_CMD_SRC)
+	CGO_ENABLED=0 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS)" -o $(BINARY_NAME) $(GGMAN_CMD_SRC)
 
 $(BINARY_UNIX): deps
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(BINARY_UNIX) $(GGMAN_CMD_SRC)
@@ -49,7 +49,7 @@ $(BINARY_WINDOWS): deps
 dist: $(BINARY_UNIX) $(BINARY_MACOS_UNIVERSAL) $(BINARY_WINDOWS)
 
 install:
-	$(GOINSTALL) -ldflags="$(GGMANVERSIONFLAGS)" $(GGMAN_CMD_SRC)
+	CGO_ENABLED=0 $(GOINSTALL) -ldflags="$(GGMANVERSIONFLAGS)" $(GGMAN_CMD_SRC)
 
 test: testdeps
 	$(GOTEST) -tags doccheck ./...
