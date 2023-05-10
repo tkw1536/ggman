@@ -10,9 +10,9 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
-	github.com/tkw1536/goprogram v0.3.5
-	github.com/tkw1536/pkglib v0.0.0-20230501182828-8cb15f4fccd8
-	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
+	github.com/tkw1536/goprogram v0.4.0
+	github.com/tkw1536/pkglib v0.0.0-20230510112922-534221eb8663
+	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
 )
 
 require (
@@ -34,11 +34,11 @@ require (
 	github.com/skeema/knownhosts v1.1.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	golang.org/x/crypto v0.8.0 // indirect
-	golang.org/x/mod v0.9.0 // indirect
-	golang.org/x/net v0.9.0 // indirect
-	golang.org/x/sys v0.7.0 // indirect
-	golang.org/x/term v0.7.0 // indirect
+	golang.org/x/mod v0.10.0 // indirect
+	golang.org/x/net v0.10.0 // indirect
+	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/term v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
-	golang.org/x/tools v0.7.0 // indirect
+	golang.org/x/tools v0.9.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )
