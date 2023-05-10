@@ -427,6 +427,7 @@ ggman comes with the following builtin aliases:
 - add `ggman show` alias to show the head commit of a repository
 - add `ggshow` utility
 - rework some of the shell aliases
+- update dependencies
 
 ### 1.19.0 (Released [Apr 4 2023](https://github.com/tkw1536/ggman/releases/tag/v1.19.0))
 
