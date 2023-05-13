@@ -27,9 +27,9 @@ import (
 //	}
 //	results, scores := w.Results(), w.Scores()
 type Walker[S any] struct {
-	state uint32 // 0 => initial, 1 => in Walk(), 2 => done
+	state atomic.Uint32 // see walker* constants
 
-	record record.Record // contains visited nodes
+	visited record.Record // contains visited nodes
 
 	wg        sync.WaitGroup // tracks which scanning processes are
 	semaphore sema.Semaphore // tracks how many scanners are alive
@@ -46,6 +46,13 @@ type Walker[S any] struct {
 	Params  Params
 	Process Process[S]
 }
+
+// walker* constants represent the state of the walker.
+const (
+	walkerUnused   uint32 = iota // walker has not yet been used
+	walkerRunning                // Walk function has been called, but not yet returned
+	walkerFinished               // Walk has returned
+)
 
 // Params are parameters for a walk across a filesystem
 type Params struct {
@@ -74,12 +81,7 @@ type Process[S any] interface {
 	// Visit is called for every node that is being visited.
 	// It is the first function called for each node.
 	//
-	// It receives several parameters:
-	//
-	// The node being visited and the appropriate context.
-	//
-	// A function that can be used to mark this node as a result.
-	// prio is a prioritisation of a node that is used for sorting; see the Result() method for details.
+	// It receives a context, representing the node being visited.
 	//
 	// Visit should return three things.
 	//
@@ -87,20 +89,20 @@ type Process[S any] interface {
 	// It is maintained throughout the processing of one node, and returned to the parent node (when being processed concurrently)
 	//
 	// shouldVisitChildren determines if any children of this node should be visited or if the process should stop.
-	// When shouldVisitChildren is false, no other functions are called for this node, and the snapshot is returned to the parent (if any) immediatly.
+	// When shouldVisitChildren is false, no other functions are called for this node, and the snapshot is returned to the parent (if any) immediately.
 	//
 	// Err is any error that may occur, and should typically be nil.
-	// An error immediatly cause iteration on this node to be aborted, and the first error of any node will be returned to the caller of Walk.
+	// An error immediately causes iteration on this node to be aborted, and the first error of any node will be returned to the caller of Walk.
 	Visit(context WalkContext[S]) (shouldVisitChildren bool, err error)
 
 	// VisitChild is called to determine if and how a child node should be processed.
 	//
-	// A child entry is valid if it can be recursivly processed (i.e. is a directory).
+	// A child entry is valid if it can be recursively processed (i.e. is a directory).
 	//
 	// When child is valid, it determines how the child should be processed; otherwise action is ignored.
 	VisitChild(child fs.DirEntry, valid bool, context WalkContext[S]) (action Step, err error)
 
-	// AfterVisitChild is called after a child has been visited syncronously.
+	// AfterVisitChild is called after a child has been visited synchronously.
 	//
 	// It is passed to special values, the returned snapshot (as returned from AfterVisit / Visit) and if the child was processed properly.
 	// The child was processed improperly when any of the Process functions on it returned an error, listing a directory failed, or it was already processed before (loop detection). In these cases resultValue is nil.
@@ -121,7 +123,7 @@ type Step int
 const (
 	// DoNothing ignores the child node, and continue with the next node.
 	DoNothing Step = iota
-	// DoSync syncronously processes the child node.
+	// DoSync synchronously processes the child node.
 	// Once processing the child node has finished the AfterChild() function will be called.
 	DoSync
 	// DoConcurrent queues the child node to be processed concurrently.
@@ -130,7 +132,7 @@ const (
 )
 
 // WalkContext represents the current state of a Walker.
-// It may additionally hold a snapshotted state of type S.
+// It may additionally hold a snapshot of the state of type S.
 //
 // Any instance of WalkContext should not be retained past any method it is passed to.
 type WalkContext[S any] interface {
@@ -164,10 +166,10 @@ type WalkContext[S any] interface {
 // This function is untested because the tests for Scan and Sweep suffice.
 func (w *Walker[S]) Walk() error {
 	// state of the walker
-	if !atomic.CompareAndSwapUint32(&w.state, 0, 1) {
+	if !w.state.CompareAndSwap(walkerUnused, walkerRunning) {
 		panic("Walker.Walk(): Attempted reuse")
 	}
-	defer atomic.StoreUint32(&w.state, 2)
+	defer w.state.Store(walkerFinished)
 
 	// setup a pool for new contexts
 	w.ctxPool.New = func() any {
@@ -259,7 +261,7 @@ func (w *Walker[S]) walk(sync bool, ctx *context[S]) (ok bool) {
 	ctx.nodePath = ctx.node.Path()
 
 	// bail out if we already visited this node!
-	if w.record.Record(path) {
+	if w.visited.Record(path) {
 		return true
 	}
 
@@ -362,7 +364,7 @@ func (w *Walker[S]) Results() []string {
 //
 // Paths expects the Scan() function to have returned, and will panic if this is not the case.
 func (w *Walker[S]) Paths(resolved bool) []string {
-	if atomic.LoadUint32(&w.state) != 2 {
+	if w.state.Load() != walkerFinished {
 		panic("Walker.Paths(): Results() called before Walk() returned")
 	}
 
@@ -378,7 +380,7 @@ func (w *Walker[S]) Paths(resolved bool) []string {
 //
 // Results expects the Scan() function to have returned, and will panic if this is not the case.
 func (w *Walker[S]) Scores() []float64 {
-	if atomic.LoadUint32(&w.state) != 2 {
+	if w.state.Load() != walkerFinished {
 		panic("Walker.Walk(): Scores() called before Walk() returned")
 	}
 
