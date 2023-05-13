@@ -428,6 +428,7 @@ ggman comes with the following builtin aliases:
 - add `ggshow` utility
 - rework some of the shell aliases
 - `Makefile`: Make sure to always build with cgo disabled
+- rework filter scoring to take position of match into account
 - update dependencies
 
 ### 1.19.0 (Released [Apr 4 2023](https://github.com/tkw1536/ggman/releases/tag/v1.19.0))

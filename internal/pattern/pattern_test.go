@@ -340,7 +340,7 @@ func TestSplitPattern_Score(t *testing.T) {
 				},
 			},
 			args{"a;b;c;c;c"},
-			1,
+			0.25,
 		},
 
 		{
@@ -354,7 +354,7 @@ func TestSplitPattern_Score(t *testing.T) {
 				},
 			},
 			args{"a;a;b;c;c"},
-			1,
+			0.5,
 		},
 		{
 			"end match",

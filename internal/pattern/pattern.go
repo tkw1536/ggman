@@ -2,6 +2,7 @@
 package pattern
 
 import (
+	"math"
 	"strings"
 
 	"github.com/danwakefield/fnmatch"
@@ -110,7 +111,7 @@ func NewSplitGlobPattern(pattern string, splitter func(string) []string, fuzzy b
 	}
 }
 
-// SplitPattern is a pattern that splits an input string and matches each string according to a subpattern.
+// SplitPattern is a pattern that splits an input string and matches each string according to a sub-pattern.
 type SplitPattern struct {
 	// Split splits the input string
 	Split func(s string) []string
@@ -123,29 +124,68 @@ type SplitPattern struct {
 	Patterns []Pattern
 }
 
-// Match checks if s matches this SplitPattern
-func (sp SplitPattern) Score(s string) float64 {
-	// when we have no patterns, we can return true right away!
+// Score scores a string.
+//
+// It first splits the function according to the split function.
+// Then it matches each part according to a corresponding sub-pattern.
+// It adds the scores and normalizes according to the number of parts matched, and where the sequence of these matches starts.
+func (sp SplitPattern) Score(s string) (score float64) {
+	// quick path: no patterns, so we can immediately return!
 	if len(sp.Patterns) == 0 {
 		return 1
 	}
 
-	var score float64
-
+	// split the string into parts
 	parts := sp.Split(s)
+
+	// find the last possible place where a match can start
 	last := len(parts) - len(sp.Patterns)
-outer:
-	for i := 0; i <= last; i++ {
-		score = 0
-		for j, pattern := range sp.Patterns {
-			pscore := pattern.Score(parts[i+j])
-			if pscore < 0 {
-				continue outer
-			}
-			score += pscore
+	if last < 0 {
+		// no possible match!
+		return -1
+	}
+
+	// find the last match
+	for start := last; start >= 0; start-- {
+		score := sp.scoreFrom(parts, start, last)
+		if score > 0 {
+			return score
+		}
+	}
+
+	// no match found
+	return -1
+}
+
+// scoreFrom returns the score for this SplitPattern starting at start.
+func (sp SplitPattern) scoreFrom(parts []string, start int, last int) (score float64) {
+	// compute the average score for each pattern
+	for i, pat := range sp.Patterns {
+		partial := pat.Score(parts[start+i])
+		if partial < 0 {
+			return -1 // no match
 		}
 
-		return score / float64(len(sp.Patterns))
+		score += partial
 	}
-	return -1
+	score /= float64(len(sp.Patterns))
+
+	// Normalize for where the pattern starts.
+	//
+	// Consider for example the sub-patterns ['hello', 'world'] to be matched against:
+	//
+	// ['i-have-three-levels', 'hello', 'world', 'stuff']
+	// ['i-have-two-levels', 'hello', 'world']
+	//
+	// We want the latter to score higher, as it more closely resembles the pattern.
+	// We use the following algorithm:
+	//
+	// Suppose score is the nth-possible match from the end.
+	// Then we place the score into the interval (1/2^(n+1) ... 1/2^(n)).
+	// This achieves the desired effect.
+	minusNPlusOne := float64(start-last) - 1 // compute -(n+1) (saves something below)
+	m := math.Pow(2, minusNPlusOne)          // 1/2^(n+1)
+	score = m * (score + 1)                  // align (0....1) to the interval (m,2m)
+
+	return
 }

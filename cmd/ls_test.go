@@ -153,7 +153,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--for", "wrld", "ls", "--scores"},
 
 			0,
-			"0.800000 ${GGROOT github.com hello world}\n0.800000 ${GGROOT gitlab.com hello world}\n",
+			"0.900000 ${GGROOT github.com hello world}\n0.900000 ${GGROOT gitlab.com hello world}\n",
 
 			"",
 		},

@@ -145,6 +145,7 @@ type DisjunctionFilter struct {
 }
 
 // Matches checks if this filter matches any of the filters that were joined.
+// It returns the highest possible score.
 func (or DisjunctionFilter) Score(env Env, clonePath string) float64 {
 	max := float64(-1)
 	for _, f := range or.Clauses {

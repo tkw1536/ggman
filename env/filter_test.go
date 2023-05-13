@@ -343,18 +343,18 @@ func TestPatternFilter_Score(t *testing.T) {
 		{"EmptyPattern", "", args{abc}, 1},
 
 		// matching one-component parts of a/b/c
-		{"oneComponentStart", "a", args{abc}, 1},
-		{"oneComponentStart outside root", "a", args{otherabc}, 1},
-		{"oneComponentMiddle", "b", args{abc}, 1},
+		{"oneComponentStart", "a", args{abc}, 0.25},
+		{"oneComponentStart outside root", "a", args{otherabc}, 0.25},
+		{"oneComponentMiddle", "b", args{abc}, 0.5},
 		{"oneComponentEnd", "c", args{abc}, 1},
 		{"oneComponentNot", "d", args{abc}, -1},
 
 		// matching constant sub-paths
-		{"twoComponentsConst", "b/c", args{abcdef}, 1},
+		{"twoComponentsConst", "b/c", args{abcdef}, 0.125},
 		{"noTwoComponentsConst", "f/g", args{abcdef}, -1},
 
 		// variable sub-paths
-		{"variableSubPathPositive", "b/*/d", args{abcdef}, 1},
+		{"variableSubPathPositive", "b/*/d", args{abcdef}, 0.25},
 		{"variableSubPathNegative", "b/*/c", args{abcdef}, -1},
 	}
 	for _, tt := range tests {
