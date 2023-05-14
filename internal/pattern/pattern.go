@@ -112,6 +112,10 @@ func NewSplitGlobPattern(pattern string, splitter func(string) []string, fuzzy b
 }
 
 // SplitPattern is a pattern that splits an input string and matches each string according to a sub-pattern.
+// To compute the overall score, the pattern scores are averaged.
+//
+// Finally, SplitPattern prioritizes matches at the edge of the input string.
+// This means that a score at the start or the end of the string will always score higher than one in the middle.
 type SplitPattern struct {
 	// Split splits the input string
 	Split func(s string) []string
@@ -175,17 +179,17 @@ func (sp SplitPattern) scoreFrom(parts []string, start int, last int) (score flo
 	// Consider for example the sub-patterns ['hello', 'world'] to be matched against:
 	//
 	// ['i-have-three-levels', 'hello', 'world', 'stuff']
+	// ['i-have-three-levels', 'stuff', 'hello', 'world']
 	// ['i-have-two-levels', 'hello', 'world']
 	//
-	// We want the latter to score higher, as it more closely resembles the pattern.
+	// We want the latter two scores to be higher (as they are matched near the edges).
 	// We use the following algorithm:
 	//
-	// Suppose score is the nth-possible match from the end.
+	// Suppose the match is nth-from-the-edge (i.e. at position n or ending at last - n).
 	// Then we place the score into the interval (1/2^(n+1) ... 1/2^(n)).
-	// This achieves the desired effect.
-	minusNPlusOne := float64(start-last) - 1 // compute -(n+1) (saves something below)
-	m := math.Pow(2, minusNPlusOne)          // 1/2^(n+1)
-	score = m * (score + 1)                  // align (0....1) to the interval (m,2m)
+	n := math.Min(float64(start), float64(last-start))
+	m := math.Pow(2, -(n + 1)) // 1/2^(n+1)
+	score = m * (score + 1)    // align (0....1) to the interval (m,2m)
 
 	return
 }

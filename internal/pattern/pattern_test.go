@@ -340,7 +340,7 @@ func TestSplitPattern_Score(t *testing.T) {
 				},
 			},
 			args{"a;b;c;c;c"},
-			0.25,
+			1,
 		},
 
 		{
