@@ -51,7 +51,7 @@
 // As of ggman 1.12, this translation of URLs into paths takes existing paths into account.
 // In particular, it re-uses existing sub-paths if they differ from the requested path only by casing.
 // By default, the first matching directory is used as opposed to creating a new one.
-// If a directory with the exact name exists, this is prefered over a case-insensitive match.
+// If a directory with the exact name exists, this is preferred over a case-insensitive match.
 //
 // This normalization behavior can be controlled using the 'GGNORM' environment variable.
 // It has three values: 'smart' (default behavior), 'fold' (fold paths, but do not prefer exact matches) and 'none' (always use exact paths, legacy behavior).
@@ -59,7 +59,7 @@
 // Any subcommand that iterates over local repositories will recursively find all repositories inside the 'GGROOT' directory.
 // In some scenarios it is desired to filter the local list of repositories, e.g. applying only to those inside a specific namespace.
 // This can be achieved using the '--for' flag, which will match to any component of the url.
-// This matching is fuzzy by default, by the fuzzyness can be disabled by passing the '--no-fuzzy-filter' flag.
+// This matching is fuzzy by default, by the fuzziness can be disabled by passing the '--no-fuzzy-filter' flag.
 // The '--for' flag also matches (relative or absolute) filesystem paths, as well as full clone URLs.
 //
 // A list of '--for' patterns or paths can also be read from a file name by using the '--from-file' argument.
@@ -85,7 +85,7 @@
 //
 //	git clone git@github.com:hello/world.git
 //
-// Usually the latter url is prefered to make use of SSH authentication.
+// Usually the latter url is preferred to make use of SSH authentication.
 // This avoids having to repeatedly type a password.
 // For this purpose, ggman implements the concept of 'canonical urls'.
 // This causes it to treat the latter url as the main one and uses it to clone the repository.
@@ -161,7 +161,7 @@ var errNoArgumentsProvided = exit.Error{
 }
 
 func main() {
-	// recover from calls to panic(), and exit the program appropriatly.
+	// recover from calls to panic(), and exit the program appropriately.
 	// This has to be in the main() function because any of the library functions might be broken.
 	// For this reason, as few ggman functions as possible are used here; just stuff from the top-level ggman package.
 	defer func() {
@@ -177,7 +177,7 @@ func main() {
 	// when there are no arguments then parsing argument *will* fail
 	//
 	// we don't need to even bother with the rest of the program
-	// just immediatly return a custom error message.
+	// just immediately return a custom error message.
 	if len(os.Args) == 1 {
 		exit.Die(streams, errNoArgumentsProvided)
 		errNoArgumentsProvided.Return()

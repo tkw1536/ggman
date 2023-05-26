@@ -17,7 +17,7 @@ import (
 // Env represents an environment to be used by ggman.
 //
 // The environment defines which git repositories are managed by ggman and where these are stored.
-// It furthremore determins how a URL is canonicalized using a CanFile.
+// It furthermore determines how a URL is canonicalized using a CanFile.
 //
 // An environment consists of four parts, each are defined as a part of this struct.
 // See NewEnv on the defaults used by ggman.
@@ -66,7 +66,7 @@ type Parameters struct {
 	Plumbing git.Plumbing
 }
 
-// NewEnv returns a new Env that fullfills the requirement r.
+// NewEnv returns a new Env that fulfills the requirement r.
 //
 // See methods LoadDefaultRoot() and LoadDefaultCanFile() for a description of default values.
 //
@@ -149,7 +149,7 @@ func (env *Env) LoadDefaultRoot() error {
 }
 
 // LoadDefaultCANFILE sets and returns env.CANFILE according to the environment variables in e.Vars.
-// If the CANFILE is already set, immediatly returns nil.
+// If the CANFILE is already set, immediately returns nil.
 //
 // If the GGMAN_CANFILE variable is set, it will use it as a filepath to read the CanFile from.
 // If it is not set it will attempt to load the file '.ggman' in the home directory.
@@ -278,7 +278,7 @@ func (env Env) At(p string) (repo, worktree string, err error) {
 
 	// start recursively searching, starting at 'path' doing at most count iterations.
 	// the regular exit condition is that repo should be the root of a repository.
-	// we addtionally need to check that the path is inside of the root.
+	// we additionally need to check that the path is inside of the root.
 	repo = path
 	count := atMaxIterCount
 	for !env.Git.IsRepository(repo) {

@@ -3,7 +3,7 @@ package walker
 import "io/fs"
 
 // Scan recursively scans a directory tree, and returns all nodes matching the Visit function.
-// Nodes returned are first sorted descending by score, then by lexiographical order.
+// Nodes returned are first sorted descending by score, then by lexicographical order.
 // When an error occurs, may continue scanning until all units have exited and returns nil, err.
 //
 // This function is a convenience alternative to:
@@ -27,7 +27,7 @@ func Scan(Visit ScanProcess, Params Params) ([]string, error) {
 // ScanProcess is a function that is called once for each directory that is being walked.
 // It returns a pair of float64 score and bool continue.
 //
-// match indiciates that what score the path received. A non-negative score indicates a match, and will be returned in the array from Scan().
+// match indicates that what score the path received. A non-negative score indicates a match, and will be returned in the array from Scan().
 // cont indicates if Scan() should continue scanning recursively.
 //
 // ScanProcess may be nil.

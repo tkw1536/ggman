@@ -71,7 +71,7 @@ func GetUserVariables() []UserVariable {
 }
 
 // GetUserVariable gets a single user variable of the given name.
-// The name is checked case-insenstive.
+// The name is checked case-insensitive.
 // When the variable does not exist, returns ok = False.
 //
 // This function is untested because the 'ggman env' command is tested.

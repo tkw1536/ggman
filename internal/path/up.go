@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// pathUpSegment is a segment that indiciates that a path should go up
+// pathUpSegment is a segment that indicates that a path should go up
 var pathUpSegment = ".." + Separator
 
 // GoesUp checks if path is a path that goes up at least one directory.
@@ -14,7 +14,7 @@ func GoesUp(path string) bool {
 	return path == ".." || strings.HasPrefix(ToOSPath(path), pathUpSegment)
 }
 
-// Contains checks if the path 'parent' could contain the path 'child' synatically.
+// Contains checks if the path 'parent' could contain the path 'child' syntactically.
 // No resolving of paths is performed.
 func Contains(parent string, child string) bool {
 	p := filepath.Clean(ToOSPath(parent))

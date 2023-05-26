@@ -530,7 +530,7 @@ func Test_gogit_Pull(t *testing.T) {
 		panic(err)
 	}
 
-	// create a second commmit in the remote repo
+	// create a second commit in the remote repo
 	_, commitB := testutil.CommitTestFiles(originRepo, map[string]string{"commitb.txt": "Commit B"})
 
 	// get a repo object
@@ -611,7 +611,7 @@ func Test_gogit_GetBranches(t *testing.T) {
 				return
 			}
 
-			// sort for testcases
+			// sort for test cases
 			slices.Sort(gotBranches)
 			slices.Sort(tt.wantBranches)
 

@@ -147,7 +147,7 @@ This requires a locally installed git.
 
 #### ggcode
 
-ggcode is like ggcd, except it opens an editor (here vscode) instead of cding.
+ggcode is like ggcd, except it opens an editor (here vscode) instead of cd-ing.
 
 ## the `ggman` command
 
@@ -187,7 +187,7 @@ After 1.12, this clone will end up in `$GGROOT/github.com/hello/world`.
 While this means placing of repositories needs to touch the disk (and check for existing directories), it results in less directory clutter.
 
 By default, the first matching directory (in alphanumerical order) is used as opposed to creating a new one.
-If a directory with the exact name exists, this is prefered over a case-insensitive match.
+If a directory with the exact name exists, this is preferred over a case-insensitive match.
 
 This normalization behavior can be controlled using the `GGNORM` environment variable.
 It has three values:
@@ -249,7 +249,7 @@ A canonical url is generated from an original url using a so-called `CANSPEC` (c
 An example CANSPEC is `git@^:$.git`. 
 
 CANSPECs generate canonical urls by first taking the original urls, and splitting them into path-like components. 
-These components also perform some normalisation, such as removing common prefixes and suffixes. 
+These components also perform some normalization, such as removing common prefixes and suffixes. 
 A few examples examples can be found in this table. 
 
 | URL                            | Components                       |
@@ -277,11 +277,11 @@ A couple of examples can be found below:
 
 To get the canonical url of a repository use `ggman canon <URL> <CANSPEC>`. 
 
-To customize the behaviour globally, a so-called `CANFILE` can be used. 
+To customize the behavior globally, a so-called `CANFILE` can be used. 
 This `CANFILE` should either be called `.ggman` in the users home directory, or be pointed to by the `GGMAN_CANFILE` environment variable. 
 
 A `CANFILE` should consist of several lines.
-Each line should contain either one or two space-seperated strings. 
+Each line should contain either one or two space-separated strings. 
 The first one is a pattern (as used with the `for` keyword) and the second is a CANSPEC to apply for all repositories matching this pattern. 
 Empty lines and those starting with '#', '\\' are treated as comments. 
 
@@ -312,7 +312,7 @@ ggman clone git@github.com:hello/world.git
 ```
 
 which will clone the the hello world repository into  `$GGROOT/github.com/hello/world`. 
-This clonening not only works for the canonical repository url, but for any other url as well. 
+This cloning not only works for the canonical repository url, but for any other url as well. 
 For example:
 
 ```bash
@@ -429,6 +429,7 @@ ggman comes with the following builtin aliases:
 - rework some of the shell aliases
 - `Makefile`: Make sure to always build with cgo disabled
 - rework filter scoring to take position of match into account
+- fix a lot of typos
 - update dependencies
 
 ### 1.19.0 (Released [Apr 4 2023](https://github.com/tkw1536/ggman/releases/tag/v1.19.0))
@@ -436,7 +437,7 @@ ggman comes with the following builtin aliases:
 - update to go 1.20
 - `ggman exec` display output in parallel when running in parallel
 - rename `--local` flag to `--here` in `ggman clone`
-- improve `ggman relocate` behaviour with symlinks
+- improve `ggman relocate` behavior with symlinks
 - update to `goprogram` 0.3.5
 - minor bugfixes and CI updates
 - update copyright year

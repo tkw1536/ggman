@@ -377,8 +377,8 @@ func TestEnv_ScanRepos_fuzzy(t *testing.T) {
 		}
 	}
 
-	mkgit(filepath.Join("abc")) // matches the filter 'bc' with a score of 0.66, but lexiographically first
-	mkgit(filepath.Join("bc"))  // matches the filter 'bc' with a score of 1, but lexiographically last
+	mkgit(filepath.Join("abc")) // matches the filter 'bc' with a score of 0.66, but lexicographically first
+	mkgit(filepath.Join("bc"))  // matches the filter 'bc' with a score of 1, but lexicographically last
 
 	// utility to remove root from all the paths
 	trimPath := func(path string) string {

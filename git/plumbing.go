@@ -20,7 +20,7 @@ import (
 // Plumbing is intended to be goroutine-safe, i.e. everything except the Init() method can be called from multiple goroutines at once.
 //
 // It is not intended to be called directly by an external caller, instead it is intended to be called by the Git interface only.
-// The reason for this is that it requires initalization and places certain assumptions on the caller.
+// The reason for this is that it requires initialization and places certain assumptions on the caller.
 //
 // For instance, to pull a repository, the following code is required:
 //
@@ -29,7 +29,7 @@ import (
 //	if !isRepo {
 //	  // error, not a repository
 //	}
-//	err = plumbining.Pull(stream.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world", cache)
+//	err = plumbing.Pull(stream.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world", cache)
 //
 // Such code is typically handled by a Git instance that wraps a Plumbing.
 type Plumbing interface {
@@ -48,7 +48,7 @@ type Plumbing interface {
 	// The semantics of the repoObject are determined by this Plumbing and should not be used outside of it.
 	// Note that the repoObject may be used for more than one subsequent call.
 	//
-	// This function surpresses all errors, and if something goes wrong assumed that isRepo is false.
+	// This function suppresses all errors, and if something goes wrong assumed that isRepo is false.
 	IsRepository(localPath string) (repoObject any, isRepo bool)
 
 	// IsRepositoryUnsafe efficiently checks if the directly at localPath contains a repository.
@@ -70,7 +70,7 @@ type Plumbing interface {
 	// The second parameter must be the returned value from IsRepository().
 	GetRemotes(clonePath string, repoObject any) (remotes map[string][]string, err error)
 
-	// GetCanonicalRemote gets the name of the canonical remote of the reposity cloned at clonePath.
+	// GetCanonicalRemote gets the name of the canonical remote of the repository cloned at clonePath.
 	// The Plumbing is free to decided what the canonical remote is, but it is typically the remote of the currently checked out branch or the 'origin' remote.
 	// If no remote exists, an empty name is returned.
 	//
@@ -465,7 +465,7 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject any, name string, urls [
 	// get the current remotes
 	remotes := cfg.Remotes[remote.Config().Name]
 
-	// if they haven't changed, we can return immediatly
+	// if they haven't changed, we can return immediately
 	if slices.Equal(remotes.URLs, urls) {
 		return nil
 	}

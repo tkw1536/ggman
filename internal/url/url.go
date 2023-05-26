@@ -20,7 +20,7 @@ const maxPortLen = len(maxPortStr) // maximal port length
 func ParsePort(s string) (uint16, error) {
 
 	// when the input string is too long, we don't even need to try
-	// parsding can just fail immediatly.
+	// parsing can just fail immediately.
 	if len(s) > maxPortLen {
 		return 0, errInvalidRange
 	}
@@ -45,7 +45,7 @@ func ParsePort(s string) (uint16, error) {
 	return uint16(v), nil
 }
 
-// IsValidURLScheme checks if a string reprents a valid URL scheme.
+// IsValidURLScheme checks if a string represents a valid URL scheme.
 //
 // A valid url scheme is one that matches the regex [a-zA-Z][a-zA-Z0-9+\-\.]*.
 func IsValidURLScheme(s string) bool {

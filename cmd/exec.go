@@ -15,7 +15,7 @@ import (
 
 // Exec is the 'ggman exec' command.
 //
-// Exec excecutes an external command for every repository known to ggman.
+// Exec executes an external command for every repository known to ggman.
 //
 // Each program is run with a working directory set to the root of the provided repository.
 // Each program is inherits standard input, output and error streams from the ggman process.

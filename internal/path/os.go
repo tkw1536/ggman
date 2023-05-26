@@ -12,7 +12,7 @@ const Separator = string(filepath.Separator)
 // defaultVolumePrefix is a prefix to use for the default volume
 var defaultVolumePrefix = filepath.VolumeName(os.TempDir())
 
-// ToOSPath turns a path that is seperated via "/"s into a path seperated by the current os-seperator.
+// ToOSPath turns a path that is separated via "/"s into a path separated by the current os-separator.
 // ToOSPath should only be used during testing.
 //
 // When path starts with "/", the default volume is prefixed on windows.

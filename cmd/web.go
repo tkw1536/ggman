@@ -15,7 +15,7 @@ import (
 
 // Web is the 'ggman web' command.
 //
-// It attempts to open the url of the current repository in a webrowser.
+// It attempts to open the url of the current repository in a browser.
 // The browser being used is determined by the underlying operating system.
 //
 // To determine the url it uses the CANSPEC `https://^/$`, which may not work with all git hosts.
@@ -41,7 +41,7 @@ import (
 // An optional argument of the form 'BASE'.
 // If it is provided, the first component of the url is replace with the given base.
 // For instance, using the base 'https://pkg.go.dev' would open the current repository on the golang documentation homepage.
-// In addition to using a custom BASE, the following pre-defined bases 'travis' (TravisCI), 'circle' (CirclCI), 'godoc' (GoDoc) and 'localgodoc' (GoDoc when run on the local machine) can be used.
+// In addition to using a custom BASE, the following pre-defined bases 'travis' (TravisCI), 'circle' (CircleCI), 'godoc' (GoDoc) and 'localgodoc' (GoDoc when run on the local machine) can be used.
 //
 //	--prefix
 //
@@ -63,7 +63,7 @@ var Web ggman.Command = urlweb{
 
 // URL is the 'ggman url' command.
 //
-// The ggman url command behaves exactly like the ggman web command, except that instead of opening the URL in a webbrowser it prints it to standard output.
+// The ggman url command behaves exactly like the ggman web command, except that instead of opening the URL in a web browser it prints it to standard output.
 var URL ggman.Command = urlweb{
 	isWebCommand: false,
 }
@@ -290,7 +290,7 @@ func (uw urlweb) getRemoteURLReal(context ggman.Context) (root string, remote st
 }
 
 func (uw urlweb) getRemoteURLFake(context ggman.Context) (root string, remote string, relative string, err error) {
-	// get the absolute path to the current workdir
+	// get the absolute path to the current working directory
 	workdir, err := context.Environment.Abs("")
 	if err != nil {
 		return "", "", "", err

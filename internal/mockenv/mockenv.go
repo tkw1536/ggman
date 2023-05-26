@@ -163,7 +163,7 @@ func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, ar
 	return uint8(err.ExitCode), stdoutBuffer.String(), stderrBuffer.String()
 }
 
-// regular expression used for substiution
+// regular expression used for substitution
 var regexGGROOT = regexp.MustCompile(`.?\$\{GGROOT( [^\}]+)?\}.?`)
 
 // TestingT is an interface around TestingT
@@ -178,7 +178,7 @@ type TestingT interface {
 // Furthermore when `${}` is surrounded by "s, (e.g. "${GGROOT a b c}"), go quotes the string.
 // When text is instead surrounded by “s`s, (e.g. `${GGROOT a b c}`) shell escapes the string.
 //
-// Context should be aditional information to be prefixed for the error message.
+// Context should be additional information to be prefixed for the error message.
 func (mock *MockEnv) AssertOutput(t TestingT, prefix, got string, wants ...string) {
 	var lastWant string
 	for _, want := range wants {
@@ -190,7 +190,7 @@ func (mock *MockEnv) AssertOutput(t TestingT, prefix, got string, wants ...strin
 	t.Errorf("%s got = %q, want = %q", prefix, got, lastWant)
 }
 
-// interpolate interpolates the striing values by replacing all ins
+// interpolate interpolates the string values by replacing all ins
 func (mock *MockEnv) interpolate(value string) (result string) {
 	return regexGGROOT.ReplaceAllStringFunc(value, func(s string) string {
 		// extract the first character, actual characters, and the last character

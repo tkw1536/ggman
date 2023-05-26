@@ -47,7 +47,7 @@ func (cl *CanLine) Unmarshal(s string) error {
 type CanFile []CanLine
 
 // ReadFrom populates this CanFile with CanLines read from the given reader.
-// It returns an error (if any occured) and the total bytes read from reader.
+// It returns an error (if any occurred) and the total bytes read from reader.
 //
 // Individual CanLines are parsed using CanLine.Unmarshal().
 // If reader returns a non-EOF error or parsing fails, ReadFrom returns an appropriate error.

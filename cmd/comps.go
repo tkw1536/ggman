@@ -8,7 +8,7 @@ import (
 // Comps is the 'ggman comps' command.
 //
 // When invoked, it prints the components of the first argument passed to it.
-// Each component is printed on a seperate line of standard output.
+// Each component is printed on a separate line of standard output.
 var Comps ggman.Command = comps{}
 
 type comps struct {

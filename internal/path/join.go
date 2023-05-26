@@ -15,7 +15,7 @@ const (
 	// NoNorm uses the exact spelling of the original path
 	NoNorm Normalization = iota
 
-	// FoldNorm reuses subpaths when they are identical under case-folding
+	// FoldNorm reuses sub paths when they are identical under case-folding
 	// It always uses the first matching subpath, regardless of how it matches
 	FoldNorm
 	// FoldPreferExactNorm is like Fold, except that it uses the exact path if it already exists

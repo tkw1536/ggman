@@ -121,7 +121,7 @@ func (pat PatternFilter) Score(env Env, clonePath string) float64 {
 			return -1
 		}
 		actualClonePath, err := filepath.Abs(clonePath)
-		if err != nil { // clonepath not resolved
+		if err != nil { // clone path not resolved
 			return -1
 		}
 		remote, err = filepath.Rel(root, actualClonePath)

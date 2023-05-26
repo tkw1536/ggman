@@ -51,7 +51,7 @@ type FuzzyFoldPattern string
 // Score scores a string against this pattern.
 //
 // To determine the score, we first check if they are reasonably equal.
-// When not equal, we immediatly return a negative score.
+// When not equal, we immediately return a negative score.
 //
 // When equal we determine the Levenshtein distance between the pattern and score.
 // A higher distance, results in a lower score.
@@ -87,7 +87,7 @@ type GlobPattern string
 
 // Score checks if a string matches this pattern.
 // When a string matches, returns a score of 1, else -1.
-// Matching is determined using case-insenstive glob matching.
+// Matching is determined using case-insensitive glob matching.
 func (p GlobPattern) Score(s string) float64 {
 	if fnmatch.Match(string(p), s, fnmatch.FNM_CASEFOLD) {
 		return 1
@@ -96,7 +96,7 @@ func (p GlobPattern) Score(s string) float64 {
 }
 
 // NewSplitGlobPattern is a pattern that uses the given splitter for a new SplitPattern.
-// Each subpattern consists of a call to NewGlobPattern.
+// Each sub-pattern consists of a call to NewGlobPattern.
 func NewSplitGlobPattern(pattern string, splitter func(string) []string, fuzzy bool) SplitPattern {
 	globs := splitter(pattern)
 

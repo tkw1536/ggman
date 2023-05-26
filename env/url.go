@@ -38,7 +38,7 @@ func (u *URL) UnmarshalFlag(value string) error {
 func ParseURL(s string) (repo URL) {
 	s = normPath(s)
 
-	// Trim off a leading scheme (as seperated by '://') and (if it is valid) store it.
+	// Trim off a leading scheme (as separated by '://') and (if it is valid) store it.
 	scheme, rest := split.Before(s, "://")
 	if url.IsValidURLScheme(scheme) {
 		repo.Scheme = scheme
@@ -99,14 +99,14 @@ func ParseURL(s string) (repo URL) {
 // Namespaces may not be nested, meaning only one expansion of namespaces is done.
 // This is to prevent infinite loops during parsing.
 //
-// ParseURLContext always suceeds.
+// ParseURLContext always succeeds.
 // This can lead to unexpected parses of URLs when e.g. a port is specified incorrectly.
 //
 // For windows compatibility, '\\' is replaced by '/' in the input string.
 func ParseURLContext(s string, namespaces map[string]string) (repo URL) {
 	s = normPath(s)
 
-	// substiute the namespaces beforehand
+	// substitute the namespaces beforehand
 	// check the long form before the short form
 	for ns, expansion := range namespaces {
 		if v, ok := strings.CutPrefix(s, ns+"://"); ok {
@@ -125,7 +125,7 @@ func ParseURLContext(s string, namespaces map[string]string) (repo URL) {
 
 var windowsReplacer = strings.NewReplacer("\\", "/")
 
-// normPath normalizes a path to use the same seperator on windows systems
+// normPath normalizes a path to use the same separator on windows systems
 func normPath(s string) string {
 	return windowsReplacer.Replace(s)
 }

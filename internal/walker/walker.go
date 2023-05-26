@@ -16,7 +16,7 @@ import (
 // The criterion is determined by the Process parameter.
 //
 // Process also determines if the process can operate on multiple directories concurrently.
-// Parameters determine the initial root directorie(s) to start with, and what level of concurrency the walker may make use of.
+// Parameters determine the initial root directory (or directories) to start with, and what level of concurrency the walker may make use of.
 //
 // Each Walker may be used only once.
 // A typical use of a walker looks like:
@@ -302,7 +302,7 @@ func (w *Walker[S]) walk(sync bool, ctx *context[S]) (ok bool) {
 		case action == DoNothing || !valid:
 			w.wg.Done()
 		case action == DoConcurrent:
-			// work asyncronously and discard the parent!
+			// work asynchronously and discard the parent!
 			go func(cctx *context[S]) {
 				defer w.returnCtx(cctx)
 				w.walk(false, cctx)
@@ -326,7 +326,7 @@ func (w *Walker[S]) walk(sync bool, ctx *context[S]) (ok bool) {
 		}
 	}
 
-	// we have finished all (syncronous) operations
+	// we have finished all (synchronous) operations
 	if err := w.Process.AfterVisit(ctx); err != nil {
 		w.reportError(err)
 		return false
@@ -341,7 +341,7 @@ func (w *Walker[S]) reportResult(path, rpath string, score float64) {
 }
 
 // reportErrors reports the provided error to the caller of Walk()
-// When another error has already occured, does nothing
+// When another error has already occurred, does nothing
 func (w *Walker[S]) reportError(err error) {
 	select {
 	case w.errChan <- err:
@@ -359,7 +359,7 @@ func (w *Walker[S]) Results() []string {
 // Paths returns the path of all nodes which have been marked as a result.
 //
 // When resolved is true, returns the normalized (resolved) paths; else the non-normalized versions are returned.
-// Directories are returned in sorted order; sorted first ascending by priority then by lexiographically by resolved node path.
+// Directories are returned in sorted order; sorted first ascending by priority then by lexicographically by resolved node path.
 // Each call to result returns a new copy of the results.
 //
 // Paths expects the Scan() function to have returned, and will panic if this is not the case.
@@ -389,7 +389,7 @@ func (w *Walker[S]) Scores() []float64 {
 
 var ErrUnknownAction = errors.New("Process.BeforeChild(): Unknown action")
 
-// walkResult represents an internal result of the wlak function
+// walkResult represents an internal result of the walk function
 type walkResult struct {
 	NodePath  string
 	NodeRPath string
@@ -398,7 +398,7 @@ type walkResult struct {
 
 // LessThan returns true if w should occur before v when sorting a slice of walkResults
 //
-// Sorting first occurs descending by Score, then ascending by lexiographic order on Node.
+// Sorting first occurs descending by Score, then ascending by lexicographic order on Node.
 func (w walkResult) LessThan(v walkResult) bool {
 	switch {
 	case w.Score < v.Score:

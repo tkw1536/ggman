@@ -31,5 +31,5 @@ type Context = goprogram.Context[ggmanEnv, ggmanParameters, ggmanFlags, ggmanReq
 // Arguments is the type of ggman Arguments
 type Arguments = goprogram.Arguments[ggmanFlags]
 
-// Description is the type of descriptuions of a ggman command
+// Description is the type of descriptions of a ggman command
 type Description = goprogram.Description[ggmanFlags, ggmanRequirements]
