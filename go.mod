@@ -1,6 +1,6 @@
 module github.com/tkw1536/ggman
 
-go 1.18
+go 1.20
 
 require (
 	github.com/alessio/shellescape v1.4.1
