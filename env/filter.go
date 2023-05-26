@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/tkw1536/ggman/internal/filter"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/pattern"
+	"github.com/tkw1536/pkglib/collection"
 )
 
 // Filter is a predicate that scores repositories inside an environment.
@@ -166,7 +166,7 @@ func (or DisjunctionFilter) Candidates() []string {
 	}
 
 	// remove duplicates from the result
-	return filter.RemoveDuplicates(candidates)
+	return collection.Deduplicate(candidates)
 }
 
 // TODO: Do we need tests for this?

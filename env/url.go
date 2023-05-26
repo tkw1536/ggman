@@ -4,9 +4,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/tkw1536/ggman/internal/filter"
 	"github.com/tkw1536/ggman/internal/split"
 	"github.com/tkw1536/ggman/internal/url"
+	"github.com/tkw1536/pkglib/collection"
 )
 
 // URL represents a URL to a single git repository.
@@ -144,7 +144,7 @@ func (url URL) IsLocal() bool {
 func (url URL) Components() []string {
 	// First split the path into components split by '/'.
 	// and remove a '.git' from the last part.
-	parts := filter.RemoveZeros(strings.Split(url.Path, "/"))
+	parts := collection.Filter(strings.Split(url.Path, "/"), func(s string) bool { return s != "" })
 	lastPart := len(parts) - 1
 	if lastPart >= 0 {
 		parts[lastPart] = strings.TrimSuffix(parts[lastPart], ".git")
