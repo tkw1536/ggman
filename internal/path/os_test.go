@@ -1,17 +1,20 @@
 package path
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 func TestToOSPath(t *testing.T) {
 	tests := []struct {
 		name string
 		want string
 	}{
-		{"hello/world", "hello" + Separator + "world"},
+		{"hello/world", "hello" + string(os.PathSeparator) + "world"},
 		{"", ""},
-		{"./", "." + Separator},
-		{"hello/../world", "hello" + Separator + ".." + Separator + "world"},
-		{"/root", defaultVolumePrefix + Separator + "root"},
+		{"./", "." + string(os.PathSeparator)},
+		{"hello/../world", "hello" + string(os.PathSeparator) + ".." + string(os.PathSeparator) + "world"},
+		{"/root", defaultVolumePrefix + string(os.PathSeparator) + "root"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

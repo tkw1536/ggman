@@ -2,12 +2,13 @@
 package path
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 )
 
 // pathUpSegment is a segment that indicates that a path should go up
-var pathUpSegment = ".." + Separator
+var pathUpSegment = ".." + string(os.PathSeparator)
 
 // GoesUp checks if path is a path that goes up at least one directory.
 func GoesUp(path string) bool {

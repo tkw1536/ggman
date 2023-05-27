@@ -6,9 +6,6 @@ import (
 	"strings"
 )
 
-// Separator contains filepath.Separator as a string
-const Separator = string(filepath.Separator)
-
 // defaultVolumePrefix is a prefix to use for the default volume
 var defaultVolumePrefix = filepath.VolumeName(os.TempDir())
 
@@ -22,7 +19,7 @@ func ToOSPath(path string) (result string) {
 	if len(path) > 0 && path[0] == '/' {
 		result = defaultVolumePrefix
 	}
-	result += strings.ReplaceAll(path, "/", Separator)
+	result += strings.ReplaceAll(path, "/", string(os.PathSeparator))
 	return
 }
 

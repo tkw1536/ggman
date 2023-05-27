@@ -46,7 +46,7 @@ func joinFold(preferExact bool, base string, elem ...string) (string, error) {
 	builder.WriteString(base)
 
 	exists := true // does the current path exist?
-	for _, elem := range strings.Split(elems, Separator) {
+	for _, elem := range strings.Split(elems, string(os.PathSeparator)) {
 		// if elements up to this point exist, we need to list the directory
 		// and then find a matching folded name!
 		if exists {
@@ -63,7 +63,7 @@ func joinFold(preferExact bool, base string, elem ...string) (string, error) {
 
 		// add the new path to the builder
 		if builder.Len() > 1 { // if root path!
-			builder.WriteString(Separator)
+			builder.WriteRune(os.PathSeparator)
 		}
 		builder.WriteString(elem)
 	}
