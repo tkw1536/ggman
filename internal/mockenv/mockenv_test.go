@@ -9,7 +9,7 @@ import (
 	"github.com/alessio/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/internal/path"
+	"github.com/tkw1536/ggman/internal/testutil"
 )
 
 // recordingT records a message passed to Errorf()
@@ -37,21 +37,21 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 		args        args
 		wantMessage string
 	}{
-		{"no replacement equal", fields{path.ToOSPath("/root/")}, args{"logprefix", "example", []string{"example"}}, ""},
-		{"no replacement not equal", fields{path.ToOSPath("/root/")}, args{"logprefix", "example", []string{"example2"}}, "logprefix got = \"example\", want = \"example2\""},
+		{"no replacement equal", fields{testutil.ToOSPath("/root/")}, args{"logprefix", "example", []string{"example"}}, ""},
+		{"no replacement not equal", fields{testutil.ToOSPath("/root/")}, args{"logprefix", "example", []string{"example2"}}, "logprefix got = \"example\", want = \"example2\""},
 
-		{"replace only ggroot ok", fields{path.ToOSPath("/root/")}, args{"logprefix", "prefix " + path.ToOSPath("/root") + " suffix", []string{"prefix ${GGROOT} suffix"}}, ""},
-		{"replace only ggroot not ok", fields{path.ToOSPath("/root/")}, args{"logprefix", "prefix " + path.ToOSPath("/root") + " suffix", []string{"prefix ${GGROOT}/sub suffix"}}, fmt.Sprintf("logprefix got = %q, want = %q", "prefix "+path.ToOSPath("/root")+" suffix", "prefix "+path.ToOSPath("/root")+"/sub suffix")},
+		{"replace only ggroot ok", fields{testutil.ToOSPath("/root/")}, args{"logprefix", "prefix " + testutil.ToOSPath("/root") + " suffix", []string{"prefix ${GGROOT} suffix"}}, ""},
+		{"replace only ggroot not ok", fields{testutil.ToOSPath("/root/")}, args{"logprefix", "prefix " + testutil.ToOSPath("/root") + " suffix", []string{"prefix ${GGROOT}/sub suffix"}}, fmt.Sprintf("logprefix got = %q, want = %q", "prefix "+testutil.ToOSPath("/root")+" suffix", "prefix "+testutil.ToOSPath("/root")+"/sub suffix")},
 
-		{"replace full path ok", fields{path.ToOSPath("/root/")}, args{"logprefix", "prefix " + path.ToOSPath("/root/a/b") + " suffix", []string{"prefix ${GGROOT a b} suffix"}}, ""},
-		{"replace full path not ok", fields{path.ToOSPath("/root/")}, args{"logprefix", "prefix " + path.ToOSPath("/root") + " suffix", []string{"prefix ${GGROOT a b} suffix"}}, fmt.Sprintf("logprefix got = %q, want = %q", "prefix "+path.ToOSPath("/root")+" suffix", "prefix "+path.ToOSPath("/root/a/b")+" suffix")},
+		{"replace full path ok", fields{testutil.ToOSPath("/root/")}, args{"logprefix", "prefix " + testutil.ToOSPath("/root/a/b") + " suffix", []string{"prefix ${GGROOT a b} suffix"}}, ""},
+		{"replace full path not ok", fields{testutil.ToOSPath("/root/")}, args{"logprefix", "prefix " + testutil.ToOSPath("/root") + " suffix", []string{"prefix ${GGROOT a b} suffix"}}, fmt.Sprintf("logprefix got = %q, want = %q", "prefix "+testutil.ToOSPath("/root")+" suffix", "prefix "+testutil.ToOSPath("/root/a/b")+" suffix")},
 
-		{"escape path with quotes", fields{path.ToOSPath("/root/")}, args{"logprefix", fmt.Sprintf("%q", path.ToOSPath("/root")), []string{"\"${GGROOT}\""}}, ""},
-		{"escape path with `s", fields{path.ToOSPath("/!root/")}, args{"logprefix", shellescape.Quote(path.ToOSPath("/!root")), []string{"`${GGROOT}`"}}, ""},
+		{"escape path with quotes", fields{testutil.ToOSPath("/root/")}, args{"logprefix", fmt.Sprintf("%q", testutil.ToOSPath("/root")), []string{"\"${GGROOT}\""}}, ""},
+		{"escape path with `s", fields{testutil.ToOSPath("/!root/")}, args{"logprefix", shellescape.Quote(testutil.ToOSPath("/!root")), []string{"`${GGROOT}`"}}, ""},
 
-		{"equal to first want is ok", fields{path.ToOSPath("/root/")}, args{"logprefix", "first", []string{"first", "last"}}, ""},
-		{"equal to last want is ok", fields{path.ToOSPath("/root/")}, args{"logprefix", "last", []string{"first", "last"}}, ""},
-		{"not equal to any wants shows last error", fields{path.ToOSPath("/root/")}, args{"logprefix", "neither", []string{"first error", "${GGROOT last}"}}, fmt.Sprintf("logprefix got = %q, want = %q", "neither", path.ToOSPath("/root/last"))},
+		{"equal to first want is ok", fields{testutil.ToOSPath("/root/")}, args{"logprefix", "first", []string{"first", "last"}}, ""},
+		{"equal to last want is ok", fields{testutil.ToOSPath("/root/")}, args{"logprefix", "last", []string{"first", "last"}}, ""},
+		{"not equal to any wants shows last error", fields{testutil.ToOSPath("/root/")}, args{"logprefix", "neither", []string{"first error", "${GGROOT last}"}}, fmt.Sprintf("logprefix got = %q, want = %q", "neither", testutil.ToOSPath("/root/last"))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

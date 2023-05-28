@@ -354,7 +354,7 @@ func TestEnv_ScanRepos(t *testing.T) {
 				return
 			}
 			trimAll(got)
-			path.ToOSPaths(tt.want)
+			testutil.ToOSPaths(tt.want)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Env.ScanRepos() = %v, want %v", got, tt.want)
 			}
@@ -427,7 +427,7 @@ func TestEnv_ScanRepos_fuzzy(t *testing.T) {
 				return
 			}
 			trimAll(got)
-			path.ToOSPaths(tt.want)
+			testutil.ToOSPaths(tt.want)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Env.ScanRepos() = %v, want %v", got, tt.want)
 			}

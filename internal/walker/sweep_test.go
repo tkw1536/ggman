@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/path"
+	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/pkglib/testlib"
 )
 
@@ -92,7 +92,7 @@ func TestSweep(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := Sweep(tt.visit, tt.params)
 			trimAll(got)
-			path.ToOSPaths(tt.want)
+			testutil.ToOSPaths(tt.want)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Sweep() error = %v, wantErr %v", err, tt.wantErr)
 				return

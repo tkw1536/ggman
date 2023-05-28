@@ -1,4 +1,4 @@
-package path
+package testutil
 
 import (
 	"os"
@@ -14,7 +14,7 @@ func TestToOSPath(t *testing.T) {
 		{"", ""},
 		{"./", "." + string(os.PathSeparator)},
 		{"hello/../world", "hello" + string(os.PathSeparator) + ".." + string(os.PathSeparator) + "world"},
-		{"/root", defaultVolumePrefix + string(os.PathSeparator) + "root"},
+		{"/root", defaultVolumeName + string(os.PathSeparator) + "root"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

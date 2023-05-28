@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/path"
+	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/pkglib/testlib"
 )
 
@@ -113,7 +113,7 @@ func TestScan(t *testing.T) {
 		{
 			"scan /, stop inside '/ab'",
 			func(pth string, root FS, depth int) (score float64, cont bool) {
-				return ScanMatch(true), trimPath(pth) != path.ToOSPath("a/ab")
+				return ScanMatch(true), trimPath(pth) != testutil.ToOSPath("a/ab")
 			},
 			Params{
 				Root: NewRealFS(base, false),
@@ -195,7 +195,7 @@ func TestScan(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := Scan(tt.visit, tt.params)
 			trimAll(got)
-			path.ToOSPaths(tt.want)
+			testutil.ToOSPaths(tt.want)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Scan() error = %v, wantErr %v", err, tt.wantErr)
 				return

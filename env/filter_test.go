@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/pattern"
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/pkglib/testlib"
@@ -366,7 +365,7 @@ func TestPatternFilter_Score(t *testing.T) {
 					Root: root,
 					Git:  git.NewGitFromPlumbing(nil, ""),
 				},
-				path.ToOSPath(tt.args.clonePath),
+				testutil.ToOSPath(tt.args.clonePath),
 			); got != tt.want {
 				t.Errorf("PatternFilter().Matches() = %v, want %v", got, tt.want)
 			}
@@ -442,8 +441,8 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 			"two pathfilters match first path",
 			fields{
 				Clauses: []Filter{
-					PathFilter{[]string{path.ToOSPath("/root/matcha")}},
-					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{testutil.ToOSPath("/root/matcha")}},
+					PathFilter{[]string{testutil.ToOSPath("/root/matchb")}},
 				},
 			},
 			args{
@@ -457,8 +456,8 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 			"two pathfilters match second path",
 			fields{
 				Clauses: []Filter{
-					PathFilter{[]string{path.ToOSPath("/root/matcha")}},
-					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{testutil.ToOSPath("/root/matcha")}},
+					PathFilter{[]string{testutil.ToOSPath("/root/matchb")}},
 				},
 			},
 			args{
@@ -472,8 +471,8 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 			"two pathfilters do not match third path",
 			fields{
 				Clauses: []Filter{
-					PathFilter{[]string{path.ToOSPath("/root/matcha")}},
-					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{testutil.ToOSPath("/root/matcha")}},
+					PathFilter{[]string{testutil.ToOSPath("/root/matchb")}},
 				},
 			},
 			args{
@@ -489,8 +488,8 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 				Clauses: tt.fields.Clauses,
 			}
 			if got := or.Score(
-				Env{Root: path.ToOSPath(tt.args.root)},
-				path.ToOSPath(tt.args.clonePath),
+				Env{Root: testutil.ToOSPath(tt.args.root)},
+				testutil.ToOSPath(tt.args.clonePath),
 			); got != tt.want {
 				t.Errorf("DisjunctionFilter.Score() = %v, want %v", got, tt.want)
 			}
@@ -519,11 +518,11 @@ func TestDisjunctionFilter_Candidates(t *testing.T) {
 			"two candidates get returned",
 			fields{
 				Clauses: []Filter{
-					PathFilter{[]string{path.ToOSPath("/root/matcha")}},
-					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{testutil.ToOSPath("/root/matcha")}},
+					PathFilter{[]string{testutil.ToOSPath("/root/matchb")}},
 				},
 			},
-			path.ToOSPaths([]string{
+			testutil.ToOSPaths([]string{
 				"/root/matcha",
 				"/root/matchb",
 			}),
@@ -533,12 +532,12 @@ func TestDisjunctionFilter_Candidates(t *testing.T) {
 			"duplicate candidates get returned only once",
 			fields{
 				Clauses: []Filter{
-					PathFilter{[]string{path.ToOSPath("/root/matcha")}},
-					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
-					PathFilter{[]string{path.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{testutil.ToOSPath("/root/matcha")}},
+					PathFilter{[]string{testutil.ToOSPath("/root/matchb")}},
+					PathFilter{[]string{testutil.ToOSPath("/root/matchb")}},
 				},
 			},
-			path.ToOSPaths([]string{
+			testutil.ToOSPaths([]string{
 				"/root/matcha",
 				"/root/matchb",
 			}),
