@@ -198,7 +198,7 @@ func (uw urlweb) Run(context ggman.Context) error {
 		if len(uw.Positionals.Base) > 0 {
 			base = uw.Positionals.Base
 
-			// lookup in builtins
+			// lookup in builtin
 			if builtIn, ok := WebBuiltInBases[base]; ok {
 				base = builtIn.URL
 				uw.BaseAsPrefix = builtIn.IncludeHost

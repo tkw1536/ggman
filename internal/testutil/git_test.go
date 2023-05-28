@@ -11,15 +11,15 @@ func TestNewTestRepo(t *testing.T) {
 	dir, repo := NewTestRepo(t)
 
 	if s, err := os.Stat(dir); err != nil || !s.IsDir() {
-		t.Errorf("NewTestRepo(): Directory was not created. ")
+		t.Errorf("NewTestRepo: Directory was not created. ")
 	}
 
 	if repo == nil {
-		t.Errorf("NewTestRepo(): Repository was not returned. ")
+		t.Errorf("NewTestRepo: Repository was not returned. ")
 	}
 
 	if _, err := git.PlainOpen(dir); err != nil {
-		t.Errorf("NewTestRepo(): Repository was not created. ")
+		t.Errorf("NewTestRepo: Repository was not created. ")
 	}
 }
 
@@ -31,10 +31,10 @@ func TestCommitTestFiles(t *testing.T) {
 	// check that the repository has 'hash' checked out.
 	head, err := repo.Head()
 	if err != nil {
-		t.Errorf("CommitTestFiles(): No HEAD")
+		t.Errorf("CommitTestFiles: No HEAD")
 	}
 
 	if head.Hash() != hash {
-		t.Errorf("CommitTestFiles(): returned hash not checked out")
+		t.Errorf("CommitTestFiles: returned hash not checked out")
 	}
 }

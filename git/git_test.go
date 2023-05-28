@@ -26,12 +26,12 @@ func TestNewGitFromPlumbing(t *testing.T) {
 
 	// no path => use a gogit
 	if _, isgogit := NewGitFromPlumbing(nil, "").Plumbing().(*gogit); !isgogit {
-		t.Errorf("NewGitFromPlumbing(): Expected *gogit")
+		t.Errorf("NewGitFromPlumbing: Expected *gogit")
 	}
 
 	// path but no git => use a gogit
 	if _, isgogit := NewGitFromPlumbing(nil, dir).Plumbing().(*gogit); !isgogit {
-		t.Errorf("NewGitFromPlumbing(): Expected *gogit")
+		t.Errorf("NewGitFromPlumbing: Expected *gogit")
 	}
 
 	if err := os.WriteFile(filepath.Join(dir, "git"), nil, os.ModePerm&0x111); err != nil {
@@ -43,7 +43,7 @@ func TestNewGitFromPlumbing(t *testing.T) {
 
 	// path with git => gitgit
 	if _, isgitgit := NewGitFromPlumbing(nil, dir).Plumbing().(*gitgit); !isgitgit {
-		t.Errorf("NewGitFromPlumbing(): Expected *gitgit")
+		t.Errorf("NewGitFromPlumbing: Expected *gitgit")
 	}
 
 }

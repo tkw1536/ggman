@@ -208,7 +208,7 @@ var errUnableDir = exit.Error{
 func (env Env) Local(url URL) (string, error) {
 	root, err := env.absRoot()
 	if err != nil {
-		panic("Env.Local(): Root not resolved")
+		panic("Env.Local: Root not resolved")
 	}
 
 	path, err := path.JoinNormalized(env.Normalization(), root, url.Components()...)
@@ -266,7 +266,7 @@ func (env Env) At(p string) (repo, worktree string, err error) {
 	// Changes here should be reflected in AtRoot().
 	root, err := env.absRoot()
 	if err != nil {
-		panic("Env.At(): Root not resolved")
+		panic("Env.At: Root not resolved")
 	}
 
 	// find the absolute path that p points to
@@ -327,7 +327,7 @@ func (env Env) AtRoot(p string) (repo string, err error) {
 // This function is untested.
 func (env Env) Canonical(url URL) string {
 	if env.CanFile == nil {
-		panic("Env.Canonical(): CanFile is nil")
+		panic("Env.Canonical: CanFile is nil")
 	}
 	return url.CanonicalWith(env.CanFile)
 }
@@ -376,7 +376,7 @@ func (env Env) ScanReposScores(folder string, resolved bool) ([]string, []float6
 		var err error
 		folder, err = env.absRoot()
 		if err != nil {
-			panic("env.Repos(): Root not resolved")
+			panic("Env.Repos: Root not resolved")
 		}
 	}
 

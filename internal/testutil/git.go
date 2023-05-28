@@ -25,7 +25,7 @@ func NewTestRepo(t *testing.T) (clonePath string, repo *git.Repository) {
 	// then actually do a git PlainInit
 	repo = NewTestRepoAt(clonePath, "")
 	if repo == nil {
-		panic("NewTestRepoAt(): Repository not created")
+		panic("NewTestRepoAt: Repository not created")
 	}
 
 	return

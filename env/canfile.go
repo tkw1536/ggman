@@ -83,7 +83,7 @@ func (cf *CanFile) ReadDefault() {
 	*cf = make([]CanLine, len(defaultCanFile))
 	for i, cl := range defaultCanFile {
 		if err := (*cf)[i].Unmarshal(cl); err != nil {
-			panic("CanFile.ReadDefault(): Unable to parse default CanFile line")
+			panic("CanFile.ReadDefault: Unable to parse default CanFile line")
 		}
 	}
 }

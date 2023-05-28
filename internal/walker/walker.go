@@ -167,7 +167,7 @@ type WalkContext[S any] interface {
 func (w *Walker[S]) Walk() error {
 	// state of the walker
 	if !w.state.CompareAndSwap(walkerUnused, walkerRunning) {
-		panic("Walker.Walk(): Attempted reuse")
+		panic("Walker.Walk: Attempted reuse")
 	}
 	defer w.state.Store(walkerFinished)
 
@@ -365,7 +365,7 @@ func (w *Walker[S]) Results() []string {
 // Paths expects the Scan() function to have returned, and will panic if this is not the case.
 func (w *Walker[S]) Paths(resolved bool) []string {
 	if w.state.Load() != walkerFinished {
-		panic("Walker.Paths(): Results() called before Walk() returned")
+		panic("Walker.Paths: Results() called before Walk() returned")
 	}
 
 	if resolved {
@@ -381,13 +381,13 @@ func (w *Walker[S]) Paths(resolved bool) []string {
 // Results expects the Scan() function to have returned, and will panic if this is not the case.
 func (w *Walker[S]) Scores() []float64 {
 	if w.state.Load() != walkerFinished {
-		panic("Walker.Walk(): Scores() called before Walk() returned")
+		panic("Walker.Walk: Scores() called before Walk() returned")
 	}
 
 	return slices.Clone(w.scores)
 }
 
-var ErrUnknownAction = errors.New("Process.BeforeChild(): Unknown action")
+var ErrUnknownAction = errors.New("Process.BeforeChild: Unknown action")
 
 // walkResult represents an internal result of the walk function
 type walkResult struct {
