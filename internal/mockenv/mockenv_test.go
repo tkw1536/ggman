@@ -10,6 +10,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/pkglib/testlib"
 )
 
 // recordingT records a message passed to Errorf()
@@ -136,4 +137,19 @@ func TestMockEnv_Run(t *testing.T) {
 		})
 	}
 
+}
+
+func TestMockEnv_Register(t *testing.T) {
+	const remote = "https://examaple.com/repo.git"
+
+	mock := NewMockEnv(t)
+	mock.Register(remote)
+
+	panicked, _ := testlib.DoesPanic(func() {
+		mock.Register(remote)
+	})
+
+	if !panicked {
+		t.Errorf("MockEnv.Register: Allowed dual registration")
+	}
 }

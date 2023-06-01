@@ -105,12 +105,22 @@ func (mock *MockEnv) Clone(remote string, path ...string) (clonePath string) {
 // All remote urls point to the same path.
 // Returns a reference to the remote repository.
 //
+// Remotes must not have been registered before, or panic() will be called.
+//
 // The purpose of registering a remote is that it does not place a requirement for external services to be alive during testing.
 // Calls to clone or fetch the provided repository will instead of talking to the remote talk to this dummy repository instead.
 func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 	if len(remotes) == 0 {
 		panic("Register: Must provide at least one remote. ")
 	}
+
+	// check that we have fresh remotes for all urls
+	for _, remote := range remotes {
+		if _, ok := mock.plumbing.URLMap[remote]; ok {
+			panic("Register: remote " + remote + " already registered")
+		}
+	}
+
 	// generate a new fake remote path
 	mock.remoteCounter++
 	fakeRemotePath := filepath.Join(mock.remoteRoot, "remote"+fmt.Sprint(mock.remoteCounter))
