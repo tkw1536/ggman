@@ -101,10 +101,14 @@ func (r relocate) Run(context ggman.Context) error {
 		{
 			err := os.Rename(gotPath, shouldPath)
 
-			// check fi something already exists
-			if errors.Is(err, fs.ErrExist) {
-				return errPathAlreadyExists.WithMessageF(shouldPath)
+			// check if an error was returned because the path already existed
+			// (fs.ErrPermission is returned by Windows)
+			if errors.Is(err, fs.ErrExist) || errors.Is(err, fs.ErrPermission) {
+				if exists, _ := fsx.Exists(shouldPath); exists {
+					return errPathAlreadyExists.WithMessageF(shouldPath)
+				}
 			}
+
 			if err != nil {
 				return errUnableToMoveRepo.WrapError(err)
 			}
