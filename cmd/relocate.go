@@ -34,12 +34,17 @@ func (relocate) Description() ggman.Description {
 }
 
 var errUnableMoveCreateParent = exit.Error{
-	Message:  "unable to create parent directory for destination: %s",
+	Message:  "unable to create parent directory for destination",
 	ExitCode: exit.ExitGeneric,
 }
 
 var errUnableToMoveRepo = exit.Error{
-	Message:  "unable to move repository: %s",
+	Message:  "unable to move repository",
+	ExitCode: exit.ExitGeneric,
+}
+
+var errRepositoryAlreadyExists = exit.Error{
+	Message:  "a repository already exists at %q",
 	ExitCode: exit.ExitGeneric,
 }
 
@@ -71,11 +76,23 @@ func (r relocate) Run(context ggman.Context) error {
 
 		// do it!
 		if err := os.MkdirAll(parentPath, os.ModePerm); err != nil {
-			return errUnableMoveCreateParent.WithMessageF(err)
+			return errUnableMoveCreateParent.WrapError(err)
 		}
 
+		// if there already is a target repository at the path
+		{
+			got, err := context.Environment.AtRoot(shouldPath)
+			if err != nil {
+				return errUnableToMoveRepo.WrapError(err)
+			}
+			if got != "" {
+				return errRepositoryAlreadyExists.WithMessageF(got)
+			}
+		}
+
+		// we're fine to do the rename
 		if err := os.Rename(gotPath, shouldPath); err != nil {
-			return errUnableToMoveRepo.WithMessageF(err)
+			return errUnableToMoveRepo.WrapError(err)
 		}
 	}
 
