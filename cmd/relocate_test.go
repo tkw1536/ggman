@@ -84,7 +84,7 @@ func TestCommandRelocate(t *testing.T) {
 	}
 }
 
-func TestCommandRelocate_exists(t *testing.T) {
+func TestCommandRelocate_existsRepo(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	// clone the same repository twice
@@ -121,6 +121,60 @@ func TestCommandRelocate_exists(t *testing.T) {
 			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com right other}` `${GGROOT github.com right directory}`\n",
 
 			"A repository already exists at\n\"${GGROOT github.com right directory}\"\n",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			code, stdout, stderr := mock.Run(Relocate, tt.workdir, "", tt.args...)
+			if code != tt.wantCode {
+				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
+			}
+			mock.AssertOutput(t, "Stdout", stdout, tt.wantStdout)
+			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
+		})
+	}
+}
+
+func TestCommandRelocate_existsPath(t *testing.T) {
+	mock := mockenv.NewMockEnv(t)
+
+	// clone the same repository twice
+	mock.Clone("https://github.com/right/directory.git", "github.com", "wrong", "directory")
+
+	if err := os.MkdirAll(mock.Resolve("github.com", "right", "directory"), os.ModePerm|os.ModeDir); err != nil {
+		panic(err)
+	}
+
+	tests := []struct {
+		name    string
+		workdir string
+		args    []string
+
+		wantCode   uint8
+		wantStdout string
+		wantStderr string
+	}{
+		{
+			"relocate with simulate",
+			"",
+			[]string{"relocate", "--simulate"},
+
+			0,
+			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com wrong directory}` `${GGROOT github.com right directory}`\n",
+
+			"",
+		},
+
+		{
+			"relocate without simulate",
+			"",
+			[]string{"relocate"},
+
+			1,
+			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com wrong directory}` `${GGROOT github.com right directory}`\n",
+
+			"Path\n\"${GGROOT github.com right directory}\"\nalready exists\n",
 		},
 	}
 

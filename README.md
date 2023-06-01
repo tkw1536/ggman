@@ -429,6 +429,7 @@ ggman comes with the following builtin aliases:
 - rework some of the shell aliases
 - `Makefile`: Make sure to always build with cgo disabled
 - rework filter scoring to take position of match into account
+- improve `ggman relocate` error handling in some edge cases 
 - fix a lot of typos
 - update dependencies
 

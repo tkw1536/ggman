@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 
@@ -48,6 +50,11 @@ var errRepositoryAlreadyExists = exit.Error{
 	ExitCode: exit.ExitGeneric,
 }
 
+var errPathAlreadyExists = exit.Error{
+	Message:  "path %q already exists",
+	ExitCode: exit.ExitGeneric,
+}
+
 func (r relocate) Run(context ggman.Context) error {
 	for _, gotPath := range context.Environment.Repos(false) {
 		// determine the remote path and where it should go
@@ -90,9 +97,17 @@ func (r relocate) Run(context ggman.Context) error {
 			}
 		}
 
-		// we're fine to do the rename
-		if err := os.Rename(gotPath, shouldPath); err != nil {
-			return errUnableToMoveRepo.WrapError(err)
+		// do the rename
+		{
+			err := os.Rename(gotPath, shouldPath)
+
+			// check fi something already exists
+			if errors.Is(err, fs.ErrExist) {
+				return errPathAlreadyExists.WithMessageF(shouldPath)
+			}
+			if err != nil {
+				return errUnableToMoveRepo.WrapError(err)
+			}
 		}
 	}
 
