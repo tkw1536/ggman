@@ -3,43 +3,60 @@ package url
 
 import (
 	"errors"
+	"math"
 )
 
-var errNoPort = errors.New("ParsePort: input is not a number")
-var errInvalidRange = errors.New("ParsePort: port number out of range")
+var (
+	errNotANumber = errors.New("ParsePort: not a valid port number")
+	errOutOfRange = errors.New("ParsePort: port not in range")
+)
 
-const maxValidPort = 65535         // maximal port (as a number)
-const maxPortStr = "65535"         // maximal port (as a string)
-const maxPortLen = len(maxPortStr) // maximal port length
+const (
+	maxValid      = math.MaxUint16  // maximal port (as a number)
+	maxMultiply10 = maxValid / 10   // maximum value before multiplication by 10
+	maxPortStr    = "65535"         // maximal port (as a string)
+	maxPortLen    = len(maxPortStr) // maximal port length
+)
 
 // ParsePort parses a string into a valid port.
 // A port is between 0 and 65535 (inclusive).
 // It may not start with "+" and must only consist of digits.
 //
 // When a port can not be parsed, returns 0 and an error.
-func ParsePort(s string) (uint16, error) {
+func ParsePort(s string) (v uint16, err error) {
 
-	// when the input string is too long, we don't even need to try
-	// parsing can just fail immediately.
-	if len(s) > maxPortLen {
-		return 0, errInvalidRange
-	}
+	// hadOverflow determines if we had an overflow
+	hadOverflow := false
 
-	// an inlined version of ParseInt(s, 10, 16)
-
-	// we first parse into a uint32
-	// so that we can afterwards check for overflow
-
-	var v uint32
 	for _, ch := range []byte(s) {
-		if '0' > ch || ch > '9' { // invalid digit
-			return 0, errNoPort
+		if '0' > ch || ch > '9' { // not a digit!
+			return 0, errNotANumber
 		}
-		v = v*10 + uint32(ch-'0')
+
+		// if we had an overflow, we just check for digits
+		if hadOverflow {
+			continue
+		}
+
+		// multiply the previous digits by 10
+		if v > maxMultiply10 {
+			hadOverflow = true
+			continue
+		}
+		v = 10 * v
+
+		// add the current digit
+		digit := uint16(ch - '0')
+		if v > maxValid-digit {
+			hadOverflow = true
+			continue
+		}
+		v += digit
 	}
 
-	if v > maxValidPort {
-		return 0, errInvalidRange
+	// we had an overflow
+	if hadOverflow {
+		return 0, errOutOfRange
 	}
 
 	return uint16(v), nil
