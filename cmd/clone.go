@@ -61,7 +61,7 @@ func (c *clone) AfterParse() error {
 
 var errCloneInvalidDest = exit.Error{
 	ExitCode: exit.ExitGeneralArguments,
-	Message:  "unable to determine local destination for %q: %s",
+	Message:  "unable to determine local destination for %q",
 }
 
 var errCloneLocalURI = exit.Error{
@@ -94,7 +94,7 @@ func (c clone) Run(context ggman.Context) error {
 	remote := context.Environment.Canonical(url)
 	local, err := c.dest(context, url)
 	if err != nil {
-		return errCloneInvalidDest.WithMessageF(c.Positional.URL, err)
+		return errCloneInvalidDest.WithMessageF(c.Positional.URL).WrapError(err)
 	}
 
 	// do the actual cloning!

@@ -31,7 +31,7 @@ type Flags struct {
 
 var errNotADirectory = exit.Error{
 	ExitCode: ExitInvalidRepo,
-	Message:  "not a directory: %q",
+	Message:  "%q is not a directory",
 }
 
 // NewFilter creates a new filter corresponding to the given Flags and Environment.

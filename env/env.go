@@ -116,8 +116,7 @@ func (env Env) absRoot() (string, error) {
 	}
 	root, err := filepath.Abs(env.Root)
 	if err != nil {
-		err = errInvalidRoot.WithMessageF(err)
-		return "", errMissingRoot
+		return "", errInvalidRoot.WrapError(err)
 	}
 	return root, nil
 }
@@ -230,7 +229,7 @@ const (
 
 var errInvalidRoot = exit.Error{
 	ExitCode: ExitInvalidEnvironment,
-	Message:  "unable to resolve root directory: %s",
+	Message:  "unable to resolve root directory",
 }
 
 var errNotResolved = exit.Error{

@@ -49,7 +49,7 @@ var errLinkAlreadyExists = exit.Error{
 
 var errLinkUnknown = exit.Error{
 	ExitCode: exit.ExitGeneric,
-	Message:  "unknown linking error: %s",
+	Message:  "unknown linking error",
 }
 
 func (l link) Run(context ggman.Context) error {
@@ -93,12 +93,12 @@ func (l link) Run(context ggman.Context) error {
 
 	// make the parent folder
 	if e := os.MkdirAll(parentTo, os.ModePerm); e != nil {
-		return errLinkUnknown.WithMessageF(e)
+		return errLinkUnknown.WrapError(e)
 	}
 
 	// and make the symlink
 	if e := os.Symlink(from, to); e != nil {
-		return errLinkUnknown.WithMessageF(e)
+		return errLinkUnknown.WrapError(e)
 	}
 
 	return nil
