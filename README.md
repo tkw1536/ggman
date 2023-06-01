@@ -422,7 +422,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.20.0 (Upcoming)
+### 1.21.0 (Upcoming)
+
+### 1.20.0 (Released [Jun 1 2023](https://github.com/tkw1536/ggman/releases/tag/v1.20.0))
 
 - add `ggman show` alias to show the head commit of a repository
 - add `ggshow` utility
@@ -431,7 +433,8 @@ ggman comes with the following builtin aliases:
 - rework filter scoring to take position of match into account
 - improve `ggman relocate` error handling in some edge cases 
 - fix a lot of typos
-- update dependencies
+- update to `goprogram` 0.4.0
+- update various other dependencies
 
 ### 1.19.0 (Released [Apr 4 2023](https://github.com/tkw1536/ggman/releases/tag/v1.19.0))
 
