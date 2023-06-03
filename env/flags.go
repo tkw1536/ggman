@@ -75,32 +75,15 @@ func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
 		filter = NoFilter
 	}
 
-	// add a WorktreeFilter filter if requested
+	// setup some additional filters
 	if flags.Dirty || flags.Clean {
-		filter = WorktreeFilter{
-			Filter: filter,
-
-			Dirty: flags.Dirty,
-			Clean: flags.Clean,
-		}
+		filter = NewWorktreeFilter(filter, flags.Dirty, flags.Clean)
 	}
-
 	if flags.Synced || flags.UnSynced {
-		filter = StatusFilter{
-			Filter: filter,
-
-			Synced:   flags.Synced,
-			UnSynced: flags.UnSynced,
-		}
+		filter = NewStatusFilter(filter, flags.Synced, flags.UnSynced)
 	}
-
 	if flags.Tarnished || flags.Pristine {
-		filter = TarnishFilter{
-			Filter: filter,
-
-			Tarnished: flags.Tarnished,
-			Pristine:  flags.Pristine,
-		}
+		filter = NewTarnishFilter(filter, flags.Tarnished, flags.Pristine)
 	}
 
 	return
