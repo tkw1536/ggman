@@ -40,10 +40,10 @@ func Benchmark_Before(b *testing.B) {
 	}
 }
 
-func TestAfter(t *testing.T) {
+func TestAfterRune(t *testing.T) {
 	type args struct {
 		s   string
-		sep string
+		sep rune
 	}
 	tests := []struct {
 		name       string
@@ -51,18 +51,18 @@ func TestAfter(t *testing.T) {
 		wantPrefix string
 		wantSuffix string
 	}{
-		{"splitFoundOnce", args{"a;b", ";"}, "a", "b"},
-		{"splitFoundMultiple", args{"a;b;c", ";"}, "a", "b;c"},
-		{"splitNotFound", args{"aaa", ";"}, "aaa", ""},
+		{"splitFoundOnce", args{"a;b", ';'}, "a", "b"},
+		{"splitFoundMultiple", args{"a;b;c", ';'}, "a", "b;c"},
+		{"splitNotFound", args{"aaa", ';'}, "aaa", ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotPrefix, gotSuffix := After(tt.args.s, tt.args.sep)
+			gotPrefix, gotSuffix := AfterRune(tt.args.s, tt.args.sep)
 			if gotPrefix != tt.wantPrefix {
-				t.Errorf("After() gotPrefix = %v, want %v", gotPrefix, tt.wantPrefix)
+				t.Errorf("AfterRune() gotPrefix = %v, want %v", gotPrefix, tt.wantPrefix)
 			}
 			if gotSuffix != tt.wantSuffix {
-				t.Errorf("After() gotSuffix = %v, want %v", gotSuffix, tt.wantSuffix)
+				t.Errorf("AfterRune() gotSuffix = %v, want %v", gotSuffix, tt.wantSuffix)
 			}
 		})
 	}
@@ -70,8 +70,8 @@ func TestAfter(t *testing.T) {
 
 func Benchmark_After(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		After("a;b", ";")
-		After("a;b;c", ";")
-		After("aaa", ";")
+		AfterRune("a;b", ';')
+		AfterRune("a;b;c", ';')
+		AfterRune("aaa", ';')
 	}
 }

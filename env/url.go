@@ -48,24 +48,24 @@ func ParseURL(s string) (repo URL) {
 	// Next, we split of the authentication if we have an '@' sign.
 	// Technically the if { } clause isn't required, the code will work fine without it.
 	// However most URLs will not have an '@' sign, so we can save allocating an extra variable and the function call.
-	if strings.ContainsRune(s, '@') {
+	if at := strings.IndexRune(s, '@'); at > 0 {
 		var auth string
-		auth, s = split.Before(s, "@")
-		repo.User, repo.Password = split.After(auth, ":")
+		auth, s = s[:at], s[at+1:]
+		repo.User, repo.Password = split.AfterRune(auth, ':')
 	}
 
 	// Finally, we check if the remainder contains a ':'.
 	// If it does, we have to figure out if it is of the form hostname:port or hostname:path.
 	// The second form is only allowed if we have some kind of scheme.
 	// If there is no ':', we can straightforwardly split after the first '/'
-	if strings.ContainsRune(s, ':') {
-		repo.HostName, s = split.Before(s, ":")
+	if colon := strings.IndexRune(s, ':'); colon >= 0 {
+		repo.HostName, s = s[:colon], s[colon+1:]
 
 		// if we have a scheme, then we have to parse everything after ':' as a port.
 		// This only works if the port is valid.
 		if repo.Scheme != "" {
 			var err error
-			port, rest := split.After(s, "/")
+			port, rest := split.AfterRune(s, '/')
 			if repo.Port, err = url.ParsePort(port); err == nil {
 				s = rest
 			}
@@ -75,7 +75,7 @@ func ParseURL(s string) (repo URL) {
 		return
 	}
 
-	repo.HostName, repo.Path = split.After(s, "/")
+	repo.HostName, repo.Path = split.AfterRune(s, '/')
 	return
 }
 
@@ -177,7 +177,7 @@ func (url URL) Canonical(cspec string) (canonical string) {
 	components := url.Components()
 
 	// split into prefix and suffix
-	prefix, suffix := split.After(cspec, "$")
+	prefix, suffix := split.AfterRune(cspec, '$')
 
 	prefix = specReplace.ReplaceAllStringFunc(prefix, func(s string) string {
 		// if everything is empty, return the string as is
