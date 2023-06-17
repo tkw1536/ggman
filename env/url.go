@@ -187,7 +187,7 @@ func (url URL) Canonical(cspec string) (canonical string) {
 		switch r {
 		case '%':
 			// insufficient components.
-			if len(components) >= 2 {
+			if len(components) < 2 {
 				builder.WriteRune(r)
 				break /* switch */
 			}
