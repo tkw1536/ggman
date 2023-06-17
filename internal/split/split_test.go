@@ -68,7 +68,7 @@ func TestAfterRune(t *testing.T) {
 	}
 }
 
-func Benchmark_After(b *testing.B) {
+func Benchmark_AfterRune(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		AfterRune("a;b", ';')
 		AfterRune("a;b;c", ';')
