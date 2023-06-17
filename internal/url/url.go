@@ -67,9 +67,9 @@ func ParsePort(s string) (v uint16, err error) {
 // A valid url scheme is one that matches the regex [a-zA-Z][a-zA-Z0-9+\-\.]*.
 func IsValidURLScheme(s string) bool {
 	// An obvious implementation of this function would be:
-	//   regexp.MustCompile("^[a-zA-Z][a-zA-Z0-9+\-\.]*$").MatchString(s)
-	// However such an implementation would be relatively slow when called a lot of times.
-	// Instead we directly build code that implements this RegEx.
+	//   regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9+\-\.]*$`).MatchString(s)
+	// However such an implementation would be a lot slower when called repeatedly.
+	// Instead we directly build code that implements this regex.
 	//
 	// For this we first check that the string is non-empty.
 	// Then we check that the first character is not a '+', '-' or '.'
@@ -85,7 +85,7 @@ func IsValidURLScheme(s string) bool {
 	}
 
 	for _, r := range s {
-		if !(('a' <= r && r <= 'z') || ('A' <= r && r <= 'Z')) && // more efficient version of !@unicode.isLetter(r)
+		if !(('a' <= r && r <= 'z') || ('A' <= r && r <= 'Z')) && // more efficient version of !@unicode.isLetter(r) for ascii
 			r != '+' &&
 			r != '-' &&
 			r != '.' {

@@ -1,12 +1,12 @@
 package env
 
 import (
-	"regexp"
 	"strings"
 
 	"github.com/tkw1536/ggman/internal/split"
 	"github.com/tkw1536/ggman/internal/url"
 	"github.com/tkw1536/pkglib/collection"
+	"github.com/tkw1536/pkglib/text"
 )
 
 // URL represents a URL to a single git repository.
@@ -164,46 +164,54 @@ func (url URL) Components() []string {
 	return append(components, parts...)
 }
 
-var specReplace = regexp.MustCompile(`[\^\%]`)
-
 // Canonical returns the canonical version of this URI given a canonical specification
 // the canonical specification can contain any character, except for three special ones
 // ^ -- replaced by the first un-used component of the URI
 // % -- replaced by the second un-used component of the URI (commonly username)
-// $ -- replaced by all remaining components in the URI joined with a '/'. Also stops all processing afterwards
+// $ -- replaced by all remaining components in the URI joined with a '/'. Also stops all processing afterwards.
 // If $ does not exist in the cspec, it is assumed to be at the end of the cspec.
 func (url URL) Canonical(cspec string) (canonical string) {
-	// get the components of the URI
-	components := url.Components()
+	var builder strings.Builder
 
-	// split into prefix and suffix
-	prefix, suffix := split.AfterRune(cspec, '$')
+	components := url.Components()                // get the components of the URI
+	prefix, suffix := split.AfterRune(cspec, '$') // split into modable and static part
 
-	prefix = specReplace.ReplaceAllStringFunc(prefix, func(s string) string {
-		// if everything is empty, return the string as is
+	for i, r := range prefix {
+		// no more components left
+		// => we can immediately exit the loop
 		if len(components) == 0 {
-			return s
+			builder.WriteString(prefix[i:])
+			break
 		}
 
-		// replace by the first component
-		if s == "^" {
-			defer func() { components = components[1:] }()
-			return components[0]
+		switch r {
+		case '%':
+			// insufficient components.
+			if len(components) >= 2 {
+				builder.WriteRune(r)
+				break /* switch */
+			}
+
+			// write the second component
+			builder.WriteString(components[1])
+			components[1] = components[0]
+			components = components[1:]
+		case '^':
+			// write the first component
+			builder.WriteString(components[0])
+			components = components[1:]
+		default:
+			builder.WriteRune(r)
 		}
+	}
 
-		// else we want to replace by the second component
-		// so we need to make sure we have that many
-		if len(components) < 2 {
-			return s
-		}
+	// add all the components to replace the '$'
+	text.Join(&builder, components, "/")
 
-		// do the replacement
-		defer func() { components = append(components[:1], components[2:]...) }()
-		return components[1]
-	})
+	// add the suffix
+	builder.WriteString(suffix)
 
-	// add the remaining components
-	return prefix + strings.Join(components, "/") + suffix
+	return builder.String()
 }
 
 // CanonicalWith returns the canonical url given a set of lines
