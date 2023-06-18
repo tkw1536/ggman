@@ -3,7 +3,6 @@ package testutil
 import (
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 // defaultVolumeName is a consistent volume name to prefix to paths.
@@ -15,15 +14,11 @@ var defaultVolumeName = filepath.VolumeName(os.TempDir())
 //
 // When path starts with "/", the path is guaranteed to contain a volume name.
 func ToOSPath(path string) (result string) {
-	if path == "" {
-		return ""
+	if len(path) > 0 && path[0] == '/' {
+		result = defaultVolumeName
 	}
-
-	parts := strings.Split(path, "/")
-	if parts[0] == "" {
-		parts[0] = defaultVolumeName
-	}
-	return strings.Join(parts, string(os.PathSeparator))
+	result += filepath.FromSlash(path)
+	return result
 }
 
 // ToOSPaths is like ToOSPath, but applies to each value in a slice or array.

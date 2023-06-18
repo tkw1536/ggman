@@ -296,9 +296,14 @@ func (uw urlweb) getRemoteURLFake(context ggman.Context) (root string, remote st
 		return "", "", "", err
 	}
 
+	// check that the
+	if !path.HasChild(context.Environment.Root, workdir) {
+		return "", "", "", errNoRelativeRepository
+	}
+
 	// determine the relative path to the root directory
 	relpath, err := filepath.Rel(context.Environment.Root, workdir)
-	if err != nil || path.GoesUp(relpath) {
+	if err != nil {
 		return "", "", "", errNoRelativeRepository
 	}
 

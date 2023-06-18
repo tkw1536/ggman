@@ -65,7 +65,7 @@ type PathFilter struct {
 // See Filter.Score.
 func (pf PathFilter) Score(env Env, clonePath string) float64 {
 	for _, p := range pf.Paths {
-		if path.Contains(p, clonePath) {
+		if path.HasChild(p, clonePath) {
 			return 1
 		}
 	}
