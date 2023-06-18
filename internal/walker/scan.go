@@ -25,21 +25,31 @@ func Scan(Visit ScanProcess, Params Params) ([]string, error) {
 }
 
 // ScanProcess is a function that is called once for each directory that is being walked.
-// It returns a pair of float64 score and bool continue.
+// It returns a triple of float64 score, bool continue and err error.
 //
-// match indicates that what score the path received. A non-negative score indicates a match, and will be returned in the array from Scan().
+// match indicates that what score the path received.
+// A non-negative score indicates a match, and will be returned in the array from Scan().
 // cont indicates if Scan() should continue scanning recursively.
+// err != nil indicates that an error has occurred, and the entire process should be aborted.
 //
 // ScanProcess may be nil.
-// In such a case, it is assumed to return the pair (0, true) for every invocation.
+// In such a case, it is assumed to return (0, true, nil) for every invocation.
 //
 // ScanProcess implements Process and can be used with Walk
-type ScanProcess func(path string, root FS, depth int) (score float64, cont bool)
+type ScanProcess func(path string, root FS, depth int) (score float64, cont bool, err error)
 
 func (v ScanProcess) Visit(context WalkContext[struct{}]) (shouldVisitChildren bool, err error) {
-	match, cont := float64(0), true
-	if v != nil {
-		match, cont = v(context.NodePath(), context.Root(), context.Depth())
+
+	// implement v == nil case
+	if v == nil {
+		context.Mark(0)
+		return true, nil
+	}
+
+	// call the match function (safely)
+	match, cont, err := v(context.NodePath(), context.Root(), context.Depth())
+	if err != nil {
+		return false, err
 	}
 	if match >= 0 {
 		context.Mark(match)

@@ -396,11 +396,11 @@ func (env Env) ScanReposScores(folder string, resolved bool) ([]string, []float6
 	}
 
 	scanner := &walker.Walker[struct{}]{
-		Process: walker.ScanProcess(func(path string, _ walker.FS, _ int) (score float64, cont bool) {
+		Process: walker.ScanProcess(func(path string, _ walker.FS, _ int) (score float64, cont bool, err error) {
 			if env.Git.IsRepositoryQuick(path) {
-				return env.Filter.Score(env, path), false // never continue even if a repository does not match
+				return env.Filter.Score(env, path), false, nil // never continue even if a repository does not match
 			}
-			return walker.ScanMatch(false), true
+			return walker.ScanMatch(false), true, nil
 		}),
 		Params: walker.Params{
 			Root: walker.NewRealFS(folder, true),

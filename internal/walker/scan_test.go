@@ -90,8 +90,8 @@ func TestScan(t *testing.T) {
 		},
 		{
 			"scan /, accept only three-triples",
-			func(path string, root FS, depth int) (score float64, cont bool) {
-				return ScanMatch(depth == 3), true
+			func(path string, root FS, depth int) (score float64, cont bool, err error) {
+				return ScanMatch(depth == 3), true, nil
 			},
 			Params{
 				Root: NewRealFS(base, false),
@@ -112,8 +112,8 @@ func TestScan(t *testing.T) {
 		},
 		{
 			"scan /, stop inside '/ab'",
-			func(pth string, root FS, depth int) (score float64, cont bool) {
-				return ScanMatch(true), trimPath(pth) != testutil.ToOSPath("a/ab")
+			func(pth string, root FS, depth int) (score float64, cont bool, err error) {
+				return ScanMatch(true), trimPath(pth) != testutil.ToOSPath("a/ab"), nil
 			},
 			Params{
 				Root: NewRealFS(base, false),
