@@ -40,16 +40,36 @@ func (u *URL) UnmarshalFlag(value string) error {
 	return nil
 }
 
-// ParseURL parses a URL without any namespaces.
-// See ParseURLNamespace.
+var windowsReplacer = strings.NewReplacer("\\", "/")
+
+// ParseURL parses a string into a repo URL.
+//
+// We support two types of urls:
+//
+// 1. The long form:
+// [scheme://][user[:password]@]hostname[:port]/path
+// e.g. https://git:git@mydomain:1234/repo.git
+// e.g. https://git@mydomain/example
+//
+// 2. The short form:
+// [scheme://][user[:password]@]hostname:path
+// e.g. mydomain:hello/world.git
+//
+// ParseURL always succeeds.
+// This can lead to unexpected parses of URLs when e.g. a port is specified incorrectly.
+//
+// For windows compatibility, '\\' is replaced by '/' in the input string.
 func ParseURL(s string) (repo URL) {
-	s = normPath(s)
+	// normalize for windows
+	s = windowsReplacer.Replace(s)
 
 	// Trim off a leading scheme (as separated by '://') and (if it is valid) store it.
-	scheme, rest := split.Before(s, "://")
-	if url.IsValidURLScheme(scheme) {
-		repo.Scheme = scheme
-		s = rest
+	{
+		scheme, rest := split.Before(s, "://")
+		if url.IsValidURLScheme(scheme) {
+			repo.Scheme = scheme
+			s = rest
+		}
 	}
 
 	// Next, we split of the authentication if we have an '@' sign.
@@ -84,57 +104,6 @@ func ParseURL(s string) (repo URL) {
 
 	repo.HostName, repo.Path = split.AfterRune(s, '/')
 	return
-}
-
-// ParseURLContext parses a string into a repo URL, while expanding the provided namespaces.
-//
-// We support two types of urls:
-//
-// 1. The long form:
-// [scheme://][user[:password]@]hostname[:port]/path
-// e.g. https://git:git@mydomain:1234/repo.git
-// e.g. https://git@mydomain/example
-//
-// 2. The short form:
-// [scheme://][user[:password]@]hostname:path
-// e.g. mydomain:hello/world.git
-//
-// A namespace may be prepended to the URL using the form 'namespace:[//]'
-// When a namespace is encountered, the remainder of the URL is appended to the expansion of the namespace.
-// Then the URL parsing is restarted.
-//
-// Namespaces may not be nested, meaning only one expansion of namespaces is done.
-// This is to prevent infinite loops during parsing.
-//
-// ParseURLContext always succeeds.
-// This can lead to unexpected parses of URLs when e.g. a port is specified incorrectly.
-//
-// For windows compatibility, '\\' is replaced by '/' in the input string.
-func ParseURLContext(s string, namespaces map[string]string) (repo URL) {
-	s = normPath(s)
-
-	// substitute the namespaces beforehand
-	// check the long form before the short form
-	for ns, expansion := range namespaces {
-		if v, ok := strings.CutPrefix(s, ns+"://"); ok {
-			s = expansion + v
-			break
-		}
-
-		if v, ok := strings.CutPrefix(s, ns+":"); ok {
-			s = expansion + v
-			break
-		}
-	}
-
-	return ParseURL(s)
-}
-
-var windowsReplacer = strings.NewReplacer("\\", "/")
-
-// normPath normalizes a path to use the same separator on windows systems
-func normPath(s string) string {
-	return windowsReplacer.Replace(s)
 }
 
 // IsLocal checks if this URL looks like a local URL.
