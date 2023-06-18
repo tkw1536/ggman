@@ -141,7 +141,7 @@ func TestParseURLContext(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotRepo := ParseURLContext(tt.args.s, tt.args.namespaces)
+			gotRepo := ParseURLNamespace(tt.args.s, tt.args.namespaces)
 			if !reflect.DeepEqual(gotRepo, tt.wantRepo) {
 				t.Errorf("ParseURLContext() = %v, want %v", gotRepo, tt.wantRepo)
 			}

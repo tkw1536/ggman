@@ -7,6 +7,8 @@ import (
 	"github.com/tkw1536/ggman/internal/url"
 	"github.com/tkw1536/pkglib/collection"
 	"github.com/tkw1536/pkglib/text"
+
+	"github.com/jessevdk/go-flags"
 )
 
 // URL represents a URL to a single git repository.
@@ -28,6 +30,11 @@ type URL struct {
 	Path string // e.g. "hello/world.git"
 }
 
+var (
+	_ flags.Unmarshaler = (*URL)(nil)
+)
+
+// UnmarshalFlag implements the flags.Unmarshaler interface.
 func (u *URL) UnmarshalFlag(value string) error {
 	*u = ParseURL(value)
 	return nil
