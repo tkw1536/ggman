@@ -305,6 +305,7 @@ func TestComponentsOf(t *testing.T) {
 		{"git://host.xz:1234/path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
 		{"host.xz:path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
 		{"user@host.xz:path/to/repo.git/", []string{"host.xz", "user", "path", "to", "repo"}},
+		{"user@host.xz:path/to/repo", []string{"host.xz", "user", "path", "to", "repo"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.s, func(t *testing.T) {
@@ -312,6 +313,20 @@ func TestComponentsOf(t *testing.T) {
 				t.Errorf("ComponentsOf() = %#v, want %#v", got, tt.want)
 			}
 		})
+	}
+}
+
+func BenchmarkComponentsOf(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		ComponentsOf("ssh://host.xz/path/to/repo.git/")
+		ComponentsOf("ssh://user@host.xz/path/to/repo.git/")
+		ComponentsOf("ssh://host.xz:1234/path/to/repo.git/")
+		ComponentsOf("ssh://user@host.xz:1234/path/to/repo.git/")
+		ComponentsOf("git://host.xz/path/to/repo.git/")
+		ComponentsOf("git://host.xz:1234/path/to/repo.git/")
+		ComponentsOf("host.xz:path/to/repo.git/")
+		ComponentsOf("user@host.xz:path/to/repo.git/")
+		ComponentsOf("user@host.xz:path/to/repo")
 	}
 }
 

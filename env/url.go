@@ -118,26 +118,33 @@ func (url URL) IsLocal() bool {
 // Empty components are ignored.
 // Furthermore a username 'git' as well as a trailing suffix of '.git' are ignored as well.
 func (url URL) Components() []string {
-	// First split the path into components split by '/'.
-	// and remove a '.git' from the last part.
-	parts := collection.Filter(strings.Split(url.Path, "/"), func(s string) bool { return s != "" })
-	lastPart := len(parts) - 1
-	if lastPart >= 0 {
-		parts[lastPart] = strings.TrimSuffix(parts[lastPart], ".git")
+	// First split the path into components split by '/'
+	// Adding the two '//' makes sure that there is enough space in the slice.
+	components := collection.Filter(strings.Split(url.Path, "/"), func(s string) bool { return s != "" })
+
+	// remove the last component that has a '.git' in it
+	if last := len(components) - 1; last >= 0 {
+		components[last] = strings.TrimSuffix(components[last], ".git")
 
 		// if we had a '/' before the .git, remove it
-		if parts[lastPart] == "" {
-			parts = parts[:lastPart]
+		if components[last] == "" {
+			components = components[:last]
 		}
 	}
 
-	// Now prepend the hostname and user (unless it is 'git' or missing)
-	components := make([]string, 1, 2+len(parts))
-	components[0] = url.HostName
-	if url.User != "" && url.User != "git" {
-		components = append(components, url.User)
+	// Prepend the hostname and user to the components.
+	if url.User == "" || url.User == "git" {
+		components = append(components, "") // add space to the hostname
+		copy(components[1:], components)
+		components[0] = url.HostName
+	} else {
+		components = append(components, "", "") // add two spaces to the front of the array
+		copy(components[2:], components)
+		components[0] = url.HostName
+		components[1] = url.User
 	}
-	return append(components, parts...)
+
+	return components
 }
 
 // Canonical returns the canonical version of this URI given a canonical specification
