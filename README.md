@@ -425,6 +425,7 @@ ggman comes with the following builtin aliases:
 ### 1.21.0 (Upcoming)
 
 - Various internal performance tweaks
+- Update dependencies
 
 ### 1.20.1 (Released [Jun 1 2023](https://github.com/tkw1536/ggman/releases/tag/v1.20.1))
 

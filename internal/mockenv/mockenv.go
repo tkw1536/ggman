@@ -159,7 +159,8 @@ func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, ar
 
 	// create a program and run Main()
 	fakeggman := ggman.NewProgram()
-	fakeggman.Register(reflectx.Copy(command, true))
+	ccommand, _ := reflectx.CopyInterface(command)
+	fakeggman.Register(ccommand)
 
 	stream := stream.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader, 0)
 
