@@ -1,5 +1,7 @@
 # ggman
 
+<!-- spellchecker:words ggman ggroot shellrc ggcd ggclone ggshow ggcode ggnorm wrld cspec gopath godoc goprogram unsynced jessevdk struct POSIX pflag localgodoc -->
+
 ![CI Status](https://github.com/tkw1536/ggman/workflows/CI/badge.svg)
 
 A golang tool that can manage all your git repositories. 
