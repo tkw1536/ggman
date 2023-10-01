@@ -75,7 +75,7 @@ func TestCommandClone(t *testing.T) {
 
 			1,
 			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\n",
-			"Unable to clone repository: Another git repository already exists in target\nlocation\n",
+			"Unable to clone repository: Another git repository already exists in target location\n",
 		},
 
 		{

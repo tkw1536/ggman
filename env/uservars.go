@@ -58,8 +58,8 @@ var allVariables = []UserVariable{
 }
 
 func init() {
-	slices.SortFunc(allVariables, func(a, b UserVariable) bool {
-		return a.Key < b.Key
+	slices.SortFunc(allVariables, func(a, b UserVariable) int {
+		return strings.Compare(a.Key, b.Key)
 	})
 }
 

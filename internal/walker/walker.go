@@ -4,6 +4,7 @@ package walker
 import (
 	"errors"
 	"io/fs"
+	"strings"
 	"sync"
 	"sync/atomic"
 
@@ -205,7 +206,7 @@ func (w *Walker[S]) Walk() error {
 		}
 
 		// sort the slice
-		slices.SortFunc(results, func(i, j walkResult) bool { return i.LessThan(j) })
+		slices.SortFunc(results, walkResult.compare)
 
 		// store the real (textual) results
 		w.paths = make([]string, len(results))
@@ -396,7 +397,7 @@ type walkResult struct {
 	Score     float64
 }
 
-// LessThan returns true if w should occur before v when sorting a slice of walkResults
+// Compare compares w with v and returns -1 when w should occur before v, 1 if v before w, and 0 if they are equal
 //
 // Sorting first occurs descending by Score, then ascending by lexicographic order on Node.
 func (w walkResult) LessThan(v walkResult) bool {
@@ -410,4 +411,19 @@ func (w walkResult) LessThan(v walkResult) bool {
 	default:
 		return false
 	}
+}
+
+// compare implements a strict weak ordering to compare w with v in the context of sorting a result list.
+// It returns 1 if w should occur after v, -1 if w before v, and 0 if they are equal.
+func (w walkResult) compare(v walkResult) int {
+	cmp := v.Score - w.Score
+	switch {
+	case cmp == 0:
+		return strings.Compare(w.NodeRPath, v.NodeRPath)
+	case cmp < 0:
+		return -1
+	case cmp > 0:
+		return 1
+	}
+	panic("never reached")
 }

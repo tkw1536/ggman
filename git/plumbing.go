@@ -549,7 +549,7 @@ func (gogit) Pull(stream stream.IOStream, clonePath string, cache any) (err erro
 
 func ignoreErrUpToDate(stream stream.IOStream, err error) error {
 	if err == git.NoErrAlreadyUpToDate {
-		stream.StdoutWriteWrap(err.Error())
+		stream.Println(err.Error())
 		err = nil
 	}
 	return err
