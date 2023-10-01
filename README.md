@@ -56,7 +56,7 @@ Afterwards simply place it somewhere in your `$PATH`.
 #### Install from Source
 
 If you do not trust pre-built binaries you can build `ggman` from source. 
-You need [`go`](https://golang.org) (version `1.18` or newer) along with `make` installed on your machine. 
+You need [`go`](https://golang.org) (version `1.21` or newer) along with `make` installed on your machine. 
 After cloning this repository, you can simply type `make install` to have ggman installed automatically 
 
 #### Optional Dependencies
