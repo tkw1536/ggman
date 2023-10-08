@@ -22,10 +22,10 @@ func NewTestRepo(t *testing.T) (clonePath string, repo *git.Repository) {
 	// first create a new temporary directory to put the git repository in
 	clonePath = testlib.TempDirAbs(t)
 
-	// then actually do a git PlainInit
+	// then create a test repo there
 	repo = NewTestRepoAt(clonePath, "")
 	if repo == nil {
-		panic("NewTestRepoAt: Repository not created")
+		panic("NewTestRepo: Repository not created")
 	}
 
 	return
