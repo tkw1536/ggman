@@ -120,7 +120,7 @@ func (url URL) IsLocal() bool {
 func (url URL) Components() []string {
 	// First split the path into components split by '/'
 	// Adding the two '//' makes sure that there is enough space in the slice.
-	components := collection.Filter(strings.Split(url.Path, "/"), func(s string) bool { return s != "" })
+	components := collection.KeepFunc(strings.Split(url.Path, "/"), func(s string) bool { return s != "" })
 
 	// remove the last component that has a '.git' in it
 	if last := len(components) - 1; last >= 0 {
