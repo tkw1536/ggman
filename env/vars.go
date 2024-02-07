@@ -38,7 +38,7 @@ var variablesEnvNames map[int]string
 
 // initialize variablesEnvNames
 func init() {
-	tVariables := reflectx.TypeFor[Variables]()
+	tVariables := reflect.TypeFor[Variables]()
 	variablesEnvNames = make(map[int]string, tVariables.NumField())
 
 	reflectx.IterateFields(tVariables, func(field reflect.StructField, index int) (cancel bool) {
