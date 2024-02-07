@@ -4,7 +4,7 @@ GOBUILD=$(GOCMD) build
 GOINSTALL=$(GOCMD) install
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
-GOGET=$(GOCMD) get
+GOMOD=$(GOCMD) mod
 GOGENERATE=$(GOCMD) generate
 
 # Flags for versioning
@@ -54,7 +54,7 @@ install:
 test: testdeps
 	$(GOTEST) -tags doccheck ./...
 testdeps:
-	$(GOGET) -v ./...
+	$(GOMOD) download
 
 lint:
 	test -z $(shell gofmt -l .)
