@@ -427,7 +427,7 @@ ggman comes with the following builtin aliases:
 ### 1.21.0 (Upcoming)
 
 - Various internal performance tweaks
-- Update to `go 1.21`
+- Update to `go 1.22`
 - Update to goprogram `0.5.0`
 - Update dependencies
 
