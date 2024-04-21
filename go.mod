@@ -1,24 +1,24 @@
 module github.com/tkw1536/ggman
 
-go 1.22.0
+go 1.22.2
 
 require (
 	github.com/alessio/shellescape v1.4.2
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964
-	github.com/go-git/go-git/v5 v5.11.0
+	github.com/go-git/go-git/v5 v5.12.0
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/pkg/errors v0.9.1
 	github.com/tkw1536/goprogram v0.5.0
-	github.com/tkw1536/pkglib v0.0.0-20240207194049-0e932a764faa
-	golang.org/x/exp v0.0.0-20240205201215-2c58cdc269a3
+	github.com/tkw1536/pkglib v0.0.0-20240421230152-7fcf00edc7df
+	golang.org/x/exp v0.0.0-20240416160154-fe59bbe5cc7f
 )
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
-	github.com/Microsoft/go-winio v0.6.1 // indirect
+	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.0.0 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
@@ -31,15 +31,15 @@ require (
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pjbgf/sha1cd v0.3.0 // indirect
-	github.com/sergi/go-diff v1.3.1 // indirect
-	github.com/skeema/knownhosts v1.2.1 // indirect
+	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
+	github.com/skeema/knownhosts v1.2.2 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	golang.org/x/crypto v0.19.0 // indirect
-	golang.org/x/mod v0.15.0 // indirect
-	golang.org/x/net v0.20.0 // indirect
-	golang.org/x/sys v0.17.0 // indirect
-	golang.org/x/term v0.17.0 // indirect
+	golang.org/x/crypto v0.22.0 // indirect
+	golang.org/x/mod v0.17.0 // indirect
+	golang.org/x/net v0.24.0 // indirect
+	golang.org/x/sys v0.19.0 // indirect
+	golang.org/x/term v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	golang.org/x/tools v0.17.0 // indirect
+	golang.org/x/tools v0.20.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )
