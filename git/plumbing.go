@@ -149,7 +149,7 @@ type Plumbing interface {
 //
 // There is no guarantee as to what plumbing is returned.
 func NewPlumbing() Plumbing {
-	// NOTE(twiesing): We cast here to avoid a warning that the Init method is a noop.
+	// NOTE: We cast here to avoid a warning that the Init method is a noop.
 	// We want to keep it in case it does something in the future.
 	gg := Plumbing(gogit{})
 	gg.Init()

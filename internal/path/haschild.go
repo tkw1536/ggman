@@ -48,7 +48,7 @@ func normSep(path string) string {
 // IsPathSeparator reports whether r is a directory separator character.
 // See also "os".IsPathSeparator.
 func IsPathSeparator(r rune) bool {
-	// NOTE(twiesing): This function is untested
+	// NOTE: This function is untested
 
 	// check that it is in bounds
 	return 0 <= r && r <= 255 && os.IsPathSeparator(uint8(r))

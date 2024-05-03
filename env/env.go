@@ -348,7 +348,7 @@ const reposMaxParallelScan = 0
 //
 // See the ScanReposScores() method for more control.
 func (env Env) RepoScores(resolved bool) ([]string, []float64) {
-	// NOTE(twiesing): This function is untested, because only the score-less variant is tested.
+	// NOTE: This function is untested, because only the score-less variant is tested.
 	repos, scores, _ := env.ScanReposScores("", resolved)
 	return repos, scores
 }
@@ -359,7 +359,7 @@ func (env Env) RepoScores(resolved bool) ([]string, []float64) {
 //
 // See the ScanRepos() method for more control.
 func (env Env) Repos(resolved bool) []string {
-	// NOTE(twiesing): This function is untested, because ScanRepos() is tested.
+	// NOTE: This function is untested, because ScanRepos() is tested.
 	repos, _ := env.RepoScores(resolved)
 	return repos
 }
@@ -370,7 +370,7 @@ func (env Env) Repos(resolved bool) []string {
 //
 // When an error occurs, this function may still return a list of (incomplete) repositories along with an error.
 func (env Env) ScanReposScores(folder string, resolved bool) ([]string, []float64, error) {
-	// NOTE(twiesing): This function is untested, only ScanRepos() itself is tested
+	// NOTE: This function is untested, only ScanRepos() itself is tested
 	if folder == "" {
 		var err error
 		folder, err = env.absRoot()

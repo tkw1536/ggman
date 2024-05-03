@@ -22,7 +22,7 @@ func Before(s, sep string) (prefix, suffix string) {
 //
 // See also Before.
 func AfterRune(s string, sep rune) (prefix, suffix string) {
-	// NOTE(twiesing): This uses sep as a rune, because nothing else is required.
+	// NOTE: This uses sep as a rune, because nothing else is required.
 	// And that turns out to be the most efficient variant.
 	if i := strings.IndexRune(s, sep); i >= 0 {
 		return s[:i], s[i+utf8.RuneLen(sep):]
