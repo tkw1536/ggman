@@ -1,5 +1,7 @@
+//spellchecker:words path
 package path
 
+//spellchecker:words path filepath testing github ggman internal testutil pkglib testlib
 import (
 	"os"
 	"path/filepath"

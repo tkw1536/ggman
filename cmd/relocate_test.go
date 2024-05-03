@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words path filepath testing github ggman internal mockenv
 import (
 	"os"
 	"path/filepath"
@@ -8,9 +9,11 @@ import (
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
+//spellchecker:words workdir GGROOT
+
 func TestCommandRelocate(t *testing.T) {
-	symlink := func(oldname, newname string) {
-		err := os.Symlink(oldname, newname)
+	symlink := func(oldName, newName string) {
+		err := os.Symlink(oldName, newName)
 		if err != nil {
 			panic(err)
 		}

@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words bufio strings github errors
 import (
 	"bufio"
 	"io"
@@ -7,6 +8,8 @@ import (
 
 	"github.com/pkg/errors"
 )
+
+//spellchecker:words canfile
 
 // CanLine represents a line within in the canonical configuration file
 type CanLine struct {

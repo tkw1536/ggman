@@ -1,6 +1,9 @@
 // Package pattern provides Pattern
+//
+//spellchecker:words pattern
 package pattern
 
+//spellchecker:words math strings github danwakefield fnmatch lithammer fuzzysearch fuzzy
 import (
 	"math"
 	"strings"
@@ -8,6 +11,8 @@ import (
 	"github.com/danwakefield/fnmatch"
 	"github.com/lithammer/fuzzysearch/fuzzy"
 )
+
+//spellchecker:words casefold
 
 // Pattern is a float predicate on strings.
 //

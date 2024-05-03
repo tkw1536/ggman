@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words reflect github mitchellh homedir pkglib reflectx
 import (
 	"os"
 	"reflect"
@@ -7,6 +8,8 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/tkw1536/pkglib/reflectx"
 )
+
+//spellchecker:words ggman GGROOT CANFILE GGNORM
 
 // Variables represents the values of specific environment variables.
 // Unset variables are represented as the empty string.

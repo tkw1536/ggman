@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words testing github ggman internal mockenv
 import (
 	"testing"
 
@@ -11,7 +12,7 @@ func TestCommandCanon(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		workdir string
+		workDir string
 		args    []string
 
 		wantCode   uint8
@@ -101,7 +102,7 @@ func TestCommandCanon(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			code, stdout, stderr := mock.Run(Canon, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(Canon, tt.workDir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

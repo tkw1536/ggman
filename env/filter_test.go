@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words path filepath reflect testing github ggman internal pattern testutil pkglib testlib
 import (
 	"path/filepath"
 	"reflect"
@@ -10,6 +11,8 @@ import (
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/pkglib/testlib"
 )
+
+//spellchecker:words matcha matchb matchc otherabc
 
 func setupFilterTest(t *testing.T) (root, exampleClonePath, otherClonePath string) {
 	root = testlib.TempDirAbs(t)
@@ -438,7 +441,7 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 		},
 
 		{
-			"two pathfilters match first path",
+			"two PathFilters match first path",
 			fields{
 				Clauses: []Filter{
 					PathFilter{[]string{testutil.ToOSPath("/root/matcha")}},
@@ -453,7 +456,7 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 		},
 
 		{
-			"two pathfilters match second path",
+			"two PathFilters match second path",
 			fields{
 				Clauses: []Filter{
 					PathFilter{[]string{testutil.ToOSPath("/root/matcha")}},
@@ -468,7 +471,7 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 		},
 
 		{
-			"two pathfilters do not match third path",
+			"two PathFilters do not match third path",
 			fields{
 				Clauses: []Filter{
 					PathFilter{[]string{testutil.ToOSPath("/root/matcha")}},

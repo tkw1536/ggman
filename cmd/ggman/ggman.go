@@ -98,8 +98,11 @@
 // When a subcommand succeeds, ggman exits with code 0.
 // When something goes wrong, it instead exits with a non-zero exit code.
 // Exit codes are defined by the ExitCode type in the github.com/tkw1536/ggman package.
+//
+//spellchecker:words main
 package main
 
+//spellchecker:words runtime debug github ggman goprogram exit pkglib stream
 import (
 	"fmt"
 	"os"
@@ -112,6 +115,8 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/pkglib/stream"
 )
+
+//spellchecker:words unsynced GGROOT GGNORM CANFILE shellrc workdir
 
 // the main ggman program that will contain everything
 var ggmanExe = ggman.NewProgram()

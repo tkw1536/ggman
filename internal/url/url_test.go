@@ -1,5 +1,6 @@
 package url
 
+//spellchecker:words math strconv testing
 import (
 	"math"
 	"strconv"
@@ -8,7 +9,7 @@ import (
 
 func Test_ParsePort(t *testing.T) {
 	type args struct {
-		portstring string
+		portString string
 	}
 	tests := []struct {
 		name     string
@@ -28,7 +29,7 @@ func Test_ParsePort(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotPort, err := ParsePort(tt.args.portstring)
+			gotPort, err := ParsePort(tt.args.portString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("parsePort() error = %v, wantErr %v", err, tt.wantErr)
 				return

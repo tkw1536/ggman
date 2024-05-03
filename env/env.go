@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words path filepath strings github errors ggman internal walker goprogram exit pkglib
 import (
 	"io/fs"
 	"os"
@@ -13,6 +14,8 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/pkglib/fsx"
 )
+
+//spellchecker:words worktree canonicalized canonicalize CANFILE workdir GGNORM GGROOT Wrapf
 
 // Env represents an environment to be used by ggman.
 //
@@ -304,7 +307,7 @@ func (env Env) At(p string) (repo, worktree string, err error) {
 // When false, returns the empty string and no error.
 // When something goes wrong, returns an error.
 func (env Env) AtRoot(p string) (repo string, err error) {
-	// This function could check if At(p) returns workdir = "."
+	// This function could check if At(p) returns worktree = "."
 	// but that would create additional disk I/O!
 
 	path, err := env.Abs(p)

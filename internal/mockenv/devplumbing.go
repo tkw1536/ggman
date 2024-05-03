@@ -1,5 +1,7 @@
+//spellchecker:words mockenv
 package mockenv
 
+//spellchecker:words github ggman pkglib stream
 import (
 	"fmt"
 	"io"
@@ -57,8 +59,8 @@ func (dp DevPlumbing) Backward(url string) string {
 }
 
 // Clone translates remoteURI and calls Clone on the underlying Plumbing.
-func (dp DevPlumbing) Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error {
-	return dp.Plumbing.Clone(dp.stream(stream), dp.Forward(remoteURI), clonePath, extraargs...)
+func (dp DevPlumbing) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
+	return dp.Plumbing.Clone(dp.stream(stream), dp.Forward(remoteURI), clonePath, extraArgs...)
 }
 
 // Fetch called Fetch on the underlying Plumbing

@@ -1,6 +1,9 @@
 // Package mockenv contains facilities for unit testing commands
+//
+//spellchecker:words mockenv
 package mockenv
 
+//spellchecker:words path filepath testing github alessio shellescape ggman internal testutil pkglib testlib
 import (
 	"fmt"
 	"path/filepath"
@@ -12,6 +15,8 @@ import (
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/pkglib/testlib"
 )
+
+//spellchecker:words GGROOT logprefix
 
 // recordingT records a message passed to Errorf()
 type recordingT struct {

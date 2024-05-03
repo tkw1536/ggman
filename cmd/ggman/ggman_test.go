@@ -1,5 +1,7 @@
+//spellchecker:words main
 package main
 
+//spellchecker:words testing github ggman internal mockenv pkglib docfmt
 import (
 	"testing"
 
@@ -7,10 +9,12 @@ import (
 	"github.com/tkw1536/pkglib/docfmt"
 )
 
+//spellchecker:words doccheck
+
 // This test runs every command once with the --help flag
 //
 // This tests that the Description() functions do not fail.
-// This also checks that all the docstrings are valid if the doccheck flag is specified.
+// This also checks that all the doc strings are valid if the doccheck flag is specified.
 func Test_main_docs(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 

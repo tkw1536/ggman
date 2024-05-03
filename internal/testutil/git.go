@@ -1,5 +1,7 @@
+//spellchecker:words testutil
 package testutil
 
+//spellchecker:words path testing time github config plumbing object pkglib testlib
 import (
 	"os"
 	"path"
@@ -12,6 +14,8 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/tkw1536/pkglib/testlib"
 )
+
+//spellchecker:words worktree
 
 // NewTestRepo creates a new (empty) repository for testing purposes.
 // clonePath is the path where the repository is located on disk.

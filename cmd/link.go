@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words path filepath github ggman goprogram exit pkglib
 import (
 	"os"
 	"path/filepath"
@@ -9,6 +10,8 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/pkglib/fsx"
 )
+
+//spellchecker:words positionals
 
 // Link is the 'ggman link' command.
 //

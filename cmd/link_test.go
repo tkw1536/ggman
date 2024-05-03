@@ -1,11 +1,14 @@
 package cmd
 
+//spellchecker:words testing github ggman internal mockenv
 import (
 	"fmt"
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
+
+//spellchecker:words workdir GGROOT
 
 func TestCommandLink(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)

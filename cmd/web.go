@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words path filepath github ggman internal goprogram exit golang maps slices browser
 import (
 	"path/filepath"
 
@@ -12,6 +13,8 @@ import (
 
 	"github.com/pkg/browser"
 )
+
+//spellchecker:words CANSPEC godoc localgodoc reclone urlweb positionals GGROOT worktree weburl workdir
 
 // Web is the 'ggman web' command.
 //
@@ -74,7 +77,7 @@ type urlweb struct {
 	Positionals struct {
 		Base string `positional-arg-name:"BASE" description:"if provided, replace the first component with the provided base url. alternatively you can use one of the predefined base URLs. use \"--list-bases\" to see a list of predefined base URLs"`
 	} `positional-args:"true"`
-	List bool `short:"l" long:"list-bases" descrioption:"print a list of all predefined base URLs"`
+	List bool `short:"l" long:"list-bases" description:"print a list of all predefined base URLs"`
 
 	ForceRepoHere bool `short:"f" long:"force-repo-here" description:"pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url"`
 	Branch        bool `short:"b" long:"branch" description:"if provided, include the HEAD reference in the resolved URL"`
@@ -302,11 +305,11 @@ func (uw urlweb) getRemoteURLFake(context ggman.Context) (root string, remote st
 	}
 
 	// determine the relative path to the root directory
-	relpath, err := filepath.Rel(context.Environment.Root, workdir)
+	relPath, err := filepath.Rel(context.Environment.Root, workdir)
 	if err != nil {
 		return "", "", "", errNoRelativeRepository
 	}
 
 	// turn it into a fake url by prepending a protocol
-	return "", "file://" + relpath, "", nil
+	return "", "file://" + relPath, "", nil
 }

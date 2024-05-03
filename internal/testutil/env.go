@@ -1,3 +1,4 @@
+//spellchecker:words testutil
 package testutil
 
 import "os"

@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words bufio strings github errors goprogram exit pkglib
 import (
 	"bufio"
 	"os"
@@ -9,6 +10,8 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/pkglib/fsx"
 )
+
+//spellchecker:words ggman unsynced uncommited worktree wrapf
 
 // Flags represents a set of filter flags used for the ggman goprogram.
 type Flags struct {

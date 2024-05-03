@@ -1,3 +1,4 @@
+//spellchecker:words walker
 package walker
 
 import "io/fs"
@@ -21,7 +22,7 @@ func Scan(Visit ScanProcess, Params Params) ([]string, error) {
 
 	// we can safely access results directly
 	// because now the walker becomes inaccessible!
-	return scanner.rpaths, err
+	return scanner.rPaths, err
 }
 
 // ScanProcess is a function that is called once for each directory that is being walked.

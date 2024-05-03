@@ -2,4 +2,8 @@
 //
 // Functions in this package are not considered part of the stable interface.
 // For this reason most functions are themselves untested.
+//
+//spellchecker:words testutil
 package testutil
+
+//spellchecker:words ggman

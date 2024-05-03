@@ -1,6 +1,9 @@
 // Package split provides Before and After.
+//
+//spellchecker:words split
 package split
 
+//spellchecker:words strings unicode
 import (
 	"strings"
 	"unicode/utf8"

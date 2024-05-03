@@ -1,5 +1,7 @@
+//spellchecker:words split
 package split
 
+//spellchecker:words testing
 import (
 	"testing"
 )

@@ -1,6 +1,9 @@
 // Package record provides Record
+//
+//spellchecker:words record
 package record
 
+//spellchecker:words sync
 import (
 	"sync"
 )

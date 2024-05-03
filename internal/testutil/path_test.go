@@ -1,5 +1,7 @@
+//spellchecker:words testutil
 package testutil
 
+//spellchecker:words testing
 import (
 	"os"
 	"testing"

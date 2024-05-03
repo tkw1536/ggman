@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words errors path filepath github alessio shellescape ggman goprogram exit pkglib
 import (
 	"errors"
 	"io/fs"

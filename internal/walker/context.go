@@ -1,5 +1,7 @@
+//spellchecker:words walker
 package walker
 
+//spellchecker:words golang slices
 import (
 	"io/fs"
 
@@ -95,8 +97,8 @@ func (w context[S]) Depth() int {
 	return len(w.path)
 }
 
-func (w context[S]) Mark(prio float64) {
-	w.w.reportResult(w.nodePath, w.rNodePath, prio)
+func (w context[S]) Mark(priority float64) {
+	w.w.reportResult(w.nodePath, w.rNodePath, priority)
 }
 
 func (w *context[S]) Snapshot(update func(snapshot S) S) {

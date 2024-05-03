@@ -1,5 +1,7 @@
+//spellchecker:words ggman
 package ggman
 
+//spellchecker:words github ggman constants goprogram exit meta
 import (
 	"fmt"
 

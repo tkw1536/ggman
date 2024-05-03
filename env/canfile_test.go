@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words reflect testing
 import (
 	"reflect"
 	"testing"

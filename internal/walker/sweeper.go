@@ -1,6 +1,9 @@
+//spellchecker:words walker
 package walker
 
 import "io/fs"
+
+//spellchecker:words sweeped
 
 // Sweep recursively sweeps a directory tree, and returns all nodes that are empty or contain only empty directories
 // When an error occurs, may continue sweeping until all units have exited and returns nil, err.
@@ -20,7 +23,7 @@ func Sweep(Visit SweepProcess, Params Params) ([]string, error) {
 
 	// we can safely access results directly
 	// because now the walker becomes inaccessible!
-	return scanner.rpaths, err
+	return scanner.rPaths, err
 }
 
 // SweepProcess is a function that is called once for each directory that is being sweeped.

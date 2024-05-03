@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words exec runtime testing github ggman internal mockenv
 import (
 	"os/exec"
 	"runtime"
@@ -7,6 +8,8 @@ import (
 
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
+
+//spellchecker:words workdir GGROOT
 
 func setupExecTest(t *testing.T) (mock *mockenv.MockEnv) {
 	mock = mockenv.NewMockEnv(t)

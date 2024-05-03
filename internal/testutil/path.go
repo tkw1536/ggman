@@ -1,5 +1,7 @@
+//spellchecker:words testutil
 package testutil
 
+//spellchecker:words path filepath
 import (
 	"os"
 	"path/filepath"

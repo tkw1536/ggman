@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words path filepath strings github ggman internal pattern pkglib collection
 import (
 	"os"
 	"path/filepath"
@@ -9,6 +10,8 @@ import (
 	"github.com/tkw1536/ggman/internal/pattern"
 	"github.com/tkw1536/pkglib/collection"
 )
+
+//spellchecker:words worktree
 
 // Filter is a predicate that scores repositories inside an environment.
 //
@@ -231,7 +234,7 @@ func NewWorktreeFilter(Filter Filter, Dirty, Clean bool) Filter {
 	}
 }
 
-// NewStatusFilter returns  new Filter that filters by repositories being synced or unsynced with the remote.
+// NewStatusFilter returns  new Filter that filters by repositories being synced or un-synced with the remote.
 func NewStatusFilter(Filter Filter, Synced, UnSynced bool) Filter {
 	return predicateFilter{
 		Filter: Filter,
@@ -246,7 +249,7 @@ func NewStatusFilter(Filter Filter, Synced, UnSynced bool) Filter {
 }
 
 // NewTarnishFilter returns new Filter that filters by if they have been tarnished or not.
-// A repository is tarnished if it has a dirty working directory, or is unsynced with the remote.
+// A repository is tarnished if it has a dirty working directory, or is un-synced with the remote.
 func NewTarnishFilter(Filter Filter, Tarnished, Pristine bool) Filter {
 	return predicateFilter{
 		Filter: Filter,

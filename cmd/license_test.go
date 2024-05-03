@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words testing github ggman constants legal internal mockenv
 import (
 	"fmt"
 	"testing"
@@ -8,6 +9,8 @@ import (
 	"github.com/tkw1536/ggman/constants/legal"
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
+
+//spellchecker:words workdir
 
 func TestCommandLicense(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)

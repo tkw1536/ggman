@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words strings github ggman internal split pkglib collection text jessevdk flags
 import (
 	"strings"
 
@@ -10,6 +11,8 @@ import (
 
 	"github.com/jessevdk/go-flags"
 )
+
+//spellchecker:words mydomain
 
 // URL represents a URL to a single git repository.
 //
@@ -152,12 +155,12 @@ func (url URL) Components() []string {
 // ^ -- replaced by the first un-used component of the URI
 // % -- replaced by the second un-used component of the URI (commonly username)
 // $ -- replaced by all remaining components in the URI joined with a '/'. Also stops all processing afterwards.
-// If $ does not exist in the cspec, it is assumed to be at the end of the cspec.
-func (url URL) Canonical(cspec string) (canonical string) {
+// If $ does not exist in the cSpec, it is assumed to be at the end of the cSpec.
+func (url URL) Canonical(cSpec string) (canonical string) {
 	var builder strings.Builder
 
 	components := url.Components()                // get the components of the URI
-	prefix, suffix := split.AfterRune(cspec, '$') // split into modable and static part
+	prefix, suffix := split.AfterRune(cSpec, '$') // split into mod-able and static part
 
 	for i, r := range prefix {
 		// no more components left

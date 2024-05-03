@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words testing github config ggman internal mockenv
 import (
 	"testing"
 
@@ -7,6 +8,8 @@ import (
 	"github.com/go-git/go-git/v5/config"
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
+
+//spellchecker:words GGROOT workdir
 
 func TestCommandFindBranch(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)

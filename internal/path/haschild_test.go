@@ -1,5 +1,7 @@
+//spellchecker:words path
 package path
 
+//spellchecker:words testing github ggman internal testutil
 import (
 	"testing"
 

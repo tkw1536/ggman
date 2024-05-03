@@ -1,6 +1,9 @@
 // Package mockenv contains facilities for unit testing commands
+//
+//spellchecker:words mockenv
 package mockenv
 
+//spellchecker:words bytes path filepath regexp strings testing github alessio shellescape ggman gggit internal testutil goprogram exit pkglib reflectx stream testlib
 import (
 	"bytes"
 	"fmt"
@@ -21,6 +24,8 @@ import (
 	"github.com/tkw1536/pkglib/stream"
 	"github.com/tkw1536/pkglib/testlib"
 )
+
+//spellchecker:words GGROOT workdir sandboxed
 
 // TODO: Consider generalizing this part of the test suite.
 // so that we can re-use it for other programs too.
@@ -158,14 +163,14 @@ func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, ar
 	stderrBuffer := &bytes.Buffer{}
 
 	// create a program and run Main()
-	fakeggman := ggman.NewProgram()
-	ccommand, _ := reflectx.CopyInterface(command)
-	fakeggman.Register(ccommand)
+	fakeGGMAN := ggman.NewProgram()
+	cCommand, _ := reflectx.CopyInterface(command)
+	fakeGGMAN.Register(cCommand)
 
 	stream := stream.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader)
 
 	// run the code
-	err := exit.AsError(fakeggman.Main(stream, env.Parameters{
+	err := exit.AsError(fakeGGMAN.Main(stream, env.Parameters{
 		Variables: mock.vars,
 		Plumbing:  mock.plumbing,
 		Workdir:   workdir,

@@ -1,10 +1,14 @@
+//spellchecker:words pattern
 package pattern
 
+//spellchecker:words reflect strings testing
 import (
 	"reflect"
 	"strings"
 	"testing"
 )
+
+//spellchecker:words aaaab
 
 func TestNewGlobPattern(t *testing.T) {
 	type args struct {
@@ -220,7 +224,7 @@ func TestNewSplitGlobPattern(t *testing.T) {
 		want SplitPattern
 	}{
 		{
-			"simple non-fuzzy spliter",
+			"simple non-fuzzy splitter",
 			args{"a;a*b;;", simpleSplitter, false},
 			SplitPattern{
 				Split: simpleSplitter,
@@ -234,7 +238,7 @@ func TestNewSplitGlobPattern(t *testing.T) {
 		},
 
 		{
-			"simple fuzzy spliter",
+			"simple fuzzy splitter",
 			args{"a;a*b;;", simpleSplitter, true},
 			SplitPattern{
 				Split: simpleSplitter,

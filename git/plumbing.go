@@ -1,5 +1,6 @@
 package git
 
+//spellchecker:words exec path filepath runtime github errors golang slices plumbing pkglib stream
 import (
 	"os"
 	"os/exec"
@@ -15,6 +16,8 @@ import (
 	"github.com/tkw1536/pkglib/fsx"
 	"github.com/tkw1536/pkglib/stream"
 )
+
+//spellchecker:words worktree bref reflike gogit gitgit wrapf storer
 
 // Plumbing is an interface that represents a working internal implementation of git.
 // Plumbing is intended to be goroutine-safe, i.e. everything except the Init() method can be called from multiple goroutines at once.
@@ -94,13 +97,13 @@ type Plumbing interface {
 	// clonePath will be the path to a local folder where the repository should be cloned to.
 	// It's parent is guaranteed to exist.
 	//
-	// extraargs will be additional arguments, in the form of arguments of a 'git clone' command.
+	// extraArgs will be additional arguments, in the form of arguments of a 'git clone' command.
 	// When this implementation does not support arguments, it returns ErrArgumentsUnsupported whenever arguments is a list of length > 0.
 	//
 	// If the clone succeeds returns, err = nil.
 	// If the underlying clone command returns a non-zero code, returns an error of type ExitError.
 	// If something else goes wrong, may return any other error type.
-	Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error
+	Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error
 
 	// Fetch should fetch new objects and refs from all remotes of the repository cloned at clonePath.
 	// May attempt to read credentials from stream.Stdin.
@@ -169,11 +172,11 @@ type gitgit struct {
 }
 
 func (gg *gitgit) Init() (err error) {
-	gg.gitPath, err = gg.findgit()
+	gg.gitPath, err = gg.findGit()
 	return
 }
 
-func (gg gitgit) findgit() (git string, err error) {
+func (gg gitgit) findGit() (git string, err error) {
 	if runtime.GOOS == "windows" {
 		return gg.findGitByExtension([]string{"exe"})
 	}
@@ -222,11 +225,11 @@ func (gg gitgit) findGitByExtension(exts []string) (git string, err error) {
 	return "", exec.ErrNotFound
 }
 
-func (gg gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error {
+func (gg gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
 
-	gargs := append([]string{"clone", remoteURI, clonePath}, extraargs...)
+	gitArgs := append([]string{"clone", remoteURI, clonePath}, extraArgs...)
 
-	cmd := exec.Command(gg.gitPath, gargs...)
+	cmd := exec.Command(gg.gitPath, gitArgs...)
 	cmd.Stdin = stream.Stdin
 	cmd.Stdout = stream.Stdout
 	cmd.Stderr = stream.Stderr
@@ -485,9 +488,9 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject any, name string, urls [
 	return
 }
 
-func (gogit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error {
+func (gogit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
 	// doesn't support extra arguments
-	if len(extraargs) > 0 {
+	if len(extraArgs) > 0 {
 		return ErrArgumentsUnsupported
 	}
 

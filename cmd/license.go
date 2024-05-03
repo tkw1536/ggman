@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words github ggman constants legal
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/constants/legal"

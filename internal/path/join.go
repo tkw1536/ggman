@@ -1,5 +1,7 @@
+//spellchecker:words path
 package path
 
+//spellchecker:words errors path filepath strings
 import (
 	"errors"
 	"io/fs"

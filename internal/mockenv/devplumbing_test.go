@@ -1,5 +1,7 @@
+//spellchecker:words mockenv
 package mockenv
 
+//spellchecker:words reflect testing github config ggman gggit internal testutil pkglib stream testlib
 import (
 	"reflect"
 	"testing"
@@ -11,6 +13,8 @@ import (
 	"github.com/tkw1536/pkglib/stream"
 	"github.com/tkw1536/pkglib/testlib"
 )
+
+//spellchecker:words gogit
 
 func TestDevPlumbing_Forward(t *testing.T) {
 
@@ -71,7 +75,7 @@ func TestDevPlumbing_Backward(t *testing.T) {
 }
 
 func Test_DevPlumbing_GetRemotes(t *testing.T) {
-	// This test has been adapted from Test_gogit_GetRemotes.
+	// This test has been adapted from Test_goGit_GetRemotes.
 
 	mp := &DevPlumbing{
 		Plumbing: gggit.NewPlumbing(),
@@ -143,7 +147,7 @@ func Test_DevPlumbing_GetRemotes(t *testing.T) {
 		}
 	})
 
-	t.Run("GetRemotes() on a reposuitory with more than one remote", func(t *testing.T) {
+	t.Run("GetRemotes() on a repository with more than one remote", func(t *testing.T) {
 		ggRepoObject, isRepo := mp.IsRepository(cloneB)
 		if !isRepo {
 			panic("IsRepository() failed")

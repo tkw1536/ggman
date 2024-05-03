@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words sync github ggman goprogram exit
 import (
 	"sync"
 
@@ -7,6 +8,8 @@ import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"
 )
+
+//spellchecker:words canonicalizes canonicalization
 
 // Fix is the 'ggman fix' command.
 //

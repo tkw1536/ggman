@@ -11,6 +11,7 @@
 // For this reason, implementation of the Plumbing interface are not exported.
 package git
 
+//spellchecker:words path filepath testing github pkglib testlib
 import (
 	"os"
 	"path/filepath"
@@ -19,18 +20,20 @@ import (
 	"github.com/tkw1536/pkglib/testlib"
 )
 
+//spellchecker:words gogit gitgit
+
 func TestNewGitFromPlumbing(t *testing.T) {
 
 	// create a temporary file
 	dir := testlib.TempDirAbs(t)
 
 	// no path => use a gogit
-	if _, isgogit := NewGitFromPlumbing(nil, "").Plumbing().(*gogit); !isgogit {
+	if _, isGogit := NewGitFromPlumbing(nil, "").Plumbing().(*gogit); !isGogit {
 		t.Errorf("NewGitFromPlumbing: Expected *gogit")
 	}
 
 	// path but no git => use a gogit
-	if _, isgogit := NewGitFromPlumbing(nil, dir).Plumbing().(*gogit); !isgogit {
+	if _, isGogit := NewGitFromPlumbing(nil, dir).Plumbing().(*gogit); !isGogit {
 		t.Errorf("NewGitFromPlumbing: Expected *gogit")
 	}
 
@@ -42,7 +45,7 @@ func TestNewGitFromPlumbing(t *testing.T) {
 	}
 
 	// path with git => gitgit
-	if _, isgitgit := NewGitFromPlumbing(nil, dir).Plumbing().(*gitgit); !isgitgit {
+	if _, isGitgit := NewGitFromPlumbing(nil, dir).Plumbing().(*gitgit); !isGitgit {
 		t.Errorf("NewGitFromPlumbing: Expected *gitgit")
 	}
 

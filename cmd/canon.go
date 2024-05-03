@@ -1,9 +1,12 @@
 package cmd
 
+//spellchecker:words github ggman
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 )
+
+//spellchecker:words CANSPEC CANFILE
 
 // Canon is the 'ggman canon' command.
 //

@@ -1,10 +1,13 @@
 package cmd
 
+//spellchecker:words github ggman goprogram exit
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"
 )
+
+//spellchecker:words positionals
 
 // FindBranch is the 'ggman find-branch' command.
 //

@@ -11,6 +11,7 @@
 // For this reason, implementation of the Plumbing interface are not exported.
 package git
 
+//spellchecker:words path filepath sync github pkglib stream
 import (
 	"os"
 	"path/filepath"
@@ -18,6 +19,8 @@ import (
 
 	"github.com/tkw1536/pkglib/stream"
 )
+
+//spellchecker:words gitgit gogit
 
 // Git represents a wrapper around a Plumbing instance.
 // It is goroutine-safe and initialization free.
@@ -43,13 +46,13 @@ type Git interface {
 	//
 	// remoteURI is the remote git uri to clone the repository from.
 	// clonePath is the local path to clone the repository to.
-	// extraargs are arguments as would be passed to a 'git clone' command.
+	// extraArgs are arguments as would be passed to a 'git clone' command.
 	//
 	// If there is already a repository at clonePath returns ErrCloneAlreadyExists.
 	// If the underlying 'git' process exits abnormally, returns.
-	// If extraargs is non-empty and extra arguments are not supported by this Wrapper, returns ErrArgumentsUnsupported.
+	// If extraArgs is non-empty and extra arguments are not supported by this Wrapper, returns ErrArgumentsUnsupported.
 	// May return other error types for other errors.
-	Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error
+	Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error
 
 	// GetHeadRef gets a resolved reference to head at the repository at clonePath.
 	//
@@ -116,7 +119,7 @@ type Git interface {
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	IsSync(clonePath string) (sycned bool, err error)
+	IsSync(clonePath string) (synced bool, err error)
 
 	// GitPath returns the path to the git executable being used, if any.
 	GitPath() string
@@ -130,22 +133,22 @@ type Git interface {
 // The implementation of this function relies on the underlying Plumbing (be it a default one or a caller provided one) to conform according to the specification.
 // In particular, this function does not checks on the error values returned and passes them directly from the implementation to the caller
 func NewGitFromPlumbing(plumbing Plumbing, path string) Git {
-	return &dfltGitWrapper{git: plumbing, path: path}
+	return &defaultGitWrapper{git: plumbing, path: path}
 }
 
-type dfltGitWrapper struct {
+type defaultGitWrapper struct {
 	once sync.Once
 
 	git  Plumbing
 	path string // the path to lookup 'git' in, if needed.
 }
 
-func (impl *dfltGitWrapper) Plumbing() Plumbing {
+func (impl *defaultGitWrapper) Plumbing() Plumbing {
 	impl.ensureInit()
 	return impl.git
 }
 
-func (impl *dfltGitWrapper) ensureInit() {
+func (impl *defaultGitWrapper) ensureInit() {
 	impl.once.Do(func() {
 		if impl.git != nil {
 			return
@@ -165,14 +168,14 @@ func (impl *dfltGitWrapper) ensureInit() {
 	})
 }
 
-func (impl *dfltGitWrapper) IsRepository(localPath string) bool {
+func (impl *defaultGitWrapper) IsRepository(localPath string) bool {
 	impl.ensureInit()
 
 	_, isRepo := impl.git.IsRepository(localPath)
 	return isRepo
 }
 
-func (impl *dfltGitWrapper) IsRepositoryQuick(localPath string) bool {
+func (impl *defaultGitWrapper) IsRepositoryQuick(localPath string) bool {
 	impl.ensureInit()
 
 	if !impl.git.IsRepositoryUnsafe(localPath) { // IsRepositoryUnsafe may not return false negatives
@@ -182,7 +185,7 @@ func (impl *dfltGitWrapper) IsRepositoryQuick(localPath string) bool {
 	return impl.IsRepository(localPath)
 }
 
-func (impl *dfltGitWrapper) Clone(stream stream.IOStream, remoteURI, clonePath string, extraargs ...string) error {
+func (impl *defaultGitWrapper) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
 	impl.ensureInit()
 
 	// check if the repository already exists
@@ -196,10 +199,10 @@ func (impl *dfltGitWrapper) Clone(stream stream.IOStream, remoteURI, clonePath s
 	}
 
 	// run the clone code and return
-	return impl.git.Clone(stream, remoteURI, clonePath, extraargs...)
+	return impl.git.Clone(stream, remoteURI, clonePath, extraArgs...)
 }
 
-func (impl *dfltGitWrapper) GetHeadRef(clonePath string) (ref string, err error) {
+func (impl *defaultGitWrapper) GetHeadRef(clonePath string) (ref string, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -212,7 +215,7 @@ func (impl *dfltGitWrapper) GetHeadRef(clonePath string) (ref string, err error)
 	return impl.git.GetHeadRef(clonePath, repoObject)
 }
 
-func (impl *dfltGitWrapper) Fetch(stream stream.IOStream, clonePath string) error {
+func (impl *defaultGitWrapper) Fetch(stream stream.IOStream, clonePath string) error {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -224,7 +227,7 @@ func (impl *dfltGitWrapper) Fetch(stream stream.IOStream, clonePath string) erro
 	return impl.git.Fetch(stream, clonePath, repoObject)
 }
 
-func (impl *dfltGitWrapper) Pull(stream stream.IOStream, clonePath string) error {
+func (impl *defaultGitWrapper) Pull(stream stream.IOStream, clonePath string) error {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -236,7 +239,7 @@ func (impl *dfltGitWrapper) Pull(stream stream.IOStream, clonePath string) error
 	return impl.git.Pull(stream, clonePath, repoObject)
 }
 
-func (impl *dfltGitWrapper) GetRemote(clonePath string) (uri string, err error) {
+func (impl *defaultGitWrapper) GetRemote(clonePath string) (uri string, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -257,7 +260,7 @@ func (impl *dfltGitWrapper) GetRemote(clonePath string) (uri string, err error) 
 	return
 }
 
-func (impl *dfltGitWrapper) UpdateRemotes(clonePath string, updateFunc func(url, name string) (string, error)) (err error) {
+func (impl *defaultGitWrapper) UpdateRemotes(clonePath string, updateFunc func(url, name string) (string, error)) (err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -293,7 +296,7 @@ func (impl *dfltGitWrapper) UpdateRemotes(clonePath string, updateFunc func(url,
 	return
 }
 
-func (impl *dfltGitWrapper) GetBranches(clonePath string) (branches []string, err error) {
+func (impl *defaultGitWrapper) GetBranches(clonePath string) (branches []string, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -305,7 +308,7 @@ func (impl *dfltGitWrapper) GetBranches(clonePath string) (branches []string, er
 	return impl.git.GetBranches(clonePath, repoObject)
 }
 
-func (impl *dfltGitWrapper) ContainsBranch(clonePath, branch string) (exists bool, err error) {
+func (impl *defaultGitWrapper) ContainsBranch(clonePath, branch string) (exists bool, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -317,7 +320,7 @@ func (impl *dfltGitWrapper) ContainsBranch(clonePath, branch string) (exists boo
 	return impl.git.ContainsBranch(clonePath, repoObject, branch)
 }
 
-func (impl *dfltGitWrapper) IsDirty(clonePath string) (dirty bool, err error) {
+func (impl *defaultGitWrapper) IsDirty(clonePath string) (dirty bool, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -329,7 +332,7 @@ func (impl *dfltGitWrapper) IsDirty(clonePath string) (dirty bool, err error) {
 	return impl.git.IsDirty(clonePath, repoObject)
 }
 
-func (impl *dfltGitWrapper) IsSync(clonePath string) (dirty bool, err error) {
+func (impl *defaultGitWrapper) IsSync(clonePath string) (dirty bool, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -341,7 +344,7 @@ func (impl *dfltGitWrapper) IsSync(clonePath string) (dirty bool, err error) {
 	return impl.git.IsSync(clonePath, repoObject)
 }
 
-func (impl *dfltGitWrapper) GitPath() string {
+func (impl *defaultGitWrapper) GitPath() string {
 	impl.ensureInit()
 
 	gitgit, isGitGit := impl.git.(*gitgit)

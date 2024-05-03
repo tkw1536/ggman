@@ -1,9 +1,13 @@
+//spellchecker:words legal
 package legal
 
+//spellchecker:words strings testing
 import (
 	"strings"
 	"testing"
 )
+
+//spellchecker:words ggman
 
 func TestLicenses(t *testing.T) {
 	if Notices == "" {

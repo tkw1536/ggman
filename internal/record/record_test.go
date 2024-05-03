@@ -1,5 +1,7 @@
+//spellchecker:words record
 package record
 
+//spellchecker:words sync atomic testing
 import (
 	"fmt"
 	"sync"

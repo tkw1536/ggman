@@ -1,11 +1,14 @@
 package cmd
 
+//spellchecker:words github ggman internal walker goprogram exit
 import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/walker"
 	"github.com/tkw1536/goprogram/exit"
 )
+
+//spellchecker:words GGROOT
 
 // Sweep is the 'ggman sweep' command.
 //

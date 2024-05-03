@@ -1,5 +1,7 @@
+//spellchecker:words walker
 package walker
 
+//spellchecker:words path filepath github pkglib
 import (
 	"io/fs"
 	"os"
@@ -7,6 +9,8 @@ import (
 
 	"github.com/tkw1536/pkglib/fsx"
 )
+
+//spellchecker:words fsys
 
 // FS represents a file system for use by walker
 //

@@ -1,5 +1,7 @@
+//spellchecker:words ggman
 package ggman
 
+//spellchecker:words embed
 import _ "embed" // to include the license
 
 // License contains the terms the ggman program is licensed under.

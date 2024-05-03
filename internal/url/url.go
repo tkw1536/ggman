@@ -1,6 +1,7 @@
 // Package url provides utilities for URL parsing
 package url
 
+//spellchecker:words errors math
 import (
 	"errors"
 	"math"

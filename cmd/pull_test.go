@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words testing github ggman internal mockenv testutil
 import (
 	"fmt"
 	"testing"
@@ -7,6 +8,8 @@ import (
 	"github.com/tkw1536/ggman/internal/mockenv"
 	"github.com/tkw1536/ggman/internal/testutil"
 )
+
+//spellchecker:words workdir
 
 func TestCommandPull(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)

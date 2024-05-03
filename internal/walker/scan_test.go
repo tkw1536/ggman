@@ -1,5 +1,7 @@
+//spellchecker:words walker
 package walker
 
+//spellchecker:words path filepath reflect testing github ggman internal testutil pkglib testlib
 import (
 	"os"
 	"path/filepath"
@@ -23,8 +25,8 @@ func TestScan(t *testing.T) {
 		}
 	}
 
-	symlink := func(oldname, newname string) {
-		err := os.Symlink(filepath.Join(base, oldname), filepath.Join(base, newname))
+	symlink := func(oldName, newName string) {
+		err := os.Symlink(filepath.Join(base, oldName), filepath.Join(base, newName))
 		if err != nil {
 			panic(err)
 		}

@@ -1,6 +1,9 @@
 // Package walker provides Walker, Scan and Sweep.
+//
+//spellchecker:words walker
 package walker
 
+//spellchecker:words errors strings sync atomic github ggman internal record pkglib sema golang slices
 import (
 	"errors"
 	"io/fs"
@@ -41,7 +44,7 @@ type Walker[S any] struct {
 	ctxPool sync.Pool // pool for *context[S] objects
 
 	paths  []string
-	rpaths []string
+	rPaths []string
 	scores []float64
 
 	Params  Params
@@ -157,7 +160,7 @@ type WalkContext[S any] interface {
 
 	// Mark the current node as a result with the given priority.
 	// May be called multiple times, in which case the node is marked as a result multiple times.
-	Mark(prio float64)
+	Mark(priority float64)
 }
 
 // Walk begins recursively walking the directory tree starting at the roots defined in Config.
@@ -210,11 +213,11 @@ func (w *Walker[S]) Walk() error {
 
 		// store the real (textual) results
 		w.paths = make([]string, len(results))
-		w.rpaths = make([]string, len(results))
+		w.rPaths = make([]string, len(results))
 		w.scores = make([]float64, len(results))
 		for i, r := range results {
 			w.paths[i] = r.NodePath
-			w.rpaths[i] = r.NodeRPath
+			w.rPaths[i] = r.NodeRPath
 			w.scores[i] = r.Score
 		}
 
@@ -304,17 +307,17 @@ func (w *Walker[S]) walk(sync bool, ctx *context[S]) (ok bool) {
 			w.wg.Done()
 		case action == DoConcurrent:
 			// work asynchronously and discard the parent!
-			go func(cctx *context[S]) {
-				defer w.returnCtx(cctx)
-				w.walk(false, cctx)
+			go func(cContext *context[S]) {
+				defer w.returnCtx(cContext)
+				w.walk(false, cContext)
 			}(ctx.sub(entry))
 		case action == DoSync:
 			// run the child processing!
-			ok, value := func(cctx *context[S]) (bool, any) {
-				defer w.returnCtx(cctx)
+			ok, value := func(cContext *context[S]) (bool, any) {
+				defer w.returnCtx(cContext)
 
-				ok := w.walk(true, cctx)
-				return ok, cctx.snapshot
+				ok := w.walk(true, cContext)
+				return ok, cContext.snapshot
 			}(ctx.sub(entry))
 
 			if err := w.Process.AfterVisitChild(entry, value, ok, ctx); err != nil {
@@ -370,7 +373,7 @@ func (w *Walker[S]) Paths(resolved bool) []string {
 	}
 
 	if resolved {
-		return slices.Clone(w.rpaths)
+		return slices.Clone(w.rPaths)
 	} else {
 		return slices.Clone(w.paths)
 	}

@@ -1,11 +1,14 @@
 package env
 
+//spellchecker:words reflect testing github ggman internal testutil
 import (
 	"reflect"
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/testutil"
 )
+
+//spellchecker:words GGROOT CANFILE GGNORM
 
 func TestReadVariables(t *testing.T) {
 	defer testutil.MockVariables(map[string]string{

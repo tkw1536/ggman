@@ -1,10 +1,13 @@
 package cmd
 
+//spellchecker:words embed github ggman
 import (
 	_ "embed"
 
 	"github.com/tkw1536/ggman"
 )
+
+//spellchecker:words shellrc
 
 // Shellrc is the 'ggman shellrc' command.
 //

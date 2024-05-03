@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words errors github ggman goprogram exit parser
 import (
 	"errors"
 	"fmt"

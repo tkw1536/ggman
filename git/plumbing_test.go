@@ -1,5 +1,6 @@
 package git
 
+//spellchecker:words path filepath reflect testing github config plumbing ggman internal testutil pkglib stream testlib golang slices
 import (
 	"os"
 	"path"
@@ -15,6 +16,8 @@ import (
 	"github.com/tkw1536/pkglib/testlib"
 	"golang.org/x/exp/slices"
 )
+
+//spellchecker:words gogit commita commitb worktree
 
 func Test_gogit_IsRepository(t *testing.T) {
 	var gg gogit
@@ -32,7 +35,7 @@ func Test_gogit_IsRepository(t *testing.T) {
 	emptyFolder := testlib.TempDirAbs(t)
 
 	// create a new folder that is deleted
-	deletedFolder := filepath.Join(testlib.TempDirAbs(t), "noexist")
+	deletedFolder := filepath.Join(testlib.TempDirAbs(t), "noExist")
 
 	type args struct {
 		localPath string
@@ -73,7 +76,7 @@ func Test_gogit_IsRepositoryUnsafe(t *testing.T) {
 	emptyFolder := testlib.TempDirAbs(t)
 
 	// create a new folder that is deleted
-	deletedFolder := filepath.Join(testlib.TempDirAbs(t), "noexist")
+	deletedFolder := filepath.Join(testlib.TempDirAbs(t), "noExist")
 
 	type args struct {
 		localPath string
@@ -217,7 +220,7 @@ func Test_gogit_GetRemotes(t *testing.T) {
 		}
 	})
 
-	t.Run("GetRemotes() on a reposuitory with more than one remote", func(t *testing.T) {
+	t.Run("GetRemotes() on a repository with more than one remote", func(t *testing.T) {
 		ggRepoObject, isRepo := gg.IsRepository(cloneB)
 		if !isRepo {
 			panic("IsRepository() failed")

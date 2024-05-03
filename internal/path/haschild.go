@@ -1,6 +1,9 @@
 // Package path provides path-based functions.
+//
+//spellchecker:words path
 package path
 
+//spellchecker:words path filepath
 import (
 	"os"
 	"path/filepath"

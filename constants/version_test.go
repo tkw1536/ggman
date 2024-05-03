@@ -1,5 +1,7 @@
+//spellchecker:words constants
 package constants
 
+//spellchecker:words reflect testing time
 import (
 	"reflect"
 	"testing"

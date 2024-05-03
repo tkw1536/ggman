@@ -1,5 +1,6 @@
 package git
 
+//spellchecker:words errors
 import "errors"
 
 // ErrNotARepository is an error that is returned when the clonePath parameter is not a repository

@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words exec github alessio shellescape ggman goprogram exit parser pkglib sema status stream
 import (
 	"os/exec"
 
@@ -12,6 +13,8 @@ import (
 	"github.com/tkw1536/pkglib/status"
 	"github.com/tkw1536/pkglib/stream"
 )
+
+//spellchecker:words positionals compat
 
 // Exec is the 'ggman exec' command.
 //
@@ -75,14 +78,14 @@ func (exe) Description() ggman.Description {
 	}
 }
 
-var ErrExecParalllelNegative = exit.Error{
+var ErrExecParallelNegative = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
 	Message:  "argument for `--parallel` must be non-negative",
 }
 
 func (e exe) AfterParse() error {
 	if e.Parallel < 0 {
-		return ErrExecParalllelNegative
+		return ErrExecParallelNegative
 	}
 	return nil
 }

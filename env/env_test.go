@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words path filepath reflect testing github ggman internal testutil pkglib testlib
 import (
 	"os"
 	"path/filepath"
@@ -12,22 +13,24 @@ import (
 	"github.com/tkw1536/pkglib/testlib"
 )
 
+//spellchecker:words GGNORM GGROOT CANFILE worktree
+
 func TestEnv_LoadDefaultRoot(t *testing.T) {
 
-	// nopdir does not have a 'Projects' subdirectory
-	nopdir := testlib.TempDirAbs(t)
-	pnopdir := filepath.Join(nopdir, "Projects")
+	// noProjectsDir does not have a 'Projects' subdirectory
+	noProjectsDir := testlib.TempDirAbs(t)
+	missingProjectsDir := filepath.Join(noProjectsDir, "Projects")
 
-	// pdir has a 'Projects' subdirectory
-	pdir := testlib.TempDirAbs(t)
-	ppdir := filepath.Join(pdir, "Projects")
+	// withProjectsDir has a 'Projects' subdirectory
+	withProjectsDir := testlib.TempDirAbs(t)
+	existingProjectsDir := filepath.Join(withProjectsDir, "Projects")
 
-	if err := os.Mkdir(ppdir, os.ModePerm); err != nil {
+	if err := os.Mkdir(existingProjectsDir, os.ModePerm); err != nil {
 		panic(err)
 	}
 
-	// nodir doesn't exist
-	nodir := filepath.Join(testlib.TempDirAbs(t), "noexist")
+	// noExistsDir doesn't exist
+	noExistsDir := filepath.Join(testlib.TempDirAbs(t), "noExist")
 
 	tests := []struct {
 		name     string
@@ -35,13 +38,13 @@ func TestEnv_LoadDefaultRoot(t *testing.T) {
 		wantRoot string
 		wantErr  bool
 	}{
-		{"GGROOT exists", Variables{GGROOT: nopdir}, nopdir, false},
-		{"GGROOT not exists", Variables{GGROOT: nodir}, nodir, false},
+		{"GGROOT exists", Variables{GGROOT: noProjectsDir}, noProjectsDir, false},
+		{"GGROOT not exists", Variables{GGROOT: noExistsDir}, noExistsDir, false},
 
 		{"GGROOT unset, HOME unset", Variables{}, "", true},
 
-		{"GGROOT unset, HOME/Projects exists", Variables{HOME: nopdir}, pnopdir, false},
-		{"GGROOT unset, HOME/Projects not exists", Variables{HOME: pdir}, ppdir, false},
+		{"GGROOT unset, HOME/Projects exists", Variables{HOME: noProjectsDir}, missingProjectsDir, false},
+		{"GGROOT unset, HOME/Projects not exists", Variables{HOME: withProjectsDir}, existingProjectsDir, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -59,22 +62,22 @@ func TestEnv_LoadDefaultRoot(t *testing.T) {
 }
 
 func TestEnv_LoadDefaultCANFILE(t *testing.T) {
-	// dfltCanFile is the default CanFile
-	var dfltCanFile CanFile
-	dfltCanFile.ReadDefault()
+	// defaultCanFile is the default CanFile
+	var defaultCanFile CanFile
+	defaultCanFile.ReadDefault()
 
 	// sampleCanFile is the sample CanFile]
 	const canLineContent = "sample@^:$.git"
 	var sampleCanFile CanFile = []CanLine{{"", canLineContent}}
 
-	// edir is an empty directory without a canFile
-	edir := testlib.TempDirAbs(t)
-	noggmanfile := filepath.Join(edir, ".ggman")
+	// emptyDir is an empty directory without a canFile
+	emptyDir := testlib.TempDirAbs(t)
+	noGGMANFile := filepath.Join(emptyDir, ".ggman")
 
-	// ddir is a directory with a '.ggman' file
-	ddir := testlib.TempDirAbs(t)
-	ggmanfile := filepath.Join(ddir, ".ggman")
-	os.WriteFile(ggmanfile, []byte(canLineContent), os.ModePerm)
+	// dDir is a directory with a '.ggman' file
+	dDir := testlib.TempDirAbs(t)
+	GGMANFile := filepath.Join(dDir, ".ggman")
+	os.WriteFile(GGMANFile, []byte(canLineContent), os.ModePerm)
 
 	tests := []struct {
 		name        string
@@ -82,13 +85,13 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 		wantErr     bool
 		wantCanfile CanFile
 	}{
-		{"loading from existing path", Variables{CANFILE: ggmanfile}, false, sampleCanFile},
+		{"loading from existing path", Variables{CANFILE: GGMANFile}, false, sampleCanFile},
 
-		{"loading from home", Variables{HOME: ddir}, false, sampleCanFile},
-		{"loading from home because of failure", Variables{CANFILE: noggmanfile, HOME: ddir}, false, sampleCanFile},
+		{"loading from home", Variables{HOME: dDir}, false, sampleCanFile},
+		{"loading from home because of failure", Variables{CANFILE: noGGMANFile, HOME: dDir}, false, sampleCanFile},
 
-		{"loading non-existing path", Variables{CANFILE: noggmanfile}, false, dfltCanFile},
-		{"loading non-existing home", Variables{HOME: edir}, false, dfltCanFile},
+		{"loading non-existing path", Variables{CANFILE: noGGMANFile}, false, defaultCanFile},
+		{"loading non-existing home", Variables{HOME: emptyDir}, false, defaultCanFile},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -269,7 +272,7 @@ func TestEnv_ScanRepos(t *testing.T) {
 	root := testlib.TempDirAbs(t)
 
 	// make a dir with parents and turn it into git
-	mkgit := func(s string) {
+	makeGit := func(s string) {
 		pth := filepath.Join(root, s)
 		err := os.MkdirAll(pth, os.ModePerm)
 		if err != nil {
@@ -280,15 +283,15 @@ func TestEnv_ScanRepos(t *testing.T) {
 		}
 	}
 
-	mkgit(filepath.Join("a", "aa", "aaa"))
-	mkgit(filepath.Join("a", "aa", "aab"))
-	mkgit(filepath.Join("a", "aa", "aac"))
-	mkgit(filepath.Join("a", "ab", "aba"))
-	mkgit(filepath.Join("a", "ab", "abb"))
-	mkgit(filepath.Join("a", "ab", "abc"))
-	mkgit(filepath.Join("a", "ac", "aca"))
-	mkgit(filepath.Join("a", "ac", "acb"))
-	mkgit(filepath.Join("a", "ac", "acc"))
+	makeGit(filepath.Join("a", "aa", "aaa"))
+	makeGit(filepath.Join("a", "aa", "aab"))
+	makeGit(filepath.Join("a", "aa", "aac"))
+	makeGit(filepath.Join("a", "ab", "aba"))
+	makeGit(filepath.Join("a", "ab", "abb"))
+	makeGit(filepath.Join("a", "ab", "abc"))
+	makeGit(filepath.Join("a", "ac", "aca"))
+	makeGit(filepath.Join("a", "ac", "acb"))
+	makeGit(filepath.Join("a", "ac", "acc"))
 
 	// utility to remove root from all the paths
 	trimPath := func(path string) string {
@@ -366,7 +369,7 @@ func TestEnv_ScanRepos_fuzzy(t *testing.T) {
 	root := testlib.TempDirAbs(t)
 
 	// make a dir with parents and turn it into git
-	mkgit := func(s string) {
+	makeGit := func(s string) {
 		pth := filepath.Join(root, s)
 		err := os.MkdirAll(pth, os.ModePerm)
 		if err != nil {
@@ -377,8 +380,8 @@ func TestEnv_ScanRepos_fuzzy(t *testing.T) {
 		}
 	}
 
-	mkgit(filepath.Join("abc")) // matches the filter 'bc' with a score of 0.66, but lexicographically first
-	mkgit(filepath.Join("bc"))  // matches the filter 'bc' with a score of 1, but lexicographically last
+	makeGit(filepath.Join("abc")) // matches the filter 'bc' with a score of 0.66, but lexicographically first
+	makeGit(filepath.Join("bc"))  // matches the filter 'bc' with a score of 1, but lexicographically last
 
 	// utility to remove root from all the paths
 	trimPath := func(path string) string {
@@ -444,7 +447,7 @@ func TestEnv_Normalization(t *testing.T) {
 		{"smart", path.FoldPreferExactNorm},
 		{"exact", path.NoNorm},
 		{"", path.FoldPreferExactNorm},
-		{"this-norm-doesnt-exist", path.FoldPreferExactNorm},
+		{"this-norm-doesn't-exist", path.FoldPreferExactNorm},
 	}
 	for _, tt := range tests {
 		t.Run(tt.GGNORM, func(t *testing.T) {

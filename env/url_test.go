@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words reflect testing
 import (
 	"reflect"
 	"testing"
@@ -210,28 +211,28 @@ func TestURL_Components(t *testing.T) {
 		wantParts []string
 	}{
 		// git@github.com/user/repo
-		{"noproto1", fields{"", "git", "", "github.com", 0, "hello/world.git"}, []string{"github.com", "hello", "world"}},
-		{"noproto2", fields{"", "git", "", "github.com", 0, "hello/world"}, []string{"github.com", "hello", "world"}},
-		{"noproto3", fields{"", "git", "", "github.com", 0, "hello/world/"}, []string{"github.com", "hello", "world"}},
-		{"noproto4", fields{"", "git", "", "github.com", 0, "hello/world//"}, []string{"github.com", "hello", "world"}},
+		{"noProto1", fields{"", "git", "", "github.com", 0, "hello/world.git"}, []string{"github.com", "hello", "world"}},
+		{"noProto2", fields{"", "git", "", "github.com", 0, "hello/world"}, []string{"github.com", "hello", "world"}},
+		{"noProto3", fields{"", "git", "", "github.com", 0, "hello/world/"}, []string{"github.com", "hello", "world"}},
+		{"noProto4", fields{"", "git", "", "github.com", 0, "hello/world//"}, []string{"github.com", "hello", "world"}},
 
 		// ssh://git@github.com/hello/world
-		{"sshproto1", fields{"ssh", "git", "", "github.com", 0, "hello/world.git"}, []string{"github.com", "hello", "world"}},
-		{"sshproto2", fields{"ssh", "git", "", "github.com", 0, "hello/world"}, []string{"github.com", "hello", "world"}},
-		{"sshproto3", fields{"ssh", "git", "", "github.com", 0, "hello/world/"}, []string{"github.com", "hello", "world"}},
-		{"sshproto4", fields{"ssh", "git", "", "github.com", 0, "hello/world//"}, []string{"github.com", "hello", "world"}},
+		{"sshProto1", fields{"ssh", "git", "", "github.com", 0, "hello/world.git"}, []string{"github.com", "hello", "world"}},
+		{"sshProto2", fields{"ssh", "git", "", "github.com", 0, "hello/world"}, []string{"github.com", "hello", "world"}},
+		{"sshProto3", fields{"ssh", "git", "", "github.com", 0, "hello/world/"}, []string{"github.com", "hello", "world"}},
+		{"sshProto4", fields{"ssh", "git", "", "github.com", 0, "hello/world//"}, []string{"github.com", "hello", "world"}},
 
 		// user@server.com
-		{"userserver1", fields{"", "user", "", "server.com", 0, "repository"}, []string{"server.com", "user", "repository"}},
-		{"userserver2", fields{"", "user", "", "server.com", 0, "repository/"}, []string{"server.com", "user", "repository"}},
-		{"userserver3", fields{"", "user", "", "server.com", 0, "repository//"}, []string{"server.com", "user", "repository"}},
-		{"userserver4", fields{"", "user", "", "server.com", 0, "repository.git"}, []string{"server.com", "user", "repository"}},
+		{"userServer1", fields{"", "user", "", "server.com", 0, "repository"}, []string{"server.com", "user", "repository"}},
+		{"userServer2", fields{"", "user", "", "server.com", 0, "repository/"}, []string{"server.com", "user", "repository"}},
+		{"userServer3", fields{"", "user", "", "server.com", 0, "repository//"}, []string{"server.com", "user", "repository"}},
+		{"userServer4", fields{"", "user", "", "server.com", 0, "repository.git"}, []string{"server.com", "user", "repository"}},
 
 		// ssh://user@server.com:1234
-		{"userport1", fields{"", "user", "", "server.com", 1234, "repository"}, []string{"server.com", "user", "repository"}},
-		{"userport2", fields{"", "user", "", "server.com", 1234, "repository/"}, []string{"server.com", "user", "repository"}},
-		{"userport3", fields{"", "user", "", "server.com", 1234, "repository//"}, []string{"server.com", "user", "repository"}},
-		{"userport4", fields{"", "user", "", "server.com", 1234, "repository.git"}, []string{"server.com", "user", "repository"}},
+		{"userPort1", fields{"", "user", "", "server.com", 1234, "repository"}, []string{"server.com", "user", "repository"}},
+		{"userPort2", fields{"", "user", "", "server.com", 1234, "repository/"}, []string{"server.com", "user", "repository"}},
+		{"userPort3", fields{"", "user", "", "server.com", 1234, "repository//"}, []string{"server.com", "user", "repository"}},
+		{"userPort4", fields{"", "user", "", "server.com", 1234, "repository.git"}, []string{"server.com", "user", "repository"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -340,7 +341,7 @@ func TestRepoURI_Canonical(t *testing.T) {
 		Path     string
 	}
 	type args struct {
-		cspec string
+		cSpec string
 	}
 	tests := []struct {
 		name          string
@@ -350,7 +351,7 @@ func TestRepoURI_Canonical(t *testing.T) {
 	}{
 		{"Treat one component special", fields{"", "user", "", "server.com", 1234, "repository"}, args{"git@^:$.git"}, "git@server.com:user/repository.git"},
 		{"Treat two components special", fields{"", "user", "", "server.com", 1234, "repository"}, args{"ssh://%@^/$.git"}, "ssh://user@server.com/repository.git"},
-		{"Empty specifcation string", fields{"", "user", "", "server.com", 1234, "repository"}, args{""}, "server.com/user/repository"},
+		{"Empty specification string", fields{"", "user", "", "server.com", 1234, "repository"}, args{""}, "server.com/user/repository"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -362,7 +363,7 @@ func TestRepoURI_Canonical(t *testing.T) {
 				Port:     tt.fields.Port,
 				Path:     tt.fields.Path,
 			}
-			if gotCanonical := rURI.Canonical(tt.args.cspec); gotCanonical != tt.wantCanonical {
+			if gotCanonical := rURI.Canonical(tt.args.cSpec); gotCanonical != tt.wantCanonical {
 				t.Errorf("RepoURI.Canonical() = %v, want %v", gotCanonical, tt.wantCanonical)
 			}
 		})
