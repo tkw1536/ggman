@@ -8,6 +8,8 @@ import (
 	"github.com/tkw1536/pkglib/collection"
 )
 
+//spellchecker:words positionals
+
 // Env is the 'ggman env' command.
 //
 // Env prints "name=value" pairs about the environment the ggman command is running in to standard output.
@@ -78,7 +80,7 @@ func (e _env) Run(context ggman.Context) error {
 		return errModesIncompatible
 	}
 
-	variables, err := e.variables(context)
+	variables, err := e.variables()
 	if err != nil {
 		return err
 	}
@@ -100,7 +102,7 @@ func (e _env) Run(context ggman.Context) error {
 	return nil
 }
 
-func (e _env) variables(context ggman.Context) ([]env.UserVariable, error) {
+func (e _env) variables() ([]env.UserVariable, error) {
 	// no variables provided => use all of them
 	if len(e.Positionals.Vars) == 0 {
 		return env.GetUserVariables(), nil
