@@ -435,6 +435,8 @@ ggman comes with the following builtin aliases:
 
 ### 1.22.0 (Upcoming)
 
+- fix typo in Makefile
+
 ### 1.21.0 (Released [May 30 2024](https://github.com/tkw1536/ggman/releases/tag/v1.21))
 
 - add `ggman find-file` command

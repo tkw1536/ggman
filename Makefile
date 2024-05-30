@@ -68,4 +68,4 @@ clean:
 	rm -rf $(DIST_DIR)
 
 deps:
-	$(GOGET) -v ./...
+	$(GOMOD) download
