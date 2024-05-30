@@ -433,7 +433,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.21.0 (Upcoming)
+### 1.22.0 (Upcoming)
+
+### 1.21.0 (Released [May 30 2024](https://github.com/tkw1536/ggman/releases/tag/v1.21))
 
 - add `ggman find-file` command
 - Various internal performance tweaks
