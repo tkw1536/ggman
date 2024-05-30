@@ -1,6 +1,6 @@
 module github.com/tkw1536/ggman
 
-go 1.22.2
+go 1.22.3
 
 require (
 	github.com/alessio/shellescape v1.4.2
@@ -12,8 +12,8 @@ require (
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/pkg/errors v0.9.1
 	github.com/tkw1536/goprogram v0.5.1
-	github.com/tkw1536/pkglib v0.0.0-20240502214847-155e7295b084
-	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842
+	github.com/tkw1536/pkglib v0.0.0-20240520194003-c5cf8740b88f
+	golang.org/x/exp v0.0.0-20240529005216-23cca8864a10
 )
 
 require (
