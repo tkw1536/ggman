@@ -130,6 +130,7 @@ func init() {
 		cmd.Exec,
 		cmd.Fetch,
 		cmd.FindBranch,
+		cmd.FindFile,
 		cmd.Fix,
 		cmd.Here,
 		cmd.License,

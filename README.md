@@ -1,6 +1,6 @@
 # ggman
 
-<!-- spellchecker:words ggman ggroot shellrc ggcd ggclone ggshow ggcode ggnorm wrld cspec gopath godoc goprogram unsynced jessevdk struct POSIX pflag localgodoc -->
+<!-- spellchecker:words ggman ggroot shellrc ggcd ggclone ggshow ggcode ggnorm wrld cspec gopath godoc goprogram unsynced jessevdk struct POSIX pflag localgodoc CANSPEC CANFILE worktree reclone testutil subpackage -->
 
 ![CI Status](https://github.com/tkw1536/ggman/workflows/CI/badge.svg)
 
@@ -383,7 +383,16 @@ git 2.28 introduced the `init.defaultBranch` option to set the name of the defau
 However this does not affect existing repositories. 
 
 To find repositories with an old branch, the `ggman find-branch` command can be used. 
-It takes a single argument (a branch name), and finds all repositories that contain a branch with the given name. 
+It takes a single argument (a branch name), and finds all repositories that contain a branch with the given name.
+
+### 'ggman find-file'
+
+Sometimes it is useful to find specific files inside repository directories.
+This can be used to e.g. detect repositories of a specific language.
+
+For this purpose the `ggman find-file` command can be used. 
+It takes a single argument (a file name), and finds all repository directories that contain a file with the given path. 
+For example, use `ggman find-file package.json` to find all repositories with a `package.json`.
 
 ### 'ggman sweep'
 
@@ -426,6 +435,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.21.0 (Upcoming)
 
+- add `ggman find-file` command
 - Various internal performance tweaks
 - make spellchecker happy
 - Update to `go 1.22`
