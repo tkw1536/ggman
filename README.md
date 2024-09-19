@@ -438,6 +438,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.22.0 (Upcoming)
 
+- update to `go 1.23`
 - add `--count` flag to `ggman ls`
 - fix typo in Makefile
 
