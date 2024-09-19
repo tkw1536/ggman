@@ -203,7 +203,10 @@ While creating this folder structure when cloning new repositories, `ggman` can 
 For this purpose the `ggman ls` command lists all repositories that have been found in this structure. 
 
 For easier integration into scripts, `ggman ls` supports an `--exit-code` argument. 
-If this is given, the command will return exit code 0 iff at least one repository is found, and exit code 1 otherwise. 
+If this is given, the command will return exit code 0 iff at least one repository is found, and exit code 1 otherwise.
+
+Furthermore, the flag `--one` or the flags `--count` / `-n` can be given to limit the number of results.
+This is useful in specific scripting circumstances.
 
 ### the '--for', '--here' and '--path' arguments
 
@@ -435,6 +438,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.22.0 (Upcoming)
 
+- add `--count` flag to `ggman ls`
 - fix typo in Makefile
 
 ### 1.21.0 (Released [May 30 2024](https://github.com/tkw1536/ggman/releases/tag/v1.21))

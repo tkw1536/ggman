@@ -118,6 +118,28 @@ func TestCommandLs(t *testing.T) {
 		},
 
 		{
+			"list all repositories with specific count",
+			"",
+			[]string{"ls", "--count", "2"},
+
+			0,
+			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n",
+
+			"",
+		},
+
+		{
+			"don't support both one and count at the same time",
+			"",
+			[]string{"ls", "--one", "--count", "2"},
+
+			4,
+			"",
+
+			"Only one of `--one` and `--limit` may be provided\n",
+		},
+
+		{
 			"list only hello/world repositories",
 			"",
 			[]string{"--for", "hello/world", "ls"},

@@ -17,13 +17,30 @@ import (
 //
 //	--one
 //
-// List at most one repository
+// # List at most one repository
+//
+// --count NUMBER
+//
+// List as most COUNT repositories. May not be combined with the one flag.
 var Ls ggman.Command = ls{}
 
 type ls struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"return exit code 1 if no repositories are found"`
 	Scores   bool `short:"s" long:"scores" description:"show scores returned from filter along with repositories"`
 	One      bool `short:"o" long:"one" description:"list at most one repository, for use in shell scripts"`
+	Limit    uint `short:"n" long:"count" description:"list at most this many repositories. May not be combined with one"`
+}
+
+var errLsOnlyOneOfOneAndLimit = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
+	Message:  "only one of `--one` and `--limit` may be provided",
+}
+
+func (ls ls) AfterParse() error {
+	if ls.Limit != 0 && ls.One {
+		return errLsOnlyOneOfOneAndLimit
+	}
+	return nil
 }
 
 func (ls) Description() ggman.Description {
@@ -43,9 +60,12 @@ var errLSExitFlag = exit.Error{
 }
 
 func (l ls) Run(context ggman.Context) error {
+	if l.One {
+		l.Limit = 1
+	}
 	repos, scores := context.Environment.RepoScores(true)
-	if l.One && len(repos) > 0 {
-		repos = repos[:1]
+	if l.Limit > 0 && len(repos) > int(l.Limit) {
+		repos = repos[:l.Limit]
 	}
 	for i, repo := range repos {
 		if l.Scores {
