@@ -129,6 +129,17 @@ func TestCommandLs(t *testing.T) {
 		},
 
 		{
+			"list all repositories with higher than available count",
+			"",
+			[]string{"ls", "--count", "5"},
+
+			0,
+			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+
+			"",
+		},
+
+		{
 			"don't support both one and count at the same time",
 			"",
 			[]string{"ls", "--one", "--count", "2"},

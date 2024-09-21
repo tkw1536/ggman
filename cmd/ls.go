@@ -31,18 +31,6 @@ type ls struct {
 	Limit    uint `short:"n" long:"count" description:"list at most this many repositories. May not be combined with one"`
 }
 
-var errLsOnlyOneOfOneAndLimit = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "only one of `--one` and `--limit` may be provided",
-}
-
-func (ls ls) AfterParse() error {
-	if ls.Limit != 0 && ls.One {
-		return errLsOnlyOneOfOneAndLimit
-	}
-	return nil
-}
-
 func (ls) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "ls",
@@ -57,6 +45,18 @@ func (ls) Description() ggman.Description {
 
 var errLSExitFlag = exit.Error{
 	ExitCode: exit.ExitGeneric,
+}
+
+var errLsOnlyOneOfOneAndLimit = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
+	Message:  "only one of `--one` and `--limit` may be provided",
+}
+
+func (ls ls) AfterParse() error {
+	if ls.Limit != 0 && ls.One {
+		return errLsOnlyOneOfOneAndLimit
+	}
+	return nil
 }
 
 func (l ls) Run(context ggman.Context) error {
