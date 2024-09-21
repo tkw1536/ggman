@@ -436,7 +436,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.22.0 (Upcoming)
+### 1.23.0 (Upcoming)
+
+### 1.22.0 (Released [Sep 22 2024](https://github.com/tkw1536/ggman/releases/tag/v1.22))
 
 - update to `go 1.23`
 - add `--count` flag to `ggman ls`
