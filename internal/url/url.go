@@ -13,54 +13,53 @@ var (
 )
 
 const (
-	maxValid      = math.MaxUint16  // maximal port (as a number)
-	maxMultiply10 = maxValid / 10   // maximum value before multiplication by 10
-	maxPortStr    = "65535"         // maximal port (as a string)
-	maxPortLen    = len(maxPortStr) // maximal port length
+	maxValid      = math.MaxUint16      // maximal port (as a number)
+	maxMultiply10 = maxValid / 10       // maximum value before multiplication by 10
+	maxPortStr    = "65535"             // maximal port (as a string)
+	maxPortLen    = len(maxPortStr)     // maximal port length
+	maxPortIndex  = len(maxPortStr) - 1 // maximal valid index
 )
 
 // ParsePort parses a string into a valid port.
 // A port is between 0 and 65535 (inclusive).
-// It may not start with "+" and must only consist of digits.
+// It may not start with "+", may not be empty, and must only consist of digits.
 //
 // When a port can not be parsed, returns 0 and an error.
-func ParsePort(s string) (v uint16, err error) {
+func ParsePort(s string) (port uint16, err error) {
+	if s == "" {
+		return 0, errNotANumber
+	}
 
-	// hadOverflow determines if we had an overflow
-	hadOverflow := false
-
-	for _, ch := range []byte(s) {
-		if '0' > ch || ch > '9' { // not a digit!
+	for i, ch := range []byte(s) {
+		// determine the current digit
+		digit := uint16(ch - '0')
+		if digit > 9 { // not a digit!
 			return 0, errNotANumber
 		}
 
-		// if we had an overflow, we just check for digits
-		if hadOverflow {
+		// prior to the last digit, we can just add the digit.
+		// because it's guaranteed to be in bounds!
+		if i < maxPortIndex {
+			port = 10 * port
+			port += digit
 			continue
 		}
 
-		// multiply the previous digits by 10
-		if v > maxMultiply10 {
-			hadOverflow = true
-			continue
+		// we're at (or beyond) the last index
+		// again add the digit, but do a bounds check!
+		if port > maxMultiply10 {
+			return 0, errOutOfRange
 		}
-		v = 10 * v
+		port = 10 * port
 
-		// add the current digit
-		digit := uint16(ch - '0')
-		if v > maxValid-digit {
-			hadOverflow = true
-			continue
+		if port > maxValid-digit {
+			return 0, errOutOfRange
 		}
-		v += digit
+		port += digit
 	}
 
-	// we had an overflow
-	if hadOverflow {
-		return 0, errOutOfRange
-	}
-
-	return uint16(v), nil
+	// and we're done!
+	return port, nil
 }
 
 // IsValidURLScheme checks if a string represents a valid URL scheme.

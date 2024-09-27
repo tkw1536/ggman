@@ -18,6 +18,7 @@ func Test_ParsePort(t *testing.T) {
 		wantErr  bool
 	}{
 		{"parsing zero port", args{"0"}, 0, false},
+		{"parsing empty port", args{""}, 0, true},
 		{"parsing valid port", args{"80"}, 80, false},
 		{"parsing high port", args{"65535"}, 65535, false},
 
