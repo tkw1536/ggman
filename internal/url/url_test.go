@@ -91,6 +91,7 @@ func Test_IsValidURLScheme(t *testing.T) {
 		{"https scheme is valid", args{"https"}, true},
 		{"git scheme is valid", args{"git"}, true},
 		{"ssh scheme is valid", args{"ssh"}, true},
+		{"ssh2 scheme is valid", args{"ssh2"}, true},
 		{"file scheme is valid", args{"file"}, true},
 		{"combined with + scheme is valid", args{"ssh+git"}, true},
 		{"combined with - scheme is valid", args{"ssh-git"}, true},

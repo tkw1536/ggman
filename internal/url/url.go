@@ -70,28 +70,50 @@ func IsValidURLScheme(s string) bool {
 	//   regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9+\-\.]*$`).MatchString(s)
 	// However such an implementation would be a lot slower when called repeatedly.
 	// Instead we directly build code that implements this regex.
-	//
-	// For this we first check that the string is non-empty.
-	// Then we check that the first character is not a '+', '-' or '.'
-	// Then we check that each character is either alphanumeric or a '+', '-' or '.'
 
-	if len(s) == 0 {
+	// Iterate over the bytes in this string.
+	// We can do this safely, because any valid scheme must be ascii.
+	bytes := []byte(s)
+	if len(bytes) == 0 {
 		return false
 	}
 
-	// if the first rune is invalid, no need to check everything else
-	if s[0] == '+' || s[0] == '-' || s[0] == '.' {
-		return false
+	var (
+		idx = 0        // current index
+		c   = bytes[0] // current character
+	)
+
+	// scheme must start with a letter
+	// so omit the loop preamble
+	goto start
+
+nextLetter:
+	// go to the next letter
+	// or be done
+	idx++
+	if idx >= len(bytes) {
+		return true
 	}
 
-	for _, r := range s {
-		if !(('a' <= r && r <= 'z') || ('A' <= r && r <= 'Z')) && // more efficient version of !@unicode.isLetter(r) for ascii
-			r != '+' &&
-			r != '-' &&
-			r != '.' {
-			return false
-		}
+	// get the current letter
+	c = bytes[idx]
+
+	if '0' <= c && c <= '9' {
+		goto nextLetter
 	}
 
-	return true
+	if c == '+' || c == '-' || c == '.' {
+		goto nextLetter
+	}
+
+start:
+	if 'a' <= c && c <= 'z' {
+		goto nextLetter
+	}
+
+	if 'A' <= c && c <= 'Z' {
+		goto nextLetter
+	}
+
+	return false
 }

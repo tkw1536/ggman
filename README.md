@@ -438,6 +438,8 @@ ggman comes with the following builtin aliases:
 
 ### 1.23.0 (Upcoming)
 
+- minor performance improvements
+
 ### 1.22.0 (Released [Sep 22 2024](https://github.com/tkw1536/ggman/releases/tag/v1.22.0))
 
 - update to `go 1.23`
