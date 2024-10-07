@@ -78,42 +78,45 @@ func Benchmark_ParsePort(b *testing.B) {
 	}
 }
 
-func Test_IsValidURLScheme(t *testing.T) {
+func Test_SplitURLScheme(t *testing.T) {
 	type args struct {
-		scheme string
+		input string
 	}
 	tests := []struct {
-		name string
-		args args
-		want bool
+		name       string
+		args       args
+		wantScheme string
+		wantRest   string
 	}{
-		{"http scheme is valid", args{"http"}, true},
-		{"https scheme is valid", args{"https"}, true},
-		{"git scheme is valid", args{"git"}, true},
-		{"ssh scheme is valid", args{"ssh"}, true},
-		{"ssh2 scheme is valid", args{"ssh2"}, true},
-		{"file scheme is valid", args{"file"}, true},
-		{"combined with + scheme is valid", args{"ssh+git"}, true},
-		{"combined with - scheme is valid", args{"ssh-git"}, true},
-		{"combined with . scheme is valid", args{"ssh.git"}, true},
+		{name: "http scheme is valid", args: args{"http://rest"}, wantScheme: "http", wantRest: "rest"},
+		{name: "https scheme is valid", args: args{"https://rest"}, wantScheme: "https", wantRest: "rest"},
+		{name: "git scheme is valid", args: args{"git://rest"}, wantScheme: "git", wantRest: "rest"},
+		{name: "ssh scheme is valid", args: args{"ssh://rest"}, wantScheme: "ssh", wantRest: "rest"},
+		{name: "ssh2 scheme is valid", args: args{"ssh2://rest"}, wantScheme: "ssh2", wantRest: "rest"},
+		{name: "file scheme is valid", args: args{"file://rest"}, wantScheme: "file", wantRest: "rest"},
+		{name: "combined with + scheme is valid", args: args{"ssh+git://rest"}, wantScheme: "ssh+git", wantRest: "rest"},
+		{name: "combined with - scheme is valid", args: args{"ssh-git://rest"}, wantScheme: "ssh-git", wantRest: "rest"},
+		{name: "combined with . scheme is valid", args: args{"ssh.git://rest"}, wantScheme: "ssh.git", wantRest: "rest"},
 
-		{"empty scheme is invalid", args{""}, false},
-		{"numerical scheme is invalid", args{"01234"}, false},
-		{"numerical starting scheme is invalid", args{"01git"}, false},
-		{"non-scheme is invalid", args{"://"}, false},
+		{name: "valid scheme without valid ending", args: args{"valid"}, wantScheme: "", wantRest: "valid"},
+		{name: "valid scheme with only :", args: args{"valid:"}, wantScheme: "", wantRest: "valid:"},
+		{name: "valid scheme with only one /", args: args{"valid:/"}, wantScheme: "", wantRest: "valid:/"},
+		{name: "valid scheme without rest", args: args{"valid://"}, wantScheme: "valid", wantRest: ""},
+
+		{name: "empty input passed through", args: args{""}, wantScheme: "", wantRest: ""},
+		{name: "numerical scheme is invalid", args: args{"01234"}, wantScheme: "", wantRest: "01234"},
+		{name: "numerical starting scheme is invalid", args: args{"01git"}, wantScheme: "", wantRest: "01git"},
+		{name: "non-scheme is invalid", args: args{"://"}, wantScheme: "", wantRest: "://"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := IsValidURLScheme(tt.args.scheme); got != tt.want {
-				t.Errorf("validateScheme() = %v, want %v", got, tt.want)
+			gotScheme, gotRest := SplitURLScheme(tt.args.input)
+			if gotScheme != tt.wantScheme {
+				t.Errorf("SplitURLScheme() scheme = %v, want %v", gotScheme, tt.wantScheme)
+			}
+			if gotRest != tt.wantRest {
+				t.Errorf("SplitURLScheme() rest = %v, want %v", gotRest, tt.wantRest)
 			}
 		})
-	}
-}
-
-func Benchmark_IsValidURLScheme(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		IsValidURLScheme("0http")
-		IsValidURLScheme("http")
 	}
 }

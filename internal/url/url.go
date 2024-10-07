@@ -62,20 +62,23 @@ func ParsePort(s string) (port uint16, err error) {
 	return port, nil
 }
 
-// IsValidURLScheme checks if a string represents a valid URL scheme.
+// SplitURLScheme splits off the URL scheme from s, returning the rest of the string in rest.
+// If it does not contain a valid scheme, returns "", s.
 //
-// A valid url scheme is one that matches the regex [a-zA-Z][a-zA-Z0-9+\-\.]*.
-func IsValidURLScheme(s string) bool {
-	// An obvious implementation of this function would be:
-	//   regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9+\-\.]*$`).MatchString(s)
+// A scheme is of the form 'scheme://rest'.
+// Scheme must match the regular expression `^[a-zA-Z][a-zA-Z0-9+\-\.]*$`.
+func SplitURLScheme(s string) (scheme string, rest string) {
+	// An obvious implementation of this function would simply match against the
+	// regular expression.
+	//
 	// However such an implementation would be a lot slower when called repeatedly.
-	// Instead we directly build code that implements this regex.
+	// Instead we directly build code that directly implements the trimming.
 
 	// Iterate over the bytes in this string.
 	// We can do this safely, because any valid scheme must be ascii.
 	bytes := []byte(s)
 	if len(bytes) == 0 {
-		return false
+		return "", s
 	}
 
 	var (
@@ -92,11 +95,17 @@ nextLetter:
 	// or be done
 	idx++
 	if idx >= len(bytes) {
-		return true
+		goto noScheme
 	}
 
 	// get the current letter
 	c = bytes[idx]
+
+	// reached end of the scheme
+	// we can make use of this because no valid scheme has a ':'.
+	if c == ':' {
+		goto scheme
+	}
 
 	if '0' <= c && c <= '9' {
 		goto nextLetter
@@ -115,5 +124,21 @@ start:
 		goto nextLetter
 	}
 
-	return false
+noScheme:
+	// not a valid letter
+	return "", s
+
+scheme:
+	// split into scheme and rest
+	scheme = string(bytes[:idx])
+	rest = string(bytes[idx+1:])
+
+	// check that the rest starts with "//"
+	if len(rest) < 2 || rest[0] != '/' || rest[1] != '/' {
+		goto noScheme
+	}
+
+	// and trim off the valid prefix
+	rest = rest[2:]
+	return
 }

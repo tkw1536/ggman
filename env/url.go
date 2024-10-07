@@ -66,14 +66,8 @@ func ParseURL(s string) (repo URL) {
 	// normalize for windows
 	s = windowsReplacer.Replace(s)
 
-	// Trim off a leading scheme (as separated by '://') and (if it is valid) store it.
-	{
-		scheme, rest := split.Before(s, "://")
-		if url.IsValidURLScheme(scheme) {
-			repo.Scheme = scheme
-			s = rest
-		}
-	}
+	// split off the url scheme
+	repo.Scheme, s = url.SplitURLScheme(s)
 
 	// Next, we split of the authentication if we have an '@' sign.
 	// Technically the if { } clause isn't required, the code will work fine without it.
