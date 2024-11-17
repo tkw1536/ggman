@@ -5,6 +5,7 @@ package mockenv
 import (
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/pkglib/stream"
@@ -42,7 +43,7 @@ func (dp DevPlumbing) stream(stream stream.IOStream) stream.IOStream {
 func (dp DevPlumbing) Forward(url string) string {
 	translated, hasURL := dp.URLMap[url]
 	if !hasURL {
-		panic(fmt.Sprintf("DevPlumbing: %q has no forward mapping", url))
+		panic("DevPlumbing: " + strconv.Quote(url) + " has no forward mapping")
 	}
 	return translated
 }

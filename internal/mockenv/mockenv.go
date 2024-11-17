@@ -6,10 +6,10 @@ package mockenv
 //spellchecker:words bytes path filepath regexp strings testing github alessio shellescape ggman gggit internal testutil goprogram exit pkglib reflectx stream testlib
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -128,7 +128,7 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 
 	// generate a new fake remote path
 	mock.remoteCounter++
-	fakeRemotePath := filepath.Join(mock.remoteRoot, "remote"+fmt.Sprint(mock.remoteCounter))
+	fakeRemotePath := filepath.Join(mock.remoteRoot, "remote"+strconv.Itoa(mock.remoteCounter))
 
 	// create a repository
 	repo = testutil.NewTestRepoAt(fakeRemotePath, "")
@@ -226,7 +226,7 @@ func (mock *MockEnv) interpolate(value string) (result string) {
 		actual = mock.Resolve(parts...)
 
 		if first == "\"" && last == "\"" {
-			return fmt.Sprintf("%q", actual)
+			return strconv.Quote(actual)
 		}
 		if first == "`" && last == "`" {
 			return shellescape.Quote(actual)

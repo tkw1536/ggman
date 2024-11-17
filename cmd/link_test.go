@@ -2,7 +2,7 @@ package cmd
 
 //spellchecker:words testing github ggman internal mockenv
 import (
-	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/mockenv"
@@ -15,7 +15,7 @@ func TestCommandLink(t *testing.T) {
 
 	externalRepo := mock.Clone("https://github.com/hello/world.git", "..", "external")
 
-	escapedExternalRepo := fmt.Sprintf("%q", externalRepo)
+	escapedExternalRepo := strconv.Quote(externalRepo)
 
 	tests := []struct {
 		name    string

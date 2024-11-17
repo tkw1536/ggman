@@ -2,7 +2,7 @@ package cmd
 
 //spellchecker:words testing github ggman internal mockenv testutil
 import (
-	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/mockenv"
@@ -19,7 +19,7 @@ func TestCommandFetch(t *testing.T) {
 	clonePath := mock.Install("https://github.com/hello/world.git", "hello", "world")
 	testutil.CommitTestFiles(repo, nil)
 
-	escapedClonePath := fmt.Sprintf("%q", clonePath)
+	escapedClonePath := strconv.Quote(clonePath)
 
 	tests := []struct {
 		name    string

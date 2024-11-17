@@ -3,7 +3,6 @@ package cmd
 //spellchecker:words errors github ggman goprogram exit parser
 import (
 	"errors"
-	"fmt"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -50,7 +49,7 @@ func (clone) Description() ggman.Description {
 
 var errInvalidDest = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  fmt.Sprintf("invalid destination: %q and %q may not be used together", "--to", "--here"),
+	Message:  `invalid destination: "--to" and "--here" may not be used together`,
 }
 
 func (c *clone) AfterParse() error {
