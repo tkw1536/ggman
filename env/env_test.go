@@ -77,7 +77,9 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 	// dDir is a directory with a '.ggman' file
 	dDir := testlib.TempDirAbs(t)
 	GGMANFile := filepath.Join(dDir, ".ggman")
-	os.WriteFile(GGMANFile, []byte(canLineContent), os.ModePerm)
+	if err := os.WriteFile(GGMANFile, []byte(canLineContent), os.ModePerm); err != nil {
+		panic(err)
+	}
 
 	tests := []struct {
 		name        string
@@ -112,7 +114,9 @@ func TestEnv_Local_Exact(t *testing.T) {
 	root := testlib.TempDirAbs(t)
 
 	// make the 'HELLO' directory, to ensure that it already exists
-	os.MkdirAll(filepath.Join(root, "server.com", "HELLO"), os.ModePerm|os.ModeDir)
+	if err := os.MkdirAll(filepath.Join(root, "server.com", "HELLO"), os.ModePerm|os.ModeDir); err != nil {
+		panic(err)
+	}
 
 	tests := []struct {
 		name   string

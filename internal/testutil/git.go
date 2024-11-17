@@ -47,10 +47,12 @@ func NewTestRepoAt(clonePath, remote string) (repo *git.Repository) {
 		return nil
 	}
 	if remote != "" {
-		repo.CreateRemote(&config.RemoteConfig{
+		if _, err := repo.CreateRemote(&config.RemoteConfig{
 			Name: "origin",
 			URLs: []string{remote},
-		})
+		}); err != nil {
+			return nil
+		}
 	}
 	return repo
 }

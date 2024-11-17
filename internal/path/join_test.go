@@ -16,7 +16,9 @@ func TestJoinNormalized(t *testing.T) {
 	// create subdirectory for testing
 	root := testlib.TempDirAbs(t)
 	exactD := filepath.Join(root, "exact")
-	os.Mkdir(exactD, os.ModePerm|os.ModeDir)
+	if err := os.Mkdir(exactD, os.ModePerm|os.ModeDir); err != nil {
+		panic(err)
+	}
 
 	type args struct {
 		n    Normalization
@@ -147,10 +149,14 @@ func TestJoinNormalized_both(t *testing.T) {
 	root := testlib.TempDirAbs(t)
 
 	lcBothD := filepath.Join(root, "both")
-	os.Mkdir(lcBothD, os.ModePerm|os.ModeDir)
+	if err := os.Mkdir(lcBothD, os.ModePerm|os.ModeDir); err != nil {
+		panic(err)
+	}
 
 	ucBothD := filepath.Join(root, "BOTH")
-	os.Mkdir(ucBothD, os.ModePerm|os.ModeDir)
+	if err := os.Mkdir(ucBothD, os.ModePerm|os.ModeDir); err != nil {
+		panic(err)
+	}
 
 	type args struct {
 		n    Normalization

@@ -67,14 +67,15 @@ func Test_ParsePort_all(t *testing.T) {
 
 func Benchmark_ParsePort(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		ParsePort("0")
-		ParsePort("80")
-		ParsePort("65535")
-		ParsePort(" 8080")
-		ParsePort("-1")
-		ParsePort("65536")
-		ParsePort("+123")
-		ParsePort("aaaa")
+		// ignore all the errors, cause we're benchmarking!
+		_, _ = ParsePort("0")
+		_, _ = ParsePort("80")
+		_, _ = ParsePort("65535")
+		_, _ = ParsePort(" 8080")
+		_, _ = ParsePort("-1")
+		_, _ = ParsePort("65536")
+		_, _ = ParsePort("+123")
+		_, _ = ParsePort("aaaa")
 	}
 }
 

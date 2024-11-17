@@ -244,7 +244,7 @@ func (uw urlweb) Run(context ggman.Context) error {
 
 	// print or open the url
 	if uw.isWebCommand {
-		browser.OpenURL(weburl)
+		return browser.OpenURL(weburl)
 	} else {
 		context.Println(weburl)
 	}

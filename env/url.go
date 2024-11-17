@@ -186,7 +186,7 @@ func (url URL) Canonical(cSpec string) (canonical string) {
 	}
 
 	// add all the components to replace the '$'
-	text.Join(&builder, components, "/")
+	_, _ = text.Join(&builder, components, "/") // ignore cause this should never fail
 
 	// add the suffix
 	builder.WriteString(suffix)

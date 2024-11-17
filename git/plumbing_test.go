@@ -631,8 +631,12 @@ func Test_gogit_ContainsBranch(t *testing.T) {
 	// In this test we only have a single repository.
 	// We create two branches 'branchA' and 'branchB'
 	clone, repo := testutil.NewTestRepo(t)
-	repo.CreateBranch(&config.Branch{Name: "branchA"})
-	repo.CreateBranch(&config.Branch{Name: "branchB"})
+	if err := repo.CreateBranch(&config.Branch{Name: "branchA"}); err != nil {
+		panic(err)
+	}
+	if err := repo.CreateBranch(&config.Branch{Name: "branchB"}); err != nil {
+		panic(err)
+	}
 
 	type args struct {
 		branch string

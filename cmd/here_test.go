@@ -17,7 +17,9 @@ func TestCommandHere(t *testing.T) {
 	clonePath := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
 
 	subClonePath := filepath.Join(clonePath, "sub")
-	os.MkdirAll(subClonePath, os.ModePerm)
+	if err := os.MkdirAll(subClonePath, os.ModePerm); err != nil {
+		panic(err)
+	}
 
 	tests := []struct {
 		name    string

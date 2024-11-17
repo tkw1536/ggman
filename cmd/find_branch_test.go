@@ -20,7 +20,9 @@ func TestCommandFindBranch(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	repo.CreateBranch(&config.Branch{Name: "branch"})
+	if err := repo.CreateBranch(&config.Branch{Name: "branch"}); err != nil {
+		panic(err)
+	}
 
 	// with branch 'branch'
 	clonePath = mock.Clone("user@server.com/repo", "server.com", "user", "repo")
@@ -28,11 +30,15 @@ func TestCommandFindBranch(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	repo.CreateBranch(&config.Branch{Name: "branch"})
+	if err := repo.CreateBranch(&config.Branch{Name: "branch"}); err != nil {
+		panic(err)
+	}
 
 	// with only master branch
 	repo = mock.Register("https://gitlab.com/hello/world.git")
-	repo.CreateBranch(&config.Branch{Name: "branchC"})
+	if err := repo.CreateBranch(&config.Branch{Name: "branchC"}); err != nil {
+		panic(err)
+	}
 	mock.Install("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
 	tests := []struct {

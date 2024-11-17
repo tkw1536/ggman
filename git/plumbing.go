@@ -39,7 +39,7 @@ type Plumbing interface {
 
 	// Init is used to initialize this Plumbing.
 	// Init should only be called once per Plumbing instance.
-	// When initialization fails, for example due to missing dependencies, returns a non-nil error,
+	// When initialization fails, for example due to missing dependencies, returns a non-nil error.
 	Init() error
 
 	// IsRepository checks if the directory at localPath is the root of a git repository.
@@ -155,7 +155,7 @@ func NewPlumbing() Plumbing {
 	// NOTE: We cast here to avoid a warning that the Init method is a noop.
 	// We want to keep it in case it does something in the future.
 	gg := Plumbing(gogit{})
-	gg.Init()
+	_ = gg.Init() // ignore cause gogit always returns a nil error
 	return gg
 }
 
@@ -570,10 +570,12 @@ func (gogit) GetBranches(clonePath string, cache any) (branches []string, err er
 	defer branchRefs.Close()
 
 	// get their names
-	branchRefs.ForEach(func(bref *plumbing.Reference) error {
+	if err := branchRefs.ForEach(func(bref *plumbing.Reference) error {
 		branches = append(branches, string(bref.Name().Short()))
 		return nil
-	})
+	}); err != nil {
+		return nil, err
+	}
 
 	return
 }

@@ -185,7 +185,7 @@ func main() {
 	// we don't need to even bother with the rest of the program
 	// just immediately return a custom error message.
 	if len(os.Args) == 1 {
-		exit.Die(streams, errNoArgumentsProvided)
+		_ = exit.Die(streams, errNoArgumentsProvided) // ignore cause Return() exits
 		errNoArgumentsProvided.Return()
 		return
 	}
