@@ -28,7 +28,7 @@ type ls struct {
 	ExitCode bool `short:"e" long:"exit-code" description:"return exit code 1 if no repositories are found"`
 	Scores   bool `short:"s" long:"scores" description:"show scores returned from filter along with repositories"`
 	One      bool `short:"o" long:"one" description:"list at most one repository, for use in shell scripts"`
-	Limit    uint `short:"n" long:"count" description:"list at most this many repositories. May not be combined with one"`
+	Limit    int  `short:"n" long:"count" description:"list at most this many repositories. May not be combined with one"`
 }
 
 func (ls) Description() ggman.Description {
@@ -49,10 +49,18 @@ var errLSExitFlag = exit.Error{
 
 var errLsOnlyOneOfOneAndLimit = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
-	Message:  "only one of `--one` and `--limit` may be provided",
+	Message:  "only one of `--one` and `--count` may be provided",
+}
+
+var errLsLimitNegative = exit.Error{
+	ExitCode: exit.ExitCommandArguments,
+	Message:  "`--count` may not be negative",
 }
 
 func (ls ls) AfterParse() error {
+	if ls.Limit < 0 {
+		return errLsLimitNegative
+	}
 	if ls.Limit != 0 && ls.One {
 		return errLsOnlyOneOfOneAndLimit
 	}
@@ -64,7 +72,7 @@ func (l ls) Run(context ggman.Context) error {
 		l.Limit = 1
 	}
 	repos, scores := context.Environment.RepoScores(true)
-	if l.Limit > 0 && len(repos) > int(l.Limit) {
+	if l.Limit > 0 && len(repos) > l.Limit {
 		repos = repos[:l.Limit]
 	}
 	for i, repo := range repos {

@@ -147,7 +147,18 @@ func TestCommandLs(t *testing.T) {
 			4,
 			"",
 
-			"Only one of `--one` and `--limit` may be provided\n",
+			"Only one of `--one` and `--count` may be provided\n",
+		},
+
+		{
+			"don't support negative limit",
+			"",
+			[]string{"ls", "--count", "-1"},
+
+			4,
+			"",
+
+			"`--count` may not be negative\n",
 		},
 
 		{
