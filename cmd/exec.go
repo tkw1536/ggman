@@ -162,7 +162,7 @@ func (e exe) runRepo(io stream.IOStream, repo string) error {
 	// but actually return other error properly!
 	if ee, ok := err.(*exec.ExitError); ok {
 		return exit.Error{
-			ExitCode: exit.ExitCode(ee.ExitCode()),
+			ExitCode: exit.ExitCode(ee.ExitCode()), // #nosec G115 exit status guaranteed to fit into uint8
 			Message:  ee.Error(),
 		}
 	}
@@ -204,3 +204,5 @@ func (e exe) runSimulate(context ggman.Context) (err error) {
 
 	return err
 }
+
+// spellchecker:words nosec
