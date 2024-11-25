@@ -44,6 +44,8 @@ func (f fix) Run(context ggman.Context) error {
 	simulate := f.Simulate
 
 	hasError := false
+
+	var innerError error
 	for _, repo := range context.Environment.Repos(true) {
 		var initialMessage sync.Once // send an initial log message to the user, once
 
@@ -56,13 +58,23 @@ func (f fix) Run(context ggman.Context) error {
 
 			initialMessage.Do(func() {
 				if !simulate {
-					context.Printf("Fixing remote of %q", repo)
+					if _, err := context.Printf("Fixing remote of %q", repo); err != nil {
+						innerError = ggman.ErrGenericOutput.WrapError(err)
+					}
 				} else {
-					context.Printf("Simulate fixing remote of %q", repo)
+					if _, err := context.Printf("Simulate fixing remote of %q", repo); err != nil {
+						innerError = ggman.ErrGenericOutput.WrapError(err)
+					}
 				}
 			})
 
-			context.Printf("Updating %s: %s -> %s\n", remoteName, url, canon)
+			if innerError != nil {
+				return "", innerError
+			}
+
+			if _, err := context.Printf("Updating %s: %s -> %s\n", remoteName, url, canon); err != nil {
+				return "", ggman.ErrGenericOutput.WrapError(err)
+			}
 
 			// either return the canonical url, or (if we're simulating) the old url
 			if simulate {
@@ -71,7 +83,7 @@ func (f fix) Run(context ggman.Context) error {
 
 			return canon, nil
 		}); e != nil {
-			context.EPrintln(e.Error())
+			_, _ = context.EPrintln(e.Error()) // no way to report error
 			hasError = true
 		}
 	}

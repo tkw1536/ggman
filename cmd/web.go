@@ -176,8 +176,7 @@ var errURLCloneAndUnsupported = exit.Error{
 
 func (uw urlweb) Run(context ggman.Context) error {
 	if uw.List {
-		uw.listBases(context)
-		return nil
+		return uw.listBases(context)
 	}
 
 	// get the remote url of the current repository
@@ -246,20 +245,22 @@ func (uw urlweb) Run(context ggman.Context) error {
 	if uw.isWebCommand {
 		return browser.OpenURL(weburl)
 	} else {
-		context.Println(weburl)
+		_, err := context.Println(weburl)
+		return ggman.ErrGenericOutput.WrapError(err)
 	}
-
-	return nil
 }
 
-func (uw urlweb) listBases(context ggman.Context) {
+func (uw urlweb) listBases(context ggman.Context) error {
 	bases := maps.Keys(WebBuiltInBases)
 	slices.Sort(bases)
 
 	for _, name := range bases {
 		base := WebBuiltInBases[name]
-		context.Printf("%s: %s\n", name, base.URL)
+		if _, err := context.Printf("%s: %s\n", name, base.URL); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
 	}
+	return nil
 }
 
 // getRemoteURL gets the remote url of current repository in the context

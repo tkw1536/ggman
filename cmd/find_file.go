@@ -76,9 +76,13 @@ func (f findFile) Run(context ggman.Context) error {
 
 		foundRepo = true
 		if f.PrintFilePath {
-			context.Println(candidate)
+			if _, err := context.Println(candidate); err != nil {
+				return ggman.ErrGenericOutput.WrapError(err)
+			}
 		} else {
-			context.Println(repo)
+			if _, err := context.Println(repo); err != nil {
+				return ggman.ErrGenericOutput.WrapError(err)
+			}
 		}
 	}
 

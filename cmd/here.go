@@ -38,9 +38,13 @@ func (h here) Run(context ggman.Context) error {
 		return err
 	}
 
-	context.Println(root)
+	if _, err := context.Println(root); err != nil {
+		return ggman.ErrGenericOutput.WrapError(err)
+	}
 	if h.Tree {
-		context.Println(worktree)
+		if _, err := context.Println(worktree); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
 	}
 
 	return nil

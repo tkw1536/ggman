@@ -54,7 +54,9 @@ func (f findBranch) Run(context ggman.Context) error {
 		}
 
 		foundRepo = true
-		context.Println(repo)
+		if _, err := context.Println(repo); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
 	}
 
 	// if we have --exit-code set and no results

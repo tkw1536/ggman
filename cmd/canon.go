@@ -42,7 +42,6 @@ func (c canon) Run(context ggman.Context) error {
 
 	// print out the canonical version of the file
 	canonical := c.Positional.URL.CanonicalWith(file)
-	context.Println(canonical)
-
-	return nil
+	_, err := context.Println(canonical)
+	return ggman.ErrGenericOutput.WrapError(err)
 }

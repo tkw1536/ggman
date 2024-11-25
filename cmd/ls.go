@@ -77,10 +77,14 @@ func (l ls) Run(context ggman.Context) error {
 	}
 	for i, repo := range repos {
 		if l.Scores {
-			context.Printf("%f %s\n", scores[i], repo)
+			if _, err := context.Printf("%f %s\n", scores[i], repo); err != nil {
+				return ggman.ErrGenericOutput.WrapError(err)
+			}
 			continue
 		}
-		context.Println(repo)
+		if _, err := context.Println(repo); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
 	}
 
 	// if we have --exit-code set and no results

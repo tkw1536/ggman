@@ -89,14 +89,22 @@ func (e _env) Run(context ggman.Context) error {
 	for _, v := range variables {
 		switch {
 		case e.List:
-			context.Println(v.Key)
+			if _, err := context.Println(v.Key); err != nil {
+				return ggman.ErrGenericOutput.WrapError(err)
+			}
 		case e.Raw:
-			context.Println(v.Get(context.Environment, context.Program.Info))
+			if _, err := context.Println(v.Get(context.Environment, context.Program.Info)); err != nil {
+				return ggman.ErrGenericOutput.WrapError(err)
+			}
 		case e.Describe:
-			context.Printf("%s: %s\n", v.Key, v.Description)
+			if _, err := context.Printf("%s: %s\n", v.Key, v.Description); err != nil {
+				return ggman.ErrGenericOutput.WrapError(err)
+			}
 		default:
 			value := shellescape.Quote(v.Get(context.Environment, context.Program.Info))
-			context.Printf("%s=%s\n", v.Key, value)
+			if _, err := context.Printf("%s=%s\n", v.Key, value); err != nil {
+				return ggman.ErrGenericOutput.WrapError(err)
+			}
 		}
 	}
 

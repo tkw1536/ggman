@@ -46,7 +46,9 @@ func (sweep) Run(context ggman.Context) error {
 	}
 
 	for _, r := range results {
-		context.Println(r)
+		if _, err := context.Println(r); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
 	}
 	return nil
 }

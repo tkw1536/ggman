@@ -39,6 +39,6 @@ func (w where) Run(context ggman.Context) error {
 	if err != nil {
 		return err
 	}
-	context.Println(localPath)
-	return nil
+	_, err = context.Println(localPath)
+	return ggman.ErrGenericOutput.WrapError(err)
 }

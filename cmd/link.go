@@ -92,7 +92,9 @@ func (l link) Run(context ggman.Context) error {
 		}
 	}
 
-	context.Printf("Linking %q -> %q\n", to, from)
+	if _, err := context.Printf("Linking %q -> %q\n", to, from); err != nil {
+		return ggman.ErrGenericOutput.WrapError(err)
+	}
 
 	// make the parent folder
 	if e := os.MkdirAll(parentTo, os.ModePerm); e != nil {

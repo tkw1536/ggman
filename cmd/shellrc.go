@@ -27,6 +27,6 @@ func (shellrc) Description() ggman.Description {
 var shellrcSh string
 
 func (shellrc) Run(context ggman.Context) error {
-	context.Printf("%s", shellrcSh)
-	return nil
+	_, err := context.Printf("%s", shellrcSh)
+	return ggman.ErrGenericOutput.WrapError(err)
 }

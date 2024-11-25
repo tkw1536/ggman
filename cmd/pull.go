@@ -33,9 +33,13 @@ var errPullCustom = exit.Error{
 func (pull) Run(context ggman.Context) error {
 	hasError := false
 	for _, repo := range context.Environment.Repos(true) {
-		context.Printf("Pulling %q\n", repo)
+		if _, err := context.Printf("Pulling %q\n", repo); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
 		if e := context.Environment.Git.Pull(context.IOStream, repo); e != nil {
-			context.EPrintf("%s\n", e)
+			if _, err := context.EPrintf("%s\n", e); err != nil {
+				return ggman.ErrGenericOutput.WrapError(err)
+			}
 			hasError = true
 		}
 	}

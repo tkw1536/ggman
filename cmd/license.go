@@ -21,8 +21,8 @@ func (license) Description() ggman.Description {
 }
 
 func (license) Run(context ggman.Context) error {
-	context.Printf(stringLicenseInfo, ggman.License, legal.Notices)
-	return nil
+	_, err := context.Printf(stringLicenseInfo, ggman.License, legal.Notices)
+	return ggman.ErrGenericOutput.WrapError(err)
 }
 
 const stringLicenseInfo = `

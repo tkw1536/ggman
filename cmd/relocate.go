@@ -76,8 +76,12 @@ func (r relocate) Run(context ggman.Context) error {
 		parentPath := filepath.Dir(shouldPath)
 
 		// print what is being done
-		context.Printf("mkdir -p %s\n", shellescape.Quote(parentPath))
-		context.Printf("mv %s %s\n", shellescape.Quote(gotPath), shellescape.Quote(shouldPath))
+		if _, err := context.Printf("mkdir -p %s\n", shellescape.Quote(parentPath)); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
+		if _, err := context.Printf("mv %s %s\n", shellescape.Quote(gotPath), shellescape.Quote(shouldPath)); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
 		if r.Simulate {
 			continue
 		}

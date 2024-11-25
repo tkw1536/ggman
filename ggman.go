@@ -15,6 +15,7 @@ package ggman
 import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram"
+	"github.com/tkw1536/goprogram/exit"
 )
 
 type ggmanEnv = env.Env
@@ -36,3 +37,9 @@ type Arguments = goprogram.Arguments[ggmanFlags]
 
 // Description is the type of descriptions of a ggman command
 type Description = goprogram.Description[ggmanFlags, ggmanRequirements]
+
+// ErrGenericOutput indicates that a generic output error occurred
+var ErrGenericOutput = exit.Error{
+	ExitCode: exit.ExitGeneric,
+	Message:  "Unknown Output Error",
+}

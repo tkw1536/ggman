@@ -27,7 +27,9 @@ func (comps) Description() ggman.Description {
 
 func (c comps) Run(context ggman.Context) error {
 	for _, comp := range c.Positional.URL.Components() {
-		context.Println(comp)
+		if _, err := context.Println(comp); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
 	}
 
 	return nil

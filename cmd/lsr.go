@@ -58,7 +58,9 @@ func (l lsr) Run(context ggman.Context) error {
 		if l.Canonical {
 			remote = env.ParseURL(remote).CanonicalWith(lines)
 		}
-		context.Println(remote)
+		if _, err := context.Println(remote); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
 	}
 
 	return nil

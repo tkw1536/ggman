@@ -122,7 +122,9 @@ func (e exe) runReal(context ggman.Context) error {
 		}
 
 		if !e.NoRepo && !statusIO {
-			io.EPrintln(repo)
+			if _, err := io.EPrintln(repo); err != nil {
+				return err
+			}
 		}
 
 		return e.runRepo(io, repo)
@@ -182,24 +184,38 @@ func (e exe) runSimulate(context ggman.Context) (err error) {
 	}
 
 	// print header of the bash script
-	context.Println("#!/bin/bash")
-	if !e.Force {
-		context.Println("set -e")
+	if _, err := context.Println("#!/bin/bash"); err != nil {
+		return ggman.ErrGenericOutput.WrapError(err)
 	}
-	context.Println("")
+	if !e.Force {
+		if _, err := context.Println("set -e"); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
+	}
+	if _, err := context.Println(""); err != nil {
+		return ggman.ErrGenericOutput.WrapError(err)
+	}
 
 	exec := shellescape.QuoteCommand(append([]string{e.Positionals.Exe}, e.Positionals.Args...))
 
 	// iterate over each repository
 	// then print each of the commands to be run!
 	for _, repo := range context.Environment.Repos(true) {
-		context.Printf("cd %s\n", shellescape.Quote(repo))
+		if _, err := context.Printf("cd %s\n", shellescape.Quote(repo)); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
 		if !e.NoRepo {
-			context.Printf("echo %s\n", shellescape.Quote(repo))
+			if _, err := context.Printf("echo %s\n", shellescape.Quote(repo)); err != nil {
+				return ggman.ErrGenericOutput.WrapError(err)
+			}
 		}
 
-		context.Println(exec)
-		context.Println("")
+		if _, err := context.Println(exec); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
+		if _, err := context.Println(""); err != nil {
+			return ggman.ErrGenericOutput.WrapError(err)
+		}
 	}
 
 	return err

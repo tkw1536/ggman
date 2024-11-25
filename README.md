@@ -441,6 +441,7 @@ ggman comes with the following builtin aliases:
 - update dependencies to latest
 - minor linting updates
 - minor performance improvements
+- explicitly handle output errors
 
 ### 1.22.0 (Released [Sep 22 2024](https://github.com/tkw1536/ggman/releases/tag/v1.22.0))
 
