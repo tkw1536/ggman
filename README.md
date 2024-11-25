@@ -438,6 +438,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.23.0 (Upcoming)
 
+- update dependencies to latest
 - minor linting updates
 - minor performance improvements
 

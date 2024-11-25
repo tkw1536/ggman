@@ -111,7 +111,7 @@ func (e exe) runReal(context ggman.Context) error {
 	}
 
 	// schedule each command to be run in parallel by using a semaphore!
-	return sema.Schedule(func(i int) error {
+	return sema.Schedule(func(i uint64) error {
 		repo := repos[i]
 
 		io := context.IOStream
@@ -126,7 +126,7 @@ func (e exe) runReal(context ggman.Context) error {
 		}
 
 		return e.runRepo(io, repo)
-	}, len(repos), sema.Concurrency{
+	}, uint64(len(repos)), sema.Concurrency{
 		Limit: e.Parallel,
 		Force: e.Force,
 	})
