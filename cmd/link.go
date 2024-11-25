@@ -7,6 +7,7 @@ import (
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/internal/dirs"
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/pkglib/fsx"
 )
@@ -97,7 +98,7 @@ func (l link) Run(context ggman.Context) error {
 	}
 
 	// make the parent folder
-	if e := os.MkdirAll(parentTo, os.ModePerm); e != nil {
+	if e := os.MkdirAll(parentTo, dirs.NewModBits); e != nil {
 		return errLinkUnknown.WrapError(e)
 	}
 

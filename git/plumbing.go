@@ -229,7 +229,7 @@ func (gg gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, extr
 
 	gitArgs := append([]string{"clone", remoteURI, clonePath}, extraArgs...)
 
-	cmd := exec.Command(gg.gitPath, gitArgs...)
+	cmd := exec.Command(gg.gitPath, gitArgs...) /* #nosec G204  -- user-controlled by design */
 	cmd.Stdin = stream.Stdin
 	cmd.Stdout = stream.Stdout
 	cmd.Stderr = stream.Stderr
@@ -243,7 +243,7 @@ func (gg gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, extr
 }
 
 func (gg gitgit) Fetch(stream stream.IOStream, clonePath string, cache any) error {
-	cmd := exec.Command(gg.gitPath, "fetch", "--all")
+	cmd := exec.Command(gg.gitPath, "fetch", "--all") /* #nosec G204  -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 	cmd.Stdin = stream.Stdin
 	cmd.Stdout = stream.Stdout
@@ -258,7 +258,7 @@ func (gg gitgit) Fetch(stream stream.IOStream, clonePath string, cache any) erro
 }
 
 func (gg gitgit) Pull(stream stream.IOStream, clonePath string, cache any) error {
-	cmd := exec.Command(gg.gitPath, "pull")
+	cmd := exec.Command(gg.gitPath, "pull") /* #nosec G204  -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 	cmd.Stdin = stream.Stdin
 	cmd.Stdout = stream.Stdout
@@ -273,7 +273,7 @@ func (gg gitgit) Pull(stream stream.IOStream, clonePath string, cache any) error
 }
 
 func (gg gitgit) IsDirty(clonePath string, cache any) (dirty bool, err error) {
-	cmd := exec.Command(gg.gitPath, "diff", "--quiet")
+	cmd := exec.Command(gg.gitPath, "diff", "--quiet") /* #nosec G204 -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 
 	// run the underlying command
@@ -552,8 +552,7 @@ func (gogit) Pull(stream stream.IOStream, clonePath string, cache any) (err erro
 
 func ignoreErrUpToDate(stream stream.IOStream, err error) error {
 	if err == git.NoErrAlreadyUpToDate {
-		stream.Println(err.Error())
-		err = nil
+		_, err = stream.Println(err.Error())
 	}
 	return err
 }

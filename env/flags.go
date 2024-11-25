@@ -119,7 +119,7 @@ func (env Env) NewFromFileFilter(p string, fuzzy bool) (filters []Filter, err er
 	}
 
 	// open the file
-	file, err := os.Open(path)
+	file, err := os.Open(path) /* #nosec G304 -- explicitly passed as a parameter */
 	if err != nil {
 		return nil, errors.Wrapf(err, "Unable to open path %q", p)
 	}

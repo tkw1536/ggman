@@ -139,7 +139,7 @@ var ErrExecFatal = exit.Error{
 }
 
 func (e exe) runRepo(io stream.IOStream, repo string) error {
-	cmd := exec.Command(e.Positionals.Exe, e.Positionals.Args...)
+	cmd := exec.Command(e.Positionals.Exe, e.Positionals.Args...) /* #nosec G204 -- by design */
 	cmd.Dir = repo
 
 	// setup standard output / input, using either the environment

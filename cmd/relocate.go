@@ -10,6 +10,7 @@ import (
 	"github.com/alessio/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/ggman/internal/dirs"
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/pkglib/fsx"
 )
@@ -87,7 +88,7 @@ func (r relocate) Run(context ggman.Context) error {
 		}
 
 		// do it!
-		if err := os.MkdirAll(parentPath, os.ModePerm); err != nil {
+		if err := os.MkdirAll(parentPath, dirs.NewModBits); err != nil {
 			return errUnableMoveCreateParent.WrapError(err)
 		}
 

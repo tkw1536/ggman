@@ -177,7 +177,7 @@ func (env *Env) LoadDefaultCANFILE() (CanFile, error) {
 	// In order, if a file exists read it or fail.
 	// If it doesn't exist continue to the next file.
 	for _, file := range files {
-		f, err := os.Open(file)
+		f, err := os.Open(file) /* #nosec G304 -- different files used by design */
 		switch {
 		case err == nil: // do nothing
 		case errors.Is(err, fs.ErrNotExist):

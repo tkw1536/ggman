@@ -18,6 +18,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	gggit "github.com/tkw1536/ggman/git"
+	"github.com/tkw1536/ggman/internal/dirs"
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/pkglib/reflectx"
@@ -49,11 +50,11 @@ func NewMockEnv(t *testing.T) *MockEnv {
 	root := testlib.TempDirAbs(t)
 
 	local := filepath.Join(root, "local")
-	if err := os.Mkdir(local, os.ModePerm); err != nil {
+	if err := os.Mkdir(local, dirs.NewModBits); err != nil {
 		panic(err)
 	}
 	remote := filepath.Join(root, "remote")
-	if err := os.Mkdir(remote, os.ModePerm); err != nil {
+	if err := os.Mkdir(remote, dirs.NewModBits); err != nil {
 		panic(err)
 	}
 

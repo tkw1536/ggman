@@ -17,6 +17,7 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/tkw1536/ggman/internal/dirs"
 	"github.com/tkw1536/pkglib/stream"
 )
 
@@ -194,7 +195,7 @@ func (impl *defaultGitWrapper) Clone(stream stream.IOStream, remoteURI, clonePat
 	}
 
 	// make the parent directory to clone the repository into
-	if err := os.MkdirAll(filepath.Join(clonePath, ".."), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Join(clonePath, ".."), dirs.NewModBits); err != nil {
 		return err
 	}
 
