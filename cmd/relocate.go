@@ -1,13 +1,13 @@
 package cmd
 
-//spellchecker:words errors path filepath github alessio shellescape ggman internal dirs goprogram exit pkglib
+//spellchecker:words errors path filepath essio shellescape github ggman internal dirs goprogram exit pkglib
 import (
 	"errors"
 	"io/fs"
 	"os"
 	"path/filepath"
 
-	"github.com/alessio/shellescape"
+	"al.essio.dev/pkg/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/dirs"

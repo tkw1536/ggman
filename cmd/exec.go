@@ -1,10 +1,10 @@
 package cmd
 
-//spellchecker:words exec github alessio shellescape ggman goprogram exit parser pkglib sema status stream
+//spellchecker:words exec essio shellescape github ggman goprogram exit parser pkglib sema status stream
 import (
 	"os/exec"
 
-	"github.com/alessio/shellescape"
+	"al.essio.dev/pkg/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"

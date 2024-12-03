@@ -3,7 +3,7 @@
 //spellchecker:words mockenv
 package mockenv
 
-//spellchecker:words bytes path filepath regexp strconv strings testing github alessio shellescape ggman gggit internal dirs testutil goprogram exit pkglib reflectx stream testlib
+//spellchecker:words bytes path filepath regexp strconv strings testing essio shellescape github ggman gggit internal dirs testutil goprogram exit pkglib reflectx stream testlib
 import (
 	"bytes"
 	"os"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/alessio/shellescape"
+	"al.essio.dev/pkg/shellescape"
 	"github.com/go-git/go-git/v5"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"

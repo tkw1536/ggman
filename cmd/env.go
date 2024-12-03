@@ -1,8 +1,8 @@
 package cmd
 
-//spellchecker:words github alessio shellescape ggman goprogram exit pkglib collection
+//spellchecker:words essio shellescape github ggman goprogram exit pkglib collection
 import (
-	"github.com/alessio/shellescape"
+	"al.essio.dev/pkg/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"

@@ -3,13 +3,13 @@
 //spellchecker:words mockenv
 package mockenv
 
-//spellchecker:words path filepath testing github alessio shellescape ggman internal testutil pkglib testlib
+//spellchecker:words path filepath testing essio shellescape github ggman internal testutil pkglib testlib
 import (
 	"fmt"
 	"path/filepath"
 	"testing"
 
-	"github.com/alessio/shellescape"
+	"al.essio.dev/pkg/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/testutil"
