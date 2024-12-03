@@ -3,7 +3,7 @@
 //spellchecker:words mockenv
 package mockenv
 
-//spellchecker:words bytes path filepath regexp strings testing github alessio shellescape ggman gggit internal testutil goprogram exit pkglib reflectx stream testlib
+//spellchecker:words bytes path filepath regexp strconv strings testing github alessio shellescape ggman gggit internal dirs testutil goprogram exit pkglib reflectx stream testlib
 import (
 	"bytes"
 	"os"

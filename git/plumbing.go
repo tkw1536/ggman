@@ -1,6 +1,6 @@
 package git
 
-//spellchecker:words exec path filepath runtime github errors golang slices plumbing pkglib stream
+//spellchecker:words exec path filepath runtime slices github errors plumbing pkglib stream
 import (
 	"os"
 	"os/exec"

@@ -1,3 +1,4 @@
+//spellchecker:words dirs
 package dirs
 
 import (

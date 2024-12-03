@@ -3,7 +3,7 @@
 //spellchecker:words walker
 package walker
 
-//spellchecker:words errors strings sync atomic github ggman internal record pkglib sema golang slices
+//spellchecker:words errors slices strings sync atomic github ggman internal record pkglib sema
 import (
 	"errors"
 	"io/fs"

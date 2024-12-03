@@ -11,7 +11,7 @@
 // For this reason, implementation of the Plumbing interface are not exported.
 package git
 
-//spellchecker:words path filepath sync github pkglib stream
+//spellchecker:words path filepath sync github ggman internal dirs pkglib stream
 import (
 	"os"
 	"path/filepath"

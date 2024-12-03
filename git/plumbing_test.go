@@ -1,6 +1,6 @@
 package git
 
-//spellchecker:words path filepath reflect testing github config plumbing ggman internal testutil pkglib stream testlib golang slices
+//spellchecker:words path filepath reflect slices testing github config plumbing ggman internal testutil pkglib stream testlib
 import (
 	"os"
 	"path"

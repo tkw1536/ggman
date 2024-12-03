@@ -1,7 +1,7 @@
 //spellchecker:words walker
 package walker
 
-//spellchecker:words golang slices
+//spellchecker:words slices
 import (
 	"io/fs"
 	"slices"

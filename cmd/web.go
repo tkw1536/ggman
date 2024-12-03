@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words path filepath github ggman internal goprogram exit golang maps slices browser
+//spellchecker:words path filepath slices github browser ggman internal goprogram exit
 import (
 	"path/filepath"
 	"slices"
