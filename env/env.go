@@ -1,13 +1,14 @@
 package env
 
-//spellchecker:words path filepath strings github errors ggman internal walker goprogram exit pkglib
+//spellchecker:words errors path filepath strings github ggman internal walker goprogram exit pkglib
 import (
+	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/walker"
@@ -183,7 +184,7 @@ func (env *Env) LoadDefaultCANFILE() (CanFile, error) {
 		case errors.Is(err, fs.ErrNotExist):
 			continue
 		default:
-			return nil, errors.Wrapf(err, "Unable to open CANFILE %q", file)
+			return nil, fmt.Errorf("unable to open CANFILE %q: %w", file, err)
 		}
 		defer f.Close()
 		if _, err := cf.ReadFrom(f); err != nil {
@@ -424,3 +425,5 @@ func (env Env) ScanRepos(folder string, resolved bool) ([]string, error) {
 	results, _, err := env.ScanReposScores(folder, resolved)
 	return results, err
 }
+
+//spellchecker:words nosec

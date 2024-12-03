@@ -1,15 +1,15 @@
 package git
 
-//spellchecker:words exec path filepath runtime slices github errors plumbing pkglib stream
+//spellchecker:words errors exec path filepath runtime slices github plumbing pkglib stream
 import (
+	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
 	"runtime"
 	"slices"
-
-	"github.com/pkg/errors"
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -326,7 +326,7 @@ func (gogit) GetHeadRef(clonePath string, repoObject any) (string, error) {
 	// or fail if that isn't possible
 	head, err := repo.Head()
 	if err != nil {
-		err = errors.Wrap(err, "Cannot resolve HEAD")
+		err = fmt.Errorf("cannot resolve HEAD: %w", err)
 		return "", err
 	}
 	name := head.Name()
@@ -347,7 +347,7 @@ func (gogit) GetRemotes(clonePath string, repoObject any) (remotes map[string][]
 	// get all the remotes for the repository
 	gitRemotes, err := r.Remotes()
 	if err != nil {
-		err = errors.Wrap(err, "Unable to get remotes")
+		err = fmt.Errorf("unable to get remotes: %w", err)
 		return
 	}
 
@@ -368,7 +368,7 @@ func (gg gogit) GetCanonicalRemote(clonePath string, repoObject any) (name strin
 	// get a map of remotes
 	remotes, err := gg.GetRemotes(clonePath, repoObject)
 	if err != nil {
-		err = errors.Wrap(err, "Unable to get remotes")
+		err = fmt.Errorf("unable to get remotes: %w", err)
 		return
 	}
 
@@ -402,19 +402,21 @@ func (gg gogit) GetCanonicalRemote(clonePath string, repoObject any) (name strin
 	panic("never reached")
 }
 
+var errNotOnABranch = errors.New("not on a branch")
+
 func (gogit) getCurrentBranch(r *git.Repository) (name string, err error) {
 
 	// determine the current head and name of it
 	head, err := r.Head()
 	if err != nil {
-		err = errors.Wrap(err, "Cannot resolve HEAD")
+		err = fmt.Errorf("cannot resolve HEAD: %w", err)
 		return
 	}
 
 	// ensure that it's a branch
 	headName := head.Name()
 	if !headName.IsBranch() {
-		err = errors.New("Not on a branch")
+		err = errNotOnABranch
 		return
 	}
 
@@ -423,30 +425,34 @@ func (gogit) getCurrentBranch(r *git.Repository) (name string, err error) {
 	return
 }
 
+var errBranchNoRemote = errors.New("branch does not have an associated remote")
+
 func (gg gogit) getCurrentBranchRemote(r *git.Repository) (name string, err error) {
 	// get the current branch
 	branchName, err := gg.getCurrentBranch(r)
 	if err != nil {
-		err = errors.Wrap(err, "Unable to get current branch")
+		err = fmt.Errorf("unable to get current branch: %w", err)
 		return
 	}
 
 	// get its' configuration
 	branch, err := r.Branch(branchName)
 	if err != nil {
-		err = errors.Wrap(err, "Cannot find branch config")
+		err = fmt.Errorf("cannot find branch config: %w", err)
 		return
 	}
 
 	// and check that the remote is non-empty
 	name = branch.Remote
 	if name == "" {
-		err = errors.New("Branch does not have an associated remote")
+		err = errBranchNoRemote
 		return
 	}
 
 	return
 }
+
+var errLengthMustBeEqual = errors.New("cannot set remoteURL: Length of old and new urls must be identical")
 
 func (gogit) SetRemoteURLs(clonePath string, repoObject any, name string, urls []string) (err error) {
 	// get the repository
@@ -455,7 +461,7 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject any, name string, urls [
 	// get the desired remote
 	remote, err := r.Remote(name)
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to find remote %s", name)
+		err = fmt.Errorf("unable to find remote %s: %w", name, err)
 		return
 	}
 
@@ -475,13 +481,13 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject any, name string, urls [
 
 	// check that they are of the new length
 	if len(remotes.URLs) != len(urls) {
-		return errors.New("Cannot set remoteURL: Length of old and new urls must be identical")
+		return errLengthMustBeEqual
 	}
 
 	// Write back the URLs
 	remotes.URLs = urls
 	if err = r.SetConfig(cfg); err != nil {
-		err = errors.Wrap(err, "Unable to store config")
+		err = fmt.Errorf("unable to store config: %w", err)
 		return
 	}
 
@@ -497,7 +503,7 @@ func (gogit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArg
 	// run a plain git clone but intercept all errors
 	_, err := git.PlainClone(clonePath, false, &git.CloneOptions{URL: remoteURI, Progress: stream.Stderr})
 	if err != nil {
-		err = ExitError{error: errors.Wrap(err, "Unable clone repository"), Code: 1}
+		err = ExitError{error: fmt.Errorf("unable clone repository: %w", err), Code: 1}
 	}
 
 	return err
@@ -521,7 +527,7 @@ func (gogit) Fetch(stream stream.IOStream, clonePath string, cache any) (err err
 
 		// fail on other errors
 		if err != nil {
-			err = errors.Wrapf(err, "Unable to fetch remote %s", remote.Config().Name)
+			err = fmt.Errorf("unable to fetch remote %q: %w", remote.Config().Name, err)
 			return
 		}
 	}
@@ -536,7 +542,7 @@ func (gogit) Pull(stream stream.IOStream, clonePath string, cache any) (err erro
 	// get the worktree
 	w, err := r.Worktree()
 	if err != nil {
-		err = errors.Wrap(err, "Unable to find worktree")
+		err = fmt.Errorf("unable to find worktree: %w", err)
 		return
 	}
 
@@ -544,7 +550,7 @@ func (gogit) Pull(stream stream.IOStream, clonePath string, cache any) (err erro
 	err = w.Pull(&git.PullOptions{Progress: stream.Stderr})
 	err = ignoreErrUpToDate(stream, err)
 	if err != nil {
-		err = errors.Wrap(err, "Unable to pull")
+		err = fmt.Errorf("unable to pull: %w", err)
 	}
 
 	return
@@ -564,7 +570,7 @@ func (gogit) GetBranches(clonePath string, cache any) (branches []string, err er
 	// list the branches
 	branchRefs, err := r.Branches()
 	if err != nil {
-		return nil, errors.Wrap(err, "Unable to get branches")
+		return nil, fmt.Errorf("unable to get branches: %w", err)
 	}
 	defer branchRefs.Close()
 
@@ -590,7 +596,7 @@ func (gogit) ContainsBranch(clonePath string, cache any, branch string) (contain
 	case nil:
 		return true, nil
 	default:
-		return false, errors.Wrap(err, "Unable to read branch")
+		return false, fmt.Errorf("unable to read branch: %w", err)
 	}
 }
 
@@ -601,13 +607,13 @@ func (gogit) IsDirty(clonePath string, cache any) (dirty bool, err error) {
 	// get the worktree
 	wt, err := r.Worktree()
 	if err != nil {
-		return false, errors.Wrap(err, "Unable to get worktree")
+		return false, fmt.Errorf("unable to get worktree: %w", err)
 	}
 
 	// check the status
 	status, err := wt.Status()
 	if err != nil {
-		return false, errors.Wrap(err, "Unable to get status")
+		return false, fmt.Errorf("unable to get status: %w", err)
 	}
 
 	// return if it is dirty!
@@ -620,7 +626,7 @@ func (gg gogit) IsSync(clonePath string, cache any) (sync bool, err error) {
 	// get all the branches
 	branches, err := gg.GetBranches(clonePath, cache)
 	if err != nil {
-		return false, errors.Wrap(err, "unable to get branch names")
+		return false, fmt.Errorf("unable to get branch names: %w", err)
 	}
 
 	// check that all the upstream branches are synced!
@@ -630,15 +636,15 @@ func (gg gogit) IsSync(clonePath string, cache any) (sync bool, err error) {
 			continue // there is no upstream, that is ok!
 		}
 		if err != nil {
-			return false, errors.Wrap(err, "Unable to get tracking refs")
+			return false, fmt.Errorf("unable to get tracking refs: %w", err)
 		}
 		srcRef, err := r.ResolveRevision(plumbing.Revision(src))
 		if err != nil {
-			return false, errors.Wrap(err, "Unable to resolve src revision")
+			return false, fmt.Errorf("unable to resolve src revision: %w", err)
 		}
 		dstRef, err := r.ResolveRevision(plumbing.Revision(dst))
 		if err != nil {
-			return false, errors.Wrap(err, "Unable to resolve dst revision")
+			return false, fmt.Errorf("unable to resolve dst revision: %w", err)
 		}
 		if srcRef.String() != dstRef.String() {
 			return false, nil
@@ -657,14 +663,14 @@ func getTrackingRefs(repo *git.Repository, branch string) (src, dst plumbing.Ref
 		return "", "", ErrNoUpstream
 	}
 	if err != nil {
-		return "", "", errors.Wrap(err, "Unable to resolve branch")
+		return "", "", fmt.Errorf("unable to resolve branch %q: %w", branch, err)
 	}
 	if br.Remote == "" {
 		return "", "", ErrNoUpstream
 	}
 	remote, err := repo.Remote(br.Remote)
 	if err != nil {
-		return "", "", errors.Wrap(err, "Unable to resolve remote")
+		return "", "", fmt.Errorf("unable to resolve remote %q: %w", br.Remote, err)
 	}
 	for _, spec := range remote.Config().Fetch {
 		if spec.Match(br.Merge) {
@@ -673,3 +679,5 @@ func getTrackingRefs(repo *git.Repository, branch string) (src, dst plumbing.Ref
 	}
 	return "", "", ErrNoUpstream
 }
+
+//spellchecker:words nosec

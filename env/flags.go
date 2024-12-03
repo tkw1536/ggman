@@ -1,12 +1,12 @@
 package env
 
-//spellchecker:words bufio strings github errors goprogram exit pkglib
+//spellchecker:words bufio strings github goprogram exit pkglib
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/pkglib/fsx"
 )
@@ -115,13 +115,13 @@ func (env Env) NewFromFileFilter(p string, fuzzy bool) (filters []Filter, err er
 	// resolve the path
 	path, err := env.Abs(p)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Unable to resolve path %q", p)
+		return nil, fmt.Errorf("unable to resolve path %q: %w", p, err)
 	}
 
 	// open the file
 	file, err := os.Open(path) /* #nosec G304 -- explicitly passed as a parameter */
 	if err != nil {
-		return nil, errors.Wrapf(err, "Unable to open path %q", p)
+		return nil, fmt.Errorf("unable to open path %q: %w", p, err)
 	}
 	defer file.Close()
 
@@ -138,7 +138,7 @@ func (env Env) NewFromFileFilter(p string, fuzzy bool) (filters []Filter, err er
 	}
 
 	if err = scanner.Err(); err != nil {
-		return nil, errors.Wrapf(err, "Unable to read file %q", p)
+		return nil, fmt.Errorf("unable to read file %q: %w", p, err)
 	}
 
 	return filters, nil
@@ -159,7 +159,7 @@ func (env Env) ResolvePathFilter(p string) (path string, err error) {
 	// sub-repositories contained in a path
 	path, err = env.Abs(p)
 	if err != nil {
-		return "", errors.Wrapf(err, "Unable to resolve path %q", p)
+		return "", fmt.Errorf("unable to resolve path %q: %w", p, err)
 	}
 
 	// must be a directory!
@@ -169,3 +169,5 @@ func (env Env) ResolvePathFilter(p string) (path string, err error) {
 
 	return
 }
+
+//spellchecker:words nosec

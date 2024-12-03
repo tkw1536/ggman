@@ -1,12 +1,12 @@
 package env
 
-//spellchecker:words bufio strings github errors
+//spellchecker:words bufio errors strings
 import (
 	"bufio"
+	"errors"
+	"fmt"
 	"io"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 //spellchecker:words canfile
@@ -18,7 +18,10 @@ type CanLine struct {
 }
 
 // ErrEmpty is an error representing an empty CanLine
-var ErrEmpty = errors.New("CanLine is empty")
+var ErrEmpty = errors.New("CanLine.Unmarshal: CanLine is empty")
+
+// ErrEmptyFields is an error indicating that unmarshaling a CanLine failed
+var ErrEmptyFields = errors.New("CanLine.Unmarshal: strings.Fields() unexpectedly returned 0-length slice")
 
 // Unmarshal reads a CanLine from a string
 func (cl *CanLine) Unmarshal(s string) error {
@@ -35,7 +38,7 @@ func (cl *CanLine) Unmarshal(s string) error {
 	// switch based on the length
 	switch len(fields) {
 	case 0:
-		return errors.Errorf("strings.Fields() unexpectedly returned 0-length slice")
+		return ErrEmptyFields
 	case 1:
 		fields = []string{"", fields[0]}
 	}
@@ -66,12 +69,15 @@ func (cf *CanFile) ReadFrom(reader io.Reader) (int64, error) {
 
 		var line CanLine
 		if err := line.Unmarshal(text); err != nil {
-			return bytes, errors.Wrap(err, "Unable to parse CANFILE line")
+			return bytes, fmt.Errorf("unable to parse CANFILE line: %w", err)
 		}
 		*cf = append(*cf, line)
 	}
 
-	return bytes, errors.Wrap(scanner.Err(), "Unable to read CANFILE")
+	if err := scanner.Err(); err != nil {
+		return bytes, fmt.Errorf("unable to read CANFILE: %w", err)
+	}
+	return bytes, nil
 }
 
 var defaultCanFile = []string{

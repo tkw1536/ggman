@@ -439,10 +439,12 @@ ggman comes with the following builtin aliases:
 ### 1.23.0 (Upcoming)
 
 - update dependencies to latest
+- use standard library packages where available
+- update to `goprogram` 0.7.0
 - minor linting updates
 - minor performance improvements
 - explicitly handle output errors
-- update to `goprogram` 0.7.0
+
 
 ### 1.22.0 (Released [Sep 22 2024](https://github.com/tkw1536/ggman/releases/tag/v1.22.0))
 
