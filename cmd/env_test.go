@@ -85,6 +85,33 @@ func TestCommandEnv(t *testing.T) {
 			"${GGROOT}\n",
 			"",
 		},
+		{
+			"more than one mode",
+			"",
+			[]string{"env", "--list", "--raw"},
+
+			4,
+			"",
+			"At most one of `--raw`, `--list` and `--describe` may be given\n",
+		},
+		{
+			"more than one mode (2)",
+			"",
+			[]string{"env", "--list", "--describe"},
+
+			4,
+			"",
+			"At most one of `--raw`, `--list` and `--describe` may be given\n",
+		},
+		{
+			"more than one mode (3)",
+			"",
+			[]string{"env", "--raw", "--describe"},
+
+			4,
+			"",
+			"At most one of `--raw`, `--list` and `--describe` may be given\n",
+		},
 	}
 
 	for _, tt := range tests {

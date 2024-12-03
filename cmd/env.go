@@ -65,8 +65,8 @@ var errModesIncompatible = exit.Error{
 	ExitCode: exit.ExitCommandArguments,
 }
 
-func (e _env) Run(context ggman.Context) error {
-	// check that at most one mode was provided
+func (e _env) AfterParse() error {
+	// check that at most one mode was given
 	count := 0
 	if e.Describe {
 		count++
@@ -80,7 +80,10 @@ func (e _env) Run(context ggman.Context) error {
 	if count > 1 {
 		return errModesIncompatible
 	}
+	return nil
+}
 
+func (e _env) Run(context ggman.Context) error {
 	variables, err := e.variables()
 	if err != nil {
 		return err
