@@ -7,13 +7,13 @@ package walker
 import (
 	"errors"
 	"io/fs"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
 
 	"github.com/tkw1536/ggman/internal/record"
 	"github.com/tkw1536/pkglib/sema"
-	"golang.org/x/exp/slices"
 )
 
 // Walker is an object that can recursively operate on all subdirectories of a directory and score those matching a specific criterion.

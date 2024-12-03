@@ -2,10 +2,10 @@ package env
 
 //spellchecker:words strings github goprogram meta golang slices
 import (
+	"slices"
 	"strings"
 
 	"github.com/tkw1536/goprogram/meta"
-	"golang.org/x/exp/slices"
 )
 
 //spellchecker:words GGROOT ggman workdir

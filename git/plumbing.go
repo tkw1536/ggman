@@ -7,9 +7,9 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"slices"
 
 	"github.com/pkg/errors"
-	"golang.org/x/exp/slices"
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"

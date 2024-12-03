@@ -4,8 +4,7 @@ package walker
 //spellchecker:words golang slices
 import (
 	"io/fs"
-
-	"golang.org/x/exp/slices"
+	"slices"
 )
 
 // context implements WalkerContext

@@ -3,15 +3,13 @@ package cmd
 //spellchecker:words path filepath github ggman internal goprogram exit golang maps slices browser
 import (
 	"path/filepath"
+	"slices"
 
+	"github.com/pkg/browser"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/goprogram/exit"
-	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
-
-	"github.com/pkg/browser"
 )
 
 //spellchecker:words CANSPEC godoc localgodoc reclone urlweb positionals GGROOT worktree weburl workdir
@@ -251,7 +249,10 @@ func (uw urlweb) Run(context ggman.Context) error {
 }
 
 func (uw urlweb) listBases(context ggman.Context) error {
-	bases := maps.Keys(WebBuiltInBases)
+	bases := make([]string, 0, len(WebBuiltInBases))
+	for key := range WebBuiltInBases {
+		bases = append(bases, key)
+	}
 	slices.Sort(bases)
 
 	for _, name := range bases {

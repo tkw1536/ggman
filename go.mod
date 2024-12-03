@@ -13,7 +13,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/tkw1536/goprogram v0.6.0
 	github.com/tkw1536/pkglib v0.0.0-20241125083302-9392aba00be6
-	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
 )
 
 require (
@@ -35,6 +34,7 @@ require (
 	github.com/skeema/knownhosts v1.3.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	golang.org/x/crypto v0.29.0 // indirect
+	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f // indirect
 	golang.org/x/net v0.31.0 // indirect
 	golang.org/x/sys v0.27.0 // indirect
 	golang.org/x/term v0.26.0 // indirect

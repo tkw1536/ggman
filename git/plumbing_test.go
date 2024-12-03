@@ -6,6 +6,7 @@ import (
 	"path"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"testing"
 
 	git "github.com/go-git/go-git/v5"
@@ -14,7 +15,6 @@ import (
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/pkglib/stream"
 	"github.com/tkw1536/pkglib/testlib"
-	"golang.org/x/exp/slices"
 )
 
 //spellchecker:words gogit commita commitb worktree
