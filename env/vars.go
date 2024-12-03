@@ -1,11 +1,10 @@
 package env
 
-//spellchecker:words reflect github mitchellh homedir pkglib reflectx
+//spellchecker:words reflect github pkglib reflectx
 import (
 	"os"
 	"reflect"
 
-	"github.com/mitchellh/go-homedir"
 	"github.com/tkw1536/pkglib/reflectx"
 )
 
@@ -67,7 +66,7 @@ func ReadVariables() (v Variables) {
 
 	// set the HOME variable
 	// errors result in an empty home
-	v.HOME, _ = homedir.Dir()
+	v.HOME, _ = os.UserHomeDir()
 
 	return
 }

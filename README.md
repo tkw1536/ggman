@@ -439,7 +439,7 @@ ggman comes with the following builtin aliases:
 ### 1.23.0 (Upcoming)
 
 - update dependencies to latest
-- use standard library packages where available
+- replace unneeded dependencies by standard library
 - update to `goprogram` 0.7.0
 - minor linting updates
 - minor performance improvements
