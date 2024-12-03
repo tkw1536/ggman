@@ -11,11 +11,12 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/pkg/errors v0.9.1
-	github.com/tkw1536/goprogram v0.6.0
+	github.com/tkw1536/goprogram v0.7.0
 	github.com/tkw1536/pkglib v0.0.0-20241125083302-9392aba00be6
 )
 
 require (
+	al.essio.dev/pkg/shellescape v1.5.1 // indirect
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.1.2 // indirect
