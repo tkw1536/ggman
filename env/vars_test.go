@@ -14,6 +14,7 @@ func TestReadVariables(t *testing.T) {
 	defer testutil.MockVariables(map[string]string{
 		"PATH":          "/fake/path",
 		"HOME":          "/fake/home",
+		"USERPROFILE":   "/fake/home",
 		"GGROOT":        "/fake/ggroot",
 		"GGMAN_CANFILE": "/fake/canfile",
 		"GGNORM":        "something-fake",
