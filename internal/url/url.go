@@ -26,7 +26,7 @@ const (
 //
 // When a port can not be parsed, returns 0 and an error.
 func ParsePort(s string) (port uint16, err error) {
-	if s == "" {
+	if s == "" || len([]byte(s)) > maxPortLen {
 		return 0, errNotANumber
 	}
 
