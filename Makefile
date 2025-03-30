@@ -4,6 +4,8 @@ GOBUILD=$(GOCMD) build
 GOINSTALL=$(GOCMD) install
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
+GOTOOL=$(GOCMD) tool
+GOVET=$(GOCMD) vet
 GOMOD=$(GOCMD) mod
 GOGENERATE=$(GOCMD) generate
 
@@ -41,7 +43,7 @@ $(BINARY_MACOS_SILICON): deps
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(BINARY_MACOS_SILICON) $(GGMAN_CMD_SRC)
 
 $(BINARY_MACOS_UNIVERSAL): $(BINARY_MACOS_INTEL) $(BINARY_MACOS_SILICON)
-	lipo -output $(BINARY_MACOS_UNIVERSAL) -create $(BINARY_MACOS_SILICON) $(BINARY_MACOS_INTEL)
+	$(GOTOOL) lipo -output $(BINARY_MACOS_UNIVERSAL) -create $(BINARY_MACOS_SILICON) $(BINARY_MACOS_INTEL)
 
 $(BINARY_WINDOWS): deps
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS) -s -w" -o $(BINARY_WINDOWS) $(GGMAN_CMD_SRC)
@@ -58,6 +60,12 @@ testdeps:
 
 lint:
 	test -z $(shell gofmt -l .)
+	$(GOVET) ./...
+	$(GOTOOL) staticcheck ./...
+	$(GOTOOL) golangci-lint run ./...
+	$(GOTOOL) govulncheck
+	$(GOTOOL) gosec ./...
+
 
 generate:
 	$(GOGENERATE) -v ./...

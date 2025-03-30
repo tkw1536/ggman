@@ -3,6 +3,6 @@
 //spellchecker:words legal
 package legal
 
-//go:generate gogenlicense -m -o notices.go
+//go:generate go tool gogenlicense -m -o notices.go
 
 //spellchecker:words gogenlicense ggman

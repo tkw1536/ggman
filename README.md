@@ -59,7 +59,7 @@ Afterwards simply place it somewhere in your `$PATH`.
 
 If you do not trust pre-built binaries you can build `ggman` from source. 
 You need [`go`](https://golang.org) (version `1.21` or newer) along with `make` installed on your machine. 
-After cloning this repository, you can simply type `make install` to have ggman installed automatically 
+After cloning this repository, you can simply type `make install` to have ggman installed automatically. 
 
 #### Optional Dependencies
 
@@ -446,11 +446,13 @@ ggman comes with the following builtin aliases:
 
 ### 1.23.0 (Upcoming)
 
+- update to `go 1.24`
 - add `--exact-url` flag to `ggman clone`
 - update dependencies to latest
 - replace unneeded dependencies by standard library
 - update to `goprogram` 0.7.0
-- minor linting updates
+- use new `go tool` during development
+- migrate lint configuration to migrate
 - minor performance improvements
 - explicitly handle output errors
 
