@@ -446,6 +446,10 @@ ggman comes with the following builtin aliases:
 
 ### 1.24.0 (Upcoming)
 
+### 1.23.1 (Released [Mar 30 2025](https://github.com/tkw1536/ggman/releases/tag/v1.23.1))
+
+- update `ggman clone` help page wording 
+
 ### 1.23.0 (Released [Mar 30 2025](https://github.com/tkw1536/ggman/releases/tag/v1.23.0))
 
 - update to `go 1.24`
