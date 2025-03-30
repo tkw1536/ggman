@@ -14,6 +14,7 @@ func TestCommandClone(t *testing.T) {
 
 	mock.Register("https://github.com/hello/world.git", "git@github.com:hello/world.git")
 	mock.Register("https://github.com/hello/world2.git", "git@github.com:hello/world2.git")
+	mock.Register("https://github.com/hello/world3.git")
 
 	tests := []struct {
 		name    string
@@ -109,6 +110,16 @@ func TestCommandClone(t *testing.T) {
 			4,
 			"",
 			"Invalid remote URI \"/some/example/path\": Invalid scheme, not a remote path\n",
+		},
+
+		{
+			"clone repository with exact url",
+			"",
+			[]string{"clone", "--exact-url", "https://github.com/hello/world3.git"},
+
+			0,
+			"Cloning \"https://github.com/hello/world3.git\" into \"${GGROOT github.com hello world3}\" ...\n",
+			"",
 		},
 	}
 

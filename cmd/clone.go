@@ -22,11 +22,12 @@ var Clone ggman.Command = clone{}
 
 type clone struct {
 	Positional struct {
-		URL  string   `required:"1-1" positional-arg-name:"URL" description:"URL of repository and arguments to pass to \"git clone\""`
-		Args []string `positional-arg-name:"ARG" description:"additional arguments to pass to clone"`
+		URL  string   `required:"1-1" positional-arg-name:"URL" description:"URL of repository clone. Will be canonicalized by default. "`
+		Args []string `positional-arg-name:"ARG" description:"additional arguments to pass to \"git clone\"."`
 	} `positional-args:"true"`
 	Force bool   `short:"f" long:"force" description:"do not complain when a repository already exists in the target directory"`
 	Local bool   `short:"l" long:"local" description:"alias of \"--here\""`
+	Exact bool   `short:"e" long:"exact-url" description:"don't use canon URL for clone, but pass exactly the one provided one"`
 	Here  bool   `long:"here" description:"clone into an appropriately named subdirectory of the current directory"`
 	To    string `short:"t" long:"to" description:"clone repository into specified directory"`
 }
@@ -91,7 +92,10 @@ func (c clone) Run(context ggman.Context) error {
 	}
 
 	// find the remote and local paths to clone to / from
-	remote := context.Environment.Canonical(url)
+	remote := c.Positional.URL
+	if !c.Exact {
+		remote = context.Environment.Canonical(url)
+	}
 	local, err := c.dest(context, url)
 	if err != nil {
 		return errCloneInvalidDest.WithMessageF(c.Positional.URL).WrapError(err)

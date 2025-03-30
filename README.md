@@ -324,7 +324,15 @@ For example:
 ggman clone https://github.com/hello/world.git
 ```
 
-will do the same as the above command. 
+will do the same as the above command.
+
+When it is not desired that the canonical URL should be used, pass the `--exact-url` flag:
+
+```bash
+ggman clone --exact-url https://github.com/hello/world.git
+```
+
+This will clone using the exact url into the same folder as above. 
 
 However sometimes for various reasons a repository needs to live in a non-standard location outside of `GGROOT`. 
 For example, in the case of `go` packages these need to live within `$GOPATH`. 
@@ -438,6 +446,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.23.0 (Upcoming)
 
+- add `--exact-url` flag to `ggman clone`
 - update dependencies to latest
 - replace unneeded dependencies by standard library
 - update to `goprogram` 0.7.0
