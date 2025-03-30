@@ -27,7 +27,7 @@ type clone struct {
 	} `positional-args:"true"`
 	Force bool   `short:"f" long:"force" description:"do not complain when a repository already exists in the target directory"`
 	Local bool   `short:"l" long:"local" description:"alias of \"--here\""`
-	Exact bool   `short:"e" long:"exact-url" description:"don't use canon URL for clone, but pass exactly the one provided one"`
+	Exact bool   `short:"e" long:"exact-url" description:"don't canonicalize URL before cloning and use exactly the passed URL"`
 	Here  bool   `long:"here" description:"clone into an appropriately named subdirectory of the current directory"`
 	To    string `short:"t" long:"to" description:"clone repository into specified directory"`
 }
