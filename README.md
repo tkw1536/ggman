@@ -444,7 +444,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.23.0 (Upcoming)
+### 1.24.0 (Upcoming)
+
+### 1.23.0 (Released [Mar 30 2025](https://github.com/tkw1536/ggman/releases/tag/v1.23.0))
 
 - update to `go 1.24`
 - add `--exact-url` flag to `ggman clone`
