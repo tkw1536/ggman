@@ -214,7 +214,7 @@ When running multi-repository operations, it is possible to limit the operations
 This is achieved by using the 'for' keyword along with a pattern. 
 For example, `ggman --for 'github.com/*/example' ls` will list all repositories from `github.com` that are named `example`. 
 
-Examples for supported patterns can be found in this table:
+Examples for simple supported patterns can be found in this table:
 
 | Pattern            | Examples                                                            |
 | ------------------ | ------------------------------------------------------------------- |
@@ -286,6 +286,7 @@ However, two characters are treated differently:
 - `%` is replaced by the second unused component of the URI (commonly a username)
 - `$` is replaced by all remaining components in the URI joined with a '/'. Also stops all special character processing afterwards. 
 If `$` does not exist in the cspec, it is assumed to be at the end of the CANSPEC.
+Furthermore, the special CANSPEC `$$` always the original url unchanged.
 
 A couple of examples can be found below:
 
@@ -303,7 +304,21 @@ This `CANFILE` should either be called `.ggman` in the users home directory, or 
 A `CANFILE` should consist of several lines.
 Each line should contain either one or two space-separated strings. 
 The first one is a pattern (as used with the `for` keyword) and the second is a CANSPEC to apply for all repositories matching this pattern. 
-Empty lines and those starting with '#', '\\' are treated as comments. 
+Empty lines and those starting with '#', '\\' are treated as comments.
+
+An example CANFILE might be:
+
+```
+# for anything on git.example.com, clone with https
+^git.example.com https://$.git
+
+# for anything on git2.example.com leave the urls unchanged
+^git2.example.com $$
+
+# by default, clone via ssh
+git@^:$.git
+```
+
 
 To resolve a canonical url with a CANFILE, simply omit the `CANSPEC` attribute of `ggman canon`. 
 

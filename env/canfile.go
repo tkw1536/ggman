@@ -68,7 +68,12 @@ func (cf *CanFile) ReadFrom(reader io.Reader) (int64, error) {
 		bytes += int64(len(text))
 
 		var line CanLine
-		if err := line.UnmarshalText(text); err != nil {
+
+		err := line.UnmarshalText(text)
+		if err == ErrEmpty {
+			continue
+		}
+		if err != nil {
 			return bytes, fmt.Errorf("unable to parse CANFILE line: %w", err)
 		}
 		*cf = append(*cf, line)

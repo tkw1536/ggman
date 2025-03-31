@@ -182,11 +182,34 @@ func (sp SplitPattern) Score(s string) (score float64) {
 		return -1
 	}
 
-	// find the last match
-	for start := last; start >= 0; start-- {
-		score := sp.scoreFrom(parts, start, last)
+	// special cases for matching at start or at the end.
+	// we need to match at most one candidate, and don't need to iterate.
+	switch {
+	case sp.MatchAtStart && sp.MatchAtEnd:
+		// exact match, require that parts and patterns match!
+		if len(parts) != len(sp.Patterns) {
+			return -1
+		}
+		fallthrough // check position 0
+	case sp.MatchAtStart:
+		// match only at position 0
+		score := sp.scoreFrom(parts, 0, last)
 		if score > 0 {
 			return score
+		}
+	case sp.MatchAtEnd:
+		// match only at the last possible position
+		score := sp.scoreFrom(parts, last, last)
+		if score > 0 {
+			return score
+		}
+	default:
+		// check all possible positions
+		for start := last; start >= 0; start-- {
+			score := sp.scoreFrom(parts, start, last)
+			if score > 0 {
+				return score
+			}
 		}
 	}
 
@@ -195,16 +218,8 @@ func (sp SplitPattern) Score(s string) (score float64) {
 }
 
 // scoreFrom returns the score for this SplitPattern starting at start.
+// It ignores sp.MatchAtStart and sp.MatchAtEnd.
 func (sp SplitPattern) scoreFrom(parts []string, start int, last int) (score float64) {
-	// match at the start
-	if sp.MatchAtStart && start != 0 {
-		return -1
-	}
-	// match at the end
-	if sp.MatchAtEnd && start != len(parts)-len(sp.Patterns) {
-		return -1
-	}
-
 	// compute the average score for each pattern
 	for i, pat := range sp.Patterns {
 		partial := pat.Score(parts[start+i])

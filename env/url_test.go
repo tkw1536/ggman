@@ -6,92 +6,101 @@ import (
 	"testing"
 )
 
+var urlTests = []struct {
+	name string
+	str  string
+	url  URL
+}{
+	// ssh://[user@]host.xz[:port]/path/to/repo.git/
+	{
+		name: "ssh",
+		str:  "ssh://host.xz/path/to/repo.git/",
+		url:  URL{Scheme: "ssh", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+	},
+	{
+		name: "sshUser",
+		str:  "ssh://user@host.xz/path/to/repo.git/",
+		url:  URL{Scheme: "ssh", User: "user", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+	},
+	{
+		name: "sshPort",
+		str:  "ssh://host.xz:1234/path/to/repo.git/",
+		url:  URL{Scheme: "ssh", User: "", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
+	},
+	{
+		name: "sshUserPort",
+		str:  "ssh://user@host.xz:1234/path/to/repo.git/",
+		url:  URL{Scheme: "ssh", User: "user", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
+	},
+
+	// git://host.xz[:port]/path/to/repo.git/
+	{
+		name: "git",
+		str:  "git://host.xz/path/to/repo.git/",
+		url:  URL{Scheme: "git", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+	},
+
+	{
+		name: "gitPort",
+		str:  "git://host.xz:1234/path/to/repo.git/",
+		url:  URL{Scheme: "git", User: "", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
+	},
+
+	//  [user@]host.xz:path/to/repo.git/
+	{
+		name: "noProto",
+		str:  "host.xz:path/to/repo.git/",
+		url:  URL{Scheme: "", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+	},
+	{
+		name: "noProtoUser",
+		str:  "user@host.xz:path/to/repo.git/",
+		url:  URL{Scheme: "", User: "user", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+	},
+
+	// local paths
+	{
+		name: "localFile",
+		str:  "file:///path/to/somewhere",
+		url:  URL{Scheme: "file", User: "", Password: "", HostName: "", Port: 0, Path: "path/to/somewhere"},
+	},
+
+	{
+		name: "localPath",
+		str:  "/path/to/somewhere",
+		url:  URL{Scheme: "", User: "", Password: "", HostName: "", Port: 0, Path: "path/to/somewhere"},
+	},
+
+	{
+		name: "localRelPath",
+		str:  "../some/relative/path",
+		url:  URL{Scheme: "", User: "", Password: "", HostName: "..", Port: 0, Path: "some/relative/path"},
+	},
+
+	{
+		name: "localRelPath2",
+		str:  "./some/relative/path",
+		url:  URL{Scheme: "", User: "", Password: "", HostName: ".", Port: 0, Path: "some/relative/path"},
+	},
+}
+
 func TestParseURL(t *testing.T) {
-	type args struct {
-		s string
-	}
-	tests := []struct {
-		name     string
-		args     args
-		wantRepo URL
-	}{
-		// ssh://[user@]host.xz[:port]/path/to/repo.git/
-		{
-			"ssh",
-			args{"ssh://host.xz/path/to/repo.git/"},
-			URL{"ssh", "", "", "host.xz", 0, "path/to/repo.git/"},
-		},
-		{
-			"sshUser",
-			args{"ssh://user@host.xz/path/to/repo.git/"},
-			URL{"ssh", "user", "", "host.xz", 0, "path/to/repo.git/"},
-		},
-		{
-			"sshPort",
-			args{"ssh://host.xz:1234/path/to/repo.git/"},
-			URL{"ssh", "", "", "host.xz", 1234, "path/to/repo.git/"},
-		},
-		{
-			"sshUserPort",
-			args{"ssh://user@host.xz:1234/path/to/repo.git/"},
-			URL{"ssh", "user", "", "host.xz", 1234, "path/to/repo.git/"},
-		},
-
-		// git://host.xz[:port]/path/to/repo.git/
-		{
-			"git",
-			args{"git://host.xz/path/to/repo.git/"},
-			URL{"git", "", "", "host.xz", 0, "path/to/repo.git/"},
-		},
-
-		{
-			"gitPort",
-			args{"git://host.xz:1234/path/to/repo.git/"},
-			URL{"git", "", "", "host.xz", 1234, "path/to/repo.git/"},
-		},
-
-		//  [user@]host.xz:path/to/repo.git/
-		{
-			"noProto",
-			args{"host.xz:path/to/repo.git/"},
-			URL{"", "", "", "host.xz", 0, "path/to/repo.git/"},
-		},
-		{
-			"noProtoUser",
-			args{"user@host.xz:path/to/repo.git/"},
-			URL{"", "user", "", "host.xz", 0, "path/to/repo.git/"},
-		},
-
-		// local paths
-		{
-			"localFile",
-			args{"file:///path/to/somewhere"},
-			URL{"file", "", "", "", 0, "path/to/somewhere"},
-		},
-
-		{
-			"localPath",
-			args{"/path/to/somewhere"},
-			URL{"", "", "", "", 0, "path/to/somewhere"},
-		},
-
-		{
-			"localRelPath",
-			args{"../some/relative/path"},
-			URL{"", "", "", "..", 0, "some/relative/path"},
-		},
-
-		{
-			"localRelPath2",
-			args{"./some/relative/path"},
-			URL{"", "", "", ".", 0, "some/relative/path"},
-		},
-	}
-	for _, tt := range tests {
+	for _, tt := range urlTests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotRepo := ParseURL(tt.args.s)
-			if !reflect.DeepEqual(gotRepo, tt.wantRepo) {
-				t.Errorf("ParseRepoURL() = %v, want %v", gotRepo, tt.wantRepo)
+			gotURL := ParseURL(tt.str)
+			if !reflect.DeepEqual(gotURL, tt.url) {
+				t.Errorf("ParseURL() = %v, want %v", gotURL, tt.url)
+			}
+		})
+	}
+}
+
+func TestURL_String(t *testing.T) {
+	for _, tt := range urlTests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotString := tt.url.String()
+			if gotString != tt.str {
+				t.Errorf("URL.String() = %v, want %v", gotString, tt.str)
 			}
 		})
 	}
@@ -331,7 +340,7 @@ func BenchmarkComponentsOf(b *testing.B) {
 	}
 }
 
-func TestRepoURI_Canonical(t *testing.T) {
+func TestRepoURL_Canonical(t *testing.T) {
 	type fields struct {
 		Scheme   string
 		User     string
@@ -351,11 +360,12 @@ func TestRepoURI_Canonical(t *testing.T) {
 	}{
 		{"Treat one component special", fields{"", "user", "", "server.com", 1234, "repository"}, args{"git@^:$.git"}, "git@server.com:user/repository.git"},
 		{"Treat two components special", fields{"", "user", "", "server.com", 1234, "repository"}, args{"ssh://%@^/$.git"}, "ssh://user@server.com/repository.git"},
-		{"Empty specification string", fields{"", "user", "", "server.com", 1234, "repository"}, args{""}, "server.com/user/repository"},
+		{"Empty specification string", fields{Scheme: "", User: "user", Password: "", HostName: "server.com", Port: 1234, Path: "repository"}, args{""}, "server.com/user/repository"},
+		{"Return original url", fields{"", "user", "", "server.com", 1234, "repository"}, args{"$$"}, "user@server.com:1234:repository"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rURI := &URL{
+			rURL := &URL{
 				Scheme:   tt.fields.Scheme,
 				User:     tt.fields.User,
 				Password: tt.fields.Password,
@@ -363,8 +373,8 @@ func TestRepoURI_Canonical(t *testing.T) {
 				Port:     tt.fields.Port,
 				Path:     tt.fields.Path,
 			}
-			if gotCanonical := rURI.Canonical(tt.args.cSpec); gotCanonical != tt.wantCanonical {
-				t.Errorf("RepoURI.Canonical() = %v, want %v", gotCanonical, tt.wantCanonical)
+			if gotCanonical := rURL.Canonical(tt.args.cSpec); gotCanonical != tt.wantCanonical {
+				t.Errorf("RepoURL.Canonical() = %v, want %v", gotCanonical, tt.wantCanonical)
 			}
 		})
 	}

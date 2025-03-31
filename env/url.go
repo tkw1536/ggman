@@ -2,6 +2,7 @@ package env
 
 //spellchecker:words strings github ggman internal split pkglib collection text jessevdk flags
 import (
+	"strconv"
 	"strings"
 
 	"github.com/tkw1536/ggman/internal/split"
@@ -31,6 +32,43 @@ type URL struct {
 	Port     uint16 // e.g. 2222
 
 	Path string // e.g. "hello/world.git"
+}
+
+// String returns a string representation of this URL.
+// It is a best guess of what was used to parse the URL, but not guaranteed to be so.
+func (url URL) String() string {
+	var builder strings.Builder
+
+	if url.Scheme != "" {
+		builder.WriteString(url.Scheme)
+		builder.WriteString("://")
+	}
+
+	if url.User != "" {
+		builder.WriteString(url.User)
+		if url.Password != "" {
+			builder.WriteString(":")
+			builder.WriteString(url.Password)
+		}
+		builder.WriteString("@")
+	}
+
+	builder.WriteString(url.HostName)
+	if url.Port != 0 {
+		builder.WriteString(":")
+		builder.WriteString(strconv.FormatUint(uint64(url.Port), 10))
+	}
+
+	if url.Path != "" {
+		if url.Scheme != "" || url.IsLocal() {
+			builder.WriteString("/")
+		} else {
+			builder.WriteString(":")
+		}
+		builder.WriteString(url.Path)
+	}
+
+	return builder.String()
 }
 
 var (
@@ -151,6 +189,9 @@ func (url URL) Components() []string {
 // $ -- replaced by all remaining components in the URI joined with a '/'. Also stops all processing afterwards.
 // If $ does not exist in the cSpec, it is assumed to be at the end of the cSpec.
 func (url URL) Canonical(cSpec string) (canonical string) {
+	if cSpec == "$$" {
+		return url.String()
+	}
 	var builder strings.Builder
 
 	components := url.Components()                // get the components of the URI
@@ -195,6 +236,7 @@ func (url URL) Canonical(cSpec string) (canonical string) {
 }
 
 // CanonicalWith returns the canonical url given a set of lines
+// If no pattern matches, return the best-guess original url.
 func (url URL) CanonicalWith(lines CanFile) (canonical string) {
 	var pat PatternFilter
 	for _, line := range lines {
@@ -204,7 +246,7 @@ func (url URL) CanonicalWith(lines CanFile) (canonical string) {
 		}
 	}
 
-	return
+	return url.String()
 }
 
 // ComponentsOf returns the components of the URL in s.
