@@ -31,6 +31,7 @@ func NewGlobPattern(s string, fuzzy bool) Pattern {
 	if s == "" {
 		return AnyStringPattern{}
 	}
+
 	// when no special characters are contained, we can use an equality pattern
 	if !strings.ContainsAny(s, globPatternBlacklist) {
 		if fuzzy {
@@ -101,8 +102,27 @@ func (p GlobPattern) Score(s string) float64 {
 }
 
 // NewSplitGlobPattern is a pattern that uses the given splitter for a new SplitPattern.
+// If patterns starts with '^' or ends with '$', the fuzzy flag is ignored and MatchAt{Start,End} are set appropriately.
 // Each sub-pattern consists of a call to NewGlobPattern.
 func NewSplitGlobPattern(pattern string, splitter func(string) []string, fuzzy bool) SplitPattern {
+	// check for the special case with ^ and '$'
+	forceStart := false
+	if len(pattern) > 0 && pattern[0] == '^' {
+		forceStart = true
+		pattern = pattern[1:]
+	}
+	forceEnd := false
+	if len(pattern) > 0 && pattern[len(pattern)-1] == '$' {
+		forceEnd = true
+		pattern = pattern[:len(pattern)-1]
+	}
+
+	// disable fuzzy matching when ^ or $ are set
+	if forceStart || forceEnd {
+		fuzzy = false
+	}
+
+	// do the splitting
 	globs := splitter(pattern)
 
 	patterns := make([]Pattern, len(globs))
@@ -113,11 +133,15 @@ func NewSplitGlobPattern(pattern string, splitter func(string) []string, fuzzy b
 	return SplitPattern{
 		Split:    splitter,
 		Patterns: patterns,
+
+		MatchAtStart: forceStart,
+		MatchAtEnd:   forceEnd,
 	}
 }
 
 // SplitPattern is a pattern that splits an input string and matches each string according to a sub-pattern.
 // To compute the overall score, the pattern scores are averaged.
+// It can optionally force matches at the start or end (or both) of the string.
 //
 // Finally, SplitPattern prioritizes matches at the edge of the input string.
 // This means that a score at the start or the end of the string will always score higher than one in the middle.
@@ -131,6 +155,10 @@ type SplitPattern struct {
 	//
 	// The SplitPattern with an empty list of patterns always matches with the maximum score.
 	Patterns []Pattern
+
+	// MatchAtStart and MatchAtEnd determine if the SplitPattern must match at the start or the end of the string.
+	MatchAtStart bool
+	MatchAtEnd   bool
 }
 
 // Score scores a string.
@@ -168,6 +196,15 @@ func (sp SplitPattern) Score(s string) (score float64) {
 
 // scoreFrom returns the score for this SplitPattern starting at start.
 func (sp SplitPattern) scoreFrom(parts []string, start int, last int) (score float64) {
+	// match at the start
+	if sp.MatchAtStart && start != 0 {
+		return -1
+	}
+	// match at the end
+	if sp.MatchAtEnd && start != len(parts)-len(sp.Patterns) {
+		return -1
+	}
+
 	// compute the average score for each pattern
 	for i, pat := range sp.Patterns {
 		partial := pat.Score(parts[start+i])

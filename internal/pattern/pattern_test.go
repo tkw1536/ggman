@@ -236,6 +236,81 @@ func TestNewSplitGlobPattern(t *testing.T) {
 				},
 			},
 		},
+		{
+			"match at start without fuzzy set",
+			args{"^a;a*b", simpleSplitter, false},
+			SplitPattern{
+				Split: simpleSplitter,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					GlobPattern("a*b"),
+				},
+				MatchAtStart: true,
+			},
+		},
+		{
+			"match at start with fuzzy set",
+			args{"^a;a*b", simpleSplitter, true},
+			SplitPattern{
+				Split: simpleSplitter,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					GlobPattern("a*b"),
+				},
+				MatchAtStart: true,
+			},
+		},
+		{
+			"match at end without fuzzy set",
+			args{"a;a*b$", simpleSplitter, false},
+			SplitPattern{
+				Split: simpleSplitter,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					GlobPattern("a*b"),
+				},
+				MatchAtEnd: true,
+			},
+		},
+		{
+			"match at end with fuzzy set",
+			args{"a;a*b$", simpleSplitter, true},
+			SplitPattern{
+				Split: simpleSplitter,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					GlobPattern("a*b"),
+				},
+				MatchAtEnd: true,
+			},
+		},
+
+		{
+			"match at start and end without fuzzy set",
+			args{"^a;a*b$", simpleSplitter, false},
+			SplitPattern{
+				Split: simpleSplitter,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					GlobPattern("a*b"),
+				},
+				MatchAtStart: true,
+				MatchAtEnd:   true,
+			},
+		},
+		{
+			"match at start and end without fuzzy set",
+			args{"^a;a*b$", simpleSplitter, true},
+			SplitPattern{
+				Split: simpleSplitter,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					GlobPattern("a*b"),
+				},
+				MatchAtStart: true,
+				MatchAtEnd:   true,
+			},
+		},
 
 		{
 			"simple fuzzy splitter",
@@ -268,8 +343,10 @@ func TestNewSplitGlobPattern(t *testing.T) {
 
 func TestSplitPattern_Score(t *testing.T) {
 	type fields struct {
-		Split    func(s string) []string
-		Patterns []Pattern
+		Split        func(s string) []string
+		Patterns     []Pattern
+		MatchAtStart bool
+		MatchAtEnd   bool
 	}
 	type args struct {
 		s string
@@ -428,12 +505,152 @@ func TestSplitPattern_Score(t *testing.T) {
 			args{"a;a;b;b;c;c"},
 			-1,
 		},
+
+		{
+			"exact match at start",
+			fields{
+				Split: splitSemicolon,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					EqualityFoldPattern("b"),
+					EqualityFoldPattern("c"),
+				},
+				MatchAtStart: true,
+			},
+			args{"a;b;c"},
+			1,
+		},
+
+		{
+			"exact match as prefix",
+			fields{
+				Split: splitSemicolon,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					EqualityFoldPattern("b"),
+					EqualityFoldPattern("c"),
+				},
+				MatchAtStart: true,
+			},
+			args{"a;b;c;b"},
+			1,
+		},
+
+		{
+			"no match when forced at start",
+			fields{
+				Split: splitSemicolon,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					EqualityFoldPattern("b"),
+					EqualityFoldPattern("c"),
+				},
+				MatchAtStart: true,
+			},
+			args{"d;a;b;c"},
+			-1,
+		},
+
+		{
+			"exact match at end",
+			fields{
+				Split: splitSemicolon,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					EqualityFoldPattern("b"),
+					EqualityFoldPattern("c"),
+				},
+				MatchAtEnd: true,
+			},
+			args{"a;b;c"},
+			1,
+		},
+
+		{
+			"exact match as suffix",
+			fields{
+				Split: splitSemicolon,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					EqualityFoldPattern("b"),
+					EqualityFoldPattern("c"),
+				},
+				MatchAtEnd: true,
+			},
+			args{"d;a;b;c"},
+			1,
+		},
+
+		{
+			"no match when forced as suffix",
+			fields{
+				Split: splitSemicolon,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					EqualityFoldPattern("b"),
+					EqualityFoldPattern("c"),
+				},
+				MatchAtEnd: true,
+			},
+			args{"a;b;c;d"},
+			-1,
+		},
+
+		{
+			"exact match at with start and end",
+			fields{
+				Split: splitSemicolon,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					EqualityFoldPattern("b"),
+					EqualityFoldPattern("c"),
+				},
+				MatchAtStart: true,
+				MatchAtEnd:   true,
+			},
+			args{"a;b;c"},
+			1,
+		},
+
+		{
+			name: "no match when exact match required, but only suffix",
+			fields: fields{
+				Split: splitSemicolon,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					EqualityFoldPattern("b"),
+					EqualityFoldPattern("c"),
+				},
+				MatchAtStart: true,
+				MatchAtEnd:   true,
+			},
+			args: args{"d;a;b;c"},
+			want: -1,
+		},
+
+		{
+			"no match when exact match required, but only prefix",
+			fields{
+				Split: splitSemicolon,
+				Patterns: []Pattern{
+					EqualityFoldPattern("a"),
+					EqualityFoldPattern("b"),
+					EqualityFoldPattern("c"),
+				},
+				MatchAtStart: true,
+				MatchAtEnd:   true,
+			},
+			args{"a;b;c;d"},
+			-1,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			sp := SplitPattern{
-				Split:    tt.fields.Split,
-				Patterns: tt.fields.Patterns,
+				Split:        tt.fields.Split,
+				Patterns:     tt.fields.Patterns,
+				MatchAtStart: tt.fields.MatchAtStart,
+				MatchAtEnd:   tt.fields.MatchAtEnd,
 			}
 			if got := sp.Score(tt.args.s); got != tt.want {
 				t.Errorf("SplitPattern.Score() = %v, want %v", got, tt.want)

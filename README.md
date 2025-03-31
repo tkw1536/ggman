@@ -218,13 +218,28 @@ Examples for supported patterns can be found in this table:
 
 | Pattern            | Examples                                                            |
 | ------------------ | ------------------------------------------------------------------- |
-| `world`            | `git@github.com:hello/world.git`, `https://github.com/hello/world`  |*
+| `world`            | `git@github.com:hello/world.git`, `https://github.com/hello/world`  |
 | `hello/*`          | `git@github.com:hello/earth.git`, `git@github.com:hello/mars.git`   |
 | `hello/m*`         | `git@github.com:hello/mars.git`, `git@github.com:hello/mercury.git` |
 | `github.com/*/*`   | `git@github.com:hello/world.git`, `git@github.com:bye/world.git`    |
 | `github.com/hello` | `git@github.com:hello/world.git`, `git@github.com:hello/mars.git`   |
 
-Note that the `--for` argument also works for exact repository urls, e.g. `ggman --for 'https://github.com/tkw1536/GitManager' ls`. 
+Patterns are generally applied against URL components (see below for details on how the splitting works).
+For example, to match the pattern `hello/*`, it is first split into the patterns `hello` and `*`.
+These are then matched individually against the components of the URL.
+The matched components have to be sequential, but don't have to be at either end of the URL.
+
+Each component pattern can be one of the following:
+- A case-insensitive `fnmatch.3` pattern with `*`, `?` and `[]` holding their usual meanings;
+- A fuzzy string match, meaning the characters in the pattern have to occur in order of the characters in the string.
+When no special fnmatch characters are found, the implementation assumes a fuzzy match. 
+Fuzzy matching can also be explicitly disabled by passing the global `--no-fuzzy-filter` argument.
+
+A special case is when a pattern begins with `^` or ends with `$` (or both).
+Then any fuzzy matching is disabled, and any matches must start at the beginning  (in the case `^`) or end at the end  (in the case `$`) of the URL (or both).
+For example `hello/world` matches both `git@github.com:hello/world.git` and `hello.com/world/example.git`, but `hello/world$` only matches the former.
+
+Note that the `--for` argument also works for exact repository urls, e.g. `ggman --for 'https://github.com/tkw1536/ggman' ls`. 
 `--for` also works with absolute or relative filepaths to locally installed repositories. 
 
 In addition, the `--for` argument by default uses a fuzzy matching algorithm.

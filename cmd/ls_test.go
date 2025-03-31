@@ -195,6 +195,17 @@ func TestCommandLs(t *testing.T) {
 		},
 
 		{
+			"list repositories with start flags",
+			"",
+			[]string{"--for", "^github.com", "ls"},
+
+			0,
+			"${GGROOT github.com hello world}\n",
+
+			"",
+		},
+
+		{
 			"list repositories with scores",
 			"",
 			[]string{"--for", "wrld", "ls", "--scores"},
