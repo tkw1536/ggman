@@ -476,6 +476,8 @@ ggman comes with the following builtin aliases:
 
 ### 1.24.0 (Upcoming)
 
+- add special CANSPEC `$$` to return URL unchanged
+- add anchors to patterns to match exactly at the start or end of a repository url
 - update tool dependencies to latest
 
 ### 1.23.1 (Released [Mar 30 2025](https://github.com/tkw1536/ggman/releases/tag/v1.23.1))
