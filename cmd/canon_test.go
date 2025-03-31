@@ -98,6 +98,16 @@ func TestCommandCanon(t *testing.T) {
 			"ssh://user@server.com/repo.git\n",
 			"",
 		},
+
+		{
+			"ssh://user@server.com:1234/repo.git $$",
+			"",
+			[]string{"canon", "ssh://user@server.com:1234/repo.git", "$$"},
+
+			0,
+			"ssh://user@server.com:1234/repo.git\n",
+			"",
+		},
 	}
 
 	for _, tt := range tests {
