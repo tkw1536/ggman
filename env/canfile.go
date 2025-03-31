@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-//spellchecker:words canfile
+//spellchecker:words canfile unmarshals
 
 // CanLine represents a line within in the canonical configuration file
 type CanLine struct {
@@ -23,9 +23,9 @@ var ErrEmpty = errors.New("CanLine.Unmarshal: CanLine is empty")
 // ErrEmptyFields is an error indicating that unmarshaling a CanLine failed
 var ErrEmptyFields = errors.New("CanLine.Unmarshal: strings.Fields() unexpectedly returned 0-length slice")
 
-// Unmarshal reads a CanLine from a string
-func (cl *CanLine) Unmarshal(s string) error {
-	s = strings.TrimSpace(s)
+// UnmarshalText unmarshals a text representation of itself
+func (cl *CanLine) UnmarshalText(text []byte) error {
+	s := strings.TrimSpace(string(text))
 
 	// if the line is empty or starts with a comment character return nothing
 	if s == "" || strings.HasPrefix(s, "#") || strings.HasPrefix(s, "//") || strings.HasPrefix(s, ";") {
@@ -64,11 +64,11 @@ func (cf *CanFile) ReadFrom(reader io.Reader) (int64, error) {
 
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
-		text := scanner.Text()
+		text := scanner.Bytes()
 		bytes += int64(len(text))
 
 		var line CanLine
-		if err := line.Unmarshal(text); err != nil {
+		if err := line.UnmarshalText(text); err != nil {
 			return bytes, fmt.Errorf("unable to parse CANFILE line: %w", err)
 		}
 		*cf = append(*cf, line)
@@ -91,7 +91,7 @@ var defaultCanFile = []string{
 func (cf *CanFile) ReadDefault() {
 	*cf = make([]CanLine, len(defaultCanFile))
 	for i, cl := range defaultCanFile {
-		if err := (*cf)[i].Unmarshal(cl); err != nil {
+		if err := (*cf)[i].UnmarshalText([]byte(cl)); err != nil {
 			panic("CanFile.ReadDefault: Unable to parse default CanFile line")
 		}
 	}
