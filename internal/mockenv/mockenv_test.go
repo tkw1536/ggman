@@ -96,8 +96,12 @@ func (me mockEnvRunCommand) Run(context ggman.Context) error {
 	clonePath := filepath.Join(context.Environment.Root, "server.com", "repo")
 	remote, _ := context.Environment.Git.GetRemote(clonePath, "")
 
-	fmt.Fprintf(context.Stdout, "path=%s remote=%s\n", clonePath, remote)
-	fmt.Fprintf(context.Stderr, "got args: %v\n", me.Positional.Argv)
+	if _, err := fmt.Fprintf(context.Stdout, "path=%s remote=%s\n", clonePath, remote); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprintf(context.Stderr, "got args: %v\n", me.Positional.Argv); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -70,7 +70,7 @@ func (SweepProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContex
 func (SweepProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext[bool]) (err error) {
 	context.Snapshot(func(isEmpty bool) bool {
 		// this directory remains empty iff all child directories are empty
-		if !(resultOK && resultValue.(bool)) {
+		if !resultOK || !resultValue.(bool) {
 			isEmpty = false
 		}
 

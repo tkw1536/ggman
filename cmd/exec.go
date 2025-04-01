@@ -98,14 +98,14 @@ func (e exe) Run(context ggman.Context) error {
 }
 
 // runReal implements ggman exec for simulate = False
-func (e exe) runReal(context ggman.Context) error {
+func (e exe) runReal(context ggman.Context) (err error) {
 	repos := context.Environment.Repos(true)
 
 	statusIO := e.Parallel != 1 && !e.Quiet
 
 	var st *status.Status
 	if statusIO {
-		st = status.NewWithCompat(context.IOStream.Stdout, 0)
+		st = status.NewWithCompat(context.Stdout, 0)
 		st.Start()
 		defer st.Stop()
 	}
@@ -117,7 +117,15 @@ func (e exe) runReal(context ggman.Context) error {
 		io := context.IOStream
 		if statusIO {
 			line := st.OpenLine(repo+": ", "")
-			defer line.Close()
+			defer func() {
+				errClose := line.Close()
+				if errClose == nil {
+					return
+				}
+				if err == nil {
+					err = errClose
+				}
+			}()
 			io = io.Streams(line, line, nil, 0).NonInteractive()
 		}
 

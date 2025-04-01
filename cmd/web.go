@@ -234,7 +234,7 @@ func (uw urlweb) Run(context ggman.Context) error {
 			return errOutsideRepository
 		}
 
-		if !(uw.Clone || uw.ReClone) {
+		if !uw.Clone && !uw.ReClone {
 			weburl += "/tree/" + ref
 			if uw.Tree {
 				weburl += "/" + relative

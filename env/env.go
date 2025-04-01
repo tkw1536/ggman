@@ -160,7 +160,7 @@ func (env *Env) LoadDefaultRoot() error {
 //
 // If loading a CanFile fails, an error of type Error is returned.
 // If loading succeeds, this function returns nil.
-func (env *Env) LoadDefaultCANFILE() (CanFile, error) {
+func (env *Env) LoadDefaultCANFILE() (cf CanFile, err error) {
 	if env.CanFile != nil {
 		return nil, nil
 	}
@@ -173,20 +173,26 @@ func (env *Env) LoadDefaultCANFILE() (CanFile, error) {
 		files = append(files, filepath.Join(env.Vars.HOME, ".ggman"))
 	}
 
-	var cf CanFile
-
 	// In order, if a file exists read it or fail.
 	// If it doesn't exist continue to the next file.
 	for _, file := range files {
-		f, err := os.Open(file) /* #nosec G304 -- different files used by design */
+		f, oErr := os.Open(file) /* #nosec G304 -- different files used by design */
 		switch {
-		case err == nil: // do nothing
-		case errors.Is(err, fs.ErrNotExist):
+		case oErr == nil: // do nothing
+		case errors.Is(oErr, fs.ErrNotExist):
 			continue
 		default:
-			return nil, fmt.Errorf("unable to open CANFILE %q: %w", file, err)
+			return nil, fmt.Errorf("unable to open CANFILE %q: %w", file, oErr)
 		}
-		defer f.Close()
+		defer func() {
+			errClose := f.Close()
+			if errClose == nil {
+				return
+			}
+			if err == nil {
+				err = errClose
+			}
+		}()
 		if _, err := cf.ReadFrom(f); err != nil {
 			return nil, err
 		}

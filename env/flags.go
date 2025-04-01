@@ -119,11 +119,21 @@ func (env Env) NewFromFileFilter(p string, fuzzy bool) (filters []Filter, err er
 	}
 
 	// open the file
-	file, err := os.Open(path) /* #nosec G304 -- explicitly passed as a parameter */
-	if err != nil {
-		return nil, fmt.Errorf("unable to open path %q: %w", p, err)
+	file, oErr := os.Open(path) /* #nosec G304 -- explicitly passed as a parameter */
+	if oErr != nil {
+		return nil, fmt.Errorf("unable to open path %q: %w", p, oErr)
 	}
-	defer file.Close()
+	defer func() {
+		eClose := file.Close()
+		if eClose == nil {
+			return
+		}
+		eClose = fmt.Errorf("unable to close path %q: %w", p, eClose)
+
+		if err == nil {
+			err = eClose
+		}
+	}()
 
 	// read each line
 	scanner := bufio.NewScanner(file)
