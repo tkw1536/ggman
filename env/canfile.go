@@ -20,10 +20,8 @@ type CanLine struct {
 // ErrEmpty is an error representing an empty CanLine
 var ErrEmpty = errors.New("CanLine.Unmarshal: CanLine is empty")
 
-// ErrEmptyFields is an error indicating that unmarshaling a CanLine failed
-var ErrEmptyFields = errors.New("CanLine.Unmarshal: strings.Fields() unexpectedly returned 0-length slice")
-
-// UnmarshalText unmarshals a text representation of itself
+// UnmarshalText unmarshals a text representation of itself.
+// An empty line returns [ErrEmpty].
 func (cl *CanLine) UnmarshalText(text []byte) error {
 	s := strings.TrimSpace(string(text))
 
@@ -38,13 +36,15 @@ func (cl *CanLine) UnmarshalText(text []byte) error {
 	// switch based on the length
 	switch len(fields) {
 	case 0:
-		return ErrEmptyFields
+		// strings.TrimSpace(s) != "" but strings.Fields(s) == []
+		panic("never reached")
 	case 1:
-		fields = []string{"", fields[0]}
+		cl.Pattern = ""
+		cl.Canonical = fields[0]
+	default:
+		cl.Pattern = fields[0]
+		cl.Canonical = fields[1]
 	}
-
-	cl.Pattern = fields[0]
-	cl.Canonical = fields[1]
 
 	return nil
 }
