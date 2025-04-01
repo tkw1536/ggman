@@ -60,7 +60,7 @@ var errPathAlreadyExists = exit.Error{
 func (r relocate) Run(context ggman.Context) error {
 	for _, gotPath := range context.Environment.Repos(false) {
 		// determine the remote path and where it should go
-		remote, err := context.Environment.Git.GetRemote(gotPath)
+		remote, err := context.Environment.Git.GetRemote(gotPath, "")
 		if err != nil || remote == "" { // ignore remotes that don't exist
 			continue
 		}

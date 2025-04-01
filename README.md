@@ -476,6 +476,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.24.0 (Upcoming)
 
+- add optional `--remote` url to `ggman url` and `ggman web`
 - add special CANSPEC `$$` to return URL unchanged
 - add anchors to patterns to match exactly at the start or end of a repository url
 - update tool dependencies to latest

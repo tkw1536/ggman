@@ -13,6 +13,8 @@ package git
 
 //spellchecker:words path filepath sync github ggman internal dirs pkglib stream
 import (
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
@@ -80,14 +82,15 @@ type Git interface {
 	// May return other error types for other errors.
 	Pull(stream stream.IOStream, clonePath string) error
 
-	// GetRemote gets the url of the canonical remote at clonePath.
-	// The semantics of 'canonical' are determined by the underlying git implementation.
+	// GetRemote gets the url of the remote at clonePath.
+	// Name is the name of the remote.
+	// When empty, picks the primary remote, as determined by the underlying git implementation.
 	// Typically this function returns the url of the tracked remote of the currently checked out branch or the 'origin' remote.
 	// If no remote exists, an empty url is returned.
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	GetRemote(clonePath string) (url string, err error)
+	GetRemote(clonePath string, name string) (url string, err error)
 
 	// UpdateRemotes updates the urls of all remotes of the repository at clonePath.
 	// updateFunc is a function that is called for each remote url to be updated.
@@ -240,7 +243,9 @@ func (impl *defaultGitWrapper) Pull(stream stream.IOStream, clonePath string) er
 	return impl.git.Pull(stream, clonePath, repoObject)
 }
 
-func (impl *defaultGitWrapper) GetRemote(clonePath string) (uri string, err error) {
+var errNoRemoteURL = errors.New("no remote URL found")
+
+func (impl *defaultGitWrapper) GetRemote(clonePath string, name string) (uri string, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -250,15 +255,36 @@ func (impl *defaultGitWrapper) GetRemote(clonePath string) (uri string, err erro
 		return
 	}
 
-	// get all the uris
-	_, uris, err := impl.git.GetCanonicalRemote(clonePath, repoObject)
-	if err != nil || len(uris) == 0 {
-		return
+	// if no name is provided, use the canonical remote!
+	if name == "" {
+		_, uris, err := impl.git.GetCanonicalRemote(clonePath, repoObject)
+		if err != nil {
+			return "", err
+		}
+		if len(uris) == 0 {
+			return "", errNoRemoteURL
+		}
+
+		// use the first uri
+		return uris[0], nil
 	}
 
-	// use the first uri
-	uri = uris[0]
-	return
+	// get all the remotes
+	remotes, err := impl.git.GetRemotes(clonePath, repoObject)
+	if err != nil {
+		return "", err
+	}
+
+	// pick the canonical one!
+	urls, ok := remotes[name]
+	if !ok {
+		return "", fmt.Errorf("remote %q not found", name)
+	}
+	if len(urls) == 0 {
+		return "", fmt.Errorf("remote %q: %w", name, errNoRemoteURL)
+	}
+
+	return urls[0], nil
 }
 
 func (impl *defaultGitWrapper) UpdateRemotes(clonePath string, updateFunc func(url, name string) (string, error)) (err error) {

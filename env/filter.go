@@ -111,7 +111,7 @@ func (pat *PatternFilter) Set(value string) {
 // The caller may assume that there is a repository at clonePath.
 func (pat PatternFilter) Score(env Env, clonePath string) float64 {
 	// find the remote url to use
-	remote, err := env.Git.GetRemote(clonePath)
+	remote, err := env.Git.GetRemote(clonePath, "")
 	if err != nil {
 		return -1
 	}

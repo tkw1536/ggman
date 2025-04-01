@@ -58,6 +58,10 @@ import (
 //	--reclone
 //
 // Like the --clone flag, but instead of using a normalized url, use the exact one found in the current repository.
+//
+//	--remote
+//
+// Optional name of git remote to show url for
 var Web ggman.Command = urlweb{
 	isWebCommand: true,
 }
@@ -77,12 +81,13 @@ type urlweb struct {
 	} `positional-args:"true"`
 	List bool `short:"l" long:"list-bases" description:"print a list of all predefined base URLs"`
 
-	ForceRepoHere bool `short:"f" long:"force-repo-here" description:"pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url"`
-	Branch        bool `short:"b" long:"branch" description:"if provided, include the HEAD reference in the resolved URL"`
-	Tree          bool `short:"t" long:"tree" description:"if provided, additionally use the HEAD reference and relative path to the root of the git worktree"`
-	BaseAsPrefix  bool `short:"p" long:"prefix" description:"treat the base argument as a prefix, instead of the hostname"`
-	Clone         bool `short:"c" long:"clone" description:"if provided to the url command, print a \"git clone\" command that can be used to clone the current repository"`
-	ReClone       bool `short:"r" long:"reclone" description:"like clone, but uses the current remote url as opposed to the https one"`
+	ForceRepoHere bool   `short:"f" long:"force-repo-here" description:"pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url"`
+	Branch        bool   `short:"b" long:"branch" description:"if provided, include the HEAD reference in the resolved URL"`
+	Tree          bool   `short:"t" long:"tree" description:"if provided, additionally use the HEAD reference and relative path to the root of the git worktree"`
+	BaseAsPrefix  bool   `short:"p" long:"prefix" description:"treat the base argument as a prefix, instead of the hostname"`
+	Clone         bool   `short:"c" long:"clone" description:"if provided to the url command, print a \"git clone\" command that can be used to clone the current repository"`
+	ReClone       bool   `short:"r" long:"reclone" description:"like clone, but uses the current remote url as opposed to the https one"`
+	Remote        string `short:"R" long:"remote" description:"optional name of git remote to show url for"`
 }
 
 // WebBuiltInBases is a map of built-in bases for the url and web commands
@@ -286,7 +291,7 @@ func (uw urlweb) getRemoteURLReal(context ggman.Context) (root string, remote st
 	}
 
 	// get the remote
-	remote, err = context.Environment.Git.GetRemote(root)
+	remote, err = context.Environment.Git.GetRemote(root, uw.Remote)
 	if err != nil {
 		return "", "", "", errOutsideRepository
 	}

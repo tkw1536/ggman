@@ -51,7 +51,7 @@ func (l lsr) Run(context ggman.Context) error {
 
 	// and print them
 	for _, repo := range context.Environment.Repos(true) {
-		remote, err := context.Environment.Git.GetRemote(repo)
+		remote, err := context.Environment.Git.GetRemote(repo, "")
 		if err != nil {
 			continue
 		}

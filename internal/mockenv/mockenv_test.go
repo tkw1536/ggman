@@ -94,7 +94,7 @@ func (mockEnvRunCommand) Description() ggman.Description {
 func (mockEnvRunCommand) AfterParse() error { return nil }
 func (me mockEnvRunCommand) Run(context ggman.Context) error {
 	clonePath := filepath.Join(context.Environment.Root, "server.com", "repo")
-	remote, _ := context.Environment.Git.GetRemote(clonePath)
+	remote, _ := context.Environment.Git.GetRemote(clonePath, "")
 
 	fmt.Fprintf(context.Stdout, "path=%s remote=%s\n", clonePath, remote)
 	fmt.Fprintf(context.Stderr, "got args: %v\n", me.Positional.Argv)

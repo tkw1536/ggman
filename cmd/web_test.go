@@ -45,6 +45,15 @@ func TestCommandURL(t *testing.T) {
 		},
 
 		{
+			"Open url for specific remote",
+			clonePath,
+			[]string{"url", "--remote", "origin"},
+			0,
+			"https://github.com/hello/world\n",
+			"",
+		},
+
+		{
 			"Print clone url at root",
 			clonePath,
 			[]string{"url", "--clone"},

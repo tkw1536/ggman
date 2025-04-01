@@ -65,7 +65,7 @@ func (l link) Run(context ggman.Context) error {
 	}
 
 	// open the source repository and get the remote
-	r, e := context.Environment.Git.GetRemote(from)
+	r, e := context.Environment.Git.GetRemote(from, "")
 	if e != nil {
 		return errLinkDoesNotExist
 	}
