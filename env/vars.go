@@ -43,16 +43,15 @@ func init() {
 	tVariables := reflect.TypeFor[Variables]()
 	variablesEnvNames = make(map[int]string, tVariables.NumField())
 
-	reflectx.IterateFields(tVariables, func(field reflect.StructField, index int) (cancel bool) {
+	for field, index := range reflectx.IterFields(tVariables) {
 		// check if we have the `env` tag
 		// and store it in variablesEnvNames
 		env, ok := field.Tag.Lookup("env")
 		if !ok {
-			return
+			continue
 		}
 		variablesEnvNames[index] = env
-		return
-	})
+	}
 }
 
 // ReadVariables reads Variables from the operating system

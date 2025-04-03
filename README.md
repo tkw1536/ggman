@@ -480,6 +480,7 @@ ggman comes with the following builtin aliases:
 - add special CANSPEC `$$` to return URL unchanged
 - add anchors to patterns to match exactly at the start or end of a repository url
 - update tool dependencies to latest
+- update `goprogram` and `pkglib` dependencies  
 
 ### 1.23.1 (Released [Mar 30 2025](https://github.com/tkw1536/ggman/releases/tag/v1.23.1))
 

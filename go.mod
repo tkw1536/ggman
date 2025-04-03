@@ -1,6 +1,6 @@
 module github.com/tkw1536/ggman
 
-go 1.24.1
+go 1.24.2
 
 require (
 	al.essio.dev/pkg/shellescape v1.6.0
@@ -9,8 +9,8 @@ require (
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
-	github.com/tkw1536/goprogram v0.7.0
-	github.com/tkw1536/pkglib v0.0.0-20250326123236-a7ba95d3ae68
+	github.com/tkw1536/goprogram v0.7.1
+	github.com/tkw1536/pkglib v0.0.0-20250403195407-1b2a3c5294f8
 )
 
 require (
