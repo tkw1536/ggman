@@ -23,22 +23,22 @@ type ggmanParameters = env.Parameters
 type ggmanRequirements = env.Requirement
 type ggmanFlags = env.Flags
 
-// Program is the type of the ggman Program
+// Program is the type of the ggman Program.
 type Program = goprogram.Program[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]
 
-// Command is the type of a ggman Command
+// Command is the type of a ggman Command.
 type Command = goprogram.Command[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]
 
-// Context is type type of a Context passed to ggman command
+// Context is type type of a Context passed to ggman command.
 type Context = goprogram.Context[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]
 
-// Arguments is the type of ggman Arguments
+// Arguments is the type of ggman Arguments.
 type Arguments = goprogram.Arguments[ggmanFlags]
 
-// Description is the type of descriptions of a ggman command
+// Description is the type of descriptions of a ggman command.
 type Description = goprogram.Description[ggmanFlags, ggmanRequirements]
 
-// ErrGenericOutput indicates that a generic output error occurred
+// ErrGenericOutput indicates that a generic output error occurred.
 var ErrGenericOutput = exit.Error{
 	ExitCode: exit.ExitGeneric,
 	Message:  "Unknown Output Error",

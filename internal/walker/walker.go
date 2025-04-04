@@ -58,7 +58,7 @@ const (
 	walkerFinished               // Walk has returned
 )
 
-// Params are parameters for a walk across a filesystem
+// Params are parameters for a walk across a filesystem.
 type Params struct {
 	// Root is the root filesystem to begin the walk at
 	Root FS
@@ -121,7 +121,7 @@ type Process[S any] interface {
 	AfterVisit(context WalkContext[S]) (err error)
 }
 
-// Step describes how a child node should be processed
+// Step describes how a child node should be processed.
 type Step int
 
 const (
@@ -130,8 +130,7 @@ const (
 	// DoSync synchronously processes the child node.
 	// Once processing the child node has finished the AfterChild() function will be called.
 	DoSync
-	// DoConcurrent queues the child node to be processed concurrently.
-	// The current node will node wait for
+	// The current node will node wait for.
 	DoConcurrent
 )
 
@@ -220,7 +219,6 @@ func (w *Walker[S]) Walk() error {
 			w.rPaths[i] = r.NodeRPath
 			w.scores[i] = r.Score
 		}
-
 	}()
 
 	// wait for the scan to finish, then return the results
@@ -235,7 +233,7 @@ func (w *Walker[S]) Walk() error {
 	return <-w.errChan
 }
 
-// walkRoot starts a walk through the provided root
+// walkRoot starts a walk through the provided root.
 func (w *Walker[S]) walkRoot(root FS) {
 	w.semaphore.Lock()
 	defer w.semaphore.Unlock()
@@ -246,7 +244,7 @@ func (w *Walker[S]) walkRoot(root FS) {
 	w.walk(true, ctx)
 }
 
-// walk walks recursively through the provided context
+// walk walks recursively through the provided context.
 func (w *Walker[S]) walk(sync bool, ctx *context[S]) (ok bool) {
 	defer w.wg.Done()
 
@@ -344,8 +342,7 @@ func (w *Walker[S]) reportResult(path, rpath string, score float64) {
 	w.resultChan <- walkResult{NodePath: path, NodeRPath: rpath, Score: score}
 }
 
-// reportErrors reports the provided error to the caller of Walk()
-// When another error has already occurred, does nothing
+// When another error has already occurred, does nothing.
 func (w *Walker[S]) reportError(err error) {
 	select {
 	case w.errChan <- err:
@@ -353,9 +350,7 @@ func (w *Walker[S]) reportError(err error) {
 	}
 }
 
-// Results behaves like w.Paths(true).
-//
-// DEPRECATED
+// DEPRECATED.
 func (w *Walker[S]) Results() []string {
 	return w.Paths(true)
 }
@@ -393,7 +388,7 @@ func (w *Walker[S]) Scores() []float64 {
 
 var ErrUnknownAction = errors.New("Process.BeforeChild: Unknown action")
 
-// walkResult represents an internal result of the walk function
+// walkResult represents an internal result of the walk function.
 type walkResult struct {
 	NodePath  string
 	NodeRPath string

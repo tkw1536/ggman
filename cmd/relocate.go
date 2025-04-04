@@ -21,7 +21,7 @@ import (
 var Relocate ggman.Command = relocate{}
 
 type relocate struct {
-	Simulate bool `short:"s" long:"simulate" description:"only print unix-like commands to move repositories around"`
+	Simulate bool `description:"only print unix-like commands to move repositories around" long:"simulate" short:"s"`
 }
 
 func (relocate) Description() ggman.Description {

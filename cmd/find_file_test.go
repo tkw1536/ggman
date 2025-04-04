@@ -17,7 +17,7 @@ func TestCommandFindFile(t *testing.T) {
 	// with file 'example.txt'
 	{
 		clonePath := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
-		if err := os.WriteFile(filepath.Join(clonePath, "example.txt"), nil, os.ModePerm); err != nil {
+		if err := os.WriteFile(filepath.Join(clonePath, "example.txt"), nil, 0600); err != nil {
 			panic(err)
 		}
 	}
@@ -25,13 +25,12 @@ func TestCommandFindFile(t *testing.T) {
 	// with file 'example/example.txt'
 	{
 		clonePath := mock.Clone("user@server.com/repo", "server.com", "user", "repo")
-		if err := os.Mkdir(filepath.Join(clonePath, "example"), os.ModePerm|os.ModeDir); err != nil {
+		if err := os.Mkdir(filepath.Join(clonePath, "example"), 0750); err != nil {
 			panic(err)
 		}
-		if err := os.WriteFile(filepath.Join(clonePath, "example", "example.txt"), nil, os.ModePerm); err != nil {
+		if err := os.WriteFile(filepath.Join(clonePath, "example", "example.txt"), nil, 0600); err != nil {
 			panic(err)
 		}
-
 	}
 
 	// with nothing

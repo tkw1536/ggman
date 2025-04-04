@@ -35,7 +35,7 @@ func TestAfterRune(t *testing.T) {
 }
 
 func Benchmark_AfterRune(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		AfterRune("a;b", ';')
 		AfterRune("a;b;c", ';')
 		AfterRune("aaa", ';')

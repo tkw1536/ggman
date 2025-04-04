@@ -22,14 +22,14 @@ var Clone ggman.Command = clone{}
 
 type clone struct {
 	Positional struct {
-		URL  string   `required:"1-1" positional-arg-name:"URL" description:"URL of repository clone. Will be canonicalized by default. "`
-		Args []string `positional-arg-name:"ARG" description:"additional arguments to pass to \"git clone\"."`
+		URL  string   `description:"URL of repository clone. Will be canonicalized by default. " positional-arg-name:"URL" required:"1-1"`
+		Args []string `description:"additional arguments to pass to \"git clone\"."              positional-arg-name:"ARG"`
 	} `positional-args:"true"`
-	Force bool   `short:"f" long:"force" description:"do not complain when a repository already exists in the target directory"`
-	Local bool   `short:"l" long:"local" description:"alias of \"--here\""`
-	Exact bool   `short:"e" long:"exact-url" description:"don't canonicalize URL before cloning and use exactly the passed URL"`
-	Here  bool   `long:"here" description:"clone into an appropriately named subdirectory of the current directory"`
-	To    string `short:"t" long:"to" description:"clone repository into specified directory"`
+	Force bool   `description:"do not complain when a repository already exists in the target directory" long:"force"     short:"f"`
+	Local bool   `description:"alias of \"--here\""                                                      long:"local"     short:"l"`
+	Exact bool   `description:"don't canonicalize URL before cloning and use exactly the passed URL"     long:"exact-url" short:"e"`
+	Here  bool   `description:"clone into an appropriately named subdirectory of the current directory"  long:"here"`
+	To    string `description:"clone repository into specified directory"                                long:"to"        short:"t"`
 }
 
 func (clone) Description() ggman.Description {
@@ -123,7 +123,7 @@ func (c clone) Run(context ggman.Context) error {
 
 var errCloneNoComps = errors.New("unable to find components of URI")
 
-// dest returns the destination path to clone the repository into
+// dest returns the destination path to clone the repository into.
 func (c clone) dest(context ggman.Context, url env.URL) (string, error) {
 	if c.Here || c.Local { // clone into directory named automatically
 		comps := url.Components()

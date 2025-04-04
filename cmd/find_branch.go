@@ -21,9 +21,9 @@ var FindBranch ggman.Command = findBranch{}
 
 type findBranch struct {
 	Positionals struct {
-		Branch string `required:"1-1" positional-arg-name:"BRANCH" description:"name of branch to find"`
+		Branch string `description:"name of branch to find" positional-arg-name:"BRANCH" required:"1-1"`
 	} `positional-args:"true"`
-	ExitCode bool `short:"e" long:"exit-code" description:"exit with status code 1 when no repositories with provided branch exist"`
+	ExitCode bool `description:"exit with status code 1 when no repositories with provided branch exist" long:"exit-code" short:"e"`
 }
 
 func (findBranch) Description() ggman.Description {

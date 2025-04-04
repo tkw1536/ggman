@@ -7,7 +7,7 @@ import (
 	"slices"
 )
 
-// context implements WalkerContext
+// context implements WalkerContext.
 type context[S any] struct {
 	w *Walker[S] // walker this context comes from
 
@@ -25,8 +25,7 @@ type context[S any] struct {
 // create / delete
 //
 
-// getCtx fetches a new (uninitialized) context from the walker-specific context pool.
-// it is guaranteed to be empty and have a nil context
+// it is guaranteed to be empty and have a nil context.
 func (w *Walker[S]) getCtx() *context[S] {
 	return w.ctxPool.Get().(*context[S])
 }
@@ -47,7 +46,7 @@ func (w *Walker[S]) returnCtx(ctx *context[S]) {
 	w.ctxPool.Put(ctx)
 }
 
-// newContext initializes a new context from the context-specific pool
+// newContext initializes a new context from the context-specific pool.
 func (w *Walker[S]) newContext(root FS) *context[S] {
 	ctx := w.getCtx()
 
@@ -59,7 +58,7 @@ func (w *Walker[S]) newContext(root FS) *context[S] {
 	return ctx
 }
 
-// sub creates a new sub-context for the given
+// sub creates a new sub-context for the given.
 func (w *context[S]) sub(entry fs.DirEntry) *context[S] {
 	sub := w.w.getCtx()
 

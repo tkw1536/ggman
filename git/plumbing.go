@@ -176,15 +176,15 @@ func (gg *gitgit) Init() (err error) {
 	return
 }
 
-func (gg gitgit) findGit() (git string, err error) {
+func (gg *gitgit) findGit() (git string, err error) {
 	if runtime.GOOS == "windows" {
 		return gg.findGitByExtension([]string{"exe"})
 	}
 	return gg.findGitByMode()
 }
 
-// findGitByMode finds git by finding a file named 'git' with executable flag set
-func (gg gitgit) findGitByMode() (git string, err error) {
+// findGitByMode finds git by finding a file named 'git' with executable flag set.
+func (gg *gitgit) findGitByMode() (git string, err error) {
 	// this code has been adapted from exec.LookPath in the standard library
 	// it allows using a more generic path variables
 	for _, git := range filepath.SplitList(gg.gitPath) {
@@ -203,8 +203,8 @@ func (gg gitgit) findGitByMode() (git string, err error) {
 	return "", exec.ErrNotFound
 }
 
-// findGitByExtension finds the git executable by looking for a non-directory file named "git.extension" where extension is in ext
-func (gg gitgit) findGitByExtension(exts []string) (git string, err error) {
+// findGitByExtension finds the git executable by looking for a non-directory file named "git.extension" where extension is in ext.
+func (gg *gitgit) findGitByExtension(exts []string) (git string, err error) {
 	// this code has been adapted from exec.LookPath in the standard library
 	// it allows using a more generic path variables
 	for _, git := range filepath.SplitList(gg.gitPath) {
@@ -225,8 +225,7 @@ func (gg gitgit) findGitByExtension(exts []string) (git string, err error) {
 	return "", exec.ErrNotFound
 }
 
-func (gg gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
-
+func (gg *gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
 	gitArgs := append([]string{"clone", remoteURI, clonePath}, extraArgs...)
 
 	cmd := exec.Command(gg.gitPath, gitArgs...) /* #nosec G204  -- user-controlled by design */
@@ -242,7 +241,7 @@ func (gg gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, extr
 	return err
 }
 
-func (gg gitgit) Fetch(stream stream.IOStream, clonePath string, cache any) error {
+func (gg *gitgit) Fetch(stream stream.IOStream, clonePath string, cache any) error {
 	cmd := exec.Command(gg.gitPath, "fetch", "--all") /* #nosec G204  -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 	cmd.Stdin = stream.Stdin
@@ -257,7 +256,7 @@ func (gg gitgit) Fetch(stream stream.IOStream, clonePath string, cache any) erro
 	return err
 }
 
-func (gg gitgit) Pull(stream stream.IOStream, clonePath string, cache any) error {
+func (gg *gitgit) Pull(stream stream.IOStream, clonePath string, cache any) error {
 	cmd := exec.Command(gg.gitPath, "pull") /* #nosec G204  -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 	cmd.Stdin = stream.Stdin
@@ -272,7 +271,7 @@ func (gg gitgit) Pull(stream stream.IOStream, clonePath string, cache any) error
 	return err
 }
 
-func (gg gitgit) IsDirty(clonePath string, cache any) (dirty bool, err error) {
+func (gg *gitgit) IsDirty(clonePath string, cache any) (dirty bool, err error) {
 	cmd := exec.Command(gg.gitPath, "diff", "--quiet") /* #nosec G204 -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 
@@ -361,7 +360,7 @@ func (gogit) GetRemotes(clonePath string, repoObject any) (remotes map[string][]
 	return
 }
 
-// originRemoteName is the name of the canonical remote
+// originRemoteName is the name of the canonical remote.
 const originRemoteName = "origin"
 
 func (gg gogit) GetCanonicalRemote(clonePath string, repoObject any) (name string, urls []string, err error) {
@@ -405,7 +404,6 @@ func (gg gogit) GetCanonicalRemote(clonePath string, repoObject any) (name strin
 var errNotOnABranch = errors.New("not on a branch")
 
 func (gogit) getCurrentBranch(r *git.Repository) (name string, err error) {
-
 	// determine the current head and name of it
 	head, err := r.Head()
 	if err != nil {
@@ -557,7 +555,7 @@ func (gogit) Pull(stream stream.IOStream, clonePath string, cache any) (err erro
 }
 
 func ignoreErrUpToDate(stream stream.IOStream, err error) error {
-	if err == git.NoErrAlreadyUpToDate {
+	if errors.Is(err, git.NoErrAlreadyUpToDate) {
 		_, err = stream.Println(err.Error())
 	}
 	return err
@@ -576,7 +574,7 @@ func (gogit) GetBranches(clonePath string, cache any) (branches []string, err er
 
 	// get their names
 	if err := branchRefs.ForEach(func(bref *plumbing.Reference) error {
-		branches = append(branches, string(bref.Name().Short()))
+		branches = append(branches, bref.Name().Short())
 		return nil
 	}); err != nil {
 		return nil, err
@@ -632,7 +630,7 @@ func (gg gogit) IsSync(clonePath string, cache any) (sync bool, err error) {
 	// check that all the upstream branches are synced!
 	for _, b := range branches {
 		src, dst, err := getTrackingRefs(r, b)
-		if err == ErrNoUpstream {
+		if errors.Is(err, ErrNoUpstream) {
 			continue // there is no upstream, that is ok!
 		}
 		if err != nil {
@@ -659,7 +657,7 @@ var ErrNoUpstream = errors.New("no corresponding upstream to track")
 // When the branch, or the upstream tracking refs do not exist, returns ErrNoUpstream.
 func getTrackingRefs(repo *git.Repository, branch string) (src, dst plumbing.ReferenceName, err error) {
 	br, err := repo.Branch(branch)
-	if err == git.ErrBranchNotFound {
+	if errors.Is(err, git.ErrBranchNotFound) {
 		return "", "", ErrNoUpstream
 	}
 	if err != nil {

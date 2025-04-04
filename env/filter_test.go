@@ -15,6 +15,8 @@ import (
 //spellchecker:words matcha matchb matchc otherabc
 
 func setupFilterTest(t *testing.T) (root, exampleClonePath, otherClonePath string) {
+	t.Helper()
+
 	root = testlib.TempDirAbs(t)
 
 	exampleClonePath = filepath.Join(root, "example")

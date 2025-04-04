@@ -10,17 +10,16 @@ import (
 	"strings"
 )
 
-// Normalization describes the normalization of a path
+// Normalization describes the normalization of a path.
 type Normalization int
 
 const (
-	// NoNorm uses the exact spelling of the original path
+	// NoNorm uses the exact spelling of the original path.
 	NoNorm Normalization = iota
 
-	// FoldNorm reuses sub paths when they are identical under case-folding
-	// It always uses the first matching subpath, regardless of how it matches
+	// It always uses the first matching subpath, regardless of how it matches.
 	FoldNorm
-	// FoldPreferExactNorm is like Fold, except that it uses the exact path if it already exists
+	// FoldPreferExactNorm is like Fold, except that it uses the exact path if it already exists.
 	FoldPreferExactNorm
 )
 
@@ -87,7 +86,7 @@ func FindFoldedDir(dir string, query string, preferExact bool) (name string, err
 	}
 }
 
-// findFoldedDirNoExact implements FindFoldedDir(dir, query, false)
+// findFoldedDirNoExact implements FindFoldedDir(dir, query, false).
 func findFoldedDirNoExact(dir string, query string) (name string, err error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -107,7 +106,7 @@ func findFoldedDirNoExact(dir string, query string) (name string, err error) {
 	return "", os.ErrNotExist
 }
 
-// findFoldedDirPreferExact implements FindFoldedDir(dir, query, true)
+// findFoldedDirPreferExact implements FindFoldedDir(dir, query, true).
 func findFoldedDirPreferExact(dir string, query string) (name string, err error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {

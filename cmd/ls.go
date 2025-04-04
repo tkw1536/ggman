@@ -25,10 +25,10 @@ import (
 var Ls ggman.Command = ls{}
 
 type ls struct {
-	ExitCode bool `short:"e" long:"exit-code" description:"return exit code 1 if no repositories are found"`
-	Scores   bool `short:"s" long:"scores" description:"show scores returned from filter along with repositories"`
-	One      bool `short:"o" long:"one" description:"list at most one repository, for use in shell scripts"`
-	Limit    int  `short:"n" long:"count" description:"list at most this many repositories. May not be combined with one"`
+	ExitCode bool `description:"return exit code 1 if no repositories are found"                   long:"exit-code" short:"e"`
+	Scores   bool `description:"show scores returned from filter along with repositories"          long:"scores"    short:"s"`
+	One      bool `description:"list at most one repository, for use in shell scripts"             long:"one"       short:"o"`
+	Limit    int  `description:"list at most this many repositories. May not be combined with one" long:"count"     short:"n"`
 }
 
 func (ls) Description() ggman.Description {

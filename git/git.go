@@ -129,13 +129,7 @@ type Git interface {
 	GitPath() string
 }
 
-// NewGitFromPlumbing creates a new Git wrapping a specific Plumbing.
-//
-// When git is nil, attempts to automatically select a Plumbing automatically.
-// The second parameter is only used when plumbing is nil; it should contain the value of 'PATH' environment variable.
-//
-// The implementation of this function relies on the underlying Plumbing (be it a default one or a caller provided one) to conform according to the specification.
-// In particular, this function does not checks on the error values returned and passes them directly from the implementation to the caller
+// In particular, this function does not checks on the error values returned and passes them directly from the implementation to the caller.
 func NewGitFromPlumbing(plumbing Plumbing, path string) Git {
 	return &defaultGitWrapper{git: plumbing, path: path}
 }

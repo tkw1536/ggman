@@ -17,12 +17,12 @@ func TestCommandURL(t *testing.T) {
 	clonePath := mock.Clone("git@github.com/hello/world.git", "hello", "world")
 
 	subClonePath := filepath.Join(clonePath, "sub")
-	if err := os.MkdirAll(subClonePath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(subClonePath, 0750); err != nil {
 		panic(err)
 	}
 
 	nonRepoPath := filepath.Join(clonePath, "..", "..", "example.com", "other")
-	if err := os.MkdirAll(nonRepoPath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(nonRepoPath, 0750); err != nil {
 		panic(err)
 	}
 

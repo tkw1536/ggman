@@ -336,7 +336,6 @@ func TestNewSplitGlobPattern(t *testing.T) {
 			if !reflect.DeepEqual(got.Patterns, tt.want.Patterns) || gotPointer != wantPointer {
 				t.Errorf("NewSplitGlobPattern() = %v, want %v", got, tt.want)
 			}
-
 		})
 	}
 }

@@ -14,54 +14,7 @@ import (
 
 //spellchecker:words CANSPEC godoc localgodoc reclone urlweb positionals GGROOT worktree weburl workdir
 
-// Web is the 'ggman web' command.
-//
-// It attempts to open the url of the current repository in a browser.
-// The browser being used is determined by the underlying operating system.
-//
-// To determine the url it uses the CANSPEC `https://^/$`, which may not work with all git hosts.
-// For instance when the url of the repository git@github.com:tkw1536/ggman.git, this will open the url https://github.com/tkw1536/ggman in a browser.
-//
-//	--force-repo-here
-//
-// Instead of looking for a repository, always pretend there is one in the current directory.
-// If the current directory is outside of the ggman root, this will cause an error.
-// Use the path relative to the 'ggman root' as the URL to the repository.
-//
-//	--tree
-//
-// This optional argument appends the string `/tree/$BRANCH/$PATH` to the url being opened, where $BRANCH is currently checked out branch and $PATH is the relative path from the repository root to the current folder.
-// On common Git Hosts, such as GitHub and GitLab, this shows a page of the current folder on the current branch.
-//
-//	--branch
-//
-// This argument works like '--tree', except that it does not append the local path to the url.
-//
-//	BASE
-//
-// An optional argument of the form 'BASE'.
-// If it is provided, the first component of the url is replace with the given base.
-// For instance, using the base 'https://pkg.go.dev' would open the current repository on the golang documentation homepage.
-// In addition to using a custom BASE, the following pre-defined bases 'travis' (TravisCI), 'circle' (CircleCI), 'godoc' (GoDoc) and 'localgodoc' (GoDoc when run on the local machine) can be used.
-//
-//	--prefix
-//
-// When provided, instead of replacing the hostname with the base, prefix it with the base instead.
-// This flag is ignored when no base is provided, or a built-in base is used.
-//
-//	--clone
-//
-// When provided, instead of printing only the URL, print a 'git clone' command invocation that can be used by an anonymous user to clone the current repository.
-// The clone url will always append '.git' to the web url, which may not work with every server.
-// Only compatible with the '--branch' flag, but not '--tree', '--prefix', and 'BASE'.
-//
-//	--reclone
-//
-// Like the --clone flag, but instead of using a normalized url, use the exact one found in the current repository.
-//
-//	--remote
-//
-// Optional name of git remote to show url for
+// Optional name of git remote to show url for.
 var Web ggman.Command = urlweb{
 	isWebCommand: true,
 }
@@ -77,20 +30,20 @@ type urlweb struct {
 	isWebCommand bool // if true, execute the web command; else the url command
 
 	Positionals struct {
-		Base string `positional-arg-name:"BASE" description:"if provided, replace the first component with the provided base url. alternatively you can use one of the predefined base URLs. use \"--list-bases\" to see a list of predefined base URLs"`
+		Base string `description:"if provided, replace the first component with the provided base url. alternatively you can use one of the predefined base URLs. use \"--list-bases\" to see a list of predefined base URLs" positional-arg-name:"BASE"`
 	} `positional-args:"true"`
-	List bool `short:"l" long:"list-bases" description:"print a list of all predefined base URLs"`
+	List bool `description:"print a list of all predefined base URLs" long:"list-bases" short:"l"`
 
-	ForceRepoHere bool   `short:"f" long:"force-repo-here" description:"pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url"`
-	Branch        bool   `short:"b" long:"branch" description:"if provided, include the HEAD reference in the resolved URL"`
-	Tree          bool   `short:"t" long:"tree" description:"if provided, additionally use the HEAD reference and relative path to the root of the git worktree"`
-	BaseAsPrefix  bool   `short:"p" long:"prefix" description:"treat the base argument as a prefix, instead of the hostname"`
-	Clone         bool   `short:"c" long:"clone" description:"if provided to the url command, print a \"git clone\" command that can be used to clone the current repository"`
-	ReClone       bool   `short:"r" long:"reclone" description:"like clone, but uses the current remote url as opposed to the https one"`
-	Remote        string `short:"R" long:"remote" description:"optional name of git remote to show url for"`
+	ForceRepoHere bool   `description:"pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url" long:"force-repo-here" short:"f"`
+	Branch        bool   `description:"if provided, include the HEAD reference in the resolved URL"                                                           long:"branch"          short:"b"`
+	Tree          bool   `description:"if provided, additionally use the HEAD reference and relative path to the root of the git worktree"                    long:"tree"            short:"t"`
+	BaseAsPrefix  bool   `description:"treat the base argument as a prefix, instead of the hostname"                                                          long:"prefix"          short:"p"`
+	Clone         bool   `description:"if provided to the url command, print a \"git clone\" command that can be used to clone the current repository"        long:"clone"           short:"c"`
+	ReClone       bool   `description:"like clone, but uses the current remote url as opposed to the https one"                                               long:"reclone"         short:"r"`
+	Remote        string `description:"optional name of git remote to show url for"                                                                           long:"remote"          short:"R"`
 }
 
-// WebBuiltInBases is a map of built-in bases for the url and web commands
+// WebBuiltInBases is a map of built-in bases for the url and web commands.
 var WebBuiltInBases = map[string]struct {
 	URL         string
 	IncludeHost bool
@@ -127,7 +80,6 @@ func (uw urlweb) Description() ggman.Description {
 }
 
 func (uw urlweb) AfterParse() error {
-
 	var cloneFlag string
 	if uw.Clone {
 		cloneFlag = "clone"
@@ -269,9 +221,8 @@ func (uw urlweb) listBases(context ggman.Context) error {
 	return nil
 }
 
-// getRemoteURL gets the remote url of current repository in the context
+// getRemoteURL gets the remote url of current repository in the context.
 func (uw urlweb) getRemoteURL(context ggman.Context) (root string, remote string, relative string, err error) {
-
 	if uw.ForceRepoHere { // don't use a repository, instead fake one!
 		return uw.getRemoteURLFake(context)
 	}

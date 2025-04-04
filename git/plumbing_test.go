@@ -2,6 +2,7 @@ package git
 
 //spellchecker:words path filepath reflect slices testing github config plumbing ggman internal testutil pkglib stream testlib
 import (
+	"errors"
 	"os"
 	"path"
 	"path/filepath"
@@ -420,10 +421,9 @@ func Test_gogit_Clone(t *testing.T) {
 		clone := testlib.TempDirAbs(t)
 
 		err := gg.Clone(stream.FromNil(), remote, clone, "--branch", "main")
-		if err != ErrArgumentsUnsupported {
+		if !errors.Is(err, ErrArgumentsUnsupported) {
 			t.Error("Clone() got err != ErrArgumentsUnsupported, want err = ErrArgumentsUnsupported")
 		}
-
 	})
 }
 
@@ -602,7 +602,6 @@ func Test_gogit_GetBranches(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
 			if !isRepo {
 				panic("IsRepository() failed")
@@ -653,7 +652,6 @@ func Test_gogit_ContainsBranch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			ggRepoObject, isRepo := gg.IsRepository(clone)
 			if !isRepo {
 				panic("IsRepository() failed")
@@ -678,7 +676,7 @@ func Test_gogit_IsDirty(t *testing.T) {
 	cleanClone, _ := testutil.NewTestRepo(t)
 
 	dirtyClone, _ := testutil.NewTestRepo(t)
-	if err := os.WriteFile(path.Join(dirtyClone, "example"), []byte{}, os.ModePerm); err != nil {
+	if err := os.WriteFile(path.Join(dirtyClone, "example"), []byte{}, 0600); err != nil {
 		panic(err)
 	}
 
@@ -696,7 +694,6 @@ func Test_gogit_IsDirty(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
 			if !isRepo {
 				panic("IsRepository() failed")
@@ -771,7 +768,6 @@ func Test_gogit_IsSync(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
 			if !isRepo {
 				panic("IsRepository() failed")

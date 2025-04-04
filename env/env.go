@@ -51,7 +51,7 @@ type Env struct {
 	CanFile CanFile
 }
 
-// Normalization returns the path Normalization used by this environment
+// Normalization returns the path Normalization used by this environment.
 func (env Env) Normalization() path.Normalization {
 	switch strings.ToLower(env.Vars.GGNORM) {
 	case "exact":

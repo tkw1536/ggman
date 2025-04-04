@@ -12,16 +12,16 @@ import (
 func TestRecord_Record(t *testing.T) {
 	var r Record
 
-	N := 1000 // number of elements to record
-	M := 1000 // how many times to record each element
+	const N = 1000 // number of elements to record
+	const M = 1000 // how many times to record each element
 
 	var recordFalse atomic.Uint64
 	var recordTrue atomic.Uint64
 
 	wg := &sync.WaitGroup{}
 	wg.Add(N * M)
-	for i := 0; i < N; i++ {
-		for j := 0; j < M; j++ {
+	for i := range N {
+		for range M {
 			go func(i int) {
 				defer wg.Done()
 				// record the element and count how many times it was recorded
@@ -35,16 +35,17 @@ func TestRecord_Record(t *testing.T) {
 	}
 	wg.Wait()
 
-	wantFalse := uint64(N) // the first time each element is recorded, it wasn't recorded before.
+	// the first time each element is recorded, it wasn't recorded before.
+	wantFalse := uint64(N)
 	if recordFalse.Load() != wantFalse {
 		t.Errorf("Record.Record() got false %d times, wanted %d times", recordFalse.Load(), wantFalse)
 	}
 
-	wantTrue := uint64((M - 1) * N) // every other time it was already recorded.
+	// every other time it was already recorded.
+	wantTrue := uint64((M - 1) * N)
 	if recordTrue.Load() != wantTrue {
 		t.Errorf("Record.Record() got false %d times, wanted %d times", recordTrue.Load(), wantTrue)
 	}
-
 }
 
 func TestRecord_Recorded(t *testing.T) {
@@ -53,11 +54,11 @@ func TestRecord_Recorded(t *testing.T) {
 	N := 1000      // number of elements to record
 	NN := N + 1000 // number of elements to not record
 
-	for i := 0; i < N; i++ {
+	for i := range N {
 		r.Record(i)
 	}
 
-	for i := 0; i < NN; i++ {
+	for i := range NN {
 		got := r.Recorded(i)
 		want := i < N
 		if got != want {
@@ -67,14 +68,13 @@ func TestRecord_Recorded(t *testing.T) {
 
 	r.Reset()
 
-	for i := 0; i < NN; i++ {
+	for i := range NN {
 		got := r.Recorded(i)
 		want := false
 		if got != want {
 			t.Errorf("Record.Rest().Recorded(%d) = %v, want = %v", i, got, want)
 		}
 	}
-
 }
 
 func ExampleRecord() {

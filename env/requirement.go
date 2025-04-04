@@ -19,7 +19,7 @@ type Requirement struct {
 	NeedsCanFile bool
 }
 
-// AllowsFlag checks if the provided option is allowed by this option
+// AllowsFlag checks if the provided option is allowed by this option.
 func (req Requirement) AllowsFlag(flag meta.Flag) bool {
 	return req.AllowsFilter
 }

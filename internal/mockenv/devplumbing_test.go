@@ -17,7 +17,6 @@ import (
 //spellchecker:words gogit
 
 func TestDevPlumbing_Forward(t *testing.T) {
-
 	mp := &DevPlumbing{URLMap: make(map[string]string)}
 	mp.URLMap["forward-a"] = "backward-a"
 	mp.URLMap["forward-b"] = "backward-b"
@@ -46,7 +45,6 @@ func TestDevPlumbing_Forward(t *testing.T) {
 }
 
 func TestDevPlumbing_Backward(t *testing.T) {
-
 	mp := &DevPlumbing{URLMap: make(map[string]string)}
 	mp.URLMap["forward-a"] = "backward-a"
 	mp.URLMap["forward-b"] = "backward-b"

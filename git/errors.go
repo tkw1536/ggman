@@ -3,7 +3,7 @@ package git
 //spellchecker:words errors
 import "errors"
 
-// ErrNotARepository is an error that is returned when the clonePath parameter is not a repository
+// ErrNotARepository is an error that is returned when the clonePath parameter is not a repository.
 var ErrNotARepository = errors.New("not a repository")
 
 // ErrCloneAlreadyExists is an error that is returned when an operation can not be completed because a clone at the provided path already exists.
@@ -19,7 +19,7 @@ type ExitError struct {
 	Code int
 }
 
-// Cause returns the cause of this error
+// Cause returns the cause of this error.
 func (err ExitError) Cause() error {
 	return err.error
 }

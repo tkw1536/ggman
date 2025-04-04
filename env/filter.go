@@ -11,7 +11,7 @@ import (
 	"github.com/tkw1536/pkglib/collection"
 )
 
-//spellchecker:words worktree
+//spellchecker:words worktree nolint
 
 // Filter is a predicate that scores repositories inside an environment.
 //
@@ -27,7 +27,7 @@ type Filter interface {
 	Score(env Env, clonePath string) float64
 }
 
-// NoFilter is a special filter that matches every directory with the highest possible score
+// NoFilter is a special filter that matches every directory with the highest possible score.
 var NoFilter Filter = emptyFilter{}
 
 type emptyFilter struct{}
@@ -45,8 +45,7 @@ type FilterWithCandidates interface {
 	Candidates() []string
 }
 
-// Candidates checks if Filter implements FilterWithCandidates and calls the Candidates() method when applicable.
-// When Filter does not implement FilterWithCandidates, returns nil
+// When Filter does not implement FilterWithCandidates, returns nil.
 func Candidates(f Filter) []string {
 	cFilter, isCFilter := f.(FilterWithCandidates)
 	if !isCFilter {
@@ -80,15 +79,14 @@ func (pf PathFilter) Candidates() []string {
 	return pf.Paths
 }
 
-// NewPatternFilter returns a new pattern filter with the appropriate value
+// NewPatternFilter returns a new pattern filter with the appropriate value.
 func NewPatternFilter(value string, fuzzy bool) (pat PatternFilter) {
 	pat.fuzzy = fuzzy
 	pat.Set(value)
 	return
 }
 
-// PatternFilter is a Filter that matches both paths and URLs according to a pattern.
-// PatternFilter implements FilterValue
+// PatternFilter implements FilterValue.
 type PatternFilter struct {
 	value   string
 	fuzzy   bool
@@ -136,7 +134,7 @@ func (pat PatternFilter) Score(env Env, clonePath string) float64 {
 	return pat.pattern.Score(remote)
 }
 
-// MatchesURL checks if this filter matches a url
+// MatchesURL checks if this filter matches a url.
 func (pat PatternFilter) MatchesURL(url URL) bool {
 	parts := strings.Join(url.Components(), string(os.PathSeparator))
 	return pat.pattern.Score(parts) >= 0
@@ -150,18 +148,17 @@ type DisjunctionFilter struct {
 // Matches checks if this filter matches any of the filters that were joined.
 // It returns the highest possible score.
 func (or DisjunctionFilter) Score(env Env, clonePath string) float64 {
-	max := float64(-1)
+	score := float64(-1)
 	for _, f := range or.Clauses {
-		if score := f.Score(env, clonePath); score > max {
-			max = score
+		if fScore := f.Score(env, clonePath); fScore > score {
+			score = fScore
 		}
 	}
-	return max
+	return score
 }
 
-// Candidates returns the candidates of this filter
+// Candidates returns the candidates of this filter.
 func (or DisjunctionFilter) Candidates() []string {
-
 	// gather a list of candidates
 	candidates := make([]string, 0, len(or.Clauses))
 	for _, clause := range or.Clauses { // most clauses will have exactly one candidate, hence len(or.Clauses) should be enough to never reallocate

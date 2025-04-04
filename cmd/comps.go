@@ -14,7 +14,7 @@ var Comps ggman.Command = comps{}
 
 type comps struct {
 	Positional struct {
-		URL env.URL `required:"1-1" positional-arg-name:"URL" description:"URL to use"`
+		URL env.URL `description:"URL to use" positional-arg-name:"URL" required:"1-1"`
 	} `positional-args:"true"`
 }
 

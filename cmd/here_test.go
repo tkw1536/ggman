@@ -17,7 +17,7 @@ func TestCommandHere(t *testing.T) {
 	clonePath := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
 
 	subClonePath := filepath.Join(clonePath, "sub")
-	if err := os.MkdirAll(subClonePath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(subClonePath, 0750); err != nil {
 		panic(err)
 	}
 

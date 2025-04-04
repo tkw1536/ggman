@@ -19,12 +19,15 @@ func TestSweep(t *testing.T) {
 	// Make mkdir and symlink utility methods for this.
 
 	mkdir := func(s string, files ...string) {
+		t.Helper()
+
 		path := filepath.Join(base, s)
-		err := os.MkdirAll(path, os.ModePerm)
+		err := os.MkdirAll(path, os.ModePerm) // #nosec: G301 fine in a test
 		if err != nil {
 			panic(err)
 		}
 		for _, f := range files {
+			//#nosec G306
 			if err := os.WriteFile(filepath.Join(path, f), nil, os.ModePerm); err != nil {
 				panic(err)
 			}

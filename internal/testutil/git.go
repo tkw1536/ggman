@@ -17,11 +17,9 @@ import (
 
 //spellchecker:words worktree
 
-// NewTestRepo creates a new (empty) repository for testing purposes.
-// clonePath is the path where the repository is located on disk.
-// repo is a reference to the created repository.
-// If something goes wrong, the function calls panic()
+// If something goes wrong, the function calls panic().
 func NewTestRepo(t *testing.T) (clonePath string, repo *git.Repository) {
+	t.Helper()
 
 	// first create a new temporary directory to put the git repository in
 	clonePath = testlib.TempDirAbs(t)
@@ -35,12 +33,7 @@ func NewTestRepo(t *testing.T) (clonePath string, repo *git.Repository) {
 	return
 }
 
-// NewTestRepoAt creates a new repository at the provided path.
-// When remote is not nil, creates an origin remote pointing to remote.
-//
-// When an error occurs, returns nil.
-//
-// The 'remote' part of this function is untested
+// The 'remote' part of this function is untested.
 func NewTestRepoAt(clonePath, remote string) (repo *git.Repository) {
 	repo, err := git.PlainInit(clonePath, false)
 	if err != nil {
@@ -59,10 +52,10 @@ func NewTestRepoAt(clonePath, remote string) (repo *git.Repository) {
 
 const commitMessage = "CommitTestFiles() commit"
 
-// AuthorName is the name to be used for authors of test git commit-likes
+// AuthorName is the name to be used for authors of test git commit-likes.
 const AuthorName = "Jane Doe"
 
-// AuthorEmail is the email to be used for email of the author of test git commit-likes
+// AuthorEmail is the email to be used for email of the author of test git commit-likes.
 const AuthorEmail = "jane.doe@example.com"
 
 // CommitTestFiles makes a new commit in the repository repo.
@@ -110,5 +103,4 @@ func CommitTestFiles(repo *git.Repository, files map[string]string) (*git.Worktr
 	}
 
 	return worktree, commit
-
 }

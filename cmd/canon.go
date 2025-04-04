@@ -16,8 +16,8 @@ var Canon ggman.Command = canon{}
 
 type canon struct {
 	Positional struct {
-		URL     env.URL `required:"1-1" positional-arg-name:"URL" description:"URL of the repository"`
-		CANSPEC string  `positional-arg-name:"CANSPEC" description:"CANSPEC of the repository"`
+		URL     env.URL `description:"URL of the repository"     positional-arg-name:"URL"     required:"1-1"`
+		CANSPEC string  `description:"CANSPEC of the repository" positional-arg-name:"CANSPEC"`
 	} `positional-args:"true"`
 }
 

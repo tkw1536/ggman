@@ -19,7 +19,7 @@ var Where ggman.Command = where{}
 
 type where struct {
 	Positionals struct {
-		URL string `required:"1-1" positional-arg-name:"URL" description:"remote repository URL to use"`
+		URL string `description:"remote repository URL to use" positional-arg-name:"URL" required:"1-1"`
 	} `positional-args:"true"`
 }
 

@@ -118,7 +118,7 @@ import (
 
 //spellchecker:words unsynced GGROOT GGNORM CANFILE shellrc workdir
 
-// the main ggman program that will contain everything
+// the main ggman program that will contain everything.
 var ggmanExe = ggman.NewProgram()
 
 func init() {

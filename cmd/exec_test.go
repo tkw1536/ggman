@@ -12,6 +12,8 @@ import (
 //spellchecker:words workdir GGROOT
 
 func setupExecTest(t *testing.T) (mock *mockenv.MockEnv) {
+	t.Helper()
+
 	mock = mockenv.NewMockEnv(t)
 
 	mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
@@ -84,7 +86,6 @@ func TestCommandExec_real(t *testing.T) {
 }
 
 func TestCommandExec_false(t *testing.T) {
-
 	if _, err := exec.LookPath("false"); err != nil {
 		t.Skip("false not found in path")
 	}

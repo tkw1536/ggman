@@ -12,7 +12,6 @@ import (
 )
 
 func TestJoinNormalized(t *testing.T) {
-
 	// create subdirectory for testing
 	root := testlib.TempDirAbs(t)
 	exactD := filepath.Join(root, "exact")

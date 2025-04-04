@@ -30,7 +30,7 @@ type DevPlumbing struct {
 	URLMap map[string]string
 }
 
-// stream returns a mapped version of stream to be used
+// stream returns a mapped version of stream to be used.
 func (dp DevPlumbing) stream(stream stream.IOStream) stream.IOStream {
 	if dp.SilenceStderr {
 		stream.Stderr = io.Discard
@@ -64,12 +64,12 @@ func (dp DevPlumbing) Clone(stream stream.IOStream, remoteURI, clonePath string,
 	return dp.Plumbing.Clone(dp.stream(stream), dp.Forward(remoteURI), clonePath, extraArgs...)
 }
 
-// Fetch called Fetch on the underlying Plumbing
+// Fetch called Fetch on the underlying Plumbing.
 func (dp DevPlumbing) Fetch(stream stream.IOStream, clonePath string, cache any) (err error) {
 	return dp.Plumbing.Fetch(dp.stream(stream), clonePath, cache)
 }
 
-// Fetch calls Pull on the underlying Plumbing
+// Fetch calls Pull on the underlying Plumbing.
 func (dp DevPlumbing) Pull(stream stream.IOStream, clonePath string, cache any) (err error) {
 	return dp.Plumbing.Pull(dp.stream(stream), clonePath, cache)
 }

@@ -19,12 +19,12 @@ func TestCommandSweep(t *testing.T) {
 
 	mkdir := func(s string, files ...string) {
 		path := filepath.Join(base, s)
-		err := os.MkdirAll(path, os.ModePerm)
+		err := os.MkdirAll(path, 0750)
 		if err != nil {
 			panic(err)
 		}
 		for _, f := range files {
-			if err := os.WriteFile(filepath.Join(path, f), nil, os.ModePerm); err != nil {
+			if err := os.WriteFile(filepath.Join(path, f), nil, 0600); err != nil {
 				panic(err)
 			}
 		}

@@ -9,7 +9,7 @@ import (
 	"github.com/tkw1536/goprogram/meta"
 )
 
-// info contains information about the ggman program
+// info contains information about the ggman program.
 var info = meta.Info{
 	BuildVersion: constants.BuildVersion,
 	BuildTime:    constants.BuildTime,
@@ -18,7 +18,7 @@ var info = meta.Info{
 	Description: "ggman manages local git repositories\n\nggman version " + constants.BuildVersion + "\nggman is licensed under the terms of the MIT License.\nuse 'ggman license' to view licensing information.",
 }
 
-// newEnvironment makes a new runtime for ggman
+// newEnvironment makes a new runtime for ggman.
 func newEnvironment(params env.Parameters, context Context) (env.Env, error) {
 	// create a new environment
 	e, err := env.NewEnv(context.Description.Requirements, params)
@@ -34,7 +34,6 @@ func newEnvironment(params env.Parameters, context Context) (env.Env, error) {
 	e.Filter = f
 
 	return e, nil
-
 }
 
 var errParseArgsNeedTwoAfterFor = exit.Error{
@@ -42,7 +41,7 @@ var errParseArgsNeedTwoAfterFor = exit.Error{
 	Message:  "unable to parse arguments: at least two arguments needed after `for' keyword",
 }
 
-// NewProgram returns a new ggman program
+// NewProgram returns a new ggman program.
 func NewProgram() (p Program) {
 	p.NewEnvironment = newEnvironment
 	p.Info = info

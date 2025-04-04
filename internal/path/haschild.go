@@ -16,9 +16,8 @@ func HasChild(parent string, child string) bool {
 	return child == parent || (len(child) > len(parent) && os.IsPathSeparator(child[len(parent)]) && child[:len(parent)] == parent)
 }
 
-// normSep uses a normalized separator for all paths
+// normSep uses a normalized separator for all paths.
 func normSep(path string) string {
-
 	// check if there are any characters that need to be replaced.
 	// If there are none, return the path as is.
 	{

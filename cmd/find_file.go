@@ -28,10 +28,10 @@ var FindFile ggman.Command = findFile{}
 
 type findFile struct {
 	Positionals struct {
-		Path string `required:"1-1" positional-arg-name:"PATH" description:"name (or path) file to find"`
+		Path string `description:"name (or path) file to find" positional-arg-name:"PATH" required:"1-1"`
 	} `positional-args:"true"`
-	PrintFilePath bool `short:"p" long:"print-file" description:"instead of printing the repository paths, print the file paths"`
-	ExitCode      bool `short:"e" long:"exit-code" description:"exit with status code 1 when no repositories with provided file exist"`
+	PrintFilePath bool `description:"instead of printing the repository paths, print the file paths"        long:"print-file" short:"p"`
+	ExitCode      bool `description:"exit with status code 1 when no repositories with provided file exist" long:"exit-code"  short:"e"`
 }
 
 func (findFile) Description() ggman.Description {
@@ -64,7 +64,6 @@ var errFindFileNotLocal = exit.Error{
 func (f findFile) Run(context ggman.Context) error {
 	foundRepo := false
 	for _, repo := range context.Environment.Repos(true) {
-
 		candidate := filepath.Join(repo, f.Positionals.Path)
 		ok, err := fsx.Exists(candidate)
 		if err != nil {

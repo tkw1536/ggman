@@ -63,30 +63,30 @@ type realFS struct {
 	FollowLinks bool
 }
 
-func (real realFS) Read(path string) ([]fs.DirEntry, error) {
+func (rfs realFS) Read(path string) ([]fs.DirEntry, error) {
 	return fs.ReadDir(os.DirFS(path), ".")
 }
 
-func (real realFS) Path() string {
-	return real.DirPath
+func (rfs realFS) Path() string {
+	return rfs.DirPath
 }
 
-func (real realFS) ResolvedPath() (string, error) {
-	if !real.FollowLinks {
-		return real.DirPath, nil
+func (rfs realFS) ResolvedPath() (string, error) {
+	if !rfs.FollowLinks {
+		return rfs.DirPath, nil
 	}
-	return filepath.EvalSymlinks(real.DirPath)
+	return filepath.EvalSymlinks(rfs.DirPath)
 }
 
-func (real realFS) CanSub(path string, entry fs.DirEntry) (bool, error) {
+func (rfs realFS) CanSub(path string, entry fs.DirEntry) (bool, error) {
 	child := filepath.Join(path, entry.Name())
-	return fsx.IsDirectory(child, real.FollowLinks)
+	return fsx.IsDirectory(child, rfs.FollowLinks)
 }
 
-func (real realFS) Sub(path, rpath string, entry fs.DirEntry) FS {
+func (rfs realFS) Sub(path, rpath string, entry fs.DirEntry) FS {
 	child := filepath.Join(path, entry.Name())
 	return realFS{
 		DirPath:     child,
-		FollowLinks: real.FollowLinks,
+		FollowLinks: rfs.FollowLinks,
 	}
 }

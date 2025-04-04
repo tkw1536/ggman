@@ -52,15 +52,15 @@ var Exec ggman.Command = exe{}
 
 type exe struct {
 	Positionals struct {
-		Exe  string   `positional-arg-name:"EXE" required:"1-1" description:"program to execute"`
-		Args []string `positional-arg-name:"ARG"  description:"arguments to pass to program"`
+		Exe  string   `description:"program to execute"           positional-arg-name:"EXE" required:"1-1"`
+		Args []string `description:"arguments to pass to program" positional-arg-name:"ARG"`
 	} `positional-args:"true"`
 
-	Parallel int  `short:"p" long:"parallel" default:"1" description:"number of commands to run in parallel, 0 for no limit"`
-	Simulate bool `short:"s" long:"simulate" description:"instead of actually running a command, print a bash script that would run them"`
-	NoRepo   bool `short:"n" long:"no-repo" description:"do not print name of repos command is being run in"`
-	Quiet    bool `short:"q" long:"quiet" description:"do not provide input or output streams to the command being run"`
-	Force    bool `short:"f" long:"force" description:"continue execution even if an executable returns a non-zero exit code"`
+	Parallel int  `default:"1"                                                                                  description:"number of commands to run in parallel, 0 for no limit" long:"parallel" short:"p"`
+	Simulate bool `description:"instead of actually running a command, print a bash script that would run them" long:"simulate"                                                     short:"s"`
+	NoRepo   bool `description:"do not print name of repos command is being run in"                             long:"no-repo"                                                      short:"n"`
+	Quiet    bool `description:"do not provide input or output streams to the command being run"                long:"quiet"                                                        short:"q"`
+	Force    bool `description:"continue execution even if an executable returns a non-zero exit code"          long:"force"                                                        short:"f"`
 }
 
 func (exe) Description() ggman.Description {
@@ -97,7 +97,7 @@ func (e exe) Run(context ggman.Context) error {
 	return e.runReal(context)
 }
 
-// runReal implements ggman exec for simulate = False
+// runReal implements ggman exec for simulate = False.
 func (e exe) runReal(context ggman.Context) (err error) {
 	repos := context.Environment.Repos(true)
 
@@ -172,7 +172,7 @@ func (e exe) runRepo(io stream.IOStream, repo string) error {
 	// but actually return other error properly!
 	if ee, ok := err.(*exec.ExitError); ok {
 		return exit.Error{
-			ExitCode: exit.ExitCode(ee.ExitCode()), // #nosec G115 -- exit status guaranteed to fit into uint8
+			ExitCode: exit.ExitCode(ee.ExitCode()), /* #nosec G115 -- by exit status guaranteed to fit into uint8 */
 			Message:  ee.Error(),
 		}
 	}
@@ -185,7 +185,7 @@ var ErrExecNoParallelSimulate = exit.Error{
 	Message:  "`--simulate` expects `--parallel` to be 1, but got %d",
 }
 
-// runSimulate runs the --simulate flag
+// runSimulate runs the --simulate flag.
 func (e exe) runSimulate(context ggman.Context) (err error) {
 	if e.Parallel != 1 {
 		return ErrExecNoParallelSimulate.WithMessageF(e.Parallel)

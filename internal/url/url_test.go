@@ -45,9 +45,9 @@ func Test_ParsePort(t *testing.T) {
 var maxPortTest = int(math.Pow(10, float64(maxPortLen)) - 1)
 
 func Test_ParsePort_all(t *testing.T) {
-	for port := 0; port <= maxValid; port++ {
-		gotPort, err := ParsePort(strconv.Itoa(port))
-		if gotPort != uint16(port) {
+	for port := uint16(0); port <= maxValid; port++ {
+		gotPort, err := ParsePort(strconv.Itoa(int(port)))
+		if gotPort != port {
 			t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
 		}
 		if err != nil {
@@ -66,7 +66,7 @@ func Test_ParsePort_all(t *testing.T) {
 }
 
 func Benchmark_ParsePort(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		// ignore all the errors, cause we're benchmarking!
 		_, _ = ParsePort("0")
 		_, _ = ParsePort("80")

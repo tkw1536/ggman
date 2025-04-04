@@ -21,7 +21,7 @@ var Link ggman.Command = link{}
 
 type link struct {
 	Positionals struct {
-		Path string `positional-arg-name:"PATH" required:"1-1" description:"path of repository to symlink"`
+		Path string `description:"path of repository to symlink" positional-arg-name:"PATH" required:"1-1"`
 	} `positional-args:"true"`
 }
 

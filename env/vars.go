@@ -35,10 +35,10 @@ type Variables struct {
 	GGNORM string `env:"GGNORM"`
 }
 
-// variableEnvNames holds a mapping from reflect-field-indexes in Variables to os.GetEnv() names
+// variableEnvNames holds a mapping from reflect-field-indexes in Variables to os.GetEnv() names.
 var variablesEnvNames map[int]string
 
-// initialize variablesEnvNames
+// initialize variablesEnvNames.
 func init() {
 	tVariables := reflect.TypeFor[Variables]()
 	variablesEnvNames = make(map[int]string, tVariables.NumField())
@@ -54,7 +54,7 @@ func init() {
 	}
 }
 
-// ReadVariables reads Variables from the operating system
+// ReadVariables reads Variables from the operating system.
 func ReadVariables() (v Variables) {
 	// assign the os.Getenv() values
 	rV := reflect.ValueOf(&v).Elem()

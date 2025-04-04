@@ -9,18 +9,11 @@ import (
 
 //spellchecker:words canonicalized CANFILE
 
-// Lsr is the 'ggman lsr' command.
-//
-// When called, the ggman ls command prints a list of remotes of all locally cloned repositories to standard output.
-// The remotes will be listed in dictionary order of their local installation paths.
-//
-//	--canonical
-//
-// When provided, instead of printing the urls directly, prints the canonical remotes of all repositories
+// When provided, instead of printing the urls directly, prints the canonical remotes of all repositories.
 var Lsr ggman.Command = lsr{}
 
 type lsr struct {
-	Canonical bool `short:"c" long:"canonical" description:"print canonicalized URLs"`
+	Canonical bool `description:"print canonicalized URLs" long:"canonical" short:"c"`
 }
 
 func (lsr) Description() ggman.Description {

@@ -30,12 +30,12 @@ func TestCommandLs(t *testing.T) {
 	glHelloWorld := mock.Clone("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
 	inputFile := mock.Resolve("file.txt")
-	if err := os.WriteFile(inputFile, []byte(testInputFile), os.ModePerm); err != nil {
+	if err := os.WriteFile(inputFile, []byte(testInputFile), 0600); err != nil {
 		panic(err)
 	}
 
 	// make glHelloWorldDirty
-	if err := os.WriteFile(filepath.Join(glHelloWorld, "dirty"), []byte{}, os.ModePerm); err != nil {
+	if err := os.WriteFile(filepath.Join(glHelloWorld, "dirty"), []byte{}, 0600); err != nil {
 		panic(err)
 	}
 

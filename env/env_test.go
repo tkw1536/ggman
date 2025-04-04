@@ -16,7 +16,6 @@ import (
 //spellchecker:words GGNORM GGROOT CANFILE worktree
 
 func TestEnv_LoadDefaultRoot(t *testing.T) {
-
 	// noProjectsDir does not have a 'Projects' subdirectory
 	noProjectsDir := testlib.TempDirAbs(t)
 	missingProjectsDir := filepath.Join(noProjectsDir, "Projects")
@@ -25,7 +24,7 @@ func TestEnv_LoadDefaultRoot(t *testing.T) {
 	withProjectsDir := testlib.TempDirAbs(t)
 	existingProjectsDir := filepath.Join(withProjectsDir, "Projects")
 
-	if err := os.Mkdir(existingProjectsDir, os.ModePerm); err != nil {
+	if err := os.Mkdir(existingProjectsDir, 0750); err != nil {
 		panic(err)
 	}
 
@@ -77,7 +76,7 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 	// dDir is a directory with a '.ggman' file
 	dDir := testlib.TempDirAbs(t)
 	GGMANFile := filepath.Join(dDir, ".ggman")
-	if err := os.WriteFile(GGMANFile, []byte(canLineContent), os.ModePerm); err != nil {
+	if err := os.WriteFile(GGMANFile, []byte(canLineContent), 0600); err != nil {
 		panic(err)
 	}
 
@@ -178,7 +177,7 @@ func TestEnv_At(t *testing.T) {
 	// group/repo contains a repository
 	group := filepath.Join(root, "group")
 	repo := filepath.Join(group, "repo")
-	if err := os.MkdirAll(repo, os.ModePerm); err != nil {
+	if err := os.MkdirAll(repo, 0750); err != nil {
 		panic(err)
 	}
 	if testutil.NewTestRepoAt(repo, "") == nil {
@@ -187,7 +186,7 @@ func TestEnv_At(t *testing.T) {
 
 	// sub is a path inside the repository
 	sub := filepath.Join(repo, "sub")
-	if err := os.MkdirAll(sub, os.ModePerm); err != nil {
+	if err := os.MkdirAll(sub, 0750); err != nil {
 		panic(err)
 	}
 
@@ -230,7 +229,7 @@ func TestEnv_AtRoot(t *testing.T) {
 	// group/repo contains a repository
 	group := filepath.Join(root, "group")
 	repo := filepath.Join(group, "repo")
-	if err := os.MkdirAll(repo, os.ModePerm); err != nil {
+	if err := os.MkdirAll(repo, 0750); err != nil {
 		panic(err)
 	}
 	if testutil.NewTestRepoAt(repo, "") == nil {
@@ -239,7 +238,7 @@ func TestEnv_AtRoot(t *testing.T) {
 
 	// sub is a path inside the repository
 	sub := filepath.Join(repo, "sub")
-	if err := os.MkdirAll(sub, os.ModePerm); err != nil {
+	if err := os.MkdirAll(sub, 0750); err != nil {
 		panic(err)
 	}
 
@@ -278,7 +277,7 @@ func TestEnv_ScanRepos(t *testing.T) {
 	// make a dir with parents and turn it into git
 	makeGit := func(s string) {
 		pth := filepath.Join(root, s)
-		err := os.MkdirAll(pth, os.ModePerm)
+		err := os.MkdirAll(pth, 0750)
 		if err != nil {
 			panic(err)
 		}
@@ -375,7 +374,7 @@ func TestEnv_ScanRepos_fuzzy(t *testing.T) {
 	// make a dir with parents and turn it into git
 	makeGit := func(s string) {
 		pth := filepath.Join(root, s)
-		err := os.MkdirAll(pth, os.ModePerm)
+		err := os.MkdirAll(pth, 0750)
 		if err != nil {
 			panic(err)
 		}

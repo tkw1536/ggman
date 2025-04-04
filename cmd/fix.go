@@ -21,7 +21,7 @@ import (
 var Fix ggman.Command = fix{}
 
 type fix struct {
-	Simulate bool `short:"s" long:"simulate" description:"do not perform any canonicalization, instead only print what would be done"`
+	Simulate bool `description:"do not perform any canonicalization, instead only print what would be done" long:"simulate" short:"s"`
 }
 
 func (fix) Description() ggman.Description {

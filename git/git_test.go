@@ -23,7 +23,6 @@ import (
 //spellchecker:words gogit gitgit
 
 func TestNewGitFromPlumbing(t *testing.T) {
-
 	// create a temporary file
 	dir := testlib.TempDirAbs(t)
 
@@ -48,5 +47,4 @@ func TestNewGitFromPlumbing(t *testing.T) {
 	if _, isGitgit := NewGitFromPlumbing(nil, dir).Plumbing().(*gitgit); !isGitgit {
 		t.Errorf("NewGitFromPlumbing: Expected *gitgit")
 	}
-
 }

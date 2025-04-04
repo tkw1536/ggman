@@ -13,7 +13,7 @@ import (
 	"github.com/jessevdk/go-flags"
 )
 
-//spellchecker:words mydomain
+//spellchecker:words mydomain nolint recvcheck
 
 // URL represents a URL to a single git repository.
 //

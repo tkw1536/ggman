@@ -18,7 +18,7 @@ import (
 
 //spellchecker:words GGROOT logprefix
 
-// recordingT records a message passed to Errorf()
+// recordingT records a message passed to Errorf().
 type recordingT struct {
 	message string
 }
@@ -28,7 +28,6 @@ func (f *recordingT) Errorf(format string, args ...any) {
 }
 
 func TestMockEnv_AssertOutput(t *testing.T) {
-
 	type fields struct {
 		localRoot string
 	}
@@ -71,12 +70,11 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 			if tt.wantMessage != r.message {
 				t.Errorf("mock.AssertOutput() message = %q, want = %q", r.message, tt.wantMessage)
 			}
-
 		})
 	}
 }
 
-// mockEnvRunCommand
+// mockEnvRunCommand.
 type mockEnvRunCommand struct {
 	Positional struct {
 		Argv []string
@@ -145,7 +143,6 @@ func TestMockEnv_Run(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func TestMockEnv_Register(t *testing.T) {

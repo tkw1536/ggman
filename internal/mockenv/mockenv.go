@@ -47,6 +47,8 @@ type MockEnv struct {
 
 // NewMockEnv creates a new MockEnv for testing ggman programs.
 func NewMockEnv(t *testing.T) *MockEnv {
+	t.Helper()
+
 	root := testlib.TempDirAbs(t)
 
 	local := filepath.Join(root, "local")
@@ -77,8 +79,8 @@ func NewMockEnv(t *testing.T) *MockEnv {
 	}
 }
 
-// Resolve resolves a local path within this environment
-func (mock MockEnv) Resolve(path ...string) string {
+// Resolve resolves a local path within this environment.
+func (mock *MockEnv) Resolve(path ...string) string {
 	return filepath.Join(append([]string{mock.localRoot}, path...)...)
 }
 
@@ -179,10 +181,10 @@ func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, ar
 	return uint8(err.ExitCode), stdoutBuffer.String(), stderrBuffer.String()
 }
 
-// regular expression used for substitution
+// regular expression used for substitution.
 var regexGGROOT = regexp.MustCompile(`.?\$\{GGROOT( [^\}]+)?\}.?`)
 
-// TestingT is an interface around TestingT
+// TestingT is an interface around TestingT.
 type TestingT interface {
 	Errorf(format string, args ...any)
 }
@@ -206,7 +208,7 @@ func (mock *MockEnv) AssertOutput(t TestingT, prefix, got string, wants ...strin
 	t.Errorf("%s got = %q, want = %q", prefix, got, lastWant)
 }
 
-// interpolate interpolates the string values by replacing all ins
+// interpolate interpolates the string values by replacing all ins.
 func (mock *MockEnv) interpolate(value string) (result string) {
 	return regexGGROOT.ReplaceAllStringFunc(value, func(s string) string {
 		// extract the first character, actual characters, and the last character

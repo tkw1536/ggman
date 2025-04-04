@@ -19,7 +19,7 @@ func TestScan(t *testing.T) {
 	// Make mkdir and symlink utility methods for this.
 
 	mkdir := func(s string) {
-		err := os.MkdirAll(filepath.Join(base, s), os.ModePerm)
+		err := os.MkdirAll(filepath.Join(base, s), 0750)
 		if err != nil {
 			panic(err)
 		}

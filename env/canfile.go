@@ -11,13 +11,13 @@ import (
 
 //spellchecker:words canfile unmarshals
 
-// CanLine represents a line within in the canonical configuration file
+// CanLine represents a line within in the canonical configuration file.
 type CanLine struct {
 	Pattern   string
 	Canonical string
 }
 
-// ErrEmpty is an error representing an empty CanLine
+// ErrEmpty is an error representing an empty CanLine.
 var ErrEmpty = errors.New("CanLine.Unmarshal: CanLine is empty")
 
 // UnmarshalText unmarshals a text representation of itself.
@@ -49,7 +49,7 @@ func (cl *CanLine) UnmarshalText(text []byte) error {
 	return nil
 }
 
-// CanFile represents a list of CanLines
+// CanFile represents a list of CanLines.
 type CanFile []CanLine
 
 // ReadFrom populates this CanFile with CanLines read from the given reader.
@@ -70,7 +70,7 @@ func (cf *CanFile) ReadFrom(reader io.Reader) (int64, error) {
 		var line CanLine
 
 		err := line.UnmarshalText(text)
-		if err == ErrEmpty {
+		if errors.Is(err, ErrEmpty) {
 			continue
 		}
 		if err != nil {
