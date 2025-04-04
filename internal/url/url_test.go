@@ -42,18 +42,26 @@ func Test_ParsePort(t *testing.T) {
 	}
 }
 
+// maximal port number to test
+// this should really be a const, but there's no pow in that.
 var maxPortTest = int(math.Pow(10, float64(maxPortLen)) - 1)
 
 func Test_ParsePort_all(t *testing.T) {
-	for port := uint16(0); port <= maxValid; port++ {
-		gotPort, err := ParsePort(strconv.Itoa(int(port)))
-		if gotPort != port {
+	for port := 0; port <= maxValid; port++ {
+		if port < 0 || port > math.MaxUint16 {
+			// bounds check to make linter happy!
+			panic("never reached")
+		}
+
+		gotPort, err := ParsePort(strconv.Itoa(port))
+		if gotPort != uint16(port) {
 			t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
 		}
 		if err != nil {
 			t.Errorf("ParsePort(%d) got error = %v, want error = nil", port, err)
 		}
 	}
+
 	for port := maxValid + 1; port <= maxPortTest; port++ {
 		gotPort, err := ParsePort(strconv.Itoa(port))
 		if gotPort != 0 {

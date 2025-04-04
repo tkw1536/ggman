@@ -235,9 +235,12 @@ func (gg *gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, ext
 
 	// run the underlying command, but treat ExitError specially by turning it into a ExitError
 	err := cmd.Run()
-	if exitError, isExitError := err.(*exec.ExitError); isExitError {
+
+	var exitError *exec.ExitError
+	if errors.As(err, &exitError) {
 		err = ExitError{error: err, Code: exitError.ExitCode()}
 	}
+
 	return err
 }
 
@@ -250,7 +253,9 @@ func (gg *gitgit) Fetch(stream stream.IOStream, clonePath string, cache any) err
 
 	// run the underlying command, but treat ExitError specially by turning it into a ExitError
 	err := cmd.Run()
-	if exitError, isExitError := err.(*exec.ExitError); isExitError {
+
+	var exitError *exec.ExitError
+	if errors.As(err, &exitError) {
 		err = ExitError{error: err, Code: exitError.ExitCode()}
 	}
 	return err
@@ -265,7 +270,9 @@ func (gg *gitgit) Pull(stream stream.IOStream, clonePath string, cache any) erro
 
 	// run the underlying command, but treat ExitError specially by turning it into a ExitError
 	err := cmd.Run()
-	if exitError, isExitError := err.(*exec.ExitError); isExitError {
+
+	var exitError *exec.ExitError
+	if errors.As(err, &exitError) {
 		err = ExitError{error: err, Code: exitError.ExitCode()}
 	}
 	return err
@@ -277,7 +284,9 @@ func (gg *gitgit) IsDirty(clonePath string, cache any) (dirty bool, err error) {
 
 	// run the underlying command
 	err = cmd.Run()
-	if exitError, isExitError := err.(*exec.ExitError); isExitError {
+
+	var exitError *exec.ExitError
+	if errors.As(err, &exitError) {
 		// code 1: it is dirty
 		if exitError.ExitCode() == 1 {
 			return true, nil
@@ -588,10 +597,11 @@ func (gogit) ContainsBranch(clonePath string, cache any, branch string) (contain
 	r := cache.(*git.Repository)
 
 	// try to open the branch
-	switch _, err := r.Branch(branch); err {
-	case git.ErrBranchNotFound:
+
+	switch _, err := r.Branch(branch); {
+	case errors.Is(err, git.ErrBranchNotFound):
 		return false, nil
-	case nil:
+	case err == nil:
 		return true, nil
 	default:
 		return false, fmt.Errorf("unable to read branch: %w", err)

@@ -10,13 +10,13 @@ import "io/fs"
 //
 // This function is a convenience alternative to:
 //
-//	 scanner := Walker{Visit: Visit, Params: Params}
-//	 err := scanner.Walk();
-//		results := scanner.Results()
-func Sweep(Visit SweepProcess, Params Params) ([]string, error) {
+//	scanner := Walker{Visit: visit, Params: params}
+//	err := scanner.Walk();
+//	results := scanner.Results()
+func Sweep(visit SweepProcess, params Params) ([]string, error) {
 	scanner := Walker[bool]{
-		Process: Visit,
-		Params:  Params,
+		Process: visit,
+		Params:  params,
 	}
 
 	err := scanner.Walk()
@@ -50,14 +50,15 @@ func (v SweepProcess) Visit(context WalkContext[bool]) (shouldRecurse bool, err 
 }
 func (SweepProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContext[bool]) (action Step, err error) {
 	context.Snapshot(func(isEmpty bool) bool {
-		if !valid {
+		switch {
+		case !valid:
 			// non-directory => we are not empty!
 			isEmpty = false
 			action = DoNothing
-		} else if isEmpty {
+		case isEmpty:
 			// we have an empty directory, so we need to keep checking the rest in sync!
 			action = DoSync
-		} else {
+		default:
 			// directory is not empty, so it doesn't matter
 			action = DoConcurrent
 		}

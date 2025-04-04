@@ -237,7 +237,10 @@ func (impl *defaultGitWrapper) Pull(stream stream.IOStream, clonePath string) er
 	return impl.git.Pull(stream, clonePath, repoObject)
 }
 
-var errNoRemoteURL = errors.New("no remote URL found")
+var (
+	errRemoteNotFound = errors.New("remote not found")
+	errNoRemoteURL    = errors.New("no remote URL found")
+)
 
 func (impl *defaultGitWrapper) GetRemote(clonePath string, name string) (uri string, err error) {
 	impl.ensureInit()
@@ -272,7 +275,7 @@ func (impl *defaultGitWrapper) GetRemote(clonePath string, name string) (uri str
 	// pick the canonical one!
 	urls, ok := remotes[name]
 	if !ok {
-		return "", fmt.Errorf("remote %q not found", name)
+		return "", fmt.Errorf("remote %q: %w", name, errRemoteNotFound)
 	}
 	if len(urls) == 0 {
 		return "", fmt.Errorf("remote %q: %w", name, errNoRemoteURL)

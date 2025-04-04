@@ -17,6 +17,7 @@ import (
 // This function is untested due to unpredictability of runtime environment.
 func CaseSensitive(t *testing.T) bool {
 	t.Helper()
+
 	temp := testlib.TempDirAbs(t)
 
 	// create lower case

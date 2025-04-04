@@ -30,7 +30,7 @@ func (sweep) Description() ggman.Description {
 	}
 }
 
-var errSweepErr = exit.Error{
+var errScanEmpty = exit.Error{
 	Message:  "error scanning for empty directories",
 	ExitCode: exit.ExitGeneric,
 }
@@ -42,7 +42,7 @@ func (sweep) Run(context ggman.Context) error {
 		Root: walker.NewRealFS(context.Environment.Root, false),
 	})
 	if err != nil {
-		return errSweepErr.WrapError(err)
+		return errScanEmpty.WrapError(err)
 	}
 
 	for _, r := range results {

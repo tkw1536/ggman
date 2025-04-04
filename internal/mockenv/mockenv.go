@@ -222,7 +222,7 @@ func (mock *MockEnv) interpolate(value string) (result string) {
 		}
 		if actual[len(actual)-1] != '}' { // the last character was empty
 			last = ""
-			actual = actual + "}"
+			actual += "}"
 		}
 
 		parts := strings.Fields(actual[:len(actual)-1])[1:] // remove trailing '}' and first part (${GGROOT)

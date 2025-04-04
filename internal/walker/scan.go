@@ -9,13 +9,13 @@ import "io/fs"
 //
 // This function is a convenience alternative to:
 //
-//	 scanner := Walker{Visit: Visit, Params: Params}
-//	 err := scanner.Walk();
-//		results := scanner.Results()
-func Scan(Visit ScanProcess, Params Params) ([]string, error) {
+//	scanner := Walker{Visit: visit, Params: params}
+//	err := scanner.Walk();
+//	results := scanner.Results()
+func Scan(visit ScanProcess, params Params) ([]string, error) {
 	scanner := Walker[struct{}]{
-		Process: Visit,
-		Params:  Params,
+		Process: visit,
+		Params:  params,
 	}
 
 	err := scanner.Walk()

@@ -67,7 +67,7 @@ func (w *context[S]) sub(entry fs.DirEntry) *context[S] {
 
 	// create a new sub-path; which will allocate a new path for the child
 	sub.path = slices.Clone(w.path)
-	sub.path = append(w.path, entry.Name())
+	sub.path = append(sub.path, entry.Name())
 
 	// return a new node
 	sub.node = w.node.Sub(w.nodePath, w.rNodePath, entry)

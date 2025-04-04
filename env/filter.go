@@ -218,38 +218,38 @@ func (pf predicateFilter) Score(env Env, clonePath string) float64 {
 }
 
 // NewWorktreeFilter returns a filter that filters by repositories having a dirty or clean working directory.
-func NewWorktreeFilter(Filter Filter, Dirty, Clean bool) Filter {
+func NewWorktreeFilter(filter Filter, dirty, clean bool) Filter {
 	return predicateFilter{
-		Filter: Filter,
+		Filter: filter,
 		Predicate: func(env Env, clonePath string) bool {
 			dirty, err := env.Git.IsDirty(clonePath)
 			return err == nil && dirty
 		},
 
-		IncludeTrue:  Dirty,
-		IncludeFalse: Clean,
+		IncludeTrue:  dirty,
+		IncludeFalse: clean,
 	}
 }
 
 // NewStatusFilter returns  new Filter that filters by repositories being synced or un-synced with the remote.
-func NewStatusFilter(Filter Filter, Synced, UnSynced bool) Filter {
+func NewStatusFilter(filter Filter, synced, unSynced bool) Filter {
 	return predicateFilter{
-		Filter: Filter,
+		Filter: filter,
 		Predicate: func(env Env, clonePath string) bool {
 			sync, err := env.Git.IsSync(clonePath)
 			return err == nil && sync
 		},
 
-		IncludeTrue:  Synced,
-		IncludeFalse: UnSynced,
+		IncludeTrue:  synced,
+		IncludeFalse: unSynced,
 	}
 }
 
 // NewTarnishFilter returns new Filter that filters by if they have been tarnished or not.
 // A repository is tarnished if it has a dirty working directory, or is un-synced with the remote.
-func NewTarnishFilter(Filter Filter, Tarnished, Pristine bool) Filter {
+func NewTarnishFilter(filter Filter, tarnished, pristine bool) Filter {
 	return predicateFilter{
-		Filter: Filter,
+		Filter: filter,
 		Predicate: func(env Env, clonePath string) bool {
 			dirty, err := env.Git.IsDirty(clonePath)
 			if err != nil {
@@ -267,7 +267,7 @@ func NewTarnishFilter(Filter Filter, Tarnished, Pristine bool) Filter {
 			return !synced
 		},
 
-		IncludeTrue:  Tarnished,
-		IncludeFalse: Pristine,
+		IncludeTrue:  tarnished,
+		IncludeFalse: pristine,
 	}
 }

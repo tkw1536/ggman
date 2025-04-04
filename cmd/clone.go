@@ -105,16 +105,16 @@ func (c clone) Run(context ggman.Context) error {
 	if _, err := context.Printf("Cloning %q into %q ...\n", remote, local); err != nil {
 		return ggman.ErrGenericOutput.WrapError(err)
 	}
-	switch err := context.Environment.Git.Clone(context.IOStream, remote, local, c.Positional.Args...); err {
-	case nil:
+	switch err := context.Environment.Git.Clone(context.IOStream, remote, local, c.Positional.Args...); {
+	case err == nil:
 		return nil
-	case git.ErrCloneAlreadyExists:
+	case errors.Is(err, git.ErrCloneAlreadyExists):
 		if c.Force {
 			_, err := context.Println("Clone already exists in target location, done.")
 			return ggman.ErrGenericOutput.WrapError(err)
 		}
 		return errCloneAlreadyExists
-	case git.ErrArgumentsUnsupported:
+	case errors.Is(err, git.ErrArgumentsUnsupported):
 		return errCloneNoArguments
 	default:
 		return errCloneOther.WithMessage(err.Error())

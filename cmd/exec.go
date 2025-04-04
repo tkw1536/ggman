@@ -2,6 +2,7 @@ package cmd
 
 //spellchecker:words exec essio shellescape github ggman goprogram exit parser pkglib sema status stream
 import (
+	"errors"
 	"os/exec"
 
 	"al.essio.dev/pkg/shellescape"
@@ -170,10 +171,11 @@ func (e exe) runRepo(io stream.IOStream, repo string) error {
 
 	// when something went wrong intercept ExitErrors
 	// but actually return other error properly!
-	if ee, ok := err.(*exec.ExitError); ok {
+	var exitError *exec.ExitError
+	if errors.As(err, &exitError) {
 		return exit.Error{
-			ExitCode: exit.ExitCode(ee.ExitCode()), /* #nosec G115 -- by exit status guaranteed to fit into uint8 */
-			Message:  ee.Error(),
+			ExitCode: exit.ExitCode(exitError.ExitCode()), /* #nosec G115 -- by exit status guaranteed to fit into uint8 */
+			Message:  exitError.Error(),
 		}
 	}
 
