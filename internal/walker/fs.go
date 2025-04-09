@@ -3,6 +3,7 @@ package walker
 
 //spellchecker:words path filepath github pkglib
 import (
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -64,7 +65,11 @@ type realFS struct {
 }
 
 func (rfs realFS) Read(path string) ([]fs.DirEntry, error) {
-	return fs.ReadDir(os.DirFS(path), ".")
+	entries, err := fs.ReadDir(os.DirFS(path), ".")
+	if err != nil {
+		return nil, fmt.Errorf("failed to read directory: %w", err)
+	}
+	return entries, nil
 }
 
 func (rfs realFS) Path() string {
@@ -75,12 +80,20 @@ func (rfs realFS) ResolvedPath() (string, error) {
 	if !rfs.FollowLinks {
 		return rfs.DirPath, nil
 	}
-	return filepath.EvalSymlinks(rfs.DirPath)
+	path, err := filepath.EvalSymlinks(rfs.DirPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to evaluate symlinks: %w", err)
+	}
+	return path, nil
 }
 
 func (rfs realFS) CanSub(path string, entry fs.DirEntry) (bool, error) {
 	child := filepath.Join(path, entry.Name())
-	return fsx.IsDirectory(child, rfs.FollowLinks)
+	isDir, err := fsx.IsDirectory(child, rfs.FollowLinks)
+	if err != nil {
+		return false, fmt.Errorf("failed to check directory: %w", err)
+	}
+	return isDir, nil
 }
 
 func (rfs realFS) Sub(path, rpath string, entry fs.DirEntry) FS {

@@ -6,6 +6,8 @@ import (
 	"github.com/tkw1536/ggman/constants/legal"
 )
 
+//spellchecker:words nolint wrapcheck
+
 // License is the 'ggman license' command.
 //
 // The license command prints to standard output legal notices about the ggman program.
@@ -22,7 +24,7 @@ func (license) Description() ggman.Description {
 
 func (license) Run(context ggman.Context) error {
 	_, err := context.Printf(stringLicenseInfo, ggman.License, legal.Notices)
-	return ggman.ErrGenericOutput.WrapError(err)
+	return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 }
 
 const stringLicenseInfo = `

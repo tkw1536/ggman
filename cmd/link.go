@@ -2,6 +2,7 @@ package cmd
 
 //spellchecker:words path filepath github ggman internal dirs goprogram exit pkglib
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/tkw1536/pkglib/fsx"
 )
 
-//spellchecker:words positionals
+//spellchecker:words positionals nolint wrapcheck
 
 // Link is the 'ggman link' command.
 //
@@ -73,7 +74,7 @@ func (l link) Run(context ggman.Context) error {
 	// find the target path
 	to, err := context.Environment.Local(env.ParseURL(r))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get local path: %w", err)
 	}
 	parentTo := filepath.Dir(to)
 
@@ -86,7 +87,7 @@ func (l link) Run(context ggman.Context) error {
 	{
 		exists, err := fsx.Exists(to)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to check for existence: %w", err)
 		}
 		if exists {
 			return errLinkAlreadyExists
@@ -94,17 +95,17 @@ func (l link) Run(context ggman.Context) error {
 	}
 
 	if _, err := context.Printf("Linking %q -> %q\n", to, from); err != nil {
-		return ggman.ErrGenericOutput.WrapError(err)
+		return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 	}
 
 	// make the parent folder
 	if e := os.MkdirAll(parentTo, dirs.NewModBits); e != nil {
-		return errLinkUnknown.WrapError(e)
+		return errLinkUnknown.WrapError(e) //nolint:wrapcheck
 	}
 
 	// and make the symlink
 	if e := os.Symlink(from, to); e != nil {
-		return errLinkUnknown.WrapError(e)
+		return errLinkUnknown.WrapError(e) //nolint:wrapcheck
 	}
 
 	return nil

@@ -2,11 +2,13 @@ package cmd
 
 //spellchecker:words github ggman
 import (
+	"fmt"
+
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 )
 
-//spellchecker:words positionals
+//spellchecker:words positionals nolint wrapcheck
 
 // Where is the 'ggman where' command.
 //
@@ -37,8 +39,8 @@ func (where) Description() ggman.Description {
 func (w where) Run(context ggman.Context) error {
 	localPath, err := context.Environment.Local(env.ParseURL(w.Positionals.URL))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get local path: %w", err)
 	}
 	_, err = context.Println(localPath)
-	return ggman.ErrGenericOutput.WrapError(err)
+	return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 }

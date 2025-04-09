@@ -95,10 +95,10 @@ func (me mockEnvRunCommand) Run(context ggman.Context) error {
 	remote, _ := context.Environment.Git.GetRemote(clonePath, "")
 
 	if _, err := fmt.Fprintf(context.Stdout, "path=%s remote=%s\n", clonePath, remote); err != nil {
-		return err
+		return fmt.Errorf("failed to write path and remote: %w", err)
 	}
 	if _, err := fmt.Fprintf(context.Stderr, "got args: %v\n", me.Positional.Argv); err != nil {
-		return err
+		return fmt.Errorf("failed write arguments: %w", err)
 	}
 
 	return nil

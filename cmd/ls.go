@@ -7,6 +7,8 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 )
 
+//spellchecker:words nolint wrapcheck
+
 // Ls is the 'ggman ls' command.
 //
 // When called, the ggman ls command prints a list of paths to all locally cloned repositories to standard output.
@@ -78,12 +80,12 @@ func (l ls) Run(context ggman.Context) error {
 	for i, repo := range repos {
 		if l.Scores {
 			if _, err := context.Printf("%f %s\n", scores[i], repo); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err)
+				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 			}
 			continue
 		}
 		if _, err := context.Println(repo); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 	}
 

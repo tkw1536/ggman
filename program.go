@@ -3,6 +3,8 @@ package ggman
 
 //spellchecker:words github ggman constants goprogram exit meta
 import (
+	"fmt"
+
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"
@@ -23,13 +25,13 @@ func newEnvironment(params env.Parameters, context Context) (env.Env, error) {
 	// create a new environment
 	e, err := env.NewEnv(context.Description.Requirements, params)
 	if err != nil {
-		return env.Env{}, err
+		return env.Env{}, fmt.Errorf("error creating env: %w", err)
 	}
 
 	// setup a filter for it!
 	f, err := env.NewFilter(context.Args.Flags, &e)
 	if err != nil {
-		return e, err
+		return e, fmt.Errorf("error creating filter: %w", err)
 	}
 	e.Filter = f
 

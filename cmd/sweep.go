@@ -8,7 +8,7 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 )
 
-//spellchecker:words GGROOT
+//spellchecker:words GGROOT nolint wrapcheck
 
 // Sweep is the 'ggman sweep' command.
 //
@@ -42,12 +42,12 @@ func (sweep) Run(context ggman.Context) error {
 		Root: walker.NewRealFS(context.Environment.Root, false),
 	})
 	if err != nil {
-		return errScanEmpty.WrapError(err)
+		return errScanEmpty.WrapError(err) //nolint:wrapcheck
 	}
 
 	for _, r := range results {
 		if _, err := context.Println(r); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 	}
 	return nil

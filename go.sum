@@ -646,8 +646,8 @@ github.com/timonwong/loggercheck v0.10.1 h1:uVZYClxQFpw55eh+PIoqM7uAOHMrhVcDoWDe
 github.com/timonwong/loggercheck v0.10.1/go.mod h1:HEAWU8djynujaAVX7QI65Myb8qgfcZ1uKbdpg3ZzKl8=
 github.com/tkw1536/gogenlicense v1.3.0 h1:TvwtdbkKOErJoKc7K8URzUiObjauuX9+Bwm7ul5Re/o=
 github.com/tkw1536/gogenlicense v1.3.0/go.mod h1:E2Pb8zfvNpOPHOf2CYmMr4MbvQFoDjUEtlXZNbTixvY=
-github.com/tkw1536/goprogram v0.7.1 h1:z+7qdNoVQs3TQKOfPfznduyqLxVx8+mCjRtK7dS46Sc=
-github.com/tkw1536/goprogram v0.7.1/go.mod h1:sQHkgSMZ/qrEtxiXMoKspa997VFJVTiGYgZpDIZ7p2M=
+github.com/tkw1536/goprogram v0.8.0 h1:3w+DjrOlqFWt3n4IoylcsdwK9avp4e6wuVcuiezNICU=
+github.com/tkw1536/goprogram v0.8.0/go.mod h1:9uaqt2iW+cO/o4eXYAkJnkpaxTu6A3chP8SJloRozB4=
 github.com/tkw1536/lipo v0.0.4 h1:jRKDrUmnEJmwoKUkeHwE1LWg2HX7nkZ4V0AipuAVEUA=
 github.com/tkw1536/lipo v0.0.4/go.mod h1:pSAPCLb6t2LuUw8bZzLclQa6LlbBxbIZQiwRXp2yQGk=
 github.com/tkw1536/pkglib v0.0.0-20250403195407-1b2a3c5294f8 h1:5y7Vclx7wLats9c0XslTHQsDvqEIxDDLQS9ouKiPnA4=

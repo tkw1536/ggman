@@ -16,7 +16,7 @@ import (
 	"github.com/tkw1536/pkglib/fsx"
 )
 
-//spellchecker:words worktree canonicalized canonicalize CANFILE workdir GGNORM GGROOT Wrapf
+//spellchecker:words worktree canonicalized canonicalize CANFILE workdir GGNORM GGROOT Wrapf nolint wrapcheck
 
 // Env represents an environment to be used by ggman.
 //
@@ -120,7 +120,7 @@ func (env Env) absRoot() (string, error) {
 	}
 	root, err := filepath.Abs(env.Root)
 	if err != nil {
-		return "", errInvalidRoot.WrapError(err)
+		return "", errInvalidRoot.WrapError(err) //nolint:wrapcheck
 	}
 	return root, nil
 }
@@ -253,7 +253,11 @@ func (env Env) Abs(path string) (string, error) {
 	if filepath.IsAbs(path) {
 		return path, nil
 	}
-	return filepath.Abs(filepath.Join(env.Workdir, path))
+	abs, err := filepath.Abs(filepath.Join(env.Workdir, path))
+	if err != nil {
+		return "", fmt.Errorf("failed to make absolute: %w", err)
+	}
+	return abs, nil
 }
 
 // atMaxIterCount is the maximum number of recursions for the At function.

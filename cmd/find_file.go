@@ -10,7 +10,7 @@ import (
 	"github.com/tkw1536/pkglib/fsx"
 )
 
-//spellchecker:words positionals
+//spellchecker:words positionals nolint wrapcheck
 
 // FindFile is the 'ggman find-file' command.
 //
@@ -76,11 +76,11 @@ func (f findFile) Run(context ggman.Context) error {
 		foundRepo = true
 		if f.PrintFilePath {
 			if _, err := context.Println(candidate); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err)
+				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 			}
 		} else {
 			if _, err := context.Println(repo); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err)
+				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 			}
 		}
 	}

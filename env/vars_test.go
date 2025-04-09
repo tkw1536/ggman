@@ -1,12 +1,12 @@
 package env
 
-//spellchecker:words reflect testing github ggman internal testutil
+//spellchecker:words reflect testing
 import (
 	"reflect"
 	"testing"
 )
 
-//spellchecker:words GGROOT CANFILE GGNORM
+//spellchecker:words GGROOT CANFILE GGNORM USERPROFILE GGMAN
 
 func TestReadVariables(t *testing.T) {
 	// set fake environment variables for test

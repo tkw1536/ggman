@@ -566,6 +566,9 @@ func (gogit) Pull(stream stream.IOStream, clonePath string, cache any) (err erro
 func ignoreErrUpToDate(stream stream.IOStream, err error) error {
 	if errors.Is(err, git.NoErrAlreadyUpToDate) {
 		_, err = stream.Println(err.Error())
+		if err != nil {
+			err = fmt.Errorf("failed to print %w message: %w", git.NoErrAlreadyUpToDate, err)
+		}
 	}
 	return err
 }
@@ -586,7 +589,7 @@ func (gogit) GetBranches(clonePath string, cache any) (branches []string, err er
 		branches = append(branches, bref.Name().Short())
 		return nil
 	}); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed iterate branch refs: %w", err)
 	}
 
 	return

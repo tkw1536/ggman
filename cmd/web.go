@@ -2,6 +2,7 @@ package cmd
 
 //spellchecker:words path filepath slices github browser ggman internal goprogram exit
 import (
+	"fmt"
 	"path/filepath"
 	"slices"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 )
 
-//spellchecker:words CANSPEC godoc localgodoc reclone urlweb positionals GGROOT worktree weburl workdir
+//spellchecker:words CANSPEC godoc localgodoc reclone urlweb positionals GGROOT worktree weburl workdir nolint wrapcheck
 
 // Optional name of git remote to show url for.
 var Web ggman.Command = urlweb{
@@ -129,6 +130,11 @@ var errURLCloneAndUnsupported = exit.Error{
 	Message:  "`ggman url` does not support %s and %s arguments at the same time",
 }
 
+var errURLFailedBrowser = exit.Error{
+	ExitCode: exit.ExitGeneric,
+	Message:  "failed to open browser: %s",
+}
+
 func (uw urlweb) Run(context ggman.Context) error {
 	if uw.List {
 		return uw.listBases(context)
@@ -198,10 +204,14 @@ func (uw urlweb) Run(context ggman.Context) error {
 
 	// print or open the url
 	if uw.isWebCommand {
-		return browser.OpenURL(weburl)
+		err := browser.OpenURL(weburl)
+		if err != nil {
+			return errURLFailedBrowser.WrapError(err) //nolint:wrapcheck
+		}
+		return nil
 	} else {
 		_, err := context.Println(weburl)
-		return ggman.ErrGenericOutput.WrapError(err)
+		return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 	}
 }
 
@@ -215,7 +225,7 @@ func (uw urlweb) listBases(context ggman.Context) error {
 	for _, name := range bases {
 		base := WebBuiltInBases[name]
 		if _, err := context.Printf("%s: %s\n", name, base.URL); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 	}
 	return nil
@@ -234,7 +244,7 @@ func (uw urlweb) getRemoteURLReal(context ggman.Context) (root string, remote st
 	// find the repository at the current location
 	root, relative, err = context.Environment.At(".")
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", fmt.Errorf("failed to get local path to repository: %w", err)
 	}
 
 	if relative == "." {
@@ -254,7 +264,7 @@ func (uw urlweb) getRemoteURLFake(context ggman.Context) (root string, remote st
 	// get the absolute path to the current working directory
 	workdir, err := context.Environment.Abs("")
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", fmt.Errorf("failed to get absolute path: %w", err)
 	}
 
 	// check that the

@@ -7,7 +7,7 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 )
 
-//spellchecker:words canonicalized CANFILE
+//spellchecker:words canonicalized CANFILE nolint wrapcheck
 
 // When provided, instead of printing the urls directly, prints the canonical remotes of all repositories.
 var Lsr ggman.Command = lsr{}
@@ -52,7 +52,7 @@ func (l lsr) Run(context ggman.Context) error {
 			remote = env.ParseURL(remote).CanonicalWith(lines)
 		}
 		if _, err := context.Println(remote); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 	}
 

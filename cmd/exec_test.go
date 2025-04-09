@@ -109,7 +109,7 @@ func TestCommandExec_false(t *testing.T) {
 
 			1,
 			"",
-			"${GGROOT github.com hello world}\nExit status 1\n",
+			"${GGROOT github.com hello world}\nProcess reported error: Exit status 1\n",
 		},
 
 		{
@@ -119,7 +119,7 @@ func TestCommandExec_false(t *testing.T) {
 
 			1,
 			"",
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\nExit status 1\n",
+			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\nProcess reported error: Exit status 1\n",
 		},
 	}
 

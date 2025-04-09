@@ -3,6 +3,7 @@ package cmd
 //spellchecker:words errors github ggman goprogram exit parser
 import (
 	"errors"
+	"fmt"
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -10,6 +11,8 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/goprogram/parser"
 )
+
+//spellchecker:words nolint wrapcheck canonicalize canonicalized
 
 // Clone is the 'ggman clone' command.
 //
@@ -98,12 +101,12 @@ func (c clone) Run(context ggman.Context) error {
 	}
 	local, err := c.dest(context, url)
 	if err != nil {
-		return errCloneInvalidDest.WithMessageF(c.Positional.URL).WrapError(err)
+		return errCloneInvalidDest.WithMessageF(c.Positional.URL).WrapError(err) //nolint:wrapcheck
 	}
 
 	// do the actual cloning!
 	if _, err := context.Printf("Cloning %q into %q ...\n", remote, local); err != nil {
-		return ggman.ErrGenericOutput.WrapError(err)
+		return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 	}
 	switch err := context.Environment.Git.Clone(context.IOStream, remote, local, c.Positional.Args...); {
 	case err == nil:
@@ -111,7 +114,7 @@ func (c clone) Run(context ggman.Context) error {
 	case errors.Is(err, git.ErrCloneAlreadyExists):
 		if c.Force {
 			_, err := context.Println("Clone already exists in target location, done.")
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 		return errCloneAlreadyExists
 	case errors.Is(err, git.ErrArgumentsUnsupported):
@@ -124,19 +127,22 @@ func (c clone) Run(context ggman.Context) error {
 var errCloneNoComps = errors.New("unable to find components of URI")
 
 // dest returns the destination path to clone the repository into.
-func (c clone) dest(context ggman.Context, url env.URL) (string, error) {
-	if c.Here || c.Local { // clone into directory named automatically
+func (c clone) dest(context ggman.Context, url env.URL) (path string, err error) {
+	switch {
+	case c.Here || c.Local: // clone into directory named automatically
 		comps := url.Components()
 		if len(comps) == 0 {
 			return "", errCloneNoComps
 		}
-		return context.Environment.Abs(comps[len(comps)-1])
+		path, err = context.Environment.Abs(comps[len(comps)-1])
+	case c.To != "": // clone directory into a directory
+		path, err = context.Environment.Abs(c.To)
+	default: // normal clone!
+		path, err = context.Environment.Local(url)
 	}
 
-	if c.To != "" { // clone directory into a directory
-		return context.Environment.Abs(c.To)
+	if err != nil {
+		return "", fmt.Errorf("failed to get destination: %w", err)
 	}
-
-	// normal clone!
-	return context.Environment.Local(url)
+	return path, nil
 }

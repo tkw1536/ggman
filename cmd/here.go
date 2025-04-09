@@ -2,11 +2,13 @@ package cmd
 
 //spellchecker:words github ggman
 import (
+	"fmt"
+
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 )
 
-//spellchecker:words worktree
+//spellchecker:words worktree nolint wrapcheck
 
 // Here is the 'ggman here' command.
 //
@@ -35,15 +37,15 @@ func (here) Description() ggman.Description {
 func (h here) Run(context ggman.Context) error {
 	root, worktree, err := context.Environment.At(".")
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get local path: %w", err)
 	}
 
 	if _, err := context.Println(root); err != nil {
-		return ggman.ErrGenericOutput.WrapError(err)
+		return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 	}
 	if h.Tree {
 		if _, err := context.Println(worktree); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 	}
 

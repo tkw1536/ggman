@@ -9,7 +9,7 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 )
 
-//spellchecker:words canonicalizes canonicalization
+//spellchecker:words canonicalizes canonicalization nolint wrapcheck
 
 // Fix is the 'ggman fix' command.
 //
@@ -69,7 +69,7 @@ func (f fix) Run(context ggman.Context) error {
 			})
 
 			if innerError != nil {
-				return "", innerError
+				return "", innerError //nolint:wrapcheck
 			}
 
 			if _, err := context.Printf("Updating %s: %s -> %s\n", remoteName, url, canon); err != nil {

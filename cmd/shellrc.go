@@ -7,7 +7,7 @@ import (
 	"github.com/tkw1536/ggman"
 )
 
-//spellchecker:words shellrc
+//spellchecker:words shellrc nolint wrapcheck
 
 // Shellrc is the 'ggman shellrc' command.
 //
@@ -28,5 +28,5 @@ var shellrcSh string
 
 func (shellrc) Run(context ggman.Context) error {
 	_, err := context.Printf("%s", shellrcSh)
-	return ggman.ErrGenericOutput.WrapError(err)
+	return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 }

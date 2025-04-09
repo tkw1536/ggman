@@ -3,6 +3,7 @@ package cmd
 //spellchecker:words errors path filepath essio shellescape github ggman internal dirs goprogram exit pkglib
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -14,6 +15,8 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 	"github.com/tkw1536/pkglib/fsx"
 )
+
+//spellchecker:words nolint wrapcheck
 
 // Relocate is the 'ggman relocate' command.
 //
@@ -66,7 +69,7 @@ func (r relocate) Run(context ggman.Context) error {
 		}
 		shouldPath, err := context.Environment.Local(env.ParseURL(remote))
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get local path: %w", err)
 		}
 
 		// if it is the same, don't move it
@@ -78,10 +81,10 @@ func (r relocate) Run(context ggman.Context) error {
 
 		// print what is being done
 		if _, err := context.Printf("mkdir -p %s\n", shellescape.Quote(parentPath)); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 		if _, err := context.Printf("mv %s %s\n", shellescape.Quote(gotPath), shellescape.Quote(shouldPath)); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 		if r.Simulate {
 			continue
@@ -89,14 +92,14 @@ func (r relocate) Run(context ggman.Context) error {
 
 		// do it!
 		if err := os.MkdirAll(parentPath, dirs.NewModBits); err != nil {
-			return errUnableMoveCreateParent.WrapError(err)
+			return errUnableMoveCreateParent.WrapError(err) //nolint:wrapcheck
 		}
 
 		// if there already is a target repository at the path
 		{
 			got, err := context.Environment.AtRoot(shouldPath)
 			if err != nil {
-				return errUnableToMoveRepo.WrapError(err)
+				return errUnableToMoveRepo.WrapError(err) //nolint:wrapcheck
 			}
 			if got != "" {
 				return errRepositoryAlreadyExists.WithMessageF(got)
@@ -116,7 +119,7 @@ func (r relocate) Run(context ggman.Context) error {
 			}
 
 			if err != nil {
-				return errUnableToMoveRepo.WrapError(err)
+				return errUnableToMoveRepo.WrapError(err) //nolint:wrapcheck
 			}
 		}
 	}

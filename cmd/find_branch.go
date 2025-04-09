@@ -7,7 +7,7 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 )
 
-//spellchecker:words positionals
+//spellchecker:words positionals nolint wrapcheck
 
 // FindBranch is the 'ggman find-branch' command.
 //
@@ -55,7 +55,7 @@ func (f findBranch) Run(context ggman.Context) error {
 
 		foundRepo = true
 		if _, err := context.Println(repo); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 	}
 

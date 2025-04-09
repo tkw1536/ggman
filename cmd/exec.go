@@ -1,8 +1,9 @@
 package cmd
 
-//spellchecker:words exec essio shellescape github ggman goprogram exit parser pkglib sema status stream
+//spellchecker:words errors exec essio shellescape github ggman goprogram exit parser pkglib sema status stream
 import (
 	"errors"
+	"fmt"
 	"os/exec"
 
 	"al.essio.dev/pkg/shellescape"
@@ -15,7 +16,7 @@ import (
 	"github.com/tkw1536/pkglib/stream"
 )
 
-//spellchecker:words positionals compat
+//spellchecker:words positionals compat nolint wrapcheck
 
 // Exec is the 'ggman exec' command.
 //
@@ -112,7 +113,7 @@ func (e exe) runReal(context ggman.Context) (err error) {
 	}
 
 	// schedule each command to be run in parallel by using a semaphore!
-	return sema.Schedule(func(i uint64) error {
+	err = sema.Schedule(func(i uint64) error {
 		repo := repos[i]
 
 		io := context.IOStream
@@ -132,7 +133,7 @@ func (e exe) runReal(context ggman.Context) (err error) {
 
 		if !e.NoRepo && !statusIO {
 			if _, err := io.EPrintln(repo); err != nil {
-				return err
+				return ggman.ErrGenericOutput.WrapError(err)
 			}
 		}
 
@@ -141,6 +142,10 @@ func (e exe) runReal(context ggman.Context) (err error) {
 		Limit: e.Parallel,
 		Force: e.Force,
 	})
+	if err != nil {
+		return fmt.Errorf("process reported error: %w", err)
+	}
+	return nil
 }
 
 var ErrExecFatal = exit.Error{
@@ -195,15 +200,15 @@ func (e exe) runSimulate(context ggman.Context) (err error) {
 
 	// print header of the bash script
 	if _, err := context.Println("#!/bin/bash"); err != nil {
-		return ggman.ErrGenericOutput.WrapError(err)
+		return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 	}
 	if !e.Force {
 		if _, err := context.Println("set -e"); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 	}
 	if _, err := context.Println(""); err != nil {
-		return ggman.ErrGenericOutput.WrapError(err)
+		return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 	}
 
 	exec := shellescape.QuoteCommand(append([]string{e.Positionals.Exe}, e.Positionals.Args...))
@@ -212,19 +217,19 @@ func (e exe) runSimulate(context ggman.Context) (err error) {
 	// then print each of the commands to be run!
 	for _, repo := range context.Environment.Repos(true) {
 		if _, err := context.Printf("cd %s\n", shellescape.Quote(repo)); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 		if !e.NoRepo {
 			if _, err := context.Printf("echo %s\n", shellescape.Quote(repo)); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err)
+				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 			}
 		}
 
 		if _, err := context.Println(exec); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 		if _, err := context.Println(""); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err)
+			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 		}
 	}
 

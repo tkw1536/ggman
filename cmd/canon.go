@@ -2,11 +2,13 @@ package cmd
 
 //spellchecker:words github ggman
 import (
+	"fmt"
+
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 )
 
-//spellchecker:words CANSPEC CANFILE
+//spellchecker:words CANSPEC CANFILE nolint wrapcheck
 
 // Canon is the 'ggman canon' command.
 //
@@ -34,7 +36,7 @@ func (c canon) Run(context ggman.Context) error {
 	if c.Positional.CANSPEC == "" {
 		var err error
 		if file, err = context.Environment.LoadDefaultCANFILE(); err != nil {
-			return err
+			return fmt.Errorf("unable to load default CANFILE: %w", err)
 		}
 	} else {
 		file = []env.CanLine{{Pattern: "", Canonical: c.Positional.CANSPEC}}
@@ -43,5 +45,5 @@ func (c canon) Run(context ggman.Context) error {
 	// print out the canonical version of the file
 	canonical := c.Positional.URL.CanonicalWith(file)
 	_, err := context.Println(canonical)
-	return ggman.ErrGenericOutput.WrapError(err)
+	return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 }

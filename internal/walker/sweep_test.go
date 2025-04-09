@@ -12,6 +12,8 @@ import (
 	"github.com/tkw1536/pkglib/testlib"
 )
 
+//spellchecker:words nosec
+
 func TestSweep(t *testing.T) {
 	base := testlib.TempDirAbs(t)
 

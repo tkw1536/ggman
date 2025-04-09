@@ -9,7 +9,7 @@ import (
 	"github.com/tkw1536/pkglib/collection"
 )
 
-//spellchecker:words positionals
+//spellchecker:words positionals nolint	wrapcheck
 
 // Env is the 'ggman env' command.
 //
@@ -93,20 +93,20 @@ func (e _env) Run(context ggman.Context) error {
 		switch {
 		case e.List:
 			if _, err := context.Println(v.Key); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err)
+				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 			}
 		case e.Raw:
 			if _, err := context.Println(v.Get(context.Environment, context.Program.Info)); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err)
+				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 			}
 		case e.Describe:
 			if _, err := context.Printf("%s: %s\n", v.Key, v.Description); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err)
+				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 			}
 		default:
 			value := shellescape.Quote(v.Get(context.Environment, context.Program.Info))
 			if _, err := context.Printf("%s=%s\n", v.Key, value); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err)
+				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
 			}
 		}
 	}

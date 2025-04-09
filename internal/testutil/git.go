@@ -15,7 +15,7 @@ import (
 	"github.com/tkw1536/pkglib/testlib"
 )
 
-//spellchecker:words worktree
+//spellchecker:words worktree nosec
 
 // If something goes wrong, the function calls panic().
 func NewTestRepo(t *testing.T) (clonePath string, repo *git.Repository) {

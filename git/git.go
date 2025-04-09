@@ -11,7 +11,7 @@
 // For this reason, implementation of the Plumbing interface are not exported.
 package git
 
-//spellchecker:words path filepath sync github ggman internal dirs pkglib stream
+//spellchecker:words errors path filepath sync github ggman internal dirs pkglib stream
 import (
 	"errors"
 	"fmt"
@@ -193,11 +193,15 @@ func (impl *defaultGitWrapper) Clone(stream stream.IOStream, remoteURI, clonePat
 
 	// make the parent directory to clone the repository into
 	if err := os.MkdirAll(filepath.Join(clonePath, ".."), dirs.NewModBits); err != nil {
-		return err
+		return fmt.Errorf("failed to crete parent directory: %w", err)
 	}
 
 	// run the clone code and return
-	return impl.git.Clone(stream, remoteURI, clonePath, extraArgs...)
+	err := impl.git.Clone(stream, remoteURI, clonePath, extraArgs...)
+	if err != nil {
+		return fmt.Errorf("failed to clone: %w", err)
+	}
+	return nil
 }
 
 func (impl *defaultGitWrapper) GetHeadRef(clonePath string) (ref string, err error) {
@@ -210,7 +214,11 @@ func (impl *defaultGitWrapper) GetHeadRef(clonePath string) (ref string, err err
 	}
 
 	// and return the reference to the head
-	return impl.git.GetHeadRef(clonePath, repoObject)
+	ref, err = impl.git.GetHeadRef(clonePath, repoObject)
+	if err != nil {
+		return "", fmt.Errorf("failed to get head ref: %w", err)
+	}
+	return ref, nil
 }
 
 func (impl *defaultGitWrapper) Fetch(stream stream.IOStream, clonePath string) error {
@@ -222,7 +230,11 @@ func (impl *defaultGitWrapper) Fetch(stream stream.IOStream, clonePath string) e
 		return ErrNotARepository
 	}
 
-	return impl.git.Fetch(stream, clonePath, repoObject)
+	err := impl.git.Fetch(stream, clonePath, repoObject)
+	if err != nil {
+		return fmt.Errorf("failed to fetch: %w", err)
+	}
+	return nil
 }
 
 func (impl *defaultGitWrapper) Pull(stream stream.IOStream, clonePath string) error {
@@ -234,7 +246,11 @@ func (impl *defaultGitWrapper) Pull(stream stream.IOStream, clonePath string) er
 		return ErrNotARepository
 	}
 
-	return impl.git.Pull(stream, clonePath, repoObject)
+	err := impl.git.Pull(stream, clonePath, repoObject)
+	if err != nil {
+		return fmt.Errorf("failed to pull: %w", err)
+	}
+	return nil
 }
 
 var (
@@ -256,7 +272,7 @@ func (impl *defaultGitWrapper) GetRemote(clonePath string, name string) (uri str
 	if name == "" {
 		_, uris, err := impl.git.GetCanonicalRemote(clonePath, repoObject)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("failed to get canonical remote: %w", err)
 		}
 		if len(uris) == 0 {
 			return "", errNoRemoteURL
@@ -269,7 +285,7 @@ func (impl *defaultGitWrapper) GetRemote(clonePath string, name string) (uri str
 	// get all the remotes
 	remotes, err := impl.git.GetRemotes(clonePath, repoObject)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to get remotes: %w", err)
 	}
 
 	// pick the canonical one!
@@ -296,7 +312,7 @@ func (impl *defaultGitWrapper) UpdateRemotes(clonePath string, updateFunc func(u
 	// get all the remotes listed in the repository
 	remotes, err := impl.git.GetRemotes(clonePath, repoObject)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get remotes: %w", err)
 	}
 
 	// iterate over all the remotes, and their URLs
@@ -313,7 +329,7 @@ func (impl *defaultGitWrapper) UpdateRemotes(clonePath string, updateFunc func(u
 
 		err := impl.git.SetRemoteURLs(clonePath, repoObject, remoteName, canonURLs)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to set remote URLs: %w", err)
 		}
 	}
 
@@ -329,7 +345,11 @@ func (impl *defaultGitWrapper) GetBranches(clonePath string) (branches []string,
 		return nil, ErrNotARepository
 	}
 
-	return impl.git.GetBranches(clonePath, repoObject)
+	branches, err = impl.git.GetBranches(clonePath, repoObject)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get branches: %w", err)
+	}
+	return branches, nil
 }
 
 func (impl *defaultGitWrapper) ContainsBranch(clonePath, branch string) (exists bool, err error) {
@@ -341,7 +361,11 @@ func (impl *defaultGitWrapper) ContainsBranch(clonePath, branch string) (exists 
 		return false, ErrNotARepository
 	}
 
-	return impl.git.ContainsBranch(clonePath, repoObject, branch)
+	exists, err = impl.git.ContainsBranch(clonePath, repoObject, branch)
+	if err != nil {
+		return false, fmt.Errorf("failed to check for contained branch: %w", err)
+	}
+	return exists, nil
 }
 
 func (impl *defaultGitWrapper) IsDirty(clonePath string) (dirty bool, err error) {
@@ -353,10 +377,14 @@ func (impl *defaultGitWrapper) IsDirty(clonePath string) (dirty bool, err error)
 		return false, ErrNotARepository
 	}
 
-	return impl.git.IsDirty(clonePath, repoObject)
+	dirty, err = impl.git.IsDirty(clonePath, repoObject)
+	if err != nil {
+		return false, fmt.Errorf("failed to check for dirty: %w", err)
+	}
+	return dirty, nil
 }
 
-func (impl *defaultGitWrapper) IsSync(clonePath string) (dirty bool, err error) {
+func (impl *defaultGitWrapper) IsSync(clonePath string) (sync bool, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
@@ -365,7 +393,11 @@ func (impl *defaultGitWrapper) IsSync(clonePath string) (dirty bool, err error) 
 		return false, ErrNotARepository
 	}
 
-	return impl.git.IsSync(clonePath, repoObject)
+	sync, err = impl.git.IsSync(clonePath, repoObject)
+	if err != nil {
+		return false, fmt.Errorf("failed to check for sync: %w", err)
+	}
+	return sync, nil
 }
 
 func (impl *defaultGitWrapper) GitPath() string {

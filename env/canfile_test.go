@@ -1,11 +1,13 @@
 package env
 
-//spellchecker:words reflect testing
+//spellchecker:words reflect strings testing
 import (
 	"reflect"
 	"strings"
 	"testing"
 )
+
+//spellchecker:words canfile
 
 func TestCanLine_UnmarshalText(t *testing.T) {
 	type args struct {

@@ -5,7 +5,6 @@ GOINSTALL=$(GOCMD) install
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOTOOL=$(GOCMD) tool
-GOVET=$(GOCMD) vet
 GOMOD=$(GOCMD) mod
 GOGENERATE=$(GOCMD) generate
 
@@ -60,7 +59,6 @@ testdeps:
 
 lint:
 	test -z $(shell gofmt -l .)
-	$(GOVET) ./...
 	$(GOTOOL) golangci-lint run ./...
 	$(GOTOOL) govulncheck
 

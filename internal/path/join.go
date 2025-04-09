@@ -4,6 +4,7 @@ package path
 //spellchecker:words errors path filepath strings
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -90,7 +91,7 @@ func FindFoldedDir(dir string, query string, preferExact bool) (name string, err
 func findFoldedDirNoExact(dir string, query string) (name string, err error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to read directory: %w", err)
 	}
 
 	for _, entry := range entries {
@@ -110,7 +111,7 @@ func findFoldedDirNoExact(dir string, query string) (name string, err error) {
 func findFoldedDirPreferExact(dir string, query string) (name string, err error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to read directory: %w", err)
 	}
 
 	// iterate over the entries and check both for exact matches and inexact matches
