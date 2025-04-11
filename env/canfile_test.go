@@ -12,6 +12,8 @@ import (
 //spellchecker:words canfile
 
 func TestCanLine_UnmarshalText(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		s []byte
 	}
@@ -29,6 +31,8 @@ func TestCanLine_UnmarshalText(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			cl := &env.CanLine{}
 			if err := cl.UnmarshalText(tt.args.s); (err != nil) != tt.wantErr {
 				t.Errorf("CanLine.Unmarshal() error = %v, wantErr %v", err, tt.wantErr)
@@ -41,6 +45,8 @@ func TestCanLine_UnmarshalText(t *testing.T) {
 }
 
 func TestCanFile_ReadFrom(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name    string
 		src     string
@@ -76,6 +82,8 @@ git@^:$.git
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			var cf env.CanFile
 
 			_, gotErr := cf.ReadFrom(strings.NewReader(tt.src))

@@ -43,6 +43,8 @@ type testFilterWithCandidates struct {
 func (testFilterWithCandidates) Candidates() []string { return []string{"a", "b", "c"} }
 
 func TestCandidates(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name   string
 		filter Filter
@@ -61,6 +63,8 @@ func TestCandidates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := Candidates(tt.filter); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Candidates() = %v, want %v", got, tt.want)
 			}
@@ -69,6 +73,8 @@ func TestCandidates(t *testing.T) {
 }
 
 func TestPathFilter_Score(t *testing.T) {
+	t.Parallel()
+
 	root, exampleClonePath, otherClonePath := setupFilterTest(t)
 
 	type fields struct {
@@ -132,6 +138,8 @@ func TestPathFilter_Score(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			pf := PathFilter{
 				Paths: tt.fields.Paths,
 			}
@@ -143,6 +151,8 @@ func TestPathFilter_Score(t *testing.T) {
 }
 
 func TestPathFilter_Candidates(t *testing.T) {
+	t.Parallel()
+
 	_, exampleClonePath, otherClonePath := setupFilterTest(t)
 
 	type fields struct {
@@ -170,6 +180,8 @@ func TestPathFilter_Candidates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			pf := PathFilter{
 				Paths: tt.fields.Paths,
 			}
@@ -181,6 +193,8 @@ func TestPathFilter_Candidates(t *testing.T) {
 }
 
 func TestNewPatternFilter(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		value string
 		fuzzy bool
@@ -228,6 +242,8 @@ func TestNewPatternFilter(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gotPat := NewPatternFilter(tt.args.value, tt.args.fuzzy)
 
 			// .Split cannot be compared with reflect
@@ -242,6 +258,8 @@ func TestNewPatternFilter(t *testing.T) {
 }
 
 func TestPatternFilter_String(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		value   string
 		pattern pattern.SplitPattern
@@ -270,6 +288,8 @@ func TestPatternFilter_String(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			pat := PatternFilter{
 				value:   tt.fields.value,
 				pattern: tt.fields.pattern,
@@ -282,6 +302,8 @@ func TestPatternFilter_String(t *testing.T) {
 }
 
 func TestPatternFilter_Score(t *testing.T) {
+	t.Parallel()
+
 	root := testlib.TempDirAbs(t)
 
 	abc := filepath.Join(root, "a", "b", "c")
@@ -331,6 +353,8 @@ func TestPatternFilter_Score(t *testing.T) {
 	for _, tt := range tests {
 		var pat PatternFilter
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			pat.Set(tt.patternValue)
 			if got := pat.Score(
 				Env{
@@ -346,6 +370,8 @@ func TestPatternFilter_Score(t *testing.T) {
 }
 
 func TestPatternFilter_MatchesURL(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		pattern string
 		s       string
@@ -375,6 +401,8 @@ func TestPatternFilter_MatchesURL(t *testing.T) {
 	for _, tt := range tests {
 		var pat PatternFilter
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			pat.Set(tt.args.pattern)
 			if got := pat.MatchesURL(ParseURL(tt.args.s)); got != tt.want {
 				t.Errorf("PatternFilter().MatchesString() = %v, want %v", got, tt.want)
@@ -384,6 +412,8 @@ func TestPatternFilter_MatchesURL(t *testing.T) {
 }
 
 func TestDisjunctionFilter_Score(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Clauses []Filter
 	}
@@ -456,6 +486,8 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			or := DisjunctionFilter{
 				Clauses: tt.fields.Clauses,
 			}
@@ -470,6 +502,8 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 }
 
 func TestDisjunctionFilter_Candidates(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Clauses []Filter
 	}
@@ -517,6 +551,8 @@ func TestDisjunctionFilter_Candidates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			or := DisjunctionFilter{
 				Clauses: tt.fields.Clauses,
 			}

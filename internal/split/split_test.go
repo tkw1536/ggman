@@ -9,6 +9,8 @@ import (
 )
 
 func TestAfterRune(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		s   string
 		sep rune
@@ -25,6 +27,8 @@ func TestAfterRune(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gotPrefix, gotSuffix := split.AfterRune(tt.args.s, tt.args.sep)
 			if gotPrefix != tt.wantPrefix {
 				t.Errorf("AfterRune() gotPrefix = %v, want %v", gotPrefix, tt.wantPrefix)

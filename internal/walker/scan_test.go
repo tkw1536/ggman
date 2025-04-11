@@ -14,6 +14,8 @@ import (
 )
 
 func TestScan(t *testing.T) {
+	t.Parallel()
+
 	base := testlib.TempDirAbs(t)
 
 	// setup a directory structure for testing.
@@ -196,6 +198,8 @@ func TestScan(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := walker.Scan(tt.visit, tt.params)
 			trimAll(got)
 			testutil.ToOSPaths(tt.want)
@@ -211,6 +215,8 @@ func TestScan(t *testing.T) {
 }
 
 func TestScanMatch(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		value bool
 	}
@@ -224,6 +230,8 @@ func TestScanMatch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := walker.ScanMatch(tt.args.value); got != tt.want {
 				t.Errorf("ScanMatch() = %v, want %v", got, tt.want)
 			}

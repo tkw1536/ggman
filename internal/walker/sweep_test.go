@@ -16,6 +16,8 @@ import (
 //spellchecker:words nosec
 
 func TestSweep(t *testing.T) {
+	t.Parallel()
+
 	base := testlib.TempDirAbs(t)
 
 	// setup a directory structure for testing.
@@ -98,6 +100,8 @@ func TestSweep(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := walker.Sweep(tt.visit, tt.params)
 			trimAll(got)
 			testutil.ToOSPaths(tt.want)

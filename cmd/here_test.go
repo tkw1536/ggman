@@ -13,6 +13,8 @@ import (
 //spellchecker:words workdir GGROOT
 
 func TestCommandHere(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	clonePath := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
@@ -70,6 +72,8 @@ func TestCommandHere(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			code, stdout, stderr := mock.Run(cmd.Here, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)

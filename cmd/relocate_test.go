@@ -10,9 +10,12 @@ import (
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
-//spellchecker:words workdir GGROOT
+//spellchecker:words workdir GGROOT nolint tparallel
 
+//nolint:tparallel,paralleltest
 func TestCommandRelocate(t *testing.T) {
+	t.Parallel()
+
 	symlink := func(oldName, newName string) {
 		err := os.Symlink(oldName, newName)
 		if err != nil {
@@ -89,6 +92,8 @@ func TestCommandRelocate(t *testing.T) {
 }
 
 func TestCommandRelocate_existsRepo(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	// clone the same repository twice
@@ -130,6 +135,8 @@ func TestCommandRelocate_existsRepo(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			code, stdout, stderr := mock.Run(cmd.Relocate, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
@@ -141,6 +148,8 @@ func TestCommandRelocate_existsRepo(t *testing.T) {
 }
 
 func TestCommandRelocate_existsPath(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	// clone the same repository twice
@@ -184,6 +193,8 @@ func TestCommandRelocate_existsPath(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			code, stdout, stderr := mock.Run(cmd.Relocate, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)

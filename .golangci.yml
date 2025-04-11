@@ -25,7 +25,7 @@ linters:
     - noctx
     - nolintlint
     - nosprintfhostport
-#    - paralleltest
+    - paralleltest
     - perfsprint
     - prealloc
     - predeclared

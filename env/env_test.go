@@ -17,6 +17,8 @@ import (
 //spellchecker:words GGNORM GGROOT CANFILE worktree
 
 func TestEnv_LoadDefaultRoot(t *testing.T) {
+	t.Parallel()
+
 	// noProjectsDir does not have a 'Projects' subdirectory
 	noProjectsDir := testlib.TempDirAbs(t)
 	missingProjectsDir := filepath.Join(noProjectsDir, "Projects")
@@ -48,6 +50,8 @@ func TestEnv_LoadDefaultRoot(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			env := env.Env{
 				Vars: tt.vars,
 			}
@@ -62,6 +66,8 @@ func TestEnv_LoadDefaultRoot(t *testing.T) {
 }
 
 func TestEnv_LoadDefaultCANFILE(t *testing.T) {
+	t.Parallel()
+
 	// defaultCanFile is the default CanFile
 	var defaultCanFile env.CanFile
 	defaultCanFile.ReadDefault()
@@ -97,6 +103,8 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			env := env.Env{
 				Vars: tt.vars,
 			}
@@ -111,6 +119,8 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 }
 
 func TestEnv_Local_Exact(t *testing.T) {
+	t.Parallel()
+
 	root := testlib.TempDirAbs(t)
 
 	// make the 'HELLO' directory, to ensure that it already exists
@@ -152,7 +162,9 @@ func TestEnv_Local_Exact(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e := &env.Env{
+			t.Parallel()
+
+			e := env.Env{
 				Root: root,
 				Vars: env.Variables{
 					GGNORM: tt.GGNORM,
@@ -173,6 +185,8 @@ func TestEnv_Local_Exact(t *testing.T) {
 }
 
 func TestEnv_At(t *testing.T) {
+	t.Parallel()
+
 	root := testlib.TempDirAbs(t)
 
 	// group/repo contains a repository
@@ -205,6 +219,8 @@ func TestEnv_At(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			env := env.Env{
 				Git:  git.NewGitFromPlumbing(nil, ""),
 				Root: root,
@@ -225,6 +241,8 @@ func TestEnv_At(t *testing.T) {
 }
 
 func TestEnv_AtRoot(t *testing.T) {
+	t.Parallel()
+
 	root := testlib.TempDirAbs(t)
 
 	// group/repo contains a repository
@@ -256,6 +274,8 @@ func TestEnv_AtRoot(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			env := env.Env{
 				Git:  git.NewGitFromPlumbing(nil, ""),
 				Root: root,
@@ -273,6 +293,8 @@ func TestEnv_AtRoot(t *testing.T) {
 }
 
 func TestEnv_ScanRepos(t *testing.T) {
+	t.Parallel()
+
 	root := testlib.TempDirAbs(t)
 
 	// make a dir with parents and turn it into git
@@ -348,6 +370,8 @@ func TestEnv_ScanRepos(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			env := env.Env{
 				Root: root,
 				Git:  git.NewGitFromPlumbing(nil, ""),
@@ -370,6 +394,8 @@ func TestEnv_ScanRepos(t *testing.T) {
 }
 
 func TestEnv_ScanRepos_fuzzy(t *testing.T) {
+	t.Parallel()
+
 	root := testlib.TempDirAbs(t)
 
 	// make a dir with parents and turn it into git
@@ -421,6 +447,8 @@ func TestEnv_ScanRepos_fuzzy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			env := env.Env{
 				Root: root,
 				Git:  git.NewGitFromPlumbing(nil, ""),
@@ -443,6 +471,8 @@ func TestEnv_ScanRepos_fuzzy(t *testing.T) {
 }
 
 func TestEnv_Normalization(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		GGNORM string
 		want   path.Normalization
@@ -455,6 +485,8 @@ func TestEnv_Normalization(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.GGNORM, func(t *testing.T) {
+			t.Parallel()
+
 			env := env.Env{
 				Vars: env.Variables{
 					GGNORM: tt.GGNORM,

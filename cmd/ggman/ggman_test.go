@@ -16,10 +16,14 @@ import (
 // This tests that the Description() functions do not fail.
 // This also checks that all the doc strings are valid if the doccheck flag is specified.
 func Test_main_docs(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	for _, name := range ggmanExe.Commands() {
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
 			defer func() {
 				err := recover()
 				if ve, isVe := err.(*docfmt.ValidationError); isVe {

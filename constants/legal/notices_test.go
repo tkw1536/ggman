@@ -12,6 +12,8 @@ import (
 //spellchecker:words ggman
 
 func TestLicenses(t *testing.T) {
+	t.Parallel()
+
 	if legal.Notices == "" {
 		t.Errorf("Notices is empty")
 	}

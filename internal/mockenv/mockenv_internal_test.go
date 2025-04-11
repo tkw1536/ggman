@@ -20,6 +20,8 @@ func (f *recordingT) Errorf(format string, args ...any) {
 }
 
 func TestMockEnv_AssertOutput(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		localRoot string
 	}
@@ -52,6 +54,8 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			mock := &MockEnv{
 				localRoot: tt.fields.localRoot,
 			}

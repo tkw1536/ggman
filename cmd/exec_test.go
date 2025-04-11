@@ -25,6 +25,8 @@ func setupExecTest(t *testing.T) (mock *mockenv.MockEnv) {
 }
 
 func TestCommandExec_real(t *testing.T) {
+	t.Parallel()
+
 	if runtime.GOOS == "windows" {
 		t.Skip("skipping on windows because pwd changes")
 	}
@@ -76,6 +78,8 @@ func TestCommandExec_real(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			code, stdout, stderr := mock.Run(cmd.Exec, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
@@ -87,6 +91,8 @@ func TestCommandExec_real(t *testing.T) {
 }
 
 func TestCommandExec_false(t *testing.T) {
+	t.Parallel()
+
 	if _, err := exec.LookPath("false"); err != nil {
 		t.Skip("false not found in path")
 	}
@@ -126,6 +132,8 @@ func TestCommandExec_false(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			code, stdout, stderr := mock.Run(cmd.Exec, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
@@ -137,6 +145,8 @@ func TestCommandExec_false(t *testing.T) {
 }
 
 func TestCommandExec_simulate(t *testing.T) {
+	t.Parallel()
+
 	if _, err := exec.LookPath("pwd"); err != nil {
 		t.Skip("pwd not found in path")
 	}
@@ -186,6 +196,8 @@ func TestCommandExec_simulate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			code, stdout, stderr := mock.Run(cmd.Exec, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)

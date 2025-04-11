@@ -14,6 +14,8 @@ import (
 var defaultVolumeName = filepath.VolumeName(os.TempDir())
 
 func TestToOSPath(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name string
 		want string
@@ -26,6 +28,8 @@ func TestToOSPath(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := testutil.ToOSPath(tt.name); got != tt.want {
 				t.Errorf("ToOSPath() = %v, want %v", got, tt.want)
 			}

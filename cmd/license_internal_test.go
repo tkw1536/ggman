@@ -13,6 +13,8 @@ import (
 //spellchecker:words workdir
 
 func TestCommandLicense(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	tests := []struct {
@@ -37,6 +39,8 @@ func TestCommandLicense(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			code, stdout, stderr := mock.Run(License, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)

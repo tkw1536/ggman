@@ -48,6 +48,8 @@ func (me mockEnvRunCommand) Run(context ggman.Context) error {
 }
 
 func TestMockEnv_Run(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	// create a fake repository and install it into the mock
@@ -74,6 +76,8 @@ func TestMockEnv_Run(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gotCode, gotStdout, gotStderr := mock.Run(cmd, "", "", append([]string{"fake"}, tt.args...)...)
 			if gotCode != tt.wantCode {
 				t.Errorf("MockEnv.Run() gotCode = %v, want %v", gotCode, tt.wantCode)
@@ -89,6 +93,8 @@ func TestMockEnv_Run(t *testing.T) {
 }
 
 func TestMockEnv_Register(t *testing.T) {
+	t.Parallel()
+
 	const remote = "https://examaple.com/repo.git"
 
 	mock := mockenv.NewMockEnv(t)

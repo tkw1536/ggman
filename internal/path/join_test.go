@@ -13,6 +13,8 @@ import (
 )
 
 func TestJoinNormalized(t *testing.T) {
+	t.Parallel()
+
 	// create subdirectory for testing
 	root := testlib.TempDirAbs(t)
 	exactD := filepath.Join(root, "exact")
@@ -128,6 +130,8 @@ func TestJoinNormalized(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := path.JoinNormalized(tt.args.n, tt.args.base, tt.args.elem...)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("JoinNormalized() error = %v, wantErr %v", err, tt.wantErr)
@@ -141,6 +145,8 @@ func TestJoinNormalized(t *testing.T) {
 }
 
 func TestJoinNormalized_both(t *testing.T) {
+	t.Parallel()
+
 	if !testutil.CaseSensitive(t) {
 		t.Skipf("Filesystem is case-insensitive")
 	}
@@ -267,6 +273,8 @@ func TestJoinNormalized_both(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := path.JoinNormalized(tt.args.n, tt.args.base, tt.args.elem...)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("JoinNormalized() error = %v, wantErr %v", err, tt.wantErr)

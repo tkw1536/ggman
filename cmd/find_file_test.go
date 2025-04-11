@@ -13,6 +13,8 @@ import (
 //spellchecker:words GGROOT workdir
 
 func TestCommandFindFile(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	// with file 'example.txt'
@@ -113,6 +115,8 @@ func TestCommandFindFile(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			code, stdout, stderr := mock.Run(cmd.FindFile, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)

@@ -10,6 +10,8 @@ import (
 )
 
 func Test_ParsePort(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		portString string
 	}
@@ -32,6 +34,8 @@ func Test_ParsePort(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gotPort, err := url.ParsePort(tt.args.portString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("parsePort() error = %v, wantErr %v", err, tt.wantErr)
@@ -57,29 +61,39 @@ const (
 var maxPortTest = int(math.Pow(10, float64(maxPortLen)) - 1)
 
 func Test_ParsePort_all(t *testing.T) {
-	for port := 0; port <= maxValid; port++ {
-		if port < 0 || port > math.MaxUint16 {
-			// bounds check to make linter happy!
-			panic("never reached")
-		}
+	t.Parallel()
 
-		gotPort, err := url.ParsePort(strconv.Itoa(port))
-		if gotPort != uint16(port) {
-			t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
-		}
-		if err != nil {
-			t.Errorf("ParsePort(%d) got error = %v, want error = nil", port, err)
-		}
+	for port := 0; port <= maxValid; port++ {
+		t.Run(strconv.Itoa(port), func(t *testing.T) {
+			t.Parallel()
+
+			if port < 0 || port > math.MaxUint16 {
+				// bounds check to make linter happy!
+				panic("never reached")
+			}
+
+			gotPort, err := url.ParsePort(strconv.Itoa(port))
+			if gotPort != uint16(port) {
+				t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
+			}
+			if err != nil {
+				t.Errorf("ParsePort(%d) got error = %v, want error = nil", port, err)
+			}
+		})
 	}
 
 	for port := maxValid + 1; port <= maxPortTest; port++ {
-		gotPort, err := url.ParsePort(strconv.Itoa(port))
-		if gotPort != 0 {
-			t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
-		}
-		if err == nil {
-			t.Errorf("ParsePort(%d) got error = nil, but want not nil", port)
-		}
+		t.Run(strconv.Itoa(port), func(t *testing.T) {
+			t.Parallel()
+
+			gotPort, err := url.ParsePort(strconv.Itoa(port))
+			if gotPort != 0 {
+				t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
+			}
+			if err == nil {
+				t.Errorf("ParsePort(%d) got error = nil, but want not nil", port)
+			}
+		})
 	}
 }
 
@@ -98,6 +112,8 @@ func Benchmark_ParsePort(b *testing.B) {
 }
 
 func Test_SplitURLScheme(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		input string
 	}
@@ -129,6 +145,8 @@ func Test_SplitURLScheme(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gotScheme, gotRest := url.SplitURLScheme(tt.args.input)
 			if gotScheme != tt.wantScheme {
 				t.Errorf("SplitURLScheme() scheme = %v, want %v", gotScheme, tt.wantScheme)

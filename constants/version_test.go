@@ -11,6 +11,8 @@ import (
 )
 
 func TestBuildVersion(t *testing.T) {
+	t.Parallel()
+
 	wantBuildVersion := "v0.0.0-unknown"
 	if constants.BuildVersion != wantBuildVersion {
 		t.Errorf("BuildVersion = %q, want = %q", constants.BuildVersion, wantBuildVersion)
@@ -18,6 +20,8 @@ func TestBuildVersion(t *testing.T) {
 }
 
 func TestBuildTime(t *testing.T) {
+	t.Parallel()
+
 	wantBuildTime := time.Unix(0, 0).UTC()
 	if !reflect.DeepEqual(constants.BuildTime, wantBuildTime) {
 		t.Errorf("BuildTime = %v, want = %v", constants.BuildTime, wantBuildTime)

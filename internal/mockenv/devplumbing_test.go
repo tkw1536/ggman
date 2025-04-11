@@ -15,9 +15,11 @@ import (
 	"github.com/tkw1536/pkglib/testlib"
 )
 
-//spellchecker:words gogit
+//spellchecker:words gogit nolint tparallel
 
 func TestDevPlumbing_Forward(t *testing.T) {
+	t.Parallel()
+
 	mp := &mockenv.DevPlumbing{URLMap: make(map[string]string)}
 	mp.URLMap["forward-a"] = "backward-a"
 	mp.URLMap["forward-b"] = "backward-b"
@@ -32,6 +34,8 @@ func TestDevPlumbing_Forward(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := mp.Forward(tt.url); got != tt.want {
 				t.Errorf("DevPlumbing.Forward() = %v, want %v", got, tt.want)
 			}
@@ -39,6 +43,8 @@ func TestDevPlumbing_Forward(t *testing.T) {
 	}
 
 	t.Run("does-not-exist", func(t *testing.T) {
+		t.Parallel()
+
 		if panics, _ := testlib.DoesPanic(func() { mp.Forward("does-not-exist") }); !panics {
 			t.Errorf("Expected DevPlumbing.Forward() to panic")
 		}
@@ -46,6 +52,8 @@ func TestDevPlumbing_Forward(t *testing.T) {
 }
 
 func TestDevPlumbing_Backward(t *testing.T) {
+	t.Parallel()
+
 	mp := &mockenv.DevPlumbing{URLMap: make(map[string]string)}
 	mp.URLMap["forward-a"] = "backward-a"
 	mp.URLMap["forward-b"] = "backward-b"
@@ -60,6 +68,8 @@ func TestDevPlumbing_Backward(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := mp.Backward(tt.url); got != tt.want {
 				t.Errorf("DevPlumbing.Backward() = %v, want %v", got, tt.want)
 			}
@@ -67,6 +77,8 @@ func TestDevPlumbing_Backward(t *testing.T) {
 	}
 
 	t.Run("does-not-exist", func(t *testing.T) {
+		t.Parallel()
+
 		if panics, _ := testlib.DoesPanic(func() { mp.Backward("does-not-exist") }); !panics {
 			t.Errorf("Expected DevPlumbing.Backward() to panic")
 		}
@@ -74,6 +86,8 @@ func TestDevPlumbing_Backward(t *testing.T) {
 }
 
 func Test_DevPlumbing_GetRemotes(t *testing.T) {
+	t.Parallel()
+
 	// This test has been adapted from Test_goGit_GetRemotes.
 
 	mp := &mockenv.DevPlumbing{
@@ -128,6 +142,8 @@ func Test_DevPlumbing_GetRemotes(t *testing.T) {
 	mp.URLMap[mappedRemote] = remote
 
 	t.Run("GetRemotes() on a repository with a single remote", func(t *testing.T) {
+		t.Parallel()
+
 		ggRepoObject, isRepo := mp.IsRepository(cloneA)
 		if !isRepo {
 			panic("IsRepository() failed")
@@ -147,6 +163,8 @@ func Test_DevPlumbing_GetRemotes(t *testing.T) {
 	})
 
 	t.Run("GetRemotes() on a repository with more than one remote", func(t *testing.T) {
+		t.Parallel()
+
 		ggRepoObject, isRepo := mp.IsRepository(cloneB)
 		if !isRepo {
 			panic("IsRepository() failed")
@@ -167,7 +185,10 @@ func Test_DevPlumbing_GetRemotes(t *testing.T) {
 	})
 }
 
+//nolint:tparallel,paralleltest
 func Test_DevPlumbing_SetRemoteURLs(t *testing.T) {
+	t.Parallel()
+
 	// This test has been adapted from Test_gogit_SetRemoteURLs.
 
 	mp := &mockenv.DevPlumbing{
@@ -253,6 +274,8 @@ func Test_DevPlumbing_SetRemoteURLs(t *testing.T) {
 }
 
 func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
+	t.Parallel()
+
 	// This test has been adapted from Test_gogit_GetCanonicalRemote.
 
 	mp := &mockenv.DevPlumbing{
@@ -302,6 +325,8 @@ func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
 	mp.URLMap[mappedRemote] = remote
 
 	t.Run("GetCanonicalRemote() on a repository with a single remote", func(t *testing.T) {
+		t.Parallel()
+
 		ggRepoObject, isRepo := mp.IsRepository(cloneA)
 		if !isRepo {
 			panic("IsRepository() failed")
@@ -324,6 +349,8 @@ func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
 	})
 
 	t.Run("GetCanonicalRemote() on a repository with more than a single remote", func(t *testing.T) {
+		t.Parallel()
+
 		ggRepoObject, isRepo := mp.IsRepository(cloneB)
 		if !isRepo {
 			panic("IsRepository() failed")
@@ -347,6 +374,8 @@ func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
 }
 
 func Test_DevPlumbing_Clone(t *testing.T) {
+	t.Parallel()
+
 	// This test has been adapted from Test_gogit_Clone.
 	mp := &mockenv.DevPlumbing{
 		Plumbing: gggit.NewPlumbing(),
@@ -361,6 +390,8 @@ func Test_DevPlumbing_Clone(t *testing.T) {
 	mp.URLMap[mappedRemote] = remote
 
 	t.Run("cloning a repository", func(t *testing.T) {
+		t.Parallel()
+
 		clone := testlib.TempDirAbs(t)
 
 		err := mp.Clone(stream.FromNil(), mappedRemote, clone)

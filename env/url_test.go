@@ -87,8 +87,12 @@ var urlTests = []struct {
 }
 
 func TestParseURL(t *testing.T) {
+	t.Parallel()
+
 	for _, tt := range urlTests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gotURL := env.ParseURL(tt.str)
 			if !reflect.DeepEqual(gotURL, tt.url) {
 				t.Errorf("env.ParseURL() = %v, want %v", gotURL, tt.url)
@@ -98,8 +102,12 @@ func TestParseURL(t *testing.T) {
 }
 
 func TestURL_String(t *testing.T) {
+	t.Parallel()
+
 	for _, tt := range urlTests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gotString := tt.url.String()
 			if gotString != tt.str {
 				t.Errorf("URL.String() = %v, want %v", gotString, tt.str)
@@ -122,6 +130,8 @@ func Benchmark_ParseRepoURL(b *testing.B) {
 }
 
 func TestURL_IsLocal(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name string
 		url  env.URL
@@ -200,6 +210,8 @@ func TestURL_IsLocal(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := tt.url.IsLocal(); got != tt.want {
 				t.Errorf("URL.IsLocal() = %v, want %v", got, tt.want)
 			}
@@ -208,6 +220,8 @@ func TestURL_IsLocal(t *testing.T) {
 }
 
 func TestURL_Components(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Scheme   string
 		User     string
@@ -247,6 +261,8 @@ func TestURL_Components(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			url := env.URL{
 				Scheme:   tt.fields.Scheme,
 				User:     tt.fields.User,
@@ -305,6 +321,8 @@ func BenchmarkURL_Components(b *testing.B) {
 }
 
 func TestComponentsOf(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		s    string
 		want []string
@@ -321,6 +339,8 @@ func TestComponentsOf(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.s, func(t *testing.T) {
+			t.Parallel()
+
 			if got := env.ComponentsOf(tt.s); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ComponentsOf() = %#v, want %#v", got, tt.want)
 			}
@@ -343,6 +363,8 @@ func BenchmarkComponentsOf(b *testing.B) {
 }
 
 func TestRepoURL_Canonical(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Scheme   string
 		User     string
@@ -367,7 +389,9 @@ func TestRepoURL_Canonical(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rURL := &env.URL{
+			t.Parallel()
+
+			rURL := env.URL{
 				Scheme:   tt.fields.Scheme,
 				User:     tt.fields.User,
 				Password: tt.fields.Password,

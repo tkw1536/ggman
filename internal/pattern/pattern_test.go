@@ -13,6 +13,8 @@ import (
 //spellchecker:words aaaab
 
 func TestNewGlobPattern(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		s     string
 		fuzzy bool
@@ -32,6 +34,8 @@ func TestNewGlobPattern(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := pattern.NewGlobPattern(tt.args.s, tt.args.fuzzy); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewGlobPattern() = %v, want %v", got, tt.want)
 			}
@@ -40,6 +44,8 @@ func TestNewGlobPattern(t *testing.T) {
 }
 
 func TestAnyStringPattern_Score(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		s string
 	}
@@ -67,6 +73,8 @@ func TestAnyStringPattern_Score(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			a := pattern.AnyStringPattern{}
 			if got := a.Score(tt.args.s); got != tt.want {
 				t.Errorf("AnyStringPattern.Score() = %v, want %v", got, tt.want)
@@ -76,6 +84,8 @@ func TestAnyStringPattern_Score(t *testing.T) {
 }
 
 func TestEqualityFoldPattern_Score(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		s string
 	}
@@ -108,6 +118,8 @@ func TestEqualityFoldPattern_Score(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := tt.p.Score(tt.args.s); got != tt.want {
 				t.Errorf("EqualityFoldPattern.Score() = %v, want %v", got, tt.want)
 			}
@@ -116,6 +128,8 @@ func TestEqualityFoldPattern_Score(t *testing.T) {
 }
 
 func TestFuzzyFoldPattern_Score(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		s string
 	}
@@ -162,6 +176,8 @@ func TestFuzzyFoldPattern_Score(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := tt.p.Score(tt.args.s); got != tt.want {
 				t.Errorf("FuzzyFoldPattern.Score() = %v, want %v", got, tt.want)
 			}
@@ -170,6 +186,8 @@ func TestFuzzyFoldPattern_Score(t *testing.T) {
 }
 
 func TestGlobPattern_Score(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		s string
 	}
@@ -202,6 +220,8 @@ func TestGlobPattern_Score(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := tt.p.Score(tt.args.s); got != tt.want {
 				t.Errorf("GlobPattern.Score() = %v, want %v", got, tt.want)
 			}
@@ -210,6 +230,8 @@ func TestGlobPattern_Score(t *testing.T) {
 }
 
 func TestNewSplitGlobPattern(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		pattern  string
 		splitter func(string) []string
@@ -330,6 +352,8 @@ func TestNewSplitGlobPattern(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := pattern.NewSplitGlobPattern(tt.args.pattern, tt.args.splitter, tt.args.fuzzy)
 
 			gotPointer := reflect.ValueOf(got.Split).Pointer()
@@ -343,6 +367,8 @@ func TestNewSplitGlobPattern(t *testing.T) {
 }
 
 func TestSplitPattern_Score(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Split        func(s string) []string
 		Patterns     []pattern.Pattern
@@ -647,6 +673,8 @@ func TestSplitPattern_Score(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			sp := pattern.SplitPattern{
 				Split:        tt.fields.Split,
 				Patterns:     tt.fields.Patterns,

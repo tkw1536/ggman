@@ -11,7 +11,10 @@ import (
 
 //spellchecker:words workdir GGROOT
 
+//nolint:tparallel,paralleltest
 func TestCommandLink(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	externalRepo := mock.Clone("https://github.com/hello/world.git", "..", "external")

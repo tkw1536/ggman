@@ -13,6 +13,8 @@ import (
 //spellchecker:words gogit gitgit
 
 func TestNewGitFromPlumbing(t *testing.T) {
+	t.Parallel()
+
 	// create a temporary file
 	dir := testlib.TempDirAbs(t)
 

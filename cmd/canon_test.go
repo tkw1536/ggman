@@ -9,6 +9,8 @@ import (
 )
 
 func TestCommandCanon(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	tests := []struct {
@@ -113,6 +115,8 @@ func TestCommandCanon(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			code, stdout, stderr := mock.Run(cmd.Canon, tt.workDir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)

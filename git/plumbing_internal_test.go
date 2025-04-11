@@ -21,6 +21,8 @@ import (
 //spellchecker:words gogit commita commitb worktree
 
 func Test_gogit_IsRepository(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// for this test, we make three directories for testing:
@@ -52,6 +54,8 @@ func Test_gogit_IsRepository(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			_, gotIsRepo := gg.IsRepository(tt.args.localPath)
 			if gotIsRepo != tt.wantIsRepo {
 				t.Errorf("gogit.IsRepository() gotIsRepo = %v, want %v", gotIsRepo, tt.wantIsRepo)
@@ -61,6 +65,8 @@ func Test_gogit_IsRepository(t *testing.T) {
 }
 
 func Test_gogit_IsRepositoryUnsafe(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// This test behaves like the IsRepository() test.
@@ -93,6 +99,8 @@ func Test_gogit_IsRepositoryUnsafe(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gotIsRepo := gg.IsRepositoryUnsafe(tt.args.localPath)
 			if gotIsRepo != tt.wantIsRepo {
 				t.Errorf("gogit.IsRepositoryUnsafe() gotIsRepo = %v, want %v", gotIsRepo, tt.wantIsRepo)
@@ -102,6 +110,8 @@ func Test_gogit_IsRepositoryUnsafe(t *testing.T) {
 }
 
 func Test_gogit_GetHeadRef(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// for this test we make three repositories:
@@ -147,6 +157,8 @@ func Test_gogit_GetHeadRef(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			// get the repo object
 			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
 			if !isRepo {
@@ -166,6 +178,8 @@ func Test_gogit_GetHeadRef(t *testing.T) {
 }
 
 func Test_gogit_GetRemotes(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// For this test we have three repositories:
@@ -203,6 +217,8 @@ func Test_gogit_GetRemotes(t *testing.T) {
 	}
 
 	t.Run("GetRemotes() on a repository with a single remote", func(t *testing.T) {
+		t.Parallel()
+
 		ggRepoObject, isRepo := gg.IsRepository(cloneA)
 		if !isRepo {
 			panic("IsRepository() failed")
@@ -222,6 +238,8 @@ func Test_gogit_GetRemotes(t *testing.T) {
 	})
 
 	t.Run("GetRemotes() on a repository with more than one remote", func(t *testing.T) {
+		t.Parallel()
+
 		ggRepoObject, isRepo := gg.IsRepository(cloneB)
 		if !isRepo {
 			panic("IsRepository() failed")
@@ -243,6 +261,8 @@ func Test_gogit_GetRemotes(t *testing.T) {
 }
 
 func Test_gogit_GetCanonicalRemote(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// For this test we have three repositories:
@@ -279,6 +299,8 @@ func Test_gogit_GetCanonicalRemote(t *testing.T) {
 	}
 
 	t.Run("GetCanonicalRemote() on a repository with a single remote", func(t *testing.T) {
+		t.Parallel()
+
 		ggRepoObject, isRepo := gg.IsRepository(cloneA)
 		if !isRepo {
 			panic("IsRepository() failed")
@@ -301,6 +323,8 @@ func Test_gogit_GetCanonicalRemote(t *testing.T) {
 	})
 
 	t.Run("GetCanonicalRemote() on a repository with more than a single remote", func(t *testing.T) {
+		t.Parallel()
+
 		ggRepoObject, isRepo := gg.IsRepository(cloneB)
 		if !isRepo {
 			panic("IsRepository() failed")
@@ -323,7 +347,10 @@ func Test_gogit_GetCanonicalRemote(t *testing.T) {
 	})
 }
 
+//nolint:tparallel,paralleltest
 func Test_gogit_SetRemoteURLs(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// for this test we have two repositories:
@@ -398,6 +425,8 @@ func Test_gogit_SetRemoteURLs(t *testing.T) {
 }
 
 func Test_gogit_Clone(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// create an initial remote repository, and add a new bogus commit to it.
@@ -405,6 +434,8 @@ func Test_gogit_Clone(t *testing.T) {
 	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
 
 	t.Run("cloning a repository", func(t *testing.T) {
+		t.Parallel()
+
 		clone := testlib.TempDirAbs(t)
 
 		err := gg.Clone(stream.FromNil(), remote, clone)
@@ -418,6 +449,8 @@ func Test_gogit_Clone(t *testing.T) {
 	})
 
 	t.Run("cloning a repository with arguments is not supported", func(t *testing.T) {
+		t.Parallel()
+
 		clone := testlib.TempDirAbs(t)
 
 		err := gg.Clone(stream.FromNil(), remote, clone, "--branch", "main")
@@ -427,7 +460,10 @@ func Test_gogit_Clone(t *testing.T) {
 	})
 }
 
+//nolint:tparallel,paralleltest
 func Test_gogit_Fetch(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// In this test we have three repositories:
@@ -514,7 +550,10 @@ func Test_gogit_Fetch(t *testing.T) {
 	})
 }
 
+//nolint:tparallel,paralleltest
 func Test_gogit_Pull(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// In this test we have two repositories:
@@ -567,6 +606,8 @@ func Test_gogit_Pull(t *testing.T) {
 }
 
 func Test_gogit_GetBranches(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// In this test we only have a single repository.
@@ -602,6 +643,8 @@ func Test_gogit_GetBranches(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
 			if !isRepo {
 				panic("IsRepository() failed")
@@ -625,6 +668,8 @@ func Test_gogit_GetBranches(t *testing.T) {
 }
 
 func Test_gogit_ContainsBranch(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// In this test we only have a single repository.
@@ -652,6 +697,8 @@ func Test_gogit_ContainsBranch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			ggRepoObject, isRepo := gg.IsRepository(clone)
 			if !isRepo {
 				panic("IsRepository() failed")
@@ -670,6 +717,8 @@ func Test_gogit_ContainsBranch(t *testing.T) {
 }
 
 func Test_gogit_IsDirty(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// In this test we have a dirty and a clean repository
@@ -694,6 +743,8 @@ func Test_gogit_IsDirty(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
 			if !isRepo {
 				panic("IsRepository() failed")
@@ -712,6 +763,8 @@ func Test_gogit_IsDirty(t *testing.T) {
 }
 
 func Test_gogit_IsSync(t *testing.T) {
+	t.Parallel()
+
 	var gg gogit
 
 	// an upstream repository (has upstream itself)
@@ -768,6 +821,8 @@ func Test_gogit_IsSync(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
 			if !isRepo {
 				panic("IsRepository() failed")

@@ -10,9 +10,12 @@ import (
 	"github.com/tkw1536/ggman/internal/testutil"
 )
 
-//spellchecker:words workdir
+//spellchecker:words workdir nolint tparallel
 
+//nolint:tparallel,paralleltest
 func TestCommandPull(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	// install git repo and make an extra commit

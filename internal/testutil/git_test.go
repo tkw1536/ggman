@@ -11,6 +11,8 @@ import (
 )
 
 func TestNewTestRepo(t *testing.T) {
+	t.Parallel()
+
 	dir, repo := testutil.NewTestRepo(t)
 
 	if s, err := os.Stat(dir); err != nil || !s.IsDir() {
@@ -27,6 +29,8 @@ func TestNewTestRepo(t *testing.T) {
 }
 
 func TestCommitTestFiles(t *testing.T) {
+	t.Parallel()
+
 	_, repo := testutil.NewTestRepo(t)
 
 	_, hash := testutil.CommitTestFiles(repo, nil)

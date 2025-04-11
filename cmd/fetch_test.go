@@ -12,7 +12,10 @@ import (
 
 //spellchecker:words workdir
 
+//nolint:tparallel,paralleltest
 func TestCommandFetch(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	// install git repo and make an extra commit

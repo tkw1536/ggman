@@ -12,6 +12,8 @@ import (
 )
 
 func TestRecord_Record(t *testing.T) {
+	t.Parallel()
+
 	var r record.Record
 
 	const N = 1000 // number of elements to record
@@ -51,6 +53,8 @@ func TestRecord_Record(t *testing.T) {
 }
 
 func TestRecord_Recorded(t *testing.T) {
+	t.Parallel()
+
 	var r record.Record
 
 	N := 1000      // number of elements to record

@@ -10,6 +10,8 @@ import (
 )
 
 func TestContains(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		parent string
 		child  string
@@ -25,6 +27,8 @@ func TestContains(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.parent+" contains "+tt.child, func(t *testing.T) {
+			t.Parallel()
+
 			if got := path.HasChild(testutil.ToOSPath(tt.parent), testutil.ToOSPath(tt.child)); got != tt.want {
 				t.Errorf("Contains() = %v, want %v", got, tt.want)
 			}

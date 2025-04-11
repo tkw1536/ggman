@@ -10,7 +10,10 @@ import (
 
 //spellchecker:words GGROOT workdir
 
+//nolint:tparallel,paralleltest
 func TestCommandFix(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	mock.Register("https://github.com/hello/world.git", "git@github.com:hello/world.git")

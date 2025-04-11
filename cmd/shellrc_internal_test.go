@@ -10,6 +10,8 @@ import (
 //spellchecker:words shellrc
 
 func TestCommandShellRC(t *testing.T) {
+	t.Parallel()
+
 	mock := mockenv.NewMockEnv(t)
 
 	code, stdout, stderr := mock.Run(Shellrc, "", "", "shellrc")
