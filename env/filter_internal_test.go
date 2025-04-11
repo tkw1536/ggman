@@ -32,39 +32,6 @@ func setupFilterTest(t *testing.T) (root, exampleClonePath, otherClonePath strin
 	return root, exampleClonePath, otherClonePath
 }
 
-func Test_emptyFilter_Score(t *testing.T) {
-	root, exampleClonePath, otherClonePath := setupFilterTest(t)
-
-	type args struct {
-		env       Env
-		clonePath string
-	}
-	tests := []struct {
-		name string
-		args args
-		want float64
-	}{
-		{
-			"empty filter matches clone path",
-			args{env: Env{Root: root}, clonePath: exampleClonePath},
-			1,
-		},
-		{
-			"empty filter matches other clone path",
-			args{env: Env{Root: root}, clonePath: otherClonePath},
-			1,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			e := emptyFilter{}
-			if got := e.Score(tt.args.env, tt.args.clonePath); got != tt.want {
-				t.Errorf("emptyFilter.Score() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 type testFilter struct{}
 
 func (testFilter) Score(env Env, clonePath string) float64 { panic("never reached") }

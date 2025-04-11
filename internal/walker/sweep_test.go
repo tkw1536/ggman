@@ -1,7 +1,7 @@
 //spellchecker:words walker
-package walker
+package walker_test
 
-//spellchecker:words path filepath reflect testing github ggman internal testutil pkglib testlib
+//spellchecker:words path filepath reflect testing github ggman internal testutil walker pkglib testlib
 import (
 	"os"
 	"path/filepath"
@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/internal/walker"
 	"github.com/tkw1536/pkglib/testlib"
 )
 
@@ -62,16 +63,16 @@ func TestSweep(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		visit   SweepProcess
-		params  Params
+		visit   walker.SweepProcess
+		params  walker.Params
 		want    []string
 		wantErr bool
 	}{
 		{
 			"sweep / without symlinks",
 			nil,
-			Params{
-				Root: NewRealFS(base, false),
+			walker.Params{
+				Root: walker.NewRealFS(base, false),
 			},
 			[]string{
 				"e/e1",
@@ -84,8 +85,8 @@ func TestSweep(t *testing.T) {
 		{
 			"sweep /e",
 			nil,
-			Params{
-				Root: NewRealFS(filepath.Join(base, "e"), false),
+			walker.Params{
+				Root: walker.NewRealFS(filepath.Join(base, "e"), false),
 			},
 			[]string{
 				"e/e1",
@@ -97,7 +98,7 @@ func TestSweep(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Sweep(tt.visit, tt.params)
+			got, err := walker.Sweep(tt.visit, tt.params)
 			trimAll(got)
 			testutil.ToOSPaths(tt.want)
 			if (err != nil) != tt.wantErr {

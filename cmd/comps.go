@@ -6,7 +6,7 @@ import (
 	"github.com/tkw1536/ggman/env"
 )
 
-//spellchecker:words nolint	wrapcheck
+//spellchecker:words nolint wrapcheck
 
 // Comps is the 'ggman comps' command.
 //

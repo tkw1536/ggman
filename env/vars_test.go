@@ -1,9 +1,11 @@
-package env
+package env_test
 
-//spellchecker:words reflect testing
+//spellchecker:words reflect testing github ggman
 import (
 	"reflect"
 	"testing"
+
+	"github.com/tkw1536/ggman/env"
 )
 
 //spellchecker:words GGROOT CANFILE GGNORM USERPROFILE GGMAN
@@ -17,8 +19,8 @@ func TestReadVariables(t *testing.T) {
 	t.Setenv("GGMAN_CANFILE", "/fake/canfile")
 	t.Setenv("GGNORM", "something-fake")
 
-	got := ReadVariables()
-	want := Variables{
+	got := env.ReadVariables()
+	want := env.Variables{
 		HOME:    "/fake/home",
 		PATH:    "/fake/path",
 		GGROOT:  "/fake/ggroot",

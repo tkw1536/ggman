@@ -1,5 +1,5 @@
 //spellchecker:words path
-package path
+package path_test
 
 //spellchecker:words path filepath testing github ggman internal testutil pkglib testlib
 import (
@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/pkglib/testlib"
 )
@@ -20,7 +21,7 @@ func TestJoinNormalized(t *testing.T) {
 	}
 
 	type args struct {
-		n    Normalization
+		n    path.Normalization
 		base string
 		elem []string
 	}
@@ -33,7 +34,7 @@ func TestJoinNormalized(t *testing.T) {
 		{
 			"join new directory (NoNorm)",
 			args{
-				n:    NoNorm,
+				n:    path.NoNorm,
 				base: root,
 				elem: []string{"new"},
 			},
@@ -43,7 +44,7 @@ func TestJoinNormalized(t *testing.T) {
 		{
 			"join new directory (FoldNorm)",
 			args{
-				n:    FoldNorm,
+				n:    path.FoldNorm,
 				base: root,
 				elem: []string{"new"},
 			},
@@ -53,7 +54,7 @@ func TestJoinNormalized(t *testing.T) {
 		{
 			"join new directory (FoldPreferExactNorm)",
 			args{
-				n:    FoldPreferExactNorm,
+				n:    path.FoldPreferExactNorm,
 				base: root,
 				elem: []string{"new"},
 			},
@@ -65,7 +66,7 @@ func TestJoinNormalized(t *testing.T) {
 		{
 			"join exact directory (NoNorm)",
 			args{
-				n:    NoNorm,
+				n:    path.NoNorm,
 				base: root,
 				elem: []string{"exact"},
 			},
@@ -75,7 +76,7 @@ func TestJoinNormalized(t *testing.T) {
 		{
 			"join exact directory (FoldNorm)",
 			args{
-				n:    FoldNorm,
+				n:    path.FoldNorm,
 				base: root,
 				elem: []string{"exact"},
 			},
@@ -85,7 +86,7 @@ func TestJoinNormalized(t *testing.T) {
 		{
 			"join exact directory (FoldPreferExactNorm)",
 			args{
-				n:    FoldPreferExactNorm,
+				n:    path.FoldPreferExactNorm,
 				base: root,
 				elem: []string{"exact"},
 			},
@@ -97,7 +98,7 @@ func TestJoinNormalized(t *testing.T) {
 		{
 			"join inexact directory (NoNorm)",
 			args{
-				n:    NoNorm,
+				n:    path.NoNorm,
 				base: root,
 				elem: []string{"eXact"},
 			},
@@ -107,7 +108,7 @@ func TestJoinNormalized(t *testing.T) {
 		{
 			"join inexact directory (FoldNorm)",
 			args{
-				n:    FoldNorm,
+				n:    path.FoldNorm,
 				base: root,
 				elem: []string{"eXact"},
 			},
@@ -117,7 +118,7 @@ func TestJoinNormalized(t *testing.T) {
 		{
 			"join inexact directory (FoldPreferExactNorm)",
 			args{
-				n:    FoldPreferExactNorm,
+				n:    path.FoldPreferExactNorm,
 				base: root,
 				elem: []string{"eXact"},
 			},
@@ -127,7 +128,7 @@ func TestJoinNormalized(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := JoinNormalized(tt.args.n, tt.args.base, tt.args.elem...)
+			got, err := path.JoinNormalized(tt.args.n, tt.args.base, tt.args.elem...)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("JoinNormalized() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -158,7 +159,7 @@ func TestJoinNormalized_both(t *testing.T) {
 	}
 
 	type args struct {
-		n    Normalization
+		n    path.Normalization
 		base string
 		elem []string
 	}
@@ -172,7 +173,7 @@ func TestJoinNormalized_both(t *testing.T) {
 		{
 			"join first existing directory (NoNorm)",
 			args{
-				n:    NoNorm,
+				n:    path.NoNorm,
 				base: root,
 				elem: []string{"BOTH"},
 			},
@@ -182,7 +183,7 @@ func TestJoinNormalized_both(t *testing.T) {
 		{
 			"join first existing directory (FoldNorm)",
 			args{
-				n:    FoldNorm,
+				n:    path.FoldNorm,
 				base: root,
 				elem: []string{"BOTH"},
 			},
@@ -192,7 +193,7 @@ func TestJoinNormalized_both(t *testing.T) {
 		{
 			"join first existing directory (FoldPreferExactNorm)",
 			args{
-				n:    FoldPreferExactNorm,
+				n:    path.FoldPreferExactNorm,
 				base: root,
 				elem: []string{"BOTH"},
 			},
@@ -204,7 +205,7 @@ func TestJoinNormalized_both(t *testing.T) {
 		{
 			"join second existing directory (NoNorm)",
 			args{
-				n:    NoNorm,
+				n:    path.NoNorm,
 				base: root,
 				elem: []string{"both"},
 			},
@@ -214,7 +215,7 @@ func TestJoinNormalized_both(t *testing.T) {
 		{
 			"join second existing directory (FoldNorm)",
 			args{
-				n:    FoldNorm,
+				n:    path.FoldNorm,
 				base: root,
 				elem: []string{"both"},
 			},
@@ -224,7 +225,7 @@ func TestJoinNormalized_both(t *testing.T) {
 		{
 			"join second existing directory (FoldPreferExactNorm)",
 			args{
-				n:    FoldPreferExactNorm,
+				n:    path.FoldPreferExactNorm,
 				base: root,
 				elem: []string{"both"},
 			},
@@ -236,7 +237,7 @@ func TestJoinNormalized_both(t *testing.T) {
 		{
 			"join neither existing directory (NoNorm)",
 			args{
-				n:    NoNorm,
+				n:    path.NoNorm,
 				base: root,
 				elem: []string{"BoTh"},
 			},
@@ -246,7 +247,7 @@ func TestJoinNormalized_both(t *testing.T) {
 		{
 			"join neither existing directory (FoldNorm)",
 			args{
-				n:    FoldNorm,
+				n:    path.FoldNorm,
 				base: root,
 				elem: []string{"BoTh"},
 			},
@@ -256,7 +257,7 @@ func TestJoinNormalized_both(t *testing.T) {
 		{
 			"join neither existing directory (FoldPreferExactNorm)",
 			args{
-				n:    FoldPreferExactNorm,
+				n:    path.FoldPreferExactNorm,
 				base: root,
 				elem: []string{"BoTh"},
 			},
@@ -266,7 +267,7 @@ func TestJoinNormalized_both(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := JoinNormalized(tt.args.n, tt.args.base, tt.args.elem...)
+			got, err := path.JoinNormalized(tt.args.n, tt.args.base, tt.args.elem...)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("JoinNormalized() error = %v, wantErr %v", err, tt.wantErr)
 				return

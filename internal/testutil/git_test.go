@@ -1,16 +1,17 @@
 //spellchecker:words testutil
-package testutil
+package testutil_test
 
-//spellchecker:words testing github
+//spellchecker:words testing github ggman internal testutil
 import (
 	"os"
 	"testing"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/tkw1536/ggman/internal/testutil"
 )
 
 func TestNewTestRepo(t *testing.T) {
-	dir, repo := NewTestRepo(t)
+	dir, repo := testutil.NewTestRepo(t)
 
 	if s, err := os.Stat(dir); err != nil || !s.IsDir() {
 		t.Errorf("NewTestRepo: Directory was not created. ")
@@ -26,9 +27,9 @@ func TestNewTestRepo(t *testing.T) {
 }
 
 func TestCommitTestFiles(t *testing.T) {
-	_, repo := NewTestRepo(t)
+	_, repo := testutil.NewTestRepo(t)
 
-	_, hash := CommitTestFiles(repo, nil)
+	_, hash := testutil.CommitTestFiles(repo, nil)
 
 	// check that the repository has 'hash' checked out.
 	head, err := repo.Head()

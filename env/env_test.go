@@ -1,4 +1,4 @@
-package env
+package env_test
 
 //spellchecker:words path filepath reflect testing github ggman internal testutil pkglib testlib
 import (
@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
@@ -33,21 +34,21 @@ func TestEnv_LoadDefaultRoot(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		vars     Variables
+		vars     env.Variables
 		wantRoot string
 		wantErr  bool
 	}{
-		{"GGROOT exists", Variables{GGROOT: noProjectsDir}, noProjectsDir, false},
-		{"GGROOT not exists", Variables{GGROOT: noExistsDir}, noExistsDir, false},
+		{"GGROOT exists", env.Variables{GGROOT: noProjectsDir}, noProjectsDir, false},
+		{"GGROOT not exists", env.Variables{GGROOT: noExistsDir}, noExistsDir, false},
 
-		{"GGROOT unset, HOME unset", Variables{}, "", true},
+		{"GGROOT unset, HOME unset", env.Variables{}, "", true},
 
-		{"GGROOT unset, HOME/Projects exists", Variables{HOME: noProjectsDir}, missingProjectsDir, false},
-		{"GGROOT unset, HOME/Projects not exists", Variables{HOME: withProjectsDir}, existingProjectsDir, false},
+		{"GGROOT unset, HOME/Projects exists", env.Variables{HOME: noProjectsDir}, missingProjectsDir, false},
+		{"GGROOT unset, HOME/Projects not exists", env.Variables{HOME: withProjectsDir}, existingProjectsDir, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			env := &Env{
+			env := env.Env{
 				Vars: tt.vars,
 			}
 			if err := env.LoadDefaultRoot(); (err != nil) != tt.wantErr {
@@ -62,12 +63,12 @@ func TestEnv_LoadDefaultRoot(t *testing.T) {
 
 func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 	// defaultCanFile is the default CanFile
-	var defaultCanFile CanFile
+	var defaultCanFile env.CanFile
 	defaultCanFile.ReadDefault()
 
 	// sampleCanFile is the sample CanFile]
 	const canLineContent = "sample@^:$.git"
-	var sampleCanFile CanFile = []CanLine{{"", canLineContent}}
+	var sampleCanFile env.CanFile = []env.CanLine{{"", canLineContent}}
 
 	// emptyDir is an empty directory without a canFile
 	emptyDir := testlib.TempDirAbs(t)
@@ -82,21 +83,21 @@ func TestEnv_LoadDefaultCANFILE(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		vars        Variables
+		vars        env.Variables
 		wantErr     bool
-		wantCanfile CanFile
+		wantCanfile env.CanFile
 	}{
-		{"loading from existing path", Variables{CANFILE: GGMANFile}, false, sampleCanFile},
+		{"loading from existing path", env.Variables{CANFILE: GGMANFile}, false, sampleCanFile},
 
-		{"loading from home", Variables{HOME: dDir}, false, sampleCanFile},
-		{"loading from home because of failure", Variables{CANFILE: noGGMANFile, HOME: dDir}, false, sampleCanFile},
+		{"loading from home", env.Variables{HOME: dDir}, false, sampleCanFile},
+		{"loading from home because of failure", env.Variables{CANFILE: noGGMANFile, HOME: dDir}, false, sampleCanFile},
 
-		{"loading non-existing path", Variables{CANFILE: noGGMANFile}, false, defaultCanFile},
-		{"loading non-existing home", Variables{HOME: emptyDir}, false, defaultCanFile},
+		{"loading non-existing path", env.Variables{CANFILE: noGGMANFile}, false, defaultCanFile},
+		{"loading non-existing home", env.Variables{HOME: emptyDir}, false, defaultCanFile},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			env := &Env{
+			env := env.Env{
 				Vars: tt.vars,
 			}
 			if _, err := env.LoadDefaultCANFILE(); (err != nil) != tt.wantErr {
@@ -151,14 +152,14 @@ func TestEnv_Local_Exact(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			env := Env{
+			e := &env.Env{
 				Root: root,
-				Vars: Variables{
+				Vars: env.Variables{
 					GGNORM: tt.GGNORM,
 				},
 			}
 
-			got, gotErr := env.Local(ParseURL(tt.name))
+			got, gotErr := e.Local(env.ParseURL(tt.name))
 
 			if gotErr != nil {
 				t.Errorf("Env.Local() err = %v, want err = nil", gotErr)
@@ -204,7 +205,7 @@ func TestEnv_At(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			env := Env{
+			env := env.Env{
 				Git:  git.NewGitFromPlumbing(nil, ""),
 				Root: root,
 			}
@@ -255,7 +256,7 @@ func TestEnv_AtRoot(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			env := Env{
+			env := env.Env{
 				Git:  git.NewGitFromPlumbing(nil, ""),
 				Root: root,
 			}
@@ -347,11 +348,11 @@ func TestEnv_ScanRepos(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			env := Env{
+			env := env.Env{
 				Root: root,
 				Git:  git.NewGitFromPlumbing(nil, ""),
 
-				Filter: NewPatternFilter(tt.Filter, false),
+				Filter: env.NewPatternFilter(tt.Filter, false),
 			}
 			got, err := env.ScanRepos(root, true)
 			wantErr := false
@@ -420,11 +421,11 @@ func TestEnv_ScanRepos_fuzzy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			env := Env{
+			env := env.Env{
 				Root: root,
 				Git:  git.NewGitFromPlumbing(nil, ""),
 
-				Filter: NewPatternFilter(tt.Filter, true),
+				Filter: env.NewPatternFilter(tt.Filter, true),
 			}
 			got, err := env.ScanRepos(root, true)
 			wantErr := false
@@ -454,8 +455,8 @@ func TestEnv_Normalization(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.GGNORM, func(t *testing.T) {
-			env := Env{
-				Vars: Variables{
+			env := env.Env{
+				Vars: env.Variables{
 					GGNORM: tt.GGNORM,
 				},
 			}

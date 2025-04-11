@@ -1,4 +1,4 @@
-package cmd
+package cmd_test
 
 //spellchecker:words path filepath testing github ggman internal mockenv
 import (
@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/tkw1536/ggman/cmd"
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
@@ -69,7 +70,7 @@ func TestCommandHere(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			code, stdout, stderr := mock.Run(Here, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(cmd.Here, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

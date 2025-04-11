@@ -1,7 +1,7 @@
 //spellchecker:words mockenv
-package mockenv
+package mockenv_test
 
-//spellchecker:words reflect testing github config ggman gggit internal testutil pkglib stream testlib
+//spellchecker:words reflect testing github config ggman gggit internal mockenv testutil pkglib stream testlib
 import (
 	"reflect"
 	"testing"
@@ -9,6 +9,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	gggit "github.com/tkw1536/ggman/git"
+	"github.com/tkw1536/ggman/internal/mockenv"
 	"github.com/tkw1536/ggman/internal/testutil"
 	"github.com/tkw1536/pkglib/stream"
 	"github.com/tkw1536/pkglib/testlib"
@@ -17,7 +18,7 @@ import (
 //spellchecker:words gogit
 
 func TestDevPlumbing_Forward(t *testing.T) {
-	mp := &DevPlumbing{URLMap: make(map[string]string)}
+	mp := &mockenv.DevPlumbing{URLMap: make(map[string]string)}
 	mp.URLMap["forward-a"] = "backward-a"
 	mp.URLMap["forward-b"] = "backward-b"
 
@@ -45,7 +46,7 @@ func TestDevPlumbing_Forward(t *testing.T) {
 }
 
 func TestDevPlumbing_Backward(t *testing.T) {
-	mp := &DevPlumbing{URLMap: make(map[string]string)}
+	mp := &mockenv.DevPlumbing{URLMap: make(map[string]string)}
 	mp.URLMap["forward-a"] = "backward-a"
 	mp.URLMap["forward-b"] = "backward-b"
 
@@ -75,7 +76,7 @@ func TestDevPlumbing_Backward(t *testing.T) {
 func Test_DevPlumbing_GetRemotes(t *testing.T) {
 	// This test has been adapted from Test_goGit_GetRemotes.
 
-	mp := &DevPlumbing{
+	mp := &mockenv.DevPlumbing{
 		Plumbing: gggit.NewPlumbing(),
 		URLMap:   make(map[string]string),
 	}
@@ -169,7 +170,7 @@ func Test_DevPlumbing_GetRemotes(t *testing.T) {
 func Test_DevPlumbing_SetRemoteURLs(t *testing.T) {
 	// This test has been adapted from Test_gogit_SetRemoteURLs.
 
-	mp := &DevPlumbing{
+	mp := &mockenv.DevPlumbing{
 		Plumbing: gggit.NewPlumbing(),
 		URLMap:   make(map[string]string),
 	}
@@ -254,7 +255,7 @@ func Test_DevPlumbing_SetRemoteURLs(t *testing.T) {
 func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
 	// This test has been adapted from Test_gogit_GetCanonicalRemote.
 
-	mp := &DevPlumbing{
+	mp := &mockenv.DevPlumbing{
 		Plumbing: gggit.NewPlumbing(),
 		URLMap:   make(map[string]string),
 	}
@@ -347,7 +348,7 @@ func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
 
 func Test_DevPlumbing_Clone(t *testing.T) {
 	// This test has been adapted from Test_gogit_Clone.
-	mp := &DevPlumbing{
+	mp := &mockenv.DevPlumbing{
 		Plumbing: gggit.NewPlumbing(),
 		URLMap:   make(map[string]string),
 	}

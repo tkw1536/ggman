@@ -1,4 +1,4 @@
-package cmd
+package cmd_test
 
 //spellchecker:words testing github config ggman internal mockenv
 import (
@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
+	"github.com/tkw1536/ggman/cmd"
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
@@ -103,7 +104,7 @@ func TestCommandFindBranch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			code, stdout, stderr := mock.Run(FindBranch, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(cmd.FindBranch, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

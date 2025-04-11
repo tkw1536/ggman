@@ -33,7 +33,7 @@ linters:
     - staticcheck
     - tagalign
     - testableexamples
-#    - testpackage
+    - testpackage
     - thelper
     - tparallel
     - unconvert

@@ -1,16 +1,18 @@
 //spellchecker:words record
-package record
+package record_test
 
-//spellchecker:words sync atomic testing
+//spellchecker:words sync atomic testing github ggman internal record
 import (
 	"fmt"
 	"sync"
 	"sync/atomic"
 	"testing"
+
+	"github.com/tkw1536/ggman/internal/record"
 )
 
 func TestRecord_Record(t *testing.T) {
-	var r Record
+	var r record.Record
 
 	const N = 1000 // number of elements to record
 	const M = 1000 // how many times to record each element
@@ -49,7 +51,7 @@ func TestRecord_Record(t *testing.T) {
 }
 
 func TestRecord_Recorded(t *testing.T) {
-	var r Record
+	var r record.Record
 
 	N := 1000      // number of elements to record
 	NN := N + 1000 // number of elements to not record
@@ -78,7 +80,7 @@ func TestRecord_Recorded(t *testing.T) {
 }
 
 func ExampleRecord() {
-	r := Record{}
+	var r record.Record
 
 	// record a value using the Record() method
 	fmt.Println(r.Record("first"))

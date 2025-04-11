@@ -7,7 +7,7 @@ import (
 	"github.com/tkw1536/goprogram/exit"
 )
 
-//spellchecker:words nolint	wrapcheck
+//spellchecker:words nolint wrapcheck
 
 // Fetch is the 'ggman fetch' command.
 //

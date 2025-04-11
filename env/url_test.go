@@ -1,95 +1,97 @@
-package env
+package env_test
 
-//spellchecker:words reflect testing
+//spellchecker:words reflect testing github ggman
 import (
 	"reflect"
 	"testing"
+
+	"github.com/tkw1536/ggman/env"
 )
 
 var urlTests = []struct {
 	name string
 	str  string
-	url  URL
+	url  env.URL
 }{
 	// ssh://[user@]host.xz[:port]/path/to/repo.git/
 	{
 		name: "ssh",
 		str:  "ssh://host.xz/path/to/repo.git/",
-		url:  URL{Scheme: "ssh", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+		url:  env.URL{Scheme: "ssh", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
 	},
 	{
 		name: "sshUser",
 		str:  "ssh://user@host.xz/path/to/repo.git/",
-		url:  URL{Scheme: "ssh", User: "user", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+		url:  env.URL{Scheme: "ssh", User: "user", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
 	},
 	{
 		name: "sshPort",
 		str:  "ssh://host.xz:1234/path/to/repo.git/",
-		url:  URL{Scheme: "ssh", User: "", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
+		url:  env.URL{Scheme: "ssh", User: "", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
 	},
 	{
 		name: "sshUserPort",
 		str:  "ssh://user@host.xz:1234/path/to/repo.git/",
-		url:  URL{Scheme: "ssh", User: "user", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
+		url:  env.URL{Scheme: "ssh", User: "user", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
 	},
 
 	// git://host.xz[:port]/path/to/repo.git/
 	{
 		name: "git",
 		str:  "git://host.xz/path/to/repo.git/",
-		url:  URL{Scheme: "git", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+		url:  env.URL{Scheme: "git", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
 	},
 
 	{
 		name: "gitPort",
 		str:  "git://host.xz:1234/path/to/repo.git/",
-		url:  URL{Scheme: "git", User: "", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
+		url:  env.URL{Scheme: "git", User: "", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
 	},
 
 	//  [user@]host.xz:path/to/repo.git/
 	{
 		name: "noProto",
 		str:  "host.xz:path/to/repo.git/",
-		url:  URL{Scheme: "", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+		url:  env.URL{Scheme: "", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
 	},
 	{
 		name: "noProtoUser",
 		str:  "user@host.xz:path/to/repo.git/",
-		url:  URL{Scheme: "", User: "user", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+		url:  env.URL{Scheme: "", User: "user", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
 	},
 
 	// local paths
 	{
 		name: "localFile",
 		str:  "file:///path/to/somewhere",
-		url:  URL{Scheme: "file", User: "", Password: "", HostName: "", Port: 0, Path: "path/to/somewhere"},
+		url:  env.URL{Scheme: "file", User: "", Password: "", HostName: "", Port: 0, Path: "path/to/somewhere"},
 	},
 
 	{
 		name: "localPath",
 		str:  "/path/to/somewhere",
-		url:  URL{Scheme: "", User: "", Password: "", HostName: "", Port: 0, Path: "path/to/somewhere"},
+		url:  env.URL{Scheme: "", User: "", Password: "", HostName: "", Port: 0, Path: "path/to/somewhere"},
 	},
 
 	{
 		name: "localRelPath",
 		str:  "../some/relative/path",
-		url:  URL{Scheme: "", User: "", Password: "", HostName: "..", Port: 0, Path: "some/relative/path"},
+		url:  env.URL{Scheme: "", User: "", Password: "", HostName: "..", Port: 0, Path: "some/relative/path"},
 	},
 
 	{
 		name: "localRelPath2",
 		str:  "./some/relative/path",
-		url:  URL{Scheme: "", User: "", Password: "", HostName: ".", Port: 0, Path: "some/relative/path"},
+		url:  env.URL{Scheme: "", User: "", Password: "", HostName: ".", Port: 0, Path: "some/relative/path"},
 	},
 }
 
 func TestParseURL(t *testing.T) {
 	for _, tt := range urlTests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotURL := ParseURL(tt.str)
+			gotURL := env.ParseURL(tt.str)
 			if !reflect.DeepEqual(gotURL, tt.url) {
-				t.Errorf("ParseURL() = %v, want %v", gotURL, tt.url)
+				t.Errorf("env.ParseURL() = %v, want %v", gotURL, tt.url)
 			}
 		})
 	}
@@ -108,91 +110,91 @@ func TestURL_String(t *testing.T) {
 
 func Benchmark_ParseRepoURL(b *testing.B) {
 	for range b.N {
-		ParseURL("ssh://host.xz/path/to/repo.git/")
-		ParseURL("ssh://user@host.xz/path/to/repo.git/")
-		ParseURL("ssh://host.xz:1234/path/to/repo.git/")
-		ParseURL("ssh://user@host.xz:1234/path/to/repo.git/")
-		ParseURL("git://host.xz/path/to/repo.git/")
-		ParseURL("git://host.xz:1234/path/to/repo.git/")
-		ParseURL("host.xz:path/to/repo.git/")
-		ParseURL("user@host.xz:path/to/repo.git/")
+		env.ParseURL("ssh://host.xz/path/to/repo.git/")
+		env.ParseURL("ssh://user@host.xz/path/to/repo.git/")
+		env.ParseURL("ssh://host.xz:1234/path/to/repo.git/")
+		env.ParseURL("ssh://user@host.xz:1234/path/to/repo.git/")
+		env.ParseURL("git://host.xz/path/to/repo.git/")
+		env.ParseURL("git://host.xz:1234/path/to/repo.git/")
+		env.ParseURL("host.xz:path/to/repo.git/")
+		env.ParseURL("user@host.xz:path/to/repo.git/")
 	}
 }
 
 func TestURL_IsLocal(t *testing.T) {
 	tests := []struct {
 		name string
-		url  URL
+		url  env.URL
 		want bool
 	}{
 		{
 			"ssh",
-			URL{"ssh", "", "", "host.xz", 0, "path/to/repo.git/"},
+			env.URL{"ssh", "", "", "host.xz", 0, "path/to/repo.git/"},
 			false,
 		},
 		{
 			"sshUser",
-			URL{"ssh", "user", "", "host.xz", 0, "path/to/repo.git/"},
+			env.URL{"ssh", "user", "", "host.xz", 0, "path/to/repo.git/"},
 			false,
 		},
 		{
 			"sshPort",
-			URL{"ssh", "", "", "host.xz", 1234, "path/to/repo.git/"},
+			env.URL{"ssh", "", "", "host.xz", 1234, "path/to/repo.git/"},
 			false,
 		},
 		{
 			"sshUserPort",
-			URL{"ssh", "user", "", "host.xz", 1234, "path/to/repo.git/"},
+			env.URL{"ssh", "user", "", "host.xz", 1234, "path/to/repo.git/"},
 			false,
 		},
 
 		// git://host.xz[:port]/path/to/repo.git/
 		{
 			"git",
-			URL{"git", "", "", "host.xz", 0, "path/to/repo.git/"},
+			env.URL{"git", "", "", "host.xz", 0, "path/to/repo.git/"},
 			false,
 		},
 
 		{
 			"gitPort",
-			URL{"git", "", "", "host.xz", 1234, "path/to/repo.git/"},
+			env.URL{"git", "", "", "host.xz", 1234, "path/to/repo.git/"},
 			false,
 		},
 
 		//  [user@]host.xz:path/to/repo.git/
 		{
 			"noProto",
-			URL{"", "", "", "host.xz", 0, "path/to/repo.git/"},
+			env.URL{"", "", "", "host.xz", 0, "path/to/repo.git/"},
 			false,
 		},
 		{
 			"noProtoUser",
-			URL{"", "user", "", "host.xz", 0, "path/to/repo.git/"},
+			env.URL{"", "user", "", "host.xz", 0, "path/to/repo.git/"},
 			false,
 		},
 
 		// local paths
 		{
 			"localFile",
-			URL{"file", "", "", "", 0, "path/to/somewhere"},
+			env.URL{"file", "", "", "", 0, "path/to/somewhere"},
 			true,
 		},
 
 		{
 			"localPath",
-			URL{"", "", "", "", 0, "path/to/somewhere"},
+			env.URL{"", "", "", "", 0, "path/to/somewhere"},
 			true,
 		},
 
 		{
 			"localRelPath",
-			URL{"", "", "", "..", 0, "some/relative/path"},
+			env.URL{"", "", "", "..", 0, "some/relative/path"},
 			true,
 		},
 
 		{
 			"localRelPath2",
-			URL{"", "", "", ".", 0, "some/relative/path"},
+			env.URL{"", "", "", ".", 0, "some/relative/path"},
 			true,
 		},
 	}
@@ -245,7 +247,7 @@ func TestURL_Components(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			url := URL{
+			url := env.URL{
 				Scheme:   tt.fields.Scheme,
 				User:     tt.fields.User,
 				Password: tt.fields.Password,
@@ -260,7 +262,7 @@ func TestURL_Components(t *testing.T) {
 	}
 }
 
-var benchComponentURLS = []URL{
+var benchComponentURLS = []env.URL{
 	{"", "git", "", "github.com", 0, "hello/world.git"},
 	{"", "git", "", "github.com", 0, "hello/world"},
 	{"", "git", "", "github.com", 0, "hello/world/"},
@@ -319,7 +321,7 @@ func TestComponentsOf(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.s, func(t *testing.T) {
-			if got := ComponentsOf(tt.s); !reflect.DeepEqual(got, tt.want) {
+			if got := env.ComponentsOf(tt.s); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ComponentsOf() = %#v, want %#v", got, tt.want)
 			}
 		})
@@ -328,15 +330,15 @@ func TestComponentsOf(t *testing.T) {
 
 func BenchmarkComponentsOf(b *testing.B) {
 	for range b.N {
-		ComponentsOf("ssh://host.xz/path/to/repo.git/")
-		ComponentsOf("ssh://user@host.xz/path/to/repo.git/")
-		ComponentsOf("ssh://host.xz:1234/path/to/repo.git/")
-		ComponentsOf("ssh://user@host.xz:1234/path/to/repo.git/")
-		ComponentsOf("git://host.xz/path/to/repo.git/")
-		ComponentsOf("git://host.xz:1234/path/to/repo.git/")
-		ComponentsOf("host.xz:path/to/repo.git/")
-		ComponentsOf("user@host.xz:path/to/repo.git/")
-		ComponentsOf("user@host.xz:path/to/repo")
+		env.ComponentsOf("ssh://host.xz/path/to/repo.git/")
+		env.ComponentsOf("ssh://user@host.xz/path/to/repo.git/")
+		env.ComponentsOf("ssh://host.xz:1234/path/to/repo.git/")
+		env.ComponentsOf("ssh://user@host.xz:1234/path/to/repo.git/")
+		env.ComponentsOf("git://host.xz/path/to/repo.git/")
+		env.ComponentsOf("git://host.xz:1234/path/to/repo.git/")
+		env.ComponentsOf("host.xz:path/to/repo.git/")
+		env.ComponentsOf("user@host.xz:path/to/repo.git/")
+		env.ComponentsOf("user@host.xz:path/to/repo")
 	}
 }
 
@@ -365,7 +367,7 @@ func TestRepoURL_Canonical(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rURL := &URL{
+			rURL := &env.URL{
 				Scheme:   tt.fields.Scheme,
 				User:     tt.fields.User,
 				Password: tt.fields.Password,

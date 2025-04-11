@@ -1,9 +1,11 @@
 //spellchecker:words split
-package split
+package split_test
 
-//spellchecker:words testing
+//spellchecker:words testing github ggman internal split
 import (
 	"testing"
+
+	"github.com/tkw1536/ggman/internal/split"
 )
 
 func TestAfterRune(t *testing.T) {
@@ -23,7 +25,7 @@ func TestAfterRune(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotPrefix, gotSuffix := AfterRune(tt.args.s, tt.args.sep)
+			gotPrefix, gotSuffix := split.AfterRune(tt.args.s, tt.args.sep)
 			if gotPrefix != tt.wantPrefix {
 				t.Errorf("AfterRune() gotPrefix = %v, want %v", gotPrefix, tt.wantPrefix)
 			}
@@ -36,8 +38,8 @@ func TestAfterRune(t *testing.T) {
 
 func Benchmark_AfterRune(b *testing.B) {
 	for range b.N {
-		AfterRune("a;b", ';')
-		AfterRune("a;b;c", ';')
-		AfterRune("aaa", ';')
+		split.AfterRune("a;b", ';')
+		split.AfterRune("a;b;c", ';')
+		split.AfterRune("aaa", ';')
 	}
 }

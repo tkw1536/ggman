@@ -1,11 +1,17 @@
 //spellchecker:words testutil
-package testutil
+package testutil_test
 
-//spellchecker:words testing
+//spellchecker:words path filepath testing github ggman internal testutil
 import (
 	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/tkw1536/ggman/internal/testutil"
 )
+
+// copied over from package proper.
+var defaultVolumeName = filepath.VolumeName(os.TempDir())
 
 func TestToOSPath(t *testing.T) {
 	tests := []struct {
@@ -20,7 +26,7 @@ func TestToOSPath(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ToOSPath(tt.name); got != tt.want {
+			if got := testutil.ToOSPath(tt.name); got != tt.want {
 				t.Errorf("ToOSPath() = %v, want %v", got, tt.want)
 			}
 		})

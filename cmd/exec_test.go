@@ -1,4 +1,4 @@
-package cmd
+package cmd_test
 
 //spellchecker:words exec runtime testing github ggman internal mockenv
 import (
@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/tkw1536/ggman/cmd"
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
@@ -75,7 +76,7 @@ func TestCommandExec_real(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			code, stdout, stderr := mock.Run(Exec, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(cmd.Exec, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
@@ -125,7 +126,7 @@ func TestCommandExec_false(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			code, stdout, stderr := mock.Run(Exec, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(cmd.Exec, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
@@ -185,7 +186,7 @@ func TestCommandExec_simulate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			code, stdout, stderr := mock.Run(Exec, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(cmd.Exec, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

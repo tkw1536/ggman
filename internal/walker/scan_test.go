@@ -1,7 +1,7 @@
 //spellchecker:words walker
-package walker
+package walker_test
 
-//spellchecker:words path filepath reflect testing github ggman internal testutil pkglib testlib
+//spellchecker:words path filepath reflect testing github ggman internal testutil walker pkglib testlib
 import (
 	"os"
 	"path/filepath"
@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/testutil"
+	"github.com/tkw1536/ggman/internal/walker"
 	"github.com/tkw1536/pkglib/testlib"
 )
 
@@ -61,16 +62,16 @@ func TestScan(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		visit   ScanProcess
-		params  Params
+		visit   walker.ScanProcess
+		params  walker.Params
 		want    []string
 		wantErr bool
 	}{
 		{
 			"scan /",
 			nil,
-			Params{
-				Root: NewRealFS(base, false),
+			walker.Params{
+				Root: walker.NewRealFS(base, false),
 			},
 			[]string{
 				".",
@@ -92,11 +93,11 @@ func TestScan(t *testing.T) {
 		},
 		{
 			"scan /, accept only three-triples",
-			func(path string, root FS, depth int) (score float64, cont bool, err error) {
-				return ScanMatch(depth == 3), true, nil
+			func(path string, root walker.FS, depth int) (score float64, cont bool, err error) {
+				return walker.ScanMatch(depth == 3), true, nil
 			},
-			Params{
-				Root: NewRealFS(base, false),
+			walker.Params{
+				Root: walker.NewRealFS(base, false),
 			},
 			[]string{
 
@@ -114,11 +115,11 @@ func TestScan(t *testing.T) {
 		},
 		{
 			"scan /, stop inside '/ab'",
-			func(pth string, root FS, depth int) (score float64, cont bool, err error) {
-				return ScanMatch(true), trimPath(pth) != testutil.ToOSPath("a/ab"), nil
+			func(pth string, root walker.FS, depth int) (score float64, cont bool, err error) {
+				return walker.ScanMatch(true), trimPath(pth) != testutil.ToOSPath("a/ab"), nil
 			},
-			Params{
-				Root: NewRealFS(base, false),
+			walker.Params{
+				Root: walker.NewRealFS(base, false),
 			},
 			[]string{
 				".",
@@ -138,9 +139,9 @@ func TestScan(t *testing.T) {
 		{
 			"scan a/aa, don't follow symlinks",
 			nil,
-			Params{
-				Root:       NewRealFS(filepath.Join(base, "a", "aa"), false),
-				ExtraRoots: []FS{NewRealFS(filepath.Join(base, "a", "ac"), false)},
+			walker.Params{
+				Root:       walker.NewRealFS(filepath.Join(base, "a", "aa"), false),
+				ExtraRoots: []walker.FS{walker.NewRealFS(filepath.Join(base, "a", "ac"), false)},
 			},
 			[]string{
 				"a/aa",
@@ -157,8 +158,8 @@ func TestScan(t *testing.T) {
 		{
 			"scan a/aa and extra roots, don't follow links",
 			nil,
-			Params{
-				Root: NewRealFS(filepath.Join(base, "a", "aa"), false),
+			walker.Params{
+				Root: walker.NewRealFS(filepath.Join(base, "a", "aa"), false),
 			},
 			[]string{
 				"a/aa",
@@ -171,8 +172,8 @@ func TestScan(t *testing.T) {
 		{
 			"scan a/aa, follow symlinks", // a/aa/linked links to the root
 			nil,
-			Params{
-				Root: NewRealFS(filepath.Join(base, "a", "aa"), true),
+			walker.Params{
+				Root: walker.NewRealFS(filepath.Join(base, "a", "aa"), true),
 			},
 			[]string{
 				".",
@@ -195,7 +196,7 @@ func TestScan(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Scan(tt.visit, tt.params)
+			got, err := walker.Scan(tt.visit, tt.params)
 			trimAll(got)
 			testutil.ToOSPaths(tt.want)
 			if (err != nil) != tt.wantErr {
@@ -223,7 +224,7 @@ func TestScanMatch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ScanMatch(tt.args.value); got != tt.want {
+			if got := walker.ScanMatch(tt.args.value); got != tt.want {
 				t.Errorf("ScanMatch() = %v, want %v", got, tt.want)
 			}
 		})

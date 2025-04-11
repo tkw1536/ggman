@@ -10,6 +10,8 @@ import (
 // defaultVolumeName is a consistent volume name to prefix to paths.
 //
 // We use the volume that the temporary directory resides on.
+//
+// NOTE: When updating this, also update path_test.go.
 var defaultVolumeName = filepath.VolumeName(os.TempDir())
 
 // ToOSPath turns a path that is separated via "/"s into a path separated by the current os-separator.

@@ -1,11 +1,13 @@
 //spellchecker:words pattern
-package pattern
+package pattern_test
 
-//spellchecker:words reflect strings testing
+//spellchecker:words reflect strings testing github ggman internal pattern
 import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/tkw1536/ggman/internal/pattern"
 )
 
 //spellchecker:words aaaab
@@ -18,19 +20,19 @@ func TestNewGlobPattern(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Pattern
+		want pattern.Pattern
 	}{
-		{"empty non-fuzzy pattern", args{"", false}, AnyStringPattern{}},
-		{"constant non-fuzzy pattern", args{"hello world", false}, EqualityFoldPattern("hello world")},
-		{"glob non-fuzzy pattern", args{"a*b", false}, GlobPattern("a*b")},
+		{"empty non-fuzzy pattern", args{"", false}, pattern.AnyStringPattern{}},
+		{"constant non-fuzzy pattern", args{"hello world", false}, pattern.EqualityFoldPattern("hello world")},
+		{"glob non-fuzzy pattern", args{"a*b", false}, pattern.GlobPattern("a*b")},
 
-		{"empty fuzzy pattern", args{"", true}, AnyStringPattern{}},
-		{"constant fuzzy pattern", args{"hello world", true}, FuzzyFoldPattern("hello world")},
-		{"glob fuzzy pattern", args{"a*b", true}, GlobPattern("a*b")},
+		{"empty fuzzy pattern", args{"", true}, pattern.AnyStringPattern{}},
+		{"constant fuzzy pattern", args{"hello world", true}, pattern.FuzzyFoldPattern("hello world")},
+		{"glob fuzzy pattern", args{"a*b", true}, pattern.GlobPattern("a*b")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewGlobPattern(tt.args.s, tt.args.fuzzy); !reflect.DeepEqual(got, tt.want) {
+			if got := pattern.NewGlobPattern(tt.args.s, tt.args.fuzzy); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewGlobPattern() = %v, want %v", got, tt.want)
 			}
 		})
@@ -65,7 +67,7 @@ func TestAnyStringPattern_Score(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			a := AnyStringPattern{}
+			a := pattern.AnyStringPattern{}
 			if got := a.Score(tt.args.s); got != tt.want {
 				t.Errorf("AnyStringPattern.Score() = %v, want %v", got, tt.want)
 			}
@@ -79,27 +81,27 @@ func TestEqualityFoldPattern_Score(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		p    EqualityFoldPattern
+		p    pattern.EqualityFoldPattern
 		args args
 		want float64
 	}{
 		{
 			"pattern matches exactly",
-			EqualityFoldPattern("test"),
+			pattern.EqualityFoldPattern("test"),
 			args{"test"},
 			1,
 		},
 
 		{
 			"pattern matches case",
-			EqualityFoldPattern("test"),
+			pattern.EqualityFoldPattern("test"),
 			args{"tEsT"},
 			1,
 		},
 
 		{
 			"pattern does not match",
-			EqualityFoldPattern("test"),
+			pattern.EqualityFoldPattern("test"),
 			args{"not-match"},
 			-1,
 		},
@@ -119,41 +121,41 @@ func TestFuzzyFoldPattern_Score(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		p    FuzzyFoldPattern
+		p    pattern.FuzzyFoldPattern
 		args args
 		want float64
 	}{
 		{
 			"pattern matches exactly",
-			FuzzyFoldPattern("test"),
+			pattern.FuzzyFoldPattern("test"),
 			args{"test"},
 			1,
 		},
 
 		{
 			"pattern matches case",
-			FuzzyFoldPattern("test"),
+			pattern.FuzzyFoldPattern("test"),
 			args{"tEsT"},
 			1,
 		},
 
 		{
 			"pattern matches fuzzy",
-			FuzzyFoldPattern("tst"),
+			pattern.FuzzyFoldPattern("tst"),
 			args{"test"},
 			0.75,
 		},
 
 		{
 			"pattern matches fuzzy case",
-			FuzzyFoldPattern("TsT"),
+			pattern.FuzzyFoldPattern("TsT"),
 			args{"TeSt"},
 			0.75,
 		},
 
 		{
 			"pattern does not match",
-			FuzzyFoldPattern("test"),
+			pattern.FuzzyFoldPattern("test"),
 			args{"not-match"},
 			-1,
 		},
@@ -173,27 +175,27 @@ func TestGlobPattern_Score(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		p    GlobPattern
+		p    pattern.GlobPattern
 		args args
 		want float64
 	}{
 		{
 			"pattern matches exactly",
-			GlobPattern("a*b"),
+			pattern.GlobPattern("a*b"),
 			args{"aaaab"},
 			1,
 		},
 
 		{
 			"pattern matches case",
-			GlobPattern("a*b"),
+			pattern.GlobPattern("a*b"),
 			args{"AaAaB"},
 			1,
 		},
 
 		{
 			"pattern does not match",
-			GlobPattern("a*b"),
+			pattern.GlobPattern("a*b"),
 			args{"1234"},
 			-1,
 		},
@@ -221,29 +223,29 @@ func TestNewSplitGlobPattern(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want SplitPattern
+		want pattern.SplitPattern
 	}{
 		{
 			"simple non-fuzzy splitter",
 			args{"a;a*b;;", simpleSplitter, false},
-			SplitPattern{
+			pattern.SplitPattern{
 				Split: simpleSplitter,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					GlobPattern("a*b"),
-					AnyStringPattern{},
-					AnyStringPattern{},
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.GlobPattern("a*b"),
+					pattern.AnyStringPattern{},
+					pattern.AnyStringPattern{},
 				},
 			},
 		},
 		{
 			"match at start without fuzzy set",
 			args{"^a;a*b", simpleSplitter, false},
-			SplitPattern{
+			pattern.SplitPattern{
 				Split: simpleSplitter,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					GlobPattern("a*b"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.GlobPattern("a*b"),
 				},
 				MatchAtStart: true,
 			},
@@ -251,11 +253,11 @@ func TestNewSplitGlobPattern(t *testing.T) {
 		{
 			"match at start with fuzzy set",
 			args{"^a;a*b", simpleSplitter, true},
-			SplitPattern{
+			pattern.SplitPattern{
 				Split: simpleSplitter,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					GlobPattern("a*b"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.GlobPattern("a*b"),
 				},
 				MatchAtStart: true,
 			},
@@ -263,11 +265,11 @@ func TestNewSplitGlobPattern(t *testing.T) {
 		{
 			"match at end without fuzzy set",
 			args{"a;a*b$", simpleSplitter, false},
-			SplitPattern{
+			pattern.SplitPattern{
 				Split: simpleSplitter,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					GlobPattern("a*b"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.GlobPattern("a*b"),
 				},
 				MatchAtEnd: true,
 			},
@@ -275,11 +277,11 @@ func TestNewSplitGlobPattern(t *testing.T) {
 		{
 			"match at end with fuzzy set",
 			args{"a;a*b$", simpleSplitter, true},
-			SplitPattern{
+			pattern.SplitPattern{
 				Split: simpleSplitter,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					GlobPattern("a*b"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.GlobPattern("a*b"),
 				},
 				MatchAtEnd: true,
 			},
@@ -288,11 +290,11 @@ func TestNewSplitGlobPattern(t *testing.T) {
 		{
 			"match at start and end without fuzzy set",
 			args{"^a;a*b$", simpleSplitter, false},
-			SplitPattern{
+			pattern.SplitPattern{
 				Split: simpleSplitter,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					GlobPattern("a*b"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.GlobPattern("a*b"),
 				},
 				MatchAtStart: true,
 				MatchAtEnd:   true,
@@ -301,11 +303,11 @@ func TestNewSplitGlobPattern(t *testing.T) {
 		{
 			"match at start and end without fuzzy set",
 			args{"^a;a*b$", simpleSplitter, true},
-			SplitPattern{
+			pattern.SplitPattern{
 				Split: simpleSplitter,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					GlobPattern("a*b"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.GlobPattern("a*b"),
 				},
 				MatchAtStart: true,
 				MatchAtEnd:   true,
@@ -315,20 +317,20 @@ func TestNewSplitGlobPattern(t *testing.T) {
 		{
 			"simple fuzzy splitter",
 			args{"a;a*b;;", simpleSplitter, true},
-			SplitPattern{
+			pattern.SplitPattern{
 				Split: simpleSplitter,
-				Patterns: []Pattern{
-					FuzzyFoldPattern("a"),
-					GlobPattern("a*b"),
-					AnyStringPattern{},
-					AnyStringPattern{},
+				Patterns: []pattern.Pattern{
+					pattern.FuzzyFoldPattern("a"),
+					pattern.GlobPattern("a*b"),
+					pattern.AnyStringPattern{},
+					pattern.AnyStringPattern{},
 				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := NewSplitGlobPattern(tt.args.pattern, tt.args.splitter, tt.args.fuzzy)
+			got := pattern.NewSplitGlobPattern(tt.args.pattern, tt.args.splitter, tt.args.fuzzy)
 
 			gotPointer := reflect.ValueOf(got.Split).Pointer()
 			wantPointer := reflect.ValueOf(tt.want.Split).Pointer()
@@ -343,7 +345,7 @@ func TestNewSplitGlobPattern(t *testing.T) {
 func TestSplitPattern_Score(t *testing.T) {
 	type fields struct {
 		Split        func(s string) []string
-		Patterns     []Pattern
+		Patterns     []pattern.Pattern
 		MatchAtStart bool
 		MatchAtEnd   bool
 	}
@@ -399,10 +401,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"exact match",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 			},
 			args{"a;b;c"},
@@ -413,10 +415,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"start match",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 			},
 			args{"a;b;c;c;c"},
@@ -427,10 +429,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"middle match",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 			},
 			args{"a;a;b;c;c"},
@@ -440,10 +442,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"end match",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 			},
 			args{"a;a;a;b;c"},
@@ -454,10 +456,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"no match (too short 1)",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 			},
 			args{"a;b"},
@@ -468,10 +470,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"no match (too short 2)",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 			},
 			args{"b;c"},
@@ -482,10 +484,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"no match (exact)",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 			},
 			args{"b;b;c"},
@@ -495,10 +497,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"no match (long)",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 			},
 			args{"a;a;b;b;c;c"},
@@ -509,10 +511,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"exact match at start",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 				MatchAtStart: true,
 			},
@@ -524,10 +526,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"exact match as prefix",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 				MatchAtStart: true,
 			},
@@ -539,10 +541,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"no match when forced at start",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 				MatchAtStart: true,
 			},
@@ -554,10 +556,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"exact match at end",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 				MatchAtEnd: true,
 			},
@@ -569,10 +571,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"exact match as suffix",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 				MatchAtEnd: true,
 			},
@@ -584,10 +586,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"no match when forced as suffix",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 				MatchAtEnd: true,
 			},
@@ -599,10 +601,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"exact match at with start and end",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 				MatchAtStart: true,
 				MatchAtEnd:   true,
@@ -615,10 +617,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			name: "no match when exact match required, but only suffix",
 			fields: fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 				MatchAtStart: true,
 				MatchAtEnd:   true,
@@ -631,10 +633,10 @@ func TestSplitPattern_Score(t *testing.T) {
 			"no match when exact match required, but only prefix",
 			fields{
 				Split: splitSemicolon,
-				Patterns: []Pattern{
-					EqualityFoldPattern("a"),
-					EqualityFoldPattern("b"),
-					EqualityFoldPattern("c"),
+				Patterns: []pattern.Pattern{
+					pattern.EqualityFoldPattern("a"),
+					pattern.EqualityFoldPattern("b"),
+					pattern.EqualityFoldPattern("c"),
 				},
 				MatchAtStart: true,
 				MatchAtEnd:   true,
@@ -645,7 +647,7 @@ func TestSplitPattern_Score(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sp := SplitPattern{
+			sp := pattern.SplitPattern{
 				Split:        tt.fields.Split,
 				Patterns:     tt.fields.Patterns,
 				MatchAtStart: tt.fields.MatchAtStart,

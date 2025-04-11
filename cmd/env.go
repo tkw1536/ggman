@@ -9,7 +9,7 @@ import (
 	"github.com/tkw1536/pkglib/collection"
 )
 
-//spellchecker:words positionals nolint	wrapcheck
+//spellchecker:words positionals nolint wrapcheck
 
 // Env is the 'ggman env' command.
 //

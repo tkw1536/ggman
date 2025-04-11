@@ -1,10 +1,12 @@
-package url
+package url_test
 
-//spellchecker:words math strconv testing
+//spellchecker:words math strconv testing github ggman internal
 import (
 	"math"
 	"strconv"
 	"testing"
+
+	"github.com/tkw1536/ggman/internal/url"
 )
 
 func Test_ParsePort(t *testing.T) {
@@ -30,7 +32,7 @@ func Test_ParsePort(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotPort, err := ParsePort(tt.args.portString)
+			gotPort, err := url.ParsePort(tt.args.portString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("parsePort() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -41,6 +43,14 @@ func Test_ParsePort(t *testing.T) {
 		})
 	}
 }
+
+// constants copied over from the url package proper
+// so that we don't need to make them public!
+const (
+	maxValid   = math.MaxUint16  // maximal port (as a number)
+	maxPortStr = "65535"         // maximal port (as a string)
+	maxPortLen = len(maxPortStr) // maximal port length
+)
 
 // maximal port number to test
 // this should really be a const, but there's no pow in that.
@@ -53,7 +63,7 @@ func Test_ParsePort_all(t *testing.T) {
 			panic("never reached")
 		}
 
-		gotPort, err := ParsePort(strconv.Itoa(port))
+		gotPort, err := url.ParsePort(strconv.Itoa(port))
 		if gotPort != uint16(port) {
 			t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
 		}
@@ -63,7 +73,7 @@ func Test_ParsePort_all(t *testing.T) {
 	}
 
 	for port := maxValid + 1; port <= maxPortTest; port++ {
-		gotPort, err := ParsePort(strconv.Itoa(port))
+		gotPort, err := url.ParsePort(strconv.Itoa(port))
 		if gotPort != 0 {
 			t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
 		}
@@ -76,14 +86,14 @@ func Test_ParsePort_all(t *testing.T) {
 func Benchmark_ParsePort(b *testing.B) {
 	for range b.N {
 		// ignore all the errors, cause we're benchmarking!
-		_, _ = ParsePort("0")
-		_, _ = ParsePort("80")
-		_, _ = ParsePort("65535")
-		_, _ = ParsePort(" 8080")
-		_, _ = ParsePort("-1")
-		_, _ = ParsePort("65536")
-		_, _ = ParsePort("+123")
-		_, _ = ParsePort("aaaa")
+		_, _ = url.ParsePort("0")
+		_, _ = url.ParsePort("80")
+		_, _ = url.ParsePort("65535")
+		_, _ = url.ParsePort(" 8080")
+		_, _ = url.ParsePort("-1")
+		_, _ = url.ParsePort("65536")
+		_, _ = url.ParsePort("+123")
+		_, _ = url.ParsePort("aaaa")
 	}
 }
 
@@ -119,7 +129,7 @@ func Test_SplitURLScheme(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotScheme, gotRest := SplitURLScheme(tt.args.input)
+			gotScheme, gotRest := url.SplitURLScheme(tt.args.input)
 			if gotScheme != tt.wantScheme {
 				t.Errorf("SplitURLScheme() scheme = %v, want %v", gotScheme, tt.wantScheme)
 			}

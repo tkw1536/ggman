@@ -1,10 +1,11 @@
-package cmd
+package cmd_test
 
 //spellchecker:words strconv testing github ggman internal mockenv testutil
 import (
 	"strconv"
 	"testing"
 
+	"github.com/tkw1536/ggman/cmd"
 	"github.com/tkw1536/ggman/internal/mockenv"
 	"github.com/tkw1536/ggman/internal/testutil"
 )
@@ -53,7 +54,7 @@ func TestCommandFetch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			code, stdout, stderr := mock.Run(Fetch, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(cmd.Fetch, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

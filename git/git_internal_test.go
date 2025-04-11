@@ -1,14 +1,4 @@
 // Package git contains an implementation of git functionality.
-//
-// The implementation consists of the Git interface and the Plumbing interface.
-//
-// The Git interface (and it's default instance Default) provide a usable interface to Git Functionality.
-// The Git interface will automatically choose between using a os.Exec() call to a native "git" wrapper, or using a pure golang git implementation.
-// This should be used directly by callers.
-//
-// The Plumbing interface provides more direct control over which interface is used to interact with repositories.
-// Calls to a Plumbing typically place assumptions on the caller and require some setup.
-// For this reason, implementation of the Plumbing interface are not exported.
 package git
 
 //spellchecker:words path filepath testing github pkglib testlib
