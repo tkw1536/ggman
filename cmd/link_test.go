@@ -9,7 +9,7 @@ import (
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
-//spellchecker:words workdir GGROOT
+//spellchecker:words workdir GGROOT nolint tparallel paralleltest
 
 //nolint:tparallel,paralleltest
 func TestCommandLink(t *testing.T) {

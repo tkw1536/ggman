@@ -8,7 +8,7 @@ import (
 	"github.com/tkw1536/ggman/internal/mockenv"
 )
 
-//spellchecker:words GGROOT
+//spellchecker:words GGROOT nolint tparallel paralleltest
 
 //nolint:tparallel,paralleltest
 func TestCommandClone(t *testing.T) {

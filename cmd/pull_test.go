@@ -10,7 +10,7 @@ import (
 	"github.com/tkw1536/ggman/internal/testutil"
 )
 
-//spellchecker:words workdir nolint tparallel
+//spellchecker:words workdir nolint tparallel paralleltest
 
 //nolint:tparallel,paralleltest
 func TestCommandPull(t *testing.T) {

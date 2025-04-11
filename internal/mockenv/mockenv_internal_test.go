@@ -10,6 +10,8 @@ import (
 	"github.com/tkw1536/ggman/internal/testutil"
 )
 
+//spellchecker:words logprefix ggroot GGROOT
+
 // recordingT records a message passed to Errorf().
 type recordingT struct {
 	message string
