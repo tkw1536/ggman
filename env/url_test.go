@@ -117,7 +117,7 @@ func TestURL_String(t *testing.T) {
 }
 
 func Benchmark_ParseRepoURL(b *testing.B) {
-	for range b.N {
+	for b.Loop() {
 		env.ParseURL("ssh://host.xz/path/to/repo.git/")
 		env.ParseURL("ssh://user@host.xz/path/to/repo.git/")
 		env.ParseURL("ssh://host.xz:1234/path/to/repo.git/")
@@ -300,7 +300,7 @@ var benchComponentURLS = []env.URL{
 }
 
 func BenchmarkURL_Components(b *testing.B) {
-	for range b.N {
+	for b.Loop() {
 		benchComponentURLS[0].Components()
 		benchComponentURLS[1].Components()
 		benchComponentURLS[2].Components()
@@ -349,7 +349,7 @@ func TestComponentsOf(t *testing.T) {
 }
 
 func BenchmarkComponentsOf(b *testing.B) {
-	for range b.N {
+	for b.Loop() {
 		env.ComponentsOf("ssh://host.xz/path/to/repo.git/")
 		env.ComponentsOf("ssh://user@host.xz/path/to/repo.git/")
 		env.ComponentsOf("ssh://host.xz:1234/path/to/repo.git/")

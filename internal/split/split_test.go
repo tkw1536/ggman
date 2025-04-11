@@ -41,7 +41,7 @@ func TestAfterRune(t *testing.T) {
 }
 
 func Benchmark_AfterRune(b *testing.B) {
-	for range b.N {
+	for b.Loop() {
 		split.AfterRune("a;b", ';')
 		split.AfterRune("a;b;c", ';')
 		split.AfterRune("aaa", ';')

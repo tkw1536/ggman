@@ -98,7 +98,7 @@ func Test_ParsePort_all(t *testing.T) {
 }
 
 func Benchmark_ParsePort(b *testing.B) {
-	for range b.N {
+	for b.Loop() {
 		// ignore all the errors, cause we're benchmarking!
 		_, _ = url.ParsePort("0")
 		_, _ = url.ParsePort("80")
