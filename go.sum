@@ -650,8 +650,8 @@ github.com/tkw1536/goprogram v0.8.0 h1:3w+DjrOlqFWt3n4IoylcsdwK9avp4e6wuVcuiezNI
 github.com/tkw1536/goprogram v0.8.0/go.mod h1:9uaqt2iW+cO/o4eXYAkJnkpaxTu6A3chP8SJloRozB4=
 github.com/tkw1536/lipo v0.0.4 h1:jRKDrUmnEJmwoKUkeHwE1LWg2HX7nkZ4V0AipuAVEUA=
 github.com/tkw1536/lipo v0.0.4/go.mod h1:pSAPCLb6t2LuUw8bZzLclQa6LlbBxbIZQiwRXp2yQGk=
-github.com/tkw1536/pkglib v0.0.0-20250403195407-1b2a3c5294f8 h1:5y7Vclx7wLats9c0XslTHQsDvqEIxDDLQS9ouKiPnA4=
-github.com/tkw1536/pkglib v0.0.0-20250403195407-1b2a3c5294f8/go.mod h1:FGzUbZDhmisoRzsm1tKY0634ZCy84Otm5KBCmRc6N2w=
+github.com/tkw1536/pkglib v0.0.0-20250411183545-eed6238479d8 h1:7+rmmtfDYlZLx3sNJ7Q81A3TTeMaVvf/jDlSSBZK584=
+github.com/tkw1536/pkglib v0.0.0-20250411183545-eed6238479d8/go.mod h1:WNw0Nr0hnOB0UCDQz6qcVY67SaiDHL1u83Mfusv6jRQ=
 github.com/tomarrell/wrapcheck/v2 v2.10.0 h1:SzRCryzy4IrAH7bVGG4cK40tNUhmVmMDuJujy4XwYDg=
 github.com/tomarrell/wrapcheck/v2 v2.10.0/go.mod h1:g9vNIyhb5/9TQgumxQyOEqDHsmGYcGsVMOx/xGkqdMo=
 github.com/tommy-muehle/go-mnd/v2 v2.5.1 h1:NowYhSdyE/1zwK9QCLeRb6USWdoif80Ie+v+yU8u1Zw=
