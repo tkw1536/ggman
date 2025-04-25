@@ -39,7 +39,7 @@ func (where) Description() ggman.Description {
 func (w where) Run(context ggman.Context) error {
 	localPath, err := context.Environment.Local(env.ParseURL(w.Positionals.URL))
 	if err != nil {
-		return fmt.Errorf("failed to get local path: %w", err)
+		return fmt.Errorf("%w: %w", errUnableLocalPath, err)
 	}
 	_, err = context.Println(localPath)
 	if err != nil {

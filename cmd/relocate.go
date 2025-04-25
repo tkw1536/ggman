@@ -69,7 +69,7 @@ func (r relocate) Run(context ggman.Context) error {
 		}
 		shouldPath, err := context.Environment.Local(env.ParseURL(remote))
 		if err != nil {
-			return fmt.Errorf("failed to get local path: %w", err)
+			return fmt.Errorf("%w: %w", errUnableLocalPath, err)
 		}
 
 		// if it is the same, don't move it

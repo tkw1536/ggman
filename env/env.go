@@ -205,15 +205,10 @@ func (env *Env) LoadDefaultCANFILE() (cf CanFile, err error) {
 	return cf, nil
 }
 
-var errUnableDir = exit.Error{
-	ExitCode: ExitInvalidRepo,
-	Message:  "unable to read directory %s",
-}
+var errUnableToReadDirectory = errors.New("unable to read directory")
 
 // Local returns the path that a repository named URL should be cloned to.
 // Normalization of paths is controlled by the norm parameter
-//
-// The error returned is either nil or of type Error.
 func (env Env) Local(url URL) (string, error) {
 	root, err := env.absRoot()
 	if err != nil {
@@ -222,7 +217,7 @@ func (env Env) Local(url URL) (string, error) {
 
 	path, err := path.JoinNormalized(env.Normalization(), root, url.Components()...)
 	if err != nil {
-		return "", errUnableDir.WithMessageF(err)
+		return "", fmt.Errorf("%w: %w", errUnableToReadDirectory, err)
 	}
 	return path, nil
 }
