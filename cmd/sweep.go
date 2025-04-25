@@ -2,6 +2,8 @@ package cmd
 
 //spellchecker:words github ggman internal walker goprogram exit
 import (
+	"fmt"
+
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/walker"
@@ -42,12 +44,12 @@ func (sweep) Run(context ggman.Context) error {
 		Root: walker.NewRealFS(context.Environment.Root, false),
 	})
 	if err != nil {
-		return errScanEmpty.WrapError(err) //nolint:wrapcheck
+		return fmt.Errorf("%w: %w", errScanEmpty, err)
 	}
 
 	for _, r := range results {
 		if _, err := context.Println(r); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 	}
 	return nil

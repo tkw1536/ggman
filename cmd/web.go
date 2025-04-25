@@ -206,12 +206,15 @@ func (uw urlweb) Run(context ggman.Context) error {
 	if uw.isWebCommand {
 		err := browser.OpenURL(weburl)
 		if err != nil {
-			return errURLFailedBrowser.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", errURLFailedBrowser, err)
 		}
 		return nil
 	} else {
 		_, err := context.Println(weburl)
-		return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+		if err != nil {
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+		}
+		return nil
 	}
 }
 
@@ -225,7 +228,7 @@ func (uw urlweb) listBases(context ggman.Context) error {
 	for _, name := range bases {
 		base := WebBuiltInBases[name]
 		if _, err := context.Printf("%s: %s\n", name, base.URL); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 	}
 	return nil

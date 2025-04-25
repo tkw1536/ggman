@@ -42,5 +42,8 @@ func (w where) Run(context ggman.Context) error {
 		return fmt.Errorf("failed to get local path: %w", err)
 	}
 	_, err = context.Println(localPath)
-	return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+	if err != nil {
+		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+	}
+	return nil
 }

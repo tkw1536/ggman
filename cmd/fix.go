@@ -2,6 +2,7 @@ package cmd
 
 //spellchecker:words sync github ggman goprogram exit
 import (
+	"fmt"
 	"sync"
 
 	"github.com/tkw1536/ggman"
@@ -59,21 +60,21 @@ func (f fix) Run(context ggman.Context) error {
 			initialMessage.Do(func() {
 				if !simulate {
 					if _, err := context.Printf("Fixing remote of %q", repo); err != nil {
-						innerError = ggman.ErrGenericOutput.WrapError(err)
+						innerError = fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 					}
 				} else {
 					if _, err := context.Printf("Simulate fixing remote of %q", repo); err != nil {
-						innerError = ggman.ErrGenericOutput.WrapError(err)
+						innerError = fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 					}
 				}
 			})
 
 			if innerError != nil {
-				return "", innerError //nolint:wrapcheck
+				return "", innerError
 			}
 
 			if _, err := context.Printf("Updating %s: %s -> %s\n", remoteName, url, canon); err != nil {
-				return "", ggman.ErrGenericOutput.WrapError(err)
+				return "", fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 
 			// either return the canonical url, or (if we're simulating) the old url

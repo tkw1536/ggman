@@ -81,10 +81,10 @@ func (r relocate) Run(context ggman.Context) error {
 
 		// print what is being done
 		if _, err := context.Printf("mkdir -p %s\n", shellescape.Quote(parentPath)); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 		if _, err := context.Printf("mv %s %s\n", shellescape.Quote(gotPath), shellescape.Quote(shouldPath)); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 		if r.Simulate {
 			continue
@@ -92,14 +92,14 @@ func (r relocate) Run(context ggman.Context) error {
 
 		// do it!
 		if err := os.MkdirAll(parentPath, dirs.NewModBits); err != nil {
-			return errUnableMoveCreateParent.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", errUnableMoveCreateParent, err)
 		}
 
 		// if there already is a target repository at the path
 		{
 			got, err := context.Environment.AtRoot(shouldPath)
 			if err != nil {
-				return errUnableToMoveRepo.WrapError(err) //nolint:wrapcheck
+				return fmt.Errorf("%w: %w", errUnableToMoveRepo, err)
 			}
 			if got != "" {
 				return errRepositoryAlreadyExists.WithMessageF(got)
@@ -119,7 +119,7 @@ func (r relocate) Run(context ggman.Context) error {
 			}
 
 			if err != nil {
-				return errUnableToMoveRepo.WrapError(err) //nolint:wrapcheck
+				return fmt.Errorf("%w: %w", errUnableToMoveRepo, err)
 			}
 		}
 	}

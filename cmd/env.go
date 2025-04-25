@@ -2,6 +2,8 @@ package cmd
 
 //spellchecker:words essio shellescape github ggman goprogram exit pkglib collection
 import (
+	"fmt"
+
 	"al.essio.dev/pkg/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
@@ -93,20 +95,20 @@ func (e _env) Run(context ggman.Context) error {
 		switch {
 		case e.List:
 			if _, err := context.Println(v.Key); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		case e.Raw:
 			if _, err := context.Println(v.Get(context.Environment, context.Program.Info)); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		case e.Describe:
 			if _, err := context.Printf("%s: %s\n", v.Key, v.Description); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		default:
 			value := shellescape.Quote(v.Get(context.Environment, context.Program.Info))
 			if _, err := context.Printf("%s=%s\n", v.Key, value); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		}
 	}

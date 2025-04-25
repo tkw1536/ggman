@@ -2,6 +2,7 @@ package cmd
 
 //spellchecker:words path filepath github ggman goprogram exit pkglib
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/tkw1536/ggman"
@@ -76,11 +77,11 @@ func (f findFile) Run(context ggman.Context) error {
 		foundRepo = true
 		if f.PrintFilePath {
 			if _, err := context.Println(candidate); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		} else {
 			if _, err := context.Println(repo); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		}
 	}

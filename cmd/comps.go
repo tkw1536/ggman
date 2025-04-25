@@ -2,6 +2,8 @@ package cmd
 
 //spellchecker:words github ggman
 import (
+	"fmt"
+
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 )
@@ -30,7 +32,7 @@ func (comps) Description() ggman.Description {
 func (c comps) Run(context ggman.Context) error {
 	for _, comp := range c.Positional.URL.Components() {
 		if _, err := context.Println(comp); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 	}
 

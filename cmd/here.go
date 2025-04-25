@@ -41,11 +41,11 @@ func (h here) Run(context ggman.Context) error {
 	}
 
 	if _, err := context.Println(root); err != nil {
-		return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 	}
 	if h.Tree {
 		if _, err := context.Println(worktree); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 	}
 

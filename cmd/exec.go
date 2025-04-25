@@ -133,7 +133,7 @@ func (e exe) runReal(context ggman.Context) (err error) {
 
 		if !e.NoRepo && !statusIO {
 			if _, err := io.EPrintln(repo); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err)
+				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		}
 
@@ -200,15 +200,15 @@ func (e exe) runSimulate(context ggman.Context) (err error) {
 
 	// print header of the bash script
 	if _, err := context.Println("#!/bin/bash"); err != nil {
-		return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 	}
 	if !e.Force {
 		if _, err := context.Println("set -e"); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 	}
 	if _, err := context.Println(""); err != nil {
-		return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 	}
 
 	exec := shellescape.QuoteCommand(append([]string{e.Positionals.Exe}, e.Positionals.Args...))
@@ -217,19 +217,19 @@ func (e exe) runSimulate(context ggman.Context) (err error) {
 	// then print each of the commands to be run!
 	for _, repo := range context.Environment.Repos(true) {
 		if _, err := context.Printf("cd %s\n", shellescape.Quote(repo)); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 		if !e.NoRepo {
 			if _, err := context.Printf("echo %s\n", shellescape.Quote(repo)); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		}
 
 		if _, err := context.Println(exec); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 		if _, err := context.Println(""); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 	}
 

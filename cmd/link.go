@@ -95,17 +95,17 @@ func (l link) Run(context ggman.Context) error {
 	}
 
 	if _, err := context.Printf("Linking %q -> %q\n", to, from); err != nil {
-		return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 	}
 
 	// make the parent folder
 	if e := os.MkdirAll(parentTo, dirs.NewModBits); e != nil {
-		return errLinkUnknown.WrapError(e) //nolint:wrapcheck
+		return fmt.Errorf("%w: %w", errLinkUnknown, e)
 	}
 
 	// and make the symlink
 	if e := os.Symlink(from, to); e != nil {
-		return errLinkUnknown.WrapError(e) //nolint:wrapcheck
+		return fmt.Errorf("%w: %w", errLinkUnknown, e)
 	}
 
 	return nil

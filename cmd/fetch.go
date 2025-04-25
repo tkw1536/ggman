@@ -2,6 +2,8 @@ package cmd
 
 //spellchecker:words github ggman goprogram exit
 import (
+	"fmt"
+
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"
@@ -38,11 +40,11 @@ func (fetch) Run(context ggman.Context) error {
 	// iterate over all the repositories, and run git fetch
 	for _, repo := range context.Environment.Repos(true) {
 		if _, err := context.Printf("Fetching %q\n", repo); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 		if e := context.Environment.Git.Fetch(context.IOStream, repo); e != nil {
 			if _, err := context.EPrintln(e.Error()); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 			hasError = true
 		}

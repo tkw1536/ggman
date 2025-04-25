@@ -3,6 +3,7 @@ package cmd
 //spellchecker:words embed github ggman
 import (
 	_ "embed"
+	"fmt"
 
 	"github.com/tkw1536/ggman"
 )
@@ -28,5 +29,8 @@ var shellrcSh string
 
 func (shellrc) Run(context ggman.Context) error {
 	_, err := context.Printf("%s", shellrcSh)
-	return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+	if err != nil {
+		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+	}
+	return nil
 }

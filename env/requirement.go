@@ -25,5 +25,5 @@ func (req Requirement) AllowsFlag(flag meta.Flag) bool {
 }
 
 func (req Requirement) Validate(args goprogram.Arguments[Flags]) error {
-	return goprogram.ValidateAllowedFlags[Flags](req, args)
+	return goprogram.ValidateAllowedFlags(req, args)
 }

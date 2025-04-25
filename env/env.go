@@ -120,7 +120,7 @@ func (env Env) absRoot() (string, error) {
 	}
 	root, err := filepath.Abs(env.Root)
 	if err != nil {
-		return "", errInvalidRoot.WrapError(err) //nolint:wrapcheck
+		return "", fmt.Errorf("%w: %w", errInvalidRoot, err)
 	}
 	return root, nil
 }

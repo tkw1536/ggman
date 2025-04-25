@@ -2,6 +2,8 @@ package cmd
 
 //spellchecker:words github ggman constants legal
 import (
+	"fmt"
+
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/constants/legal"
 )
@@ -24,7 +26,10 @@ func (license) Description() ggman.Description {
 
 func (license) Run(context ggman.Context) error {
 	_, err := context.Printf(stringLicenseInfo, ggman.License, legal.Notices)
-	return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+	if err != nil {
+		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+	}
+	return nil
 }
 
 const stringLicenseInfo = `

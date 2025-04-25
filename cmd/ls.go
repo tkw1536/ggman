@@ -2,6 +2,8 @@ package cmd
 
 //spellchecker:words github ggman goprogram exit
 import (
+	"fmt"
+
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"
@@ -80,12 +82,12 @@ func (l ls) Run(context ggman.Context) error {
 	for i, repo := range repos {
 		if l.Scores {
 			if _, err := context.Printf("%f %s\n", scores[i], repo); err != nil {
-				return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 			continue
 		}
 		if _, err := context.Println(repo); err != nil {
-			return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 	}
 

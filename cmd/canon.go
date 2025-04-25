@@ -45,5 +45,8 @@ func (c canon) Run(context ggman.Context) error {
 	// print out the canonical version of the file
 	canonical := c.Positional.URL.CanonicalWith(file)
 	_, err := context.Println(canonical)
-	return ggman.ErrGenericOutput.WrapError(err) //nolint:wrapcheck
+	if err != nil {
+		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+	}
+	return nil
 }
