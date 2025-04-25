@@ -208,7 +208,7 @@ func (env *Env) LoadDefaultCANFILE() (cf CanFile, err error) {
 var errUnableToReadDirectory = errors.New("unable to read directory")
 
 // Local returns the path that a repository named URL should be cloned to.
-// Normalization of paths is controlled by the norm parameter
+// Normalization of paths is controlled by the norm parameter.
 func (env Env) Local(url URL) (string, error) {
 	root, err := env.absRoot()
 	if err != nil {
@@ -269,7 +269,7 @@ const atMaxIterCount = 1000
 //
 // Assumes that the root directory is set.
 // If that is not the case, calls panic().
-// If no repository is found, returns an error of type Error.
+// If no repository is found, returns an error possible wrapping type Error.
 func (env Env) At(p string) (repo, worktree string, err error) {
 	// Changes here should be reflected in AtRoot().
 	root, err := env.absRoot()

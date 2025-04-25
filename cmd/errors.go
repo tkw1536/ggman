@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words github ggman goprogram exit
 import (
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/goprogram/exit"

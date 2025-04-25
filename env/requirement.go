@@ -6,6 +6,8 @@ import (
 	"github.com/tkw1536/goprogram/meta"
 )
 
+//spellchecker:words nolint wrapcheck
+
 // Requirement represents a set of requirements on the Environment.
 type Requirement struct {
 	// Does the environment require a root directory?
@@ -25,5 +27,5 @@ func (req Requirement) AllowsFlag(flag meta.Flag) bool {
 }
 
 func (req Requirement) Validate(args goprogram.Arguments[Flags]) error {
-	return goprogram.ValidateAllowedFlags(req, args)
+	return goprogram.ValidateAllowedFlags(req, args) // nolint:wrapcheck
 }

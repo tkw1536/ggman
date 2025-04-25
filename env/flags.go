@@ -34,7 +34,7 @@ type Flags struct {
 
 var errNotADirectory = exit.Error{
 	ExitCode: ExitInvalidRepo,
-	Message:  "%q is not a directory",
+	Message:  "not a directory",
 }
 
 // NewFilter creates a new filter corresponding to the given Flags and Environment.
@@ -174,7 +174,7 @@ func (env Env) ResolvePathFilter(p string) (path string, err error) {
 
 	// must be a directory!
 	if ok, err := fsx.IsDirectory(path, true); err != nil || !ok {
-		return "", errNotADirectory.WithMessageF(p)
+		return "", fmt.Errorf("%q %w", p, errNotADirectory)
 	}
 
 	return
