@@ -1,6 +1,10 @@
 version: "2"
 linters:
   default: standard
+  settings:
+    wrapcheck:
+      extra-ignore-sigs:
+        - exit.NewErrorWithCode(
   enable:
     - bidichk
     - bodyclose
