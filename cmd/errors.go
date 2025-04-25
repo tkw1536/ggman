@@ -8,7 +8,6 @@ import (
 
 // this files contains errors shared by multiple commands.
 
-var errUnableLocalPath = exit.Error{
-	ExitCode: env.ExitInvalidRepo,
-	Message:  "failed to get local path",
-}
+var (
+	errUnableLocalPath = exit.NewErrorWithCode("failed to get local path", env.ExitInvalidRepo)
+)

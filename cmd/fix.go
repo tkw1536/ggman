@@ -37,9 +37,7 @@ func (fix) Description() ggman.Description {
 	}
 }
 
-var errFixCustom = exit.Error{
-	ExitCode: exit.ExitGeneric,
-}
+var errFixCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
 
 func (f fix) Run(context ggman.Context) error {
 	simulate := f.Simulate

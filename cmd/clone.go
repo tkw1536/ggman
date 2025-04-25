@@ -51,47 +51,27 @@ func (clone) Description() ggman.Description {
 	}
 }
 
-var errInvalidDest = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  `invalid destination: "--to" and "--here" may not be used together`,
-}
-
 func (c *clone) AfterParse() error {
 	if (c.Here || c.Local) && c.To != "" {
-		return errInvalidDest
+		return errCloneInvalidDestFlags
 	}
 	return nil
 }
 
-var errCloneInvalidDest = exit.Error{
-	ExitCode: exit.ExitGeneralArguments,
-	Message:  "unable to determine local destination for %q",
-}
-
-var errCloneLocalURI = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "invalid remote URI %q: invalid scheme, not a remote path",
-}
-
-var errCloneAlreadyExists = exit.Error{
-	ExitCode: exit.ExitGeneric,
-	Message:  "unable to clone repository: another git repository already exists in target location",
-}
-
-var errCloneNoArguments = exit.Error{
-	ExitCode: exit.ExitGeneric,
-	Message:  "external `git` not found, can not pass any additional arguments to `git clone`",
-}
-
-var errCloneOther = exit.Error{
-	ExitCode: exit.ExitGeneric,
-}
+var (
+	errCloneInvalidDestFlags = exit.NewErrorWithCode(`invalid destination: "--to" and "--here" may not be used together`, exit.ExitCommandArguments)
+	errCloneInvalidDest      = exit.NewErrorWithCode("unable to determine local destination", exit.ExitGeneralArguments)
+	errCloneLocalURI         = exit.NewErrorWithCode("invalid remote URI: invalid scheme, not a remote path", exit.ExitCommandArguments)
+	errCloneAlreadyExists    = exit.NewErrorWithCode("unable to clone repository: another git repository already exists in target location", exit.ExitGeneric)
+	errCloneNoArguments      = exit.NewErrorWithCode("external `git` not found, can not pass any additional arguments to `git clone`", exit.ExitGeneric)
+	errCloneOther            = exit.NewErrorWithCode("", exit.ExitGeneric)
+)
 
 func (c clone) Run(context ggman.Context) error {
 	// grab the url to clone and make sure it is not local
 	url := env.ParseURL(c.Positional.URL)
 	if url.IsLocal() {
-		return errCloneLocalURI.WithMessageF(c.Positional.URL)
+		return fmt.Errorf("%q: %w", c.Positional.URL, errCloneLocalURI)
 	}
 
 	// find the remote and local paths to clone to / from
@@ -101,7 +81,7 @@ func (c clone) Run(context ggman.Context) error {
 	}
 	local, err := c.dest(context, url)
 	if err != nil {
-		return fmt.Errorf("%w: %w", errCloneInvalidDest.WithMessageF(c.Positional.URL), err)
+		return fmt.Errorf("%w for %q: %w", errCloneInvalidDest, c.Positional.URL, err)
 	}
 
 	// do the actual cloning!
@@ -123,7 +103,7 @@ func (c clone) Run(context ggman.Context) error {
 	case errors.Is(err, git.ErrArgumentsUnsupported):
 		return errCloneNoArguments
 	default:
-		return errCloneOther.WithMessage(err.Error())
+		return fmt.Errorf("%w%w", errCloneOther, err)
 	}
 }
 

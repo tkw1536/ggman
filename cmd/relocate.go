@@ -40,25 +40,13 @@ func (relocate) Description() ggman.Description {
 	}
 }
 
-var errUnableMoveCreateParent = exit.Error{
-	Message:  "unable to create parent directory for destination",
-	ExitCode: exit.ExitGeneric,
-}
+var (
+	errRelocateCreateParent = exit.NewErrorWithCode("unable to create parent directory for destination", exit.ExitGeneric)
+	errRelocateMove         = exit.NewErrorWithCode("unable to move repository", exit.ExitGeneric)
 
-var errUnableToMoveRepo = exit.Error{
-	Message:  "unable to move repository",
-	ExitCode: exit.ExitGeneric,
-}
-
-var errRepositoryAlreadyExists = exit.Error{
-	Message:  "a repository already exists at %q",
-	ExitCode: exit.ExitGeneric,
-}
-
-var errPathAlreadyExists = exit.Error{
-	Message:  "path %q already exists",
-	ExitCode: exit.ExitGeneric,
-}
+	errRelocateRepoExists = exit.NewErrorWithCode("repository already exists", exit.ExitGeneric)
+	errRelocatePathExists = exit.NewErrorWithCode("path already exists", exit.ExitGeneric)
+)
 
 func (r relocate) Run(context ggman.Context) error {
 	for _, gotPath := range context.Environment.Repos(false) {
@@ -92,17 +80,17 @@ func (r relocate) Run(context ggman.Context) error {
 
 		// do it!
 		if err := os.MkdirAll(parentPath, dirs.NewModBits); err != nil {
-			return fmt.Errorf("%w: %w", errUnableMoveCreateParent, err)
+			return fmt.Errorf("%w: %w", errRelocateCreateParent, err)
 		}
 
 		// if there already is a target repository at the path
 		{
 			got, err := context.Environment.AtRoot(shouldPath)
 			if err != nil {
-				return fmt.Errorf("%w: %w", errUnableToMoveRepo, err)
+				return fmt.Errorf("%w: %w", errRelocateMove, err)
 			}
 			if got != "" {
-				return errRepositoryAlreadyExists.WithMessageF(got)
+				return fmt.Errorf("%w at %q", errRelocateRepoExists, got)
 			}
 		}
 
@@ -114,12 +102,12 @@ func (r relocate) Run(context ggman.Context) error {
 			// (fs.ErrPermission is returned by Windows)
 			if errors.Is(err, fs.ErrExist) || errors.Is(err, fs.ErrPermission) {
 				if exists, _ := fsx.Exists(shouldPath); exists {
-					return errPathAlreadyExists.WithMessageF(shouldPath)
+					return fmt.Errorf("%q: %w", shouldPath, errRelocatePathExists)
 				}
 			}
 
 			if err != nil {
-				return fmt.Errorf("%w: %w", errUnableToMoveRepo, err)
+				return fmt.Errorf("%w: %w", errRelocateMove, err)
 			}
 		}
 	}

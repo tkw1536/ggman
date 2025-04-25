@@ -53,14 +53,10 @@ func (f findFile) AfterParse() error {
 	return nil
 }
 
-var errFindFileCustom = exit.Error{
-	ExitCode: exit.ExitGeneric,
-}
-
-var errFindFileNotLocal = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "path argument is not a local path",
-}
+var (
+	errFindFileCustom   = exit.NewErrorWithCode("", exit.ExitGeneric)
+	errFindFileNotLocal = exit.NewErrorWithCode("path argument is not a local path", exit.ExitCommandArguments)
+)
 
 func (f findFile) Run(context ggman.Context) error {
 	foundRepo := false

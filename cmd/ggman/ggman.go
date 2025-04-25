@@ -161,10 +161,7 @@ func init() {
 }
 
 // an error when nor arguments are provided.
-var errNoArgumentsProvided = exit.Error{
-	ExitCode: exit.ExitGeneralArguments,
-	Message:  "need at least one argument. use `ggman license` to view licensing information",
-}
+var errNoArgumentsProvided = exit.NewErrorWithCode("need at least one argument. use `ggman license` to view licensing information", exit.ExitGeneralArguments)
 
 func main() {
 	// recover from calls to panic(), and exit the program appropriately.
@@ -186,18 +183,22 @@ func main() {
 	// just immediately return a custom error message.
 	if len(os.Args) == 1 {
 		_ = exit.Die(streams, errNoArgumentsProvided) // ignore cause Return() exits
-		errNoArgumentsProvided.Return()
+		code, _ := exit.CodeFromError(errNoArgumentsProvided)
+		code.Return()
 		return
 	}
 
 	// execute the main program with the real environment!
-	err := exit.AsError(ggmanExe.Main(streams, env.Parameters{
-		Variables: env.ReadVariables(),
-		Plumbing:  nil,
-		Workdir:   "",
-	}, os.Args[1:]))
+	code, _ := exit.CodeFromError(
+		ggmanExe.Main(streams, env.Parameters{
+			Variables: env.ReadVariables(),
+			Plumbing:  nil,
+			Workdir:   "",
+		}, os.Args[1:]),
+	)
 
-	err.Return()
+	// and return the code
+	code.Return()
 }
 
 const fatalPanicMessage = `Fatal Error: Panic

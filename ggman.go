@@ -39,7 +39,4 @@ type Arguments = goprogram.Arguments[ggmanFlags]
 type Description = goprogram.Description[ggmanFlags, ggmanRequirements]
 
 // ErrGenericOutput indicates that a generic output error occurred.
-var ErrGenericOutput = exit.Error{
-	ExitCode: exit.ExitGeneric,
-	Message:  "Unknown Output Error",
-}
+var ErrGenericOutput = exit.NewErrorWithCode("unknown output error", exit.ExitGeneric)

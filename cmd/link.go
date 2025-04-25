@@ -37,25 +37,12 @@ func (link) Description() ggman.Description {
 	}
 }
 
-var errLinkDoesNotExist = exit.Error{
-	ExitCode: exit.ExitGeneric,
-	Message:  "unable to link repository: can not open source repository",
-}
-
-var errLinkSamePath = exit.Error{
-	ExitCode: exit.ExitGeneric,
-	Message:  "unable to link repository: link source and target are identical",
-}
-
-var errLinkAlreadyExists = exit.Error{
-	ExitCode: exit.ExitGeneric,
-	Message:  "unable to link repository: another directory already exists in target location",
-}
-
-var errLinkUnknown = exit.Error{
-	ExitCode: exit.ExitGeneric,
-	Message:  "unknown linking error",
-}
+var (
+	errLinkDoesNotExist  = exit.NewErrorWithCode("unable to link repository: can not open source repository", exit.ExitGeneric)
+	errLinkSamePath      = exit.NewErrorWithCode("unable to link repository: link source and target are identical", exit.ExitGeneric)
+	errLinkAlreadyExists = exit.NewErrorWithCode("unable to link repository: another directory already exists in target location", exit.ExitGeneric)
+	errLinkUnknown       = exit.NewErrorWithCode("unknown linking error", exit.ExitGeneric)
+)
 
 func (l link) Run(context ggman.Context) error {
 	// make sure that the path is absolute

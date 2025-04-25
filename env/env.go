@@ -105,10 +105,7 @@ func NewEnv(r Requirement, params Parameters) (Env, error) {
 	return env, nil
 }
 
-var errMissingRoot = exit.Error{
-	ExitCode: ExitInvalidEnvironment,
-	Message:  "unable to find GGROOT directory",
-}
+var errMissingRoot = exit.NewErrorWithCode("unable to find GGROOT directory", ExitInvalidEnvironment)
 
 // absRoot returns the absolute path to the root directory.
 // If the root directory is not set, returns an error of type Error.
@@ -232,15 +229,10 @@ const (
 	ExitInvalidRepo exit.ExitCode = 6
 )
 
-var errInvalidRoot = exit.Error{
-	ExitCode: ExitInvalidEnvironment,
-	Message:  "unable to resolve root directory",
-}
-
-var errNotResolved = exit.Error{
-	ExitCode: ExitInvalidRepo,
-	Message:  "unable to resolve repository %q",
-}
+var (
+	errInvalidRoot = exit.NewErrorWithCode("unable to resolve root directory", ExitInvalidEnvironment)
+	errNotResolved = exit.NewErrorWithCode("unable to resolve repository", ExitInvalidRepo)
+)
 
 // Abs returns the absolute path to path, unless it is already absolute.
 // path is resolved relative to the working directory of this environment.
@@ -281,7 +273,7 @@ func (env Env) At(p string) (repo, worktree string, err error) {
 	// so that we can start searching
 	path, err := env.Abs(p)
 	if err != nil {
-		return "", "", errNotResolved.WithMessageF(p)
+		return "", "", fmt.Errorf("%w %q", errNotResolved, p)
 	}
 
 	// start recursively searching, starting at 'path' doing at most count iterations.
@@ -293,14 +285,14 @@ func (env Env) At(p string) (repo, worktree string, err error) {
 		count--
 		repo = filepath.Join(repo, "..")
 		if !strings.HasPrefix(repo, root) || root == "" || root == "/" || count == 0 {
-			return "", "", errNotResolved.WithMessageF(p)
+			return "", "", fmt.Errorf("%w %q", errNotResolved, p)
 		}
 	}
 
 	// we have found the worktree path and the repository.
 	worktree, err = filepath.Rel(repo, path)
 	if err != nil {
-		return "", "", errNotResolved.WithMessageF(root)
+		return "", "", fmt.Errorf("%w %q", errNotResolved, root)
 	}
 
 	return
@@ -318,7 +310,7 @@ func (env Env) AtRoot(p string) (repo string, err error) {
 
 	path, err := env.Abs(p)
 	if err != nil {
-		return "", errNotResolved.WithMessageF(p)
+		return "", fmt.Errorf("%w %q", errNotResolved, p)
 	}
 
 	if !env.Git.IsRepository(path) {

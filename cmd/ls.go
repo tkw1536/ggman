@@ -47,19 +47,11 @@ func (ls) Description() ggman.Description {
 	}
 }
 
-var errLSExitFlag = exit.Error{
-	ExitCode: exit.ExitGeneric,
-}
-
-var errLsOnlyOneOfOneAndLimit = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "only one of `--one` and `--count` may be provided",
-}
-
-var errLsLimitNegative = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "`--count` may not be negative",
-}
+var (
+	errLSExitFlag             = exit.NewErrorWithCode("", exit.ExitGeneric)
+	errLsOnlyOneOfOneAndLimit = exit.NewErrorWithCode("only one of `--one` and `--count` may be provided", exit.ExitCommandArguments)
+	errLsLimitNegative        = exit.NewErrorWithCode("`--count` may not be negative", exit.ExitCommandArguments)
+)
 
 func (ls ls) AfterParse() error {
 	if ls.Limit < 0 {

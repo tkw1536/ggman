@@ -91,49 +91,32 @@ func (uw urlweb) AfterParse() error {
 	isClone := uw.Clone || uw.ReClone
 
 	if uw.isWebCommand && isClone {
-		return errWebFlagUnsupported.WithMessageF(cloneFlag)
+		return fmt.Errorf("%w: %q", errWebFlagUnsupported, cloneFlag)
 	}
 
 	if isClone && uw.Tree {
-		return errURLCloneAndUnsupported.WithMessageF(cloneFlag, "tree")
+		return fmt.Errorf("%w: %q and %q", errURLFlagsUnsupported, cloneFlag, "tree")
 	}
 
 	if isClone && uw.BaseAsPrefix {
-		return errURLCloneAndUnsupported.WithMessageF(cloneFlag, "prefix")
+		return fmt.Errorf("%w: %q and %q", errURLFlagsUnsupported, cloneFlag, "prefix")
 	}
 
 	return nil
 }
 
-var errOutsideRepository = exit.Error{
-	ExitCode: env.ExitInvalidRepo,
-	Message:  "not inside a ggman-controlled repository",
-}
+var (
+	// TODO: move some of these around?
 
-var errWebNoRemote = exit.Error{
-	ExitCode: env.ExitInvalidRepo,
-	Message:  "repository does not have a remote",
-}
+	errURLWebNoRelative        = exit.NewErrorWithCode("unable to use `--relative`: not inside GGROOT", env.ExitInvalidRepo)
+	errURLWebNoRemote          = exit.NewErrorWithCode("repository does not have a remote", env.ExitInvalidRepo)
+	errURLWebOutsideRepository = exit.NewErrorWithCode("not inside a ggman-controlled repository", env.ExitInvalidRepo)
 
-var errNoRelativeRepository = exit.Error{
-	ExitCode: env.ExitInvalidRepo,
-	Message:  "unable to use `--relative`: not inside GGROOT",
-}
+	errWebFlagUnsupported = exit.NewErrorWithCode("flag unsupported by `ggman web`", exit.ExitCommandArguments)
 
-var errWebFlagUnsupported = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "`ggman web` does not support the %s flag",
-}
-
-var errURLCloneAndUnsupported = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "`ggman url` does not support %s and %s arguments at the same time",
-}
-
-var errURLFailedBrowser = exit.Error{
-	ExitCode: exit.ExitGeneric,
-	Message:  "failed to open browser: %s",
-}
+	errURLFlagsUnsupported = exit.NewErrorWithCode("flag combination unsupported by `ggman url`", exit.ExitCommandArguments)
+	errURLFailedBrowser    = exit.NewErrorWithCode("failed to open browser", exit.ExitGeneric)
+)
 
 func (uw urlweb) Run(context ggman.Context) error {
 	if uw.List {
@@ -146,7 +129,7 @@ func (uw urlweb) Run(context ggman.Context) error {
 		return err
 	}
 	if remote == "" {
-		return errWebNoRemote
+		return errURLWebNoRemote
 	}
 
 	var weburl string
@@ -189,7 +172,7 @@ func (uw urlweb) Run(context ggman.Context) error {
 	if root != "" && (uw.Tree || uw.Branch) {
 		ref, err := context.Environment.Git.GetHeadRef(root)
 		if err != nil {
-			return errOutsideRepository
+			return errURLWebOutsideRepository
 		}
 
 		if !uw.Clone && !uw.ReClone {
@@ -257,7 +240,7 @@ func (uw urlweb) getRemoteURLReal(context ggman.Context) (root string, remote st
 	// get the remote
 	remote, err = context.Environment.Git.GetRemote(root, uw.Remote)
 	if err != nil {
-		return "", "", "", errOutsideRepository
+		return "", "", "", errURLWebOutsideRepository
 	}
 
 	return
@@ -272,13 +255,13 @@ func (uw urlweb) getRemoteURLFake(context ggman.Context) (root string, remote st
 
 	// check that the
 	if !path.HasChild(context.Environment.Root, workdir) {
-		return "", "", "", errNoRelativeRepository
+		return "", "", "", errURLWebNoRelative
 	}
 
 	// determine the relative path to the root directory
 	relPath, err := filepath.Rel(context.Environment.Root, workdir)
 	if err != nil {
-		return "", "", "", errNoRelativeRepository
+		return "", "", "", errURLWebNoRelative
 	}
 
 	// turn it into a fake url by prepending a protocol

@@ -39,9 +39,7 @@ func (findBranch) Description() ggman.Description {
 	}
 }
 
-var errFindBranchCustom = exit.Error{
-	ExitCode: exit.ExitGeneric,
-}
+var errFindBranchCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
 
 func (f findBranch) Run(context ggman.Context) error {
 	foundRepo := false

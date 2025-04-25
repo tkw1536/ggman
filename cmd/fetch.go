@@ -30,9 +30,7 @@ func (fetch) Description() ggman.Description {
 	}
 }
 
-var errFetchCustom = exit.Error{
-	ExitCode: exit.ExitGeneric,
-}
+var errFetchCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
 
 func (fetch) Run(context ggman.Context) error {
 	hasError := false

@@ -481,6 +481,7 @@ ggman comes with the following builtin aliases:
 - add anchors to patterns to match exactly at the start or end of a repository url
 - update tool dependencies to latest
 - add a bunch of linting
+- update some error messages in line with new `goprogram`
 - update `goprogram` and `pkglib` dependencies  
 
 ### 1.23.1 (Released [Mar 30 2025](https://github.com/tkw1536/ggman/releases/tag/v1.23.1))

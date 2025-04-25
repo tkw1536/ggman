@@ -80,14 +80,15 @@ func (exe) Description() ggman.Description {
 	}
 }
 
-var ErrExecParallelNegative = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "argument for `--parallel` must be non-negative",
-}
+var (
+	errExecFatal              = exit.NewErrorWithCode("", exit.ExitGeneric)
+	errExecParallelNegative   = exit.NewErrorWithCode("argument for `--parallel` must be non-negative", exit.ExitCommandArguments)
+	errExecNoParallelSimulate = exit.NewErrorWithCode("`--simulate` expects `--parallel` to be 1", exit.ExitCommandArguments)
+)
 
 func (e exe) AfterParse() error {
 	if e.Parallel < 0 {
-		return ErrExecParallelNegative
+		return errExecParallelNegative
 	}
 	return nil
 }
@@ -148,10 +149,6 @@ func (e exe) runReal(context ggman.Context) (err error) {
 	return nil
 }
 
-var ErrExecFatal = exit.Error{
-	ExitCode: exit.ExitGeneric,
-}
-
 func (e exe) runRepo(io stream.IOStream, repo string) error {
 	cmd := exec.Command(e.Positionals.Exe, e.Positionals.Args...) /* #nosec G204 -- by design */
 	cmd.Dir = repo
@@ -178,24 +175,16 @@ func (e exe) runRepo(io stream.IOStream, repo string) error {
 	// but actually return other error properly!
 	var exitError *exec.ExitError
 	if errors.As(err, &exitError) {
-		return exit.Error{
-			ExitCode: exit.ExitCode(exitError.ExitCode()), /* #nosec G115 -- by exit status guaranteed to fit into uint8 */
-			Message:  exitError.Error(),
-		}
+		return exit.NewErrorWithCode(err.Error(), exit.Code(exitError.ExitCode()))
 	}
 
-	return ErrExecFatal.WithMessage(err.Error())
-}
-
-var ErrExecNoParallelSimulate = exit.Error{
-	ExitCode: exit.ExitCommandArguments,
-	Message:  "`--simulate` expects `--parallel` to be 1, but got %d",
+	return fmt.Errorf("%w%w", errExecFatal, err)
 }
 
 // runSimulate runs the --simulate flag.
 func (e exe) runSimulate(context ggman.Context) (err error) {
 	if e.Parallel != 1 {
-		return ErrExecNoParallelSimulate.WithMessageF(e.Parallel)
+		return fmt.Errorf("%w, but got %d", errExecNoParallelSimulate, e.Parallel)
 	}
 
 	// print header of the bash script

@@ -57,15 +57,10 @@ func (_env) Description() ggman.Description {
 	}
 }
 
-var errEnvInvalidVar = exit.Error{
-	Message:  "unknown environment variable %q",
-	ExitCode: exit.ExitCommandArguments,
-}
-
-var errModesIncompatible = exit.Error{
-	Message:  "at most one of `--raw`, `--list` and `--describe` may be given",
-	ExitCode: exit.ExitCommandArguments,
-}
+var (
+	errEnvInvalidVar        = exit.NewErrorWithCode("unknown environment variable", exit.ExitCommandArguments)
+	errEnvModesIncompatible = exit.NewErrorWithCode("at most one of `--raw`, `--list` and `--describe` may be given", exit.ExitCommandArguments)
+)
 
 func (e _env) AfterParse() error {
 	// check that at most one mode was given
@@ -80,7 +75,7 @@ func (e _env) AfterParse() error {
 		count++
 	}
 	if count > 1 {
-		return errModesIncompatible
+		return errEnvModesIncompatible
 	}
 	return nil
 }
@@ -132,7 +127,7 @@ func (e _env) variables() ([]env.UserVariable, error) {
 	})
 
 	if invalid != "" {
-		return nil, errEnvInvalidVar.WithMessageF(invalid)
+		return nil, fmt.Errorf("%w %q", errEnvInvalidVar, invalid)
 	}
 
 	return variables, nil

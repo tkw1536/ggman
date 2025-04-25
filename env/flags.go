@@ -32,10 +32,7 @@ type Flags struct {
 	Pristine  bool `description:"filter list of repositories to only contain those that are clean and synced"  long:"pristine"  short:"p"`
 }
 
-var errNotADirectory = exit.Error{
-	ExitCode: ExitInvalidRepo,
-	Message:  "not a directory",
-}
+var errNotADirectory = exit.NewErrorWithCode("not a directory", ExitInvalidRepo)
 
 // NewFilter creates a new filter corresponding to the given Flags and Environment.
 func NewFilter(flags Flags, env *Env) (filter Filter, err error) {

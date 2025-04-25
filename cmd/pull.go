@@ -30,9 +30,7 @@ func (pull) Description() ggman.Description {
 	}
 }
 
-var errPullCustom = exit.Error{
-	ExitCode: exit.ExitGeneric,
-}
+var errPullCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
 
 func (pull) Run(context ggman.Context) error {
 	hasError := false

@@ -134,7 +134,7 @@ func TestCommandURL(t *testing.T) {
 			[]string{"url", "--clone", "--tree"},
 			4,
 			"",
-			"`ggman url` does not support clone and tree arguments at the same time\n",
+			"Flag combination unsupported by `ggman url`: \"clone\" and \"tree\"\n",
 		},
 
 		{
@@ -143,7 +143,7 @@ func TestCommandURL(t *testing.T) {
 			[]string{"url", "--reclone", "--tree"},
 			4,
 			"",
-			"`ggman url` does not support reclone and tree arguments at the same time\n",
+			"Flag combination unsupported by `ggman url`: \"reclone\" and \"tree\"\n",
 		},
 
 		{

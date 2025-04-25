@@ -103,7 +103,7 @@ func TestCommandClone(t *testing.T) {
 
 			4,
 			"",
-			"Invalid remote URI \"./example\": Invalid scheme, not a remote path\n",
+			"\"./example\": Invalid remote URI: Invalid scheme, not a remote path\n",
 		},
 
 		{
@@ -113,7 +113,7 @@ func TestCommandClone(t *testing.T) {
 
 			4,
 			"",
-			"Invalid remote URI \"/some/example/path\": Invalid scheme, not a remote path\n",
+			"\"/some/example/path\": Invalid remote URI: Invalid scheme, not a remote path\n",
 		},
 
 		{

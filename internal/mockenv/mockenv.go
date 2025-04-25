@@ -173,12 +173,14 @@ func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, ar
 	stream := stream.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader)
 
 	// run the code
-	err := exit.AsError(fakeGGMAN.Main(stream, env.Parameters{
-		Variables: mock.vars,
-		Plumbing:  mock.plumbing,
-		Workdir:   workdir,
-	}, argv))
-	return uint8(err.ExitCode), stdoutBuffer.String(), stderrBuffer.String()
+	exitCode, _ := exit.CodeFromError(
+		fakeGGMAN.Main(stream, env.Parameters{
+			Variables: mock.vars,
+			Plumbing:  mock.plumbing,
+			Workdir:   workdir,
+		}, argv),
+	)
+	return uint8(exitCode), stdoutBuffer.String(), stderrBuffer.String()
 }
 
 // regular expression used for substitution.
