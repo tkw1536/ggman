@@ -106,8 +106,6 @@ func (uw urlweb) AfterParse() error {
 }
 
 var (
-	// TODO: move some of these around?
-
 	errURLWebNoRelative        = exit.NewErrorWithCode("unable to use `--relative`: not inside GGROOT", env.ExitInvalidRepo)
 	errURLWebNoRemote          = exit.NewErrorWithCode("repository does not have a remote", env.ExitInvalidRepo)
 	errURLWebOutsideRepository = exit.NewErrorWithCode("not inside a ggman-controlled repository", env.ExitInvalidRepo)

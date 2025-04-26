@@ -17,17 +17,16 @@ type CanLine struct {
 	Canonical string
 }
 
-// ErrEmpty is an error representing an empty CanLine.
-var ErrEmpty = errors.New("CanLine.Unmarshal: CanLine is empty")
+var errCanLineEmpty = errors.New("CanLine.UnmarshalText: CanLine is empty")
 
 // UnmarshalText unmarshals a text representation of itself.
-// An empty line returns [ErrEmpty].
+// An empty line returns [errCanLineEmpty].
 func (cl *CanLine) UnmarshalText(text []byte) error {
 	s := strings.TrimSpace(string(text))
 
 	// if the line is empty or starts with a comment character return nothing
 	if s == "" || strings.HasPrefix(s, "#") || strings.HasPrefix(s, "//") || strings.HasPrefix(s, ";") {
-		return ErrEmpty
+		return errCanLineEmpty
 	}
 
 	// get the fields of the string
@@ -70,7 +69,7 @@ func (cf *CanFile) ReadFrom(reader io.Reader) (int64, error) {
 		var line CanLine
 
 		err := line.UnmarshalText(text)
-		if errors.Is(err, ErrEmpty) {
+		if errors.Is(err, errCanLineEmpty) {
 			continue
 		}
 		if err != nil {
