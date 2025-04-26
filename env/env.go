@@ -154,9 +154,6 @@ func (env *Env) LoadDefaultRoot() error {
 // If the GGMAN_CANFILE variable is set, it will use it as a filepath to read the CanFile from.
 // If it is not set it will attempt to load the file '.ggman' in the home directory.
 // If neither is set, this function will load an in-memory default CanFile.
-//
-// If loading a CanFile fails, an error of type Error is returned.
-// If loading succeeds, this function returns nil.
 func (env *Env) LoadDefaultCANFILE() (cf CanFile, err error) {
 	if env.CanFile != nil {
 		return nil, nil

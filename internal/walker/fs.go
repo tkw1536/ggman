@@ -67,7 +67,7 @@ type realFS struct {
 func (rfs realFS) Read(path string) ([]fs.DirEntry, error) {
 	entries, err := fs.ReadDir(os.DirFS(path), ".")
 	if err != nil {
-		return nil, fmt.Errorf("failed to read directory: %w", err)
+		return nil, fmt.Errorf("%q: failed to read directory: %w", path, err)
 	}
 	return entries, nil
 }
@@ -82,7 +82,7 @@ func (rfs realFS) ResolvedPath() (string, error) {
 	}
 	path, err := filepath.EvalSymlinks(rfs.DirPath)
 	if err != nil {
-		return "", fmt.Errorf("failed to evaluate symlinks: %w", err)
+		return "", fmt.Errorf("%q: failed to evaluate symlinks: %w", rfs.DirPath, err)
 	}
 	return path, nil
 }
@@ -91,7 +91,7 @@ func (rfs realFS) CanSub(path string, entry fs.DirEntry) (bool, error) {
 	child := filepath.Join(path, entry.Name())
 	isDir, err := fsx.IsDirectory(child, rfs.FollowLinks)
 	if err != nil {
-		return false, fmt.Errorf("failed to check directory: %w", err)
+		return false, fmt.Errorf("%q: failed to check directory: %w", path, err)
 	}
 	return isDir, nil
 }

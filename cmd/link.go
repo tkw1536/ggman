@@ -38,9 +38,10 @@ func (link) Description() ggman.Description {
 }
 
 var (
-	errLinkDoesNotExist  = exit.NewErrorWithCode("unable to link repository: can not open source repository", exit.ExitGeneric)
-	errLinkSamePath      = exit.NewErrorWithCode("unable to link repository: link source and target are identical", exit.ExitGeneric)
-	errLinkAlreadyExists = exit.NewErrorWithCode("unable to link repository: another directory already exists in target location", exit.ExitGeneric)
+	errLinkDoesNotExist  = exit.NewErrorWithCode("can not open source repository", exit.ExitGeneric)
+	errLinkSamePath      = exit.NewErrorWithCode("link source and target are identical", exit.ExitGeneric)
+	errLinkAlreadyExists = exit.NewErrorWithCode("another directory already exists in target location", exit.ExitGeneric)
+	errLinkCheck         = exit.NewErrorWithCode("unable to check directory", exit.ExitGeneric)
 	errLinkUnknown       = exit.NewErrorWithCode("unknown linking error", exit.ExitGeneric)
 )
 
@@ -74,7 +75,7 @@ func (l link) Run(context ggman.Context) error {
 	{
 		exists, err := fsx.Exists(to)
 		if err != nil {
-			return fmt.Errorf("failed to check for existence: %w", err)
+			return fmt.Errorf("%w: %q: %w", errLinkCheck, to, err)
 		}
 		if exists {
 			return errLinkAlreadyExists

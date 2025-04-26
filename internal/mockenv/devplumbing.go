@@ -63,7 +63,7 @@ func (dp DevPlumbing) Backward(url string) string {
 func (dp DevPlumbing) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
 	err := dp.Plumbing.Clone(dp.stream(stream), dp.Forward(remoteURI), clonePath, extraArgs...)
 	if err != nil {
-		return fmt.Errorf("failed to clone: %w", err)
+		return fmt.Errorf("%q: failed to clone: %w", remoteURI, err)
 	}
 	return nil
 }
@@ -72,7 +72,7 @@ func (dp DevPlumbing) Clone(stream stream.IOStream, remoteURI, clonePath string,
 func (dp DevPlumbing) Fetch(stream stream.IOStream, clonePath string, cache any) error {
 	err := dp.Plumbing.Fetch(dp.stream(stream), clonePath, cache)
 	if err != nil {
-		return fmt.Errorf("failed to fetch: %w", err)
+		return fmt.Errorf("%q: failed to fetch: %w", clonePath, err)
 	}
 	return nil
 }
@@ -81,7 +81,7 @@ func (dp DevPlumbing) Fetch(stream stream.IOStream, clonePath string, cache any)
 func (dp DevPlumbing) Pull(stream stream.IOStream, clonePath string, cache any) error {
 	err := dp.Plumbing.Pull(dp.stream(stream), clonePath, cache)
 	if err != nil {
-		return fmt.Errorf("failed to pull: %w", err)
+		return fmt.Errorf("%q: failed to pull: %w", clonePath, err)
 	}
 	return nil
 }
@@ -114,7 +114,7 @@ func (dp DevPlumbing) SetRemoteURLs(clonePath string, repoObject any, name strin
 
 	err := dp.Plumbing.SetRemoteURLs(clonePath, repoObject, name, urls)
 	if err != nil {
-		return fmt.Errorf("failed to st remote URLs: %w", err)
+		return fmt.Errorf("%q: failed to set remote URLs: %w", clonePath, err)
 	}
 	return nil
 }

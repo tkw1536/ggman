@@ -6,6 +6,7 @@ import (
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
+	"github.com/tkw1536/goprogram/exit"
 )
 
 //spellchecker:words CANSPEC CANFILE nolint wrapcheck
@@ -30,13 +31,17 @@ func (canon) Description() ggman.Description {
 	}
 }
 
+var (
+	errCanonUnableCanFile = exit.NewErrorWithCode("unable to load default CANFILE", exit.ExitContext)
+)
+
 func (c canon) Run(context ggman.Context) error {
 	var file env.CanFile
 
 	if c.Positional.CANSPEC == "" {
 		var err error
 		if file, err = context.Environment.LoadDefaultCANFILE(); err != nil {
-			return fmt.Errorf("unable to load default CANFILE: %w", err)
+			return fmt.Errorf("%w: %w", errCanonUnableCanFile, err)
 		}
 	} else {
 		file = []env.CanLine{{Pattern: "", Canonical: c.Positional.CANSPEC}}

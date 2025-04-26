@@ -47,7 +47,7 @@ func TestCommandLink(t *testing.T) {
 
 			1,
 			"",
-			"unable to link repository: another directory already exists in target location\n",
+			"another directory already exists in target location\n",
 		},
 	}
 

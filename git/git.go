@@ -379,7 +379,7 @@ func (impl *defaultGitWrapper) IsDirty(clonePath string) (dirty bool, err error)
 
 	dirty, err = impl.git.IsDirty(clonePath, repoObject)
 	if err != nil {
-		return false, fmt.Errorf("failed to check for dirty: %w", err)
+		return false, fmt.Errorf("%q: failed to check for dirty: %w", clonePath, err)
 	}
 	return dirty, nil
 }
@@ -395,7 +395,7 @@ func (impl *defaultGitWrapper) IsSync(clonePath string) (sync bool, err error) {
 
 	sync, err = impl.git.IsSync(clonePath, repoObject)
 	if err != nil {
-		return false, fmt.Errorf("failed to check for sync: %w", err)
+		return false, fmt.Errorf("%q: failed to check for sync: %w", clonePath, err)
 	}
 	return sync, nil
 }

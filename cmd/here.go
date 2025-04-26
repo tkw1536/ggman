@@ -37,7 +37,7 @@ func (here) Description() ggman.Description {
 func (h here) Run(context ggman.Context) error {
 	root, worktree, err := context.Environment.At(".")
 	if err != nil {
-		return fmt.Errorf("failed to get local path: %w", err)
+		return fmt.Errorf("%w: %w", env.ErrUnableLocalPath, err)
 	}
 
 	if _, err := context.Println(root); err != nil {

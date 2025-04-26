@@ -30,14 +30,14 @@ func (lsr) Description() ggman.Description {
 	}
 }
 
-var errInvalidCanfile = exit.NewErrorWithCode("invalid CANFILE found", env.ExitInvalidEnvironment)
+var errLSRInvalidCanfile = exit.NewErrorWithCode("invalid CANFILE found", env.ExitInvalidEnvironment)
 
 func (l lsr) Run(context ggman.Context) error {
 	var lines env.CanFile
 	if l.Canonical {
 		var err error
 		if lines, err = context.Environment.LoadDefaultCANFILE(); err != nil {
-			return errInvalidCanfile
+			return fmt.Errorf("%w: %w", errLSRInvalidCanfile, err)
 		}
 	}
 

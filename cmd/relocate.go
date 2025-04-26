@@ -80,7 +80,7 @@ func (r relocate) Run(context ggman.Context) error {
 
 		// do it!
 		if err := os.MkdirAll(parentPath, dirs.NewModBits); err != nil {
-			return fmt.Errorf("%w: %w", errRelocateCreateParent, err)
+			return fmt.Errorf("%q: %w: %w", parentPath, errRelocateCreateParent, err)
 		}
 
 		// if there already is a target repository at the path

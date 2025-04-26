@@ -65,6 +65,8 @@ var (
 	errCloneAlreadyExists    = exit.NewErrorWithCode("unable to clone repository: another git repository already exists in target location", exit.ExitGeneric)
 	errCloneNoArguments      = exit.NewErrorWithCode("external `git` not found, can not pass any additional arguments to `git clone`", exit.ExitGeneric)
 	errCloneOther            = exit.NewErrorWithCode("", exit.ExitGeneric)
+
+	errCloneNoComps = errors.New("unable to find components of URI")
 )
 
 func (c clone) Run(context ggman.Context) error {
@@ -81,7 +83,7 @@ func (c clone) Run(context ggman.Context) error {
 	}
 	local, err := c.dest(context, url)
 	if err != nil {
-		return fmt.Errorf("%w for %q: %w", errCloneInvalidDest, c.Positional.URL, err)
+		return fmt.Errorf("%q: %w: %w", c.Positional.URL, errCloneInvalidDest, err)
 	}
 
 	// do the actual cloning!
@@ -107,8 +109,6 @@ func (c clone) Run(context ggman.Context) error {
 	}
 }
 
-var errCloneNoComps = errors.New("unable to find components of URI")
-
 // dest returns the destination path to clone the repository into.
 func (c clone) dest(context ggman.Context, url env.URL) (path string, err error) {
 	switch {
@@ -125,7 +125,7 @@ func (c clone) dest(context ggman.Context, url env.URL) (path string, err error)
 	}
 
 	if err != nil {
-		return "", fmt.Errorf("failed to get destination: %w", err)
+		return "", fmt.Errorf("%q: failed to get destination: %w", url.String(), err)
 	}
 	return path, nil
 }
