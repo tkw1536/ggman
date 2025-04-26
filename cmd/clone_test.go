@@ -74,7 +74,7 @@ func TestCommandClone(t *testing.T) {
 
 			4,
 			"",
-			"Invalid destination: \"--to\" and \"--here\" may not be used together\n",
+			"invalid destination: \"--to\" and \"--here\" may not be used together\n",
 		},
 		{
 			"clone existing repository",
@@ -83,7 +83,7 @@ func TestCommandClone(t *testing.T) {
 
 			1,
 			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\n",
-			"Unable to clone repository: Another git repository already exists in target location\n",
+			"unable to clone repository: another git repository already exists in target location\n",
 		},
 
 		{
@@ -103,7 +103,7 @@ func TestCommandClone(t *testing.T) {
 
 			4,
 			"",
-			"\"./example\": Invalid remote URI: Invalid scheme, not a remote path\n",
+			"\"./example\": invalid remote URI: invalid scheme, not a remote path\n",
 		},
 
 		{
@@ -113,7 +113,7 @@ func TestCommandClone(t *testing.T) {
 
 			4,
 			"",
-			"\"/some/example/path\": Invalid remote URI: Invalid scheme, not a remote path\n",
+			"\"/some/example/path\": invalid remote URI: invalid scheme, not a remote path\n",
 		},
 
 		{

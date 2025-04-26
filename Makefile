@@ -53,7 +53,7 @@ install:
 	CGO_ENABLED=0 $(GOINSTALL) -ldflags="$(GGMANVERSIONFLAGS)" $(GGMAN_CMD_SRC)
 
 test: testdeps
-	$(GOTEST) -tags doccheck ./...
+	$(GOTEST) -count=1 ./...
 testdeps:
 	$(GOMOD) download
 

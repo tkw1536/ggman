@@ -5,12 +5,12 @@ go 1.24.2
 require (
 	al.essio.dev/pkg/shellescape v1.6.0
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964
-	github.com/go-git/go-git/v5 v5.15.0
+	github.com/go-git/go-git/v5 v5.16.0
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
-	github.com/tkw1536/goprogram v0.9.0
-	github.com/tkw1536/pkglib v0.0.0-20250415153013-42f5cb7cb7da
+	github.com/tkw1536/goprogram v0.9.2
+	github.com/tkw1536/pkglib v0.0.0-20250426054217-2ee805d8e0b1
 )
 
 require (

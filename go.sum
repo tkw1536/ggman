@@ -203,8 +203,8 @@ github.com/go-git/go-billy/v5 v5.6.2 h1:6Q86EsPXMa7c3YZ3aLAQsMA0VlWmy43r6FHqa/UN
 github.com/go-git/go-billy/v5 v5.6.2/go.mod h1:rcFC2rAsp/erv7CMz9GczHcuD0D32fWzH+MJAU+jaUU=
 github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20231010084843-55a94097c399 h1:eMje31YglSBqCdIqdhKBW8lokaMrL3uTkpGYlE2OOT4=
 github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20231010084843-55a94097c399/go.mod h1:1OCfN199q1Jm3HZlxleg+Dw/mwps2Wbk9frAWm+4FII=
-github.com/go-git/go-git/v5 v5.15.0 h1:f5Qn0W0F7ry1iN0ZwIU5m/n7/BKB4hiZfc+zlZx7ly0=
-github.com/go-git/go-git/v5 v5.15.0/go.mod h1:4Ge4alE/5gPs30F2H1esi2gPd69R0C39lolkucHBOp8=
+github.com/go-git/go-git/v5 v5.16.0 h1:k3kuOEpkc0DeY7xlL6NaaNg39xdgQbtH5mwCafHO9AQ=
+github.com/go-git/go-git/v5 v5.16.0/go.mod h1:4Ge4alE/5gPs30F2H1esi2gPd69R0C39lolkucHBOp8=
 github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
@@ -646,12 +646,12 @@ github.com/timonwong/loggercheck v0.10.1 h1:uVZYClxQFpw55eh+PIoqM7uAOHMrhVcDoWDe
 github.com/timonwong/loggercheck v0.10.1/go.mod h1:HEAWU8djynujaAVX7QI65Myb8qgfcZ1uKbdpg3ZzKl8=
 github.com/tkw1536/gogenlicense v1.3.0 h1:TvwtdbkKOErJoKc7K8URzUiObjauuX9+Bwm7ul5Re/o=
 github.com/tkw1536/gogenlicense v1.3.0/go.mod h1:E2Pb8zfvNpOPHOf2CYmMr4MbvQFoDjUEtlXZNbTixvY=
-github.com/tkw1536/goprogram v0.9.0 h1:E1ANh5qh0DxMsAbPV7SroXAhTMeG+6SOgCCP1aD3x/4=
-github.com/tkw1536/goprogram v0.9.0/go.mod h1:v0j3Da8lbNq93PfXGMHnHnAG+8L1JBOdTy4txXjE5C4=
+github.com/tkw1536/goprogram v0.9.2 h1:qTglTb7t+CgXnhbtrqGNH9i7yVa3hNz1jlqnCjxf28I=
+github.com/tkw1536/goprogram v0.9.2/go.mod h1:9FlYjfdr6vEoqvHj+tT9/VSfjJEsBNcCPz75LLa5VlY=
 github.com/tkw1536/lipo v0.0.4 h1:jRKDrUmnEJmwoKUkeHwE1LWg2HX7nkZ4V0AipuAVEUA=
 github.com/tkw1536/lipo v0.0.4/go.mod h1:pSAPCLb6t2LuUw8bZzLclQa6LlbBxbIZQiwRXp2yQGk=
-github.com/tkw1536/pkglib v0.0.0-20250415153013-42f5cb7cb7da h1:1BJ944CeWyQhuMEFw8tCr+O5FMRXmYJYsyuXfNFSifc=
-github.com/tkw1536/pkglib v0.0.0-20250415153013-42f5cb7cb7da/go.mod h1:M66z46BT3CB7/MB1XVWLpN59SlkVp4Q0IEOXDG1ey8M=
+github.com/tkw1536/pkglib v0.0.0-20250426054217-2ee805d8e0b1 h1:5FX3romogLxH1sr0S3qZ6W3dInUfs/ijWPcY7SUcD1E=
+github.com/tkw1536/pkglib v0.0.0-20250426054217-2ee805d8e0b1/go.mod h1:M66z46BT3CB7/MB1XVWLpN59SlkVp4Q0IEOXDG1ey8M=
 github.com/tomarrell/wrapcheck/v2 v2.10.0 h1:SzRCryzy4IrAH7bVGG4cK40tNUhmVmMDuJujy4XwYDg=
 github.com/tomarrell/wrapcheck/v2 v2.10.0/go.mod h1:g9vNIyhb5/9TQgumxQyOEqDHsmGYcGsVMOx/xGkqdMo=
 github.com/tommy-muehle/go-mnd/v2 v2.5.1 h1:NowYhSdyE/1zwK9QCLeRb6USWdoif80Ie+v+yU8u1Zw=

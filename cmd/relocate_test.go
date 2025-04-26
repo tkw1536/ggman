@@ -129,7 +129,7 @@ func TestCommandRelocate_existsRepo(t *testing.T) {
 			1,
 			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com right other}` `${GGROOT github.com right directory}`\n",
 
-			"Repository already exists at \"${GGROOT github.com right directory}\"\n",
+			"repository already exists at \"${GGROOT github.com right directory}\"\n",
 		},
 	}
 
@@ -187,7 +187,7 @@ func TestCommandRelocate_existsPath(t *testing.T) {
 			1,
 			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com wrong directory}` `${GGROOT github.com right directory}`\n",
 
-			"\"${GGROOT github.com right directory}\": Path already exists\n",
+			"\"${GGROOT github.com right directory}\": path already exists\n",
 		},
 	}
 

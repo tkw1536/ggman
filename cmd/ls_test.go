@@ -150,7 +150,7 @@ func TestCommandLs(t *testing.T) {
 			4,
 			"",
 
-			"Only one of `--one` and `--count` may be provided\n",
+			"only one of `--one` and `--count` may be provided\n",
 		},
 
 		{
