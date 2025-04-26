@@ -53,6 +53,15 @@ func TestCommandEnv(t *testing.T) {
 			"",
 		},
 		{
+			"show unknown variable",
+			"",
+			[]string{"env", "NOT_EXISTS"},
+
+			4,
+			"",
+			"\"NOT_EXISTS\": unknown environment variable\n",
+		},
+		{
 			"list single variable",
 			"",
 			[]string{"env", "--list", "GGROOT"},

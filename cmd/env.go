@@ -120,14 +120,14 @@ func (e _env) variables() ([]env.UserVariable, error) {
 	var invalid string
 	variables := collection.MapSlice(e.Positionals.Vars, func(name string) env.UserVariable {
 		value, ok := env.GetUserVariable(name)
-		if !ok && invalid != "" { // store an invalid name!
+		if !ok && invalid == "" { // store an invalid name!
 			invalid = name
 		}
 		return value
 	})
 
 	if invalid != "" {
-		return nil, fmt.Errorf("%w %q", errEnvInvalidVar, invalid)
+		return nil, fmt.Errorf("%q: %w", invalid, errEnvInvalidVar)
 	}
 
 	return variables, nil
