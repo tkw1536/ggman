@@ -61,7 +61,7 @@ func (l link) Run(context ggman.Context) error {
 	// find the target path
 	to, err := context.Environment.Local(env.ParseURL(r))
 	if err != nil {
-		return fmt.Errorf("%w: %w", errUnableLocalPath, err)
+		return fmt.Errorf("%w: %w", env.ErrUnableLocalPath, err)
 	}
 	parentTo := filepath.Dir(to)
 

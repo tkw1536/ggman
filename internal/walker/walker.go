@@ -323,7 +323,7 @@ func (w *Walker[S]) walk(sync bool, ctx *context[S]) (ok bool) {
 				return false
 			}
 		default:
-			w.reportError(ErrUnknownAction)
+			w.reportError(errUnknownAction)
 			return false
 		}
 	}
@@ -386,7 +386,7 @@ func (w *Walker[S]) Scores() []float64 {
 	return slices.Clone(w.scores)
 }
 
-var ErrUnknownAction = errors.New("Process.BeforeChild: Unknown action")
+var errUnknownAction = errors.New("Process.BeforeChild: Unknown action")
 
 // walkResult represents an internal result of the walk function.
 type walkResult struct {

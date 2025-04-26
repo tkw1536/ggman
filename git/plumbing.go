@@ -643,7 +643,7 @@ func (gg gogit) IsSync(clonePath string, cache any) (sync bool, err error) {
 	// check that all the upstream branches are synced!
 	for _, b := range branches {
 		src, dst, err := getTrackingRefs(r, b)
-		if errors.Is(err, ErrNoUpstream) {
+		if errors.Is(err, errNoUpstream) {
 			continue // there is no upstream, that is ok!
 		}
 		if err != nil {
@@ -664,20 +664,20 @@ func (gg gogit) IsSync(clonePath string, cache any) (sync bool, err error) {
 	return true, nil
 }
 
-var ErrNoUpstream = errors.New("no corresponding upstream to track")
+var errNoUpstream = errors.New("no corresponding upstream to track")
 
 // getTrackingRefs returns the src and dst upstream tracking refs for the provided branch.
 // When the branch, or the upstream tracking refs do not exist, returns ErrNoUpstream.
 func getTrackingRefs(repo *git.Repository, branch string) (src, dst plumbing.ReferenceName, err error) {
 	br, err := repo.Branch(branch)
 	if errors.Is(err, git.ErrBranchNotFound) {
-		return "", "", ErrNoUpstream
+		return "", "", errNoUpstream
 	}
 	if err != nil {
 		return "", "", fmt.Errorf("unable to resolve branch %q: %w", branch, err)
 	}
 	if br.Remote == "" {
-		return "", "", ErrNoUpstream
+		return "", "", errNoUpstream
 	}
 	remote, err := repo.Remote(br.Remote)
 	if err != nil {
@@ -688,7 +688,7 @@ func getTrackingRefs(repo *git.Repository, branch string) (src, dst plumbing.Ref
 			return br.Merge, spec.Dst(br.Merge), nil
 		}
 	}
-	return "", "", ErrNoUpstream
+	return "", "", errNoUpstream
 }
 
 //spellchecker:words nosec

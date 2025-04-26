@@ -57,7 +57,7 @@ func (r relocate) Run(context ggman.Context) error {
 		}
 		shouldPath, err := context.Environment.Local(env.ParseURL(remote))
 		if err != nil {
-			return fmt.Errorf("%w: %w", errUnableLocalPath, err)
+			return fmt.Errorf("%w: %w", env.ErrUnableLocalPath, err)
 		}
 
 		// if it is the same, don't move it

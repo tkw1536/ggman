@@ -202,7 +202,12 @@ func (env *Env) LoadDefaultCANFILE() (cf CanFile, err error) {
 	return cf, nil
 }
 
-var errUnableToReadDirectory = errors.New("unable to read directory")
+var (
+	errUnableToReadDirectory = errors.New("unable to read directory")
+
+	// ErrUnableLocalPath should be used by callers to indicate that it was unable to get a local path.
+	ErrUnableLocalPath = exit.NewErrorWithCode("failed to get local path", ExitInvalidRepo)
+)
 
 // Local returns the path that a repository named URL should be cloned to.
 // Normalization of paths is controlled by the norm parameter.
