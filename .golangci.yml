@@ -1,10 +1,19 @@
 version: "2"
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
 linters:
   default: standard
   settings:
+    nolintlint:
+      allow-unused: false
+      require-explanation: true
+      require-specific: true
+      allow-no-explanation: ["paralleltest", "tparallel"]
     wrapcheck:
-      extra-ignore-sigs:
-        - exit.NewErrorWithCode(
+      ignore-package-globs:
+        - github.com/tkw1536/pkglib/errorsx
+        - github.com/tkw1536/goprogram/exit
   enable:
     - bidichk
     - bodyclose
