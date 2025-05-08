@@ -1,7 +1,7 @@
 //spellchecker:words main
 package main
 
-//spellchecker:words testing github ggman internal mockenv pkglib docfmt
+//spellchecker:words testing github ggman internal mockenv
 import (
 	"testing"
 
