@@ -19,20 +19,14 @@ import (
 // The env struct-tag indicates which environment variable the value corresponds to.
 type Variables struct {
 	// HOME is the path to the users' home directory
-	// This is typically stored in the 'HOME' variable on unix-like systems
+	// This is typically stored in the 'HOME' variable on unix-like systems.
 	HOME string
 
-	// PATH is the value of the 'PATH' environment variable
-	PATH string `env:"PATH"`
-
-	// GGROOT is the value of the 'GGROOT' environment variable
-	GGROOT string `env:"GGROOT"`
-
-	// CANFILE is the value of the 'GGMAN_CANFILE' environment variable
+	// other environment variables
+	PATH    string `env:"PATH"`
+	GGROOT  string `env:"GGROOT"`
 	CANFILE string `env:"GGMAN_CANFILE"`
-
-	// GGNORM is the value of the 'GGNORM' environment variable
-	GGNORM string `env:"GGNORM"`
+	GGNORM  string `env:"GGNORM"`
 }
 
 // variableEnvNames holds a mapping from reflect-field-indexes in Variables to os.GetEnv() names.
@@ -44,8 +38,6 @@ func init() {
 	variablesEnvNames = make(map[int]string, tVariables.NumField())
 
 	for field, index := range reflectx.IterFields(tVariables) {
-		// check if we have the `env` tag
-		// and store it in variablesEnvNames
 		env, ok := field.Tag.Lookup("env")
 		if !ok {
 			continue
@@ -59,8 +51,7 @@ func ReadVariables() (v Variables) {
 	// assign the os.Getenv() values
 	rV := reflect.ValueOf(&v).Elem()
 	for i, env := range variablesEnvNames {
-		value := os.Getenv(env)
-		rV.Field(i).SetString(value)
+		rV.Field(i).SetString(os.Getenv(env))
 	}
 
 	// set the HOME variable

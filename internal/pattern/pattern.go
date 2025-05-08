@@ -64,7 +64,7 @@ type FuzzyFoldPattern string
 //
 // Finally the score is normalized to the range [0, 1] using the length of s.
 //
-// See also "github.com/lithammer/fuzzysearch/fuzzy".RankMatchFold.
+// See also [fuzzy.RankMatchFold].
 func (p FuzzyFoldPattern) Score(s string) float64 {
 	score := float64(fuzzy.RankMatchFold(string(p), s))
 	if score == -1 {
@@ -77,9 +77,9 @@ func (p FuzzyFoldPattern) Score(s string) float64 {
 type EqualityFoldPattern string
 
 // Score scores a string against this pattern.
-// A string matches an EqualityFoldPattern if they are equal under Unicode case-folding.
+// A string matches if they are equal under Unicode case-folding.
 //
-// See strings.EqualFold for a more detailed description.
+// See [strings.EqualFold] for a more detailed description.
 // Returns 1 when the string matches, and -1 when not.
 func (p EqualityFoldPattern) Score(s string) float64 {
 	if strings.EqualFold(string(p), s) {
@@ -146,7 +146,7 @@ func NewSplitGlobPattern(pattern string, splitter func(string) []string, fuzzy b
 // Finally, SplitPattern prioritizes matches at the edge of the input string.
 // This means that a score at the start or the end of the string will always score higher than one in the middle.
 type SplitPattern struct {
-	// Split splits the input string
+	// Split splits the input string into components
 	Split func(s string) []string
 
 	// Patterns are the patterns to score components with
