@@ -116,7 +116,7 @@ func TestURL_String(t *testing.T) {
 	}
 }
 
-func Benchmark_ParseRepoURL(b *testing.B) {
+func Benchmark_ParseURL(b *testing.B) {
 	for b.Loop() {
 		env.ParseURL("ssh://host.xz/path/to/repo.git/")
 		env.ParseURL("ssh://user@host.xz/path/to/repo.git/")
