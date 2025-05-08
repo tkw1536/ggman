@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/tkw1536/ggman/internal/split"
-	"github.com/tkw1536/ggman/internal/url"
+	internalURL "github.com/tkw1536/ggman/internal/url"
 	"github.com/tkw1536/pkglib/collection"
 	"github.com/tkw1536/pkglib/text"
 
@@ -83,7 +83,7 @@ func (u *URL) UnmarshalFlag(value string) error {
 
 var windowsReplacer = strings.NewReplacer("\\", "/")
 
-// ParseURL parses a string into a repo URL.
+// ParseURL parses a string into a URL.
 //
 // We support two types of urls:
 //
@@ -100,37 +100,37 @@ var windowsReplacer = strings.NewReplacer("\\", "/")
 // This can lead to unexpected parses of URLs when e.g. a port is specified incorrectly.
 //
 // For windows compatibility, '\\' is replaced by '/' in the input string.
-func ParseURL(s string) (repo URL) {
-	// In this function we use repo.Path as scratch space.
+func ParseURL(s string) (url URL) {
+	// In this function we use url.Path as scratch space.
 	// we keep splitting off parts as we parse them
-	repo.Path = windowsReplacer.Replace(s)                 // normalize for windows!
-	repo.Scheme, repo.Path = url.SplitURLScheme(repo.Path) // split off the scheme
+	url.Path = windowsReplacer.Replace(s)                       // normalize for windows!
+	url.Scheme, url.Path = internalURL.SplitURLScheme(url.Path) // split off the scheme
 
 	// split off authentication, if any.
-	if at := strings.IndexRune(repo.Path, '@'); at >= 0 {
-		repo.User, repo.Path = repo.Path[:at], repo.Path[at+1:]
-		repo.User, repo.Password = split.AfterRune(repo.User, ':')
+	if at := strings.IndexRune(url.Path, '@'); at >= 0 {
+		url.User, url.Path = url.Path[:at], url.Path[at+1:]
+		url.User, url.Password = split.AfterRune(url.User, ':')
 	}
 
-	colon := strings.IndexRune(repo.Path, ':')
+	colon := strings.IndexRune(url.Path, ':')
 	if colon < 0 {
-		repo.HostName, repo.Path = split.AfterRune(repo.Path, '/')
+		url.HostName, url.Path = split.AfterRune(url.Path, '/')
 		return
 	}
 
 	// we have the form "hostname:port/path" or "hostname:path".
 	// the former is only valid if we have a scheme.
-	repo.HostName, repo.Path = repo.Path[:colon], repo.Path[colon+1:]
-	if repo.Scheme == "" {
+	url.HostName, url.Path = url.Path[:colon], url.Path[colon+1:]
+	if url.Scheme == "" {
 		return
 	}
 
 	// split off a valid port from the path.
-	if slash := strings.IndexRune(repo.Path, '/'); slash >= 0 {
+	if slash := strings.IndexRune(url.Path, '/'); slash >= 0 {
 		var err error
-		repo.Port, err = url.ParsePort(repo.Path[:slash])
+		url.Port, err = internalURL.ParsePort(url.Path[:slash])
 		if err == nil {
-			repo.Path = repo.Path[slash+1:]
+			url.Path = url.Path[slash+1:]
 		}
 	}
 
