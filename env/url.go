@@ -7,7 +7,6 @@ import (
 
 	"github.com/tkw1536/ggman/internal/split"
 	internalURL "github.com/tkw1536/ggman/internal/url"
-	"github.com/tkw1536/pkglib/collection"
 	"github.com/tkw1536/pkglib/text"
 
 	"github.com/jessevdk/go-flags"
@@ -149,30 +148,28 @@ func (url URL) IsLocal() bool {
 // Empty components are ignored.
 // Furthermore a username 'git' as well as a trailing suffix of '.git' are ignored as well.
 func (url URL) Components() []string {
-	// First split the path into components split by '/'
-	// Adding the two '//' makes sure that there is enough space in the slice.
-	components := collection.KeepFunc(strings.Split(url.Path, "/"), func(s string) bool { return s != "" })
+	hasUser := url.User != "" && url.User != "git"
 
-	// remove the last component that has a '.git' in it
+	count := internalURL.CountNonEmptySplit(url.Path, '/') + 1
+	if hasUser {
+		count += 1
+	}
+
+	components := make([]string, 1, count)
+	components[0] = url.HostName
+	if hasUser {
+		components = append(components, url.User)
+	}
+
+	components = internalURL.SplitNonEmpty(url.Path, '/', components)
+
+	// remove trailing '.git'
 	if last := len(components) - 1; last >= 0 {
 		components[last] = strings.TrimSuffix(components[last], ".git")
 
-		// if we had a '/' before the .git, remove it
 		if components[last] == "" {
 			components = components[:last]
 		}
-	}
-
-	// Prepend the hostname and user to the components.
-	if url.User == "" || url.User == "git" {
-		components = append(components, "") // add space to the hostname
-		copy(components[1:], components)
-		components[0] = url.HostName
-	} else {
-		components = append(components, "", "") // add two spaces to the front of the array
-		copy(components[2:], components)
-		components[0] = url.HostName
-		components[1] = url.User
 	}
 
 	return components
