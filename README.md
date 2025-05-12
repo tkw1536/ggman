@@ -474,12 +474,15 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.24.0 (Upcoming)
+### 1.25.0 (Upcoming)
+
+### 1.24.0 (Released [May 12 2025](https://github.com/tkw1536/ggman/releases/tag/v1.24.0))
 
 - add optional `--remote` url to `ggman url` and `ggman web`
 - add special CANSPEC `$$` to return URL unchanged
 - add anchors to patterns to match exactly at the start or end of a repository url
 - update tool dependencies to latest
+- internal improvements
 - add a bunch of linting
 - update some error messages in line with new `goprogram`
 - update `goprogram` and `pkglib` dependencies  
