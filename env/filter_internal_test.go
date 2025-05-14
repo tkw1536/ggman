@@ -100,7 +100,7 @@ func TestPathFilter_Score(t *testing.T) {
 				Env{Root: root},
 				root,
 			},
-			-1,
+			FilterDoesNotMatch,
 		},
 		{
 			"non-listed path doesn't match",
@@ -111,7 +111,7 @@ func TestPathFilter_Score(t *testing.T) {
 				Env{Root: root},
 				"/outside/",
 			},
-			-1,
+			FilterDoesNotMatch,
 		},
 		{
 			"listed path matches (1)",
@@ -340,15 +340,15 @@ func TestPatternFilter_Score(t *testing.T) {
 		{"oneComponentStart outside root", "a", args{otherabc}, 0.5},
 		{"oneComponentMiddle", "b", args{abc}, 0.5},
 		{"oneComponentEnd", "c", args{abc}, 1},
-		{"oneComponentNot", "d", args{abc}, -1},
+		{"oneComponentNot", "d", args{abc}, FilterDoesNotMatch},
 
 		// matching constant sub-paths
 		{"twoComponentsConst", "b/c", args{abcdef}, 0.25},
-		{"noTwoComponentsConst", "f/g", args{abcdef}, -1},
+		{"noTwoComponentsConst", "f/g", args{abcdef}, FilterDoesNotMatch},
 
 		// variable sub-paths
 		{"variableSubPathPositive", "b/*/d", args{abcdef}, 0.25},
-		{"variableSubPathNegative", "b/*/c", args{abcdef}, -1},
+		{"variableSubPathNegative", "b/*/c", args{abcdef}, FilterDoesNotMatch},
 	}
 	for _, tt := range tests {
 		var pat PatternFilter
@@ -436,7 +436,7 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 				"/root/",
 				"/root/whatever/",
 			},
-			-1,
+			FilterDoesNotMatch,
 		},
 
 		{
@@ -481,7 +481,7 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 				"/root/",
 				"/root/matchc",
 			},
-			-1,
+			FilterDoesNotMatch,
 		},
 	}
 	for _, tt := range tests {

@@ -23,9 +23,12 @@ type Filter interface {
 	// Score scores the repository at clonePath against this filter.
 	//
 	// When it does match, returns a float64 between 0 and 1 (inclusive on both ends),
-	// If the filter does not match, returns -1
+	// If the filter does not match, returns a negative number such as [FilterDoesNotMatch].
 	Score(env Env, clonePath string) float64
 }
+
+// FilterDoesNotMatch should is used by a [Filter] to indicate that it does not match.
+const FilterDoesNotMatch = float64(-1)
 
 // NoFilter is a special filter that matches every directory with the highest possible score.
 var NoFilter Filter = emptyFilter{}
@@ -71,7 +74,7 @@ func (pf PathFilter) Score(env Env, clonePath string) float64 {
 			return 1
 		}
 	}
-	return -1
+	return FilterDoesNotMatch
 }
 
 // Candidates returns a list of folders that should be scanned regardless of their location.
@@ -111,7 +114,7 @@ func (pat PatternFilter) Score(env Env, clonePath string) float64 {
 	// find the remote url to use
 	remote, err := env.Git.GetRemote(clonePath, "")
 	if err != nil {
-		return -1
+		return FilterDoesNotMatch
 	}
 
 	// if there is no remote url (because the repo has been cleanly "init"ed)
@@ -119,15 +122,15 @@ func (pat PatternFilter) Score(env Env, clonePath string) float64 {
 	if remote == "" {
 		root, err := env.absRoot()
 		if err != nil { // root not resolved
-			return -1
+			return FilterDoesNotMatch
 		}
 		actualClonePath, err := filepath.Abs(clonePath)
 		if err != nil { // clone path not resolved
-			return -1
+			return FilterDoesNotMatch
 		}
 		remote, err = filepath.Rel(root, actualClonePath)
 		if err != nil { // relative path not resolved
-			return -1
+			return FilterDoesNotMatch
 		}
 	}
 
@@ -148,7 +151,7 @@ type DisjunctionFilter struct {
 // Matches checks if this filter matches any of the filters that were joined.
 // It returns the highest possible score.
 func (or DisjunctionFilter) Score(env Env, clonePath string) float64 {
-	score := float64(-1)
+	score := FilterDoesNotMatch
 	for _, f := range or.Clauses {
 		if fScore := f.Score(env, clonePath); fScore > score {
 			score = fScore
@@ -171,9 +174,11 @@ func (or DisjunctionFilter) Candidates() []string {
 
 // TODO: Do we need tests for this?
 
-// predicateFilter implements Filter that applies predicate to each repository of filter.
+// predicateFilter implements [Filter].
+// It applies Predicate to each matching repository, and only
+// includes them as dictated by [IncludeTrue] and [IncludeFalse].
 type predicateFilter struct {
-	Filter
+	Filter Filter
 
 	// Predicate is the predicate to apply.
 	Predicate func(env Env, clonePath string) bool
@@ -188,16 +193,15 @@ func (pf predicateFilter) Candidates() []string {
 }
 
 func (pf predicateFilter) Score(env Env, clonePath string) float64 {
-	// neither is included
-	// don't even need to run the underlying filter
+	// include nothing
 	if !pf.IncludeTrue && !pf.IncludeFalse {
-		return -1
+		return FilterDoesNotMatch
 	}
 
-	// Need to check if we score at all
+	// does the underlying filter match?
 	score := pf.Filter.Score(env, clonePath)
 	if score < 0 {
-		return -1
+		return FilterDoesNotMatch
 	}
 
 	// both are included, so we don't need to do any more checking
@@ -205,16 +209,16 @@ func (pf predicateFilter) Score(env Env, clonePath string) float64 {
 		return score
 	}
 
-	// need to check the filter
-	ok := pf.Predicate(env, clonePath)
+	// determine if the repository should be included
+	include := pf.Predicate(env, clonePath)
 	if pf.IncludeFalse {
-		ok = !ok
+		include = !include
 	}
 
-	if !ok {
-		return -1
+	if !include {
+		return FilterDoesNotMatch
 	}
-	return 1
+	return score
 }
 
 // NewWorktreeFilter returns a filter that filters by repositories having a dirty or clean working directory.
