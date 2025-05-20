@@ -5,7 +5,7 @@
 // The public interface of the ggman is defined only by the ggman executable.
 // This package is not considered part of the public interface as such and not subject to Semantic Versioning.
 //
-// The top-level ggman package is considered to be stand-alone, and (with the exception of 'util') does not directly depend on any of its' sub-packages.
+// The top-level ggman package is considered to be stand-alone, and (with the exception of 'env') does not directly depend on any of its' sub-packages.
 // As such it can be safely used by any sub-package without cyclic imports.
 //
 //spellchecker:words ggman
