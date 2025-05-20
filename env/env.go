@@ -149,14 +149,14 @@ func (env *Env) LoadDefaultRoot() error {
 }
 
 // LoadDefaultCANFILE sets and returns env.CANFILE according to the environment variables in e.Vars.
-// If the CANFILE is already set, immediately returns nil.
+// If the CANFILE is already set, immediately returns it.
 //
 // If the GGMAN_CANFILE variable is set, it will use it as a filepath to read the CanFile from.
 // If it is not set it will attempt to load the file '.ggman' in the home directory.
 // If neither is set, this function will load an in-memory default CanFile.
 func (env *Env) LoadDefaultCANFILE() (cf CanFile, err error) {
 	if env.CanFile != nil {
-		return nil, nil
+		return env.CanFile, nil
 	}
 
 	files := make([]string, 0, 2)
