@@ -12,7 +12,8 @@ import (
 	"github.com/tkw1536/pkglib/testlib"
 )
 
-// CaseSensitive checks if temporary directories exist on a case-sensitive file system.
+// CaseSensitive checks if two directories differing only in case can be successfully created inside a new temporary file.
+// It is intended to check if the temporary file system is case sensitive.
 //
 // This function is untested due to unpredictability of runtime environment.
 func CaseSensitive(t *testing.T) bool {
