@@ -18,11 +18,11 @@ var defaultVolumeName = filepath.VolumeName(os.TempDir())
 //
 // When path starts with "/", the path is guaranteed to contain a volume name.
 func ToOSPath(path string) (result string) {
+	path = filepath.ToSlash(path)
 	if len(path) > 0 && path[0] == '/' {
-		result = defaultVolumeName
+		return defaultVolumeName + path
 	}
-	result += filepath.FromSlash(path)
-	return result
+	return path
 }
 
 // ToOSPaths is like ToOSPath, but applies to each value in a slice or array.
