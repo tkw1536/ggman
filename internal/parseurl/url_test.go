@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/tkw1536/ggman/internal/parseurl"
-	url "github.com/tkw1536/ggman/internal/parseurl"
 )
 
 func Test_ParsePort(t *testing.T) {
@@ -38,7 +37,7 @@ func Test_ParsePort(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			gotPort, err := url.ParsePort(tt.args.portString)
+			gotPort, err := parseurl.ParsePort(tt.args.portString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("parsePort() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -74,7 +73,7 @@ func Test_ParsePort_all(t *testing.T) {
 				panic("never reached")
 			}
 
-			gotPort, err := url.ParsePort(strconv.Itoa(port))
+			gotPort, err := parseurl.ParsePort(strconv.Itoa(port))
 			if gotPort != uint16(port) {
 				t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
 			}
@@ -88,7 +87,7 @@ func Test_ParsePort_all(t *testing.T) {
 		t.Run(strconv.Itoa(port), func(t *testing.T) {
 			t.Parallel()
 
-			gotPort, err := url.ParsePort(strconv.Itoa(port))
+			gotPort, err := parseurl.ParsePort(strconv.Itoa(port))
 			if gotPort != 0 {
 				t.Errorf("ParsePort(%d) got port = %d", port, gotPort)
 			}
@@ -102,14 +101,14 @@ func Test_ParsePort_all(t *testing.T) {
 func Benchmark_ParsePort(b *testing.B) {
 	for b.Loop() {
 		// ignore all the errors, cause we're benchmarking!
-		_, _ = url.ParsePort("0")
-		_, _ = url.ParsePort("80")
-		_, _ = url.ParsePort("65535")
-		_, _ = url.ParsePort(" 8080")
-		_, _ = url.ParsePort("-1")
-		_, _ = url.ParsePort("65536")
-		_, _ = url.ParsePort("+123")
-		_, _ = url.ParsePort("aaaa")
+		_, _ = parseurl.ParsePort("0")
+		_, _ = parseurl.ParsePort("80")
+		_, _ = parseurl.ParsePort("65535")
+		_, _ = parseurl.ParsePort(" 8080")
+		_, _ = parseurl.ParsePort("-1")
+		_, _ = parseurl.ParsePort("65536")
+		_, _ = parseurl.ParsePort("+123")
+		_, _ = parseurl.ParsePort("aaaa")
 	}
 }
 
@@ -149,7 +148,7 @@ func Test_SplitScheme(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			gotScheme, gotRest := url.SplitScheme(tt.args.input)
+			gotScheme, gotRest := parseurl.SplitScheme(tt.args.input)
 			if gotScheme != tt.wantScheme {
 				t.Errorf("SplitScheme() scheme = %v, want %v", gotScheme, tt.wantScheme)
 			}
