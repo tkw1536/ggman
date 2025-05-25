@@ -1,12 +1,13 @@
-package url_test
+//spellchecker:words parseurl
+package parseurl_test
 
-//spellchecker:words math strconv testing github ggman internal
+//spellchecker:words math strconv testing github ggman internal parseurl
 import (
 	"math"
 	"strconv"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/url"
+	url "github.com/tkw1536/ggman/internal/parseurl"
 )
 
 func Test_ParsePort(t *testing.T) {
@@ -147,7 +148,7 @@ func Test_SplitURLScheme(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			gotScheme, gotRest := url.SplitURLScheme(tt.args.input)
+			gotScheme, gotRest := url.SplitScheme(tt.args.input)
 			if gotScheme != tt.wantScheme {
 				t.Errorf("SplitURLScheme() scheme = %v, want %v", gotScheme, tt.wantScheme)
 			}

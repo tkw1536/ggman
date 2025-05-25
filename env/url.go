@@ -1,12 +1,12 @@
 package env
 
-//spellchecker:words strconv strings github ggman internal split pkglib collection text jessevdk flags
+//spellchecker:words strconv strings github ggman internal parseurl split pkglib text jessevdk flags
 import (
 	"strconv"
 	"strings"
 
+	"github.com/tkw1536/ggman/internal/parseurl"
 	"github.com/tkw1536/ggman/internal/split"
-	internalURL "github.com/tkw1536/ggman/internal/url"
 	"github.com/tkw1536/pkglib/text"
 
 	"github.com/jessevdk/go-flags"
@@ -102,8 +102,8 @@ var windowsReplacer = strings.NewReplacer("\\", "/")
 func ParseURL(s string) (url URL) {
 	// In this function we use url.Path as scratch space.
 	// we keep splitting off parts as we parse them
-	url.Path = windowsReplacer.Replace(s)                       // normalize for windows!
-	url.Scheme, url.Path = internalURL.SplitURLScheme(url.Path) // split off the scheme
+	url.Path = windowsReplacer.Replace(s)                 // normalize for windows!
+	url.Scheme, url.Path = parseurl.SplitScheme(url.Path) // split off the scheme
 
 	// split off authentication, if any.
 	if at := strings.IndexRune(url.Path, '@'); at >= 0 {
@@ -127,7 +127,7 @@ func ParseURL(s string) (url URL) {
 	// split off a valid port from the path.
 	if slash := strings.IndexRune(url.Path, '/'); slash >= 0 {
 		var err error
-		url.Port, err = internalURL.ParsePort(url.Path[:slash])
+		url.Port, err = parseurl.ParsePort(url.Path[:slash])
 		if err == nil {
 			url.Path = url.Path[slash+1:]
 		}
@@ -150,7 +150,7 @@ func (url URL) IsLocal() bool {
 func (url URL) Components() []string {
 	hasUser := url.User != "" && url.User != "git"
 
-	count := internalURL.CountNonEmptySplit(url.Path, '/') + 1
+	count := parseurl.CountNonEmptySplit(url.Path, '/') + 1
 	if hasUser {
 		count += 1
 	}
@@ -161,7 +161,7 @@ func (url URL) Components() []string {
 		components = append(components, url.User)
 	}
 
-	components = internalURL.SplitNonEmpty(url.Path, '/', components)
+	components = parseurl.SplitNonEmpty(url.Path, '/', components)
 
 	// remove trailing '.git'
 	if last := len(components) - 1; last >= 0 {

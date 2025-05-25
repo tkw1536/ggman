@@ -1,5 +1,7 @@
-// Package url provides utilities for URL parsing
-package url
+// Package parseurl provides utilities for URL parsing
+//
+//spellchecker:words parseurl
+package parseurl
 
 //spellchecker:words errors math
 import (
@@ -62,12 +64,12 @@ func ParsePort(s string) (port uint16, err error) {
 	return port, nil
 }
 
-// SplitURLScheme splits off the URL scheme from s, returning the rest of the string in rest.
+// SplitScheme splits off the scheme from a URL s, returning the rest of the string in rest.
 // If it does not contain a valid scheme, returns "", s.
 //
 // A scheme is of the form 'scheme://rest'.
 // Scheme must match the regular expression `^[a-zA-Z][a-zA-Z0-9+\-\.]*$`.
-func SplitURLScheme(s string) (scheme string, rest string) {
+func SplitScheme(s string) (scheme string, rest string) {
 	// An obvious implementation of this function would simply match against the
 	// regular expression.
 	//

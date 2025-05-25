@@ -1,4 +1,5 @@
-package url
+//spellchecker:words parseurl
+package parseurl
 
 // SplitNonEmpty is like [strings.Split] except that empty parts are skipped.
 // Furthermore, instead of directly returning the result it is appended to buf.

@@ -1,10 +1,12 @@
-package url_test
+//spellchecker:words parseurl
+package parseurl_test
 
+//spellchecker:words reflect testing github ggman internal parseurl
 import (
 	"reflect"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/url"
+	url "github.com/tkw1536/ggman/internal/parseurl"
 )
 
 var slashSplitTests = []struct {
