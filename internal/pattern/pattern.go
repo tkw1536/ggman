@@ -22,7 +22,7 @@ type Pattern interface {
 	Score(s string) float64
 }
 
-const globPatternBlacklist = "*?\\["
+const globPatternDenyList = "*?\\["
 
 // NewGlobPattern creates a new case-insensitive pattern that scores strings either using a glob pattern (when it contains special characters) or using fuzzy or exact case-folded equality.
 // This function essentially behaves like GlobPattern, however uses performance optimizations to avoid calls to fnmatch.
@@ -33,7 +33,7 @@ func NewGlobPattern(s string, fuzzy bool) Pattern {
 	}
 
 	// when no special characters are contained, we can use an equality pattern
-	if !strings.ContainsAny(s, globPatternBlacklist) {
+	if !strings.ContainsAny(s, globPatternDenyList) {
 		if fuzzy {
 			return FuzzyFoldPattern(s)
 		}
