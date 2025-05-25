@@ -7,6 +7,7 @@ package parseurl
 import (
 	"errors"
 	"math"
+	"strings"
 )
 
 var (
@@ -64,83 +65,68 @@ func ParsePort(s string) (port uint16, err error) {
 	return port, nil
 }
 
+const schemeSlashes = "//"
+
 // SplitScheme splits off the scheme from a URL s, returning the rest of the string in rest.
 // If it does not contain a valid scheme, returns "", s.
 //
 // A scheme is of the form 'scheme://rest'.
 // Scheme must match the regular expression `^[a-zA-Z][a-zA-Z0-9+\-\.]*$`.
 func SplitScheme(s string) (scheme string, rest string) {
-	// An obvious implementation of this function would simply match against the
-	// regular expression.
-	//
-	// However such an implementation would be a lot slower when called repeatedly.
-	// Instead we directly build code that directly implements the trimming.
-
-	// Iterate over the bytes in this string.
-	// We can do this safely, because any valid scheme must be ascii.
-	bytes := []byte(s)
+	bytes := []byte(s) // safe because any valid scheme is only single-byte runes
 	if len(bytes) == 0 {
 		return "", s
 	}
 
+	var firstInvalidColonIndex = len(bytes) - len(schemeSlashes)
+	if firstInvalidColonIndex < 0 {
+		return "", s
+	}
+
 	var (
-		idx = 0        // current index
-		c   = bytes[0] // current character
+		index       = 0
+		currentByte = bytes[0]
 	)
 
-	// scheme must start with a letter
-	// so omit the loop preamble
-	goto start
+	goto checkFirstByte
 
-nextLetter:
-	// go to the next letter
-	// or be done
-	idx++
-	if idx >= len(bytes) {
-		goto noScheme
+advanceByteAndCheck:
+	index++
+	if index >= firstInvalidColonIndex {
+		return "", s
+	}
+	currentByte = bytes[index]
+
+	if currentByte == ':' {
+		goto sawColon
 	}
 
-	// get the current letter
-	c = bytes[idx]
-
-	// reached end of the scheme
-	// we can make use of this because no valid scheme has a ':'.
-	if c == ':' {
-		goto scheme
+	if currentByte == '+' || currentByte == '-' || currentByte == '.' {
+		goto advanceByteAndCheck
 	}
 
-	if '0' <= c && c <= '9' {
-		goto nextLetter
+	if '0' <= currentByte && currentByte <= '9' {
+		goto advanceByteAndCheck
 	}
 
-	if c == '+' || c == '-' || c == '.' {
-		goto nextLetter
+checkFirstByte:
+	if 'a' <= currentByte && currentByte <= 'z' {
+		goto advanceByteAndCheck
 	}
 
-start:
-	if 'a' <= c && c <= 'z' {
-		goto nextLetter
+	if 'A' <= currentByte && currentByte <= 'Z' {
+		goto advanceByteAndCheck
 	}
 
-	if 'A' <= c && c <= 'Z' {
-		goto nextLetter
-	}
-
-noScheme:
-	// not a valid letter
 	return "", s
 
-scheme:
-	// split into scheme and rest
-	scheme = string(bytes[:idx])
-	rest = string(bytes[idx+1:])
-
-	// check that the rest starts with "//"
-	if len(rest) < 2 || rest[0] != '/' || rest[1] != '/' {
-		goto noScheme
+sawColon:
+	rest = string(bytes[index+1:])
+	if !strings.HasPrefix(rest, schemeSlashes) {
+		return "", s
 	}
 
-	// and trim off the valid prefix
-	rest = rest[2:]
+	scheme = string(bytes[:index])
+	rest = rest[len(schemeSlashes):]
 	return
 }

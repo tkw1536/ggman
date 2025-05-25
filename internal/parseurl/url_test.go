@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/tkw1536/ggman/internal/parseurl"
 	url "github.com/tkw1536/ggman/internal/parseurl"
 )
 
@@ -112,7 +113,7 @@ func Benchmark_ParsePort(b *testing.B) {
 	}
 }
 
-func Test_SplitURLScheme(t *testing.T) {
+func Test_SplitScheme(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
@@ -150,11 +151,33 @@ func Test_SplitURLScheme(t *testing.T) {
 
 			gotScheme, gotRest := url.SplitScheme(tt.args.input)
 			if gotScheme != tt.wantScheme {
-				t.Errorf("SplitURLScheme() scheme = %v, want %v", gotScheme, tt.wantScheme)
+				t.Errorf("SplitScheme() scheme = %v, want %v", gotScheme, tt.wantScheme)
 			}
 			if gotRest != tt.wantRest {
-				t.Errorf("SplitURLScheme() rest = %v, want %v", gotRest, tt.wantRest)
+				t.Errorf("SplitScheme() rest = %v, want %v", gotRest, tt.wantRest)
 			}
 		})
+	}
+}
+
+func Benchmark_SplitScheme(b *testing.B) {
+	for b.Loop() {
+		_, _ = parseurl.SplitScheme("http://rest")
+		_, _ = parseurl.SplitScheme("https://rest")
+		_, _ = parseurl.SplitScheme("git://rest")
+		_, _ = parseurl.SplitScheme("ssh://rest")
+		_, _ = parseurl.SplitScheme("ssh2://rest")
+		_, _ = parseurl.SplitScheme("file://rest")
+		_, _ = parseurl.SplitScheme("ssh+git://rest")
+		_, _ = parseurl.SplitScheme("ssh-git://rest")
+		_, _ = parseurl.SplitScheme("ssh.git://rest")
+		_, _ = parseurl.SplitScheme("valid")
+		_, _ = parseurl.SplitScheme("valid:")
+		_, _ = parseurl.SplitScheme("valid:/")
+		_, _ = parseurl.SplitScheme("valid://")
+		_, _ = parseurl.SplitScheme("")
+		_, _ = parseurl.SplitScheme("01234")
+		_, _ = parseurl.SplitScheme("01git")
+		_, _ = parseurl.SplitScheme("://")
 	}
 }
