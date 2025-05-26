@@ -16,11 +16,12 @@ var (
 )
 
 const (
-	maxValid      = math.MaxUint16      // maximal port (as a number)
-	maxMultiply10 = maxValid / 10       // maximum value before multiplication by 10
-	maxPortStr    = "65535"             // maximal port (as a string)
-	maxPortLen    = len(maxPortStr)     // maximal port length
-	maxPortIndex  = len(maxPortStr) - 1 // maximal valid index
+	maxValid     = math.MaxUint16      // maximal port (as a number)
+	maxLastAcc   = maxValid / 10       // maximum accumulator before final multiplication
+	maxLastDigit = maxValid % 10       // maximum value for the last digit
+	maxPortStr   = "65535"             // maximal port (as a string)
+	maxPortLen   = len(maxPortStr)     // maximal port length
+	maxPortIndex = len(maxPortStr) - 1 // maximal valid index
 )
 
 // ParsePort parses a string into a valid port.
@@ -34,34 +35,25 @@ func ParsePort(s string) (port uint16, err error) {
 	}
 
 	for i, ch := range []byte(s) {
-		// determine the current digit
 		digit := uint16(ch - '0')
-		if digit > 9 { // not a digit!
+		if digit > 9 {
 			return 0, errNotANumber
 		}
 
-		// prior to the last digit, we can just add the digit.
-		// because it's guaranteed to be in bounds!
-		if i < maxPortIndex {
-			port = 10 * port
-			port += digit
-			continue
+		if i == maxPortIndex {
+			// bounds check only needed for last index
+			// because everything before is guaranteed in-bounds
+			if port > maxLastAcc {
+				return 0, errOutOfRange
+			}
+			if port == maxLastAcc && digit > maxLastDigit {
+				return 0, errOutOfRange
+			}
 		}
 
-		// we're at (or beyond) the last index
-		// again add the digit, but do a bounds check!
-		if port > maxMultiply10 {
-			return 0, errOutOfRange
-		}
-		port = 10 * port
-
-		if port > maxValid-digit {
-			return 0, errOutOfRange
-		}
-		port += digit
+		port = 10*port + digit
 	}
 
-	// and we're done!
 	return port, nil
 }
 
