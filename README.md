@@ -476,6 +476,8 @@ ggman comes with the following builtin aliases:
 
 ### 1.25.0 (Upcoming)
 
+- update dependencies
+
 ### 1.24.0 (Released [May 12 2025](https://github.com/tkw1536/ggman/releases/tag/v1.24.0))
 
 - add optional `--remote` url to `ggman url` and `ggman web`

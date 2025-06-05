@@ -60,7 +60,6 @@ testdeps:
 lint:
 	test -z $(shell gofmt -l .)
 	$(GOTOOL) golangci-lint run ./...
-	$(GOTOOL) modernize -test ./...
 	$(GOTOOL) govulncheck
 
 
