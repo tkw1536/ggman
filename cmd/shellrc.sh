@@ -22,7 +22,7 @@ ggcode () {
 ggclone () {
 	DEST="$(ggman --no-fuzzy-filter -f "$1" ls --one)"
 	if [ "$DEST" = "" ]; then
-		ggman clone "$@" || exit $?
+		ggman clone "$@" || return $?
 		DEST="$(ggman where "$1")"
 	fi
 	echo "$DEST"
