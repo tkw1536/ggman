@@ -11,7 +11,7 @@ import (
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/pkglib/testlib"
+	"go.tkw01536.de/pkglib/testlib"
 )
 
 //spellchecker:words GGNORM GGROOT CANFILE worktree

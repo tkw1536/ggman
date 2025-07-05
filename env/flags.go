@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/pkglib/fsx"
+	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/fsx"
 )
 
 //spellchecker:words ggman unsynced uncommited worktree wrapf

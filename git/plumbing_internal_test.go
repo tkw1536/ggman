@@ -14,8 +14,8 @@ import (
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/pkglib/stream"
-	"github.com/tkw1536/pkglib/testlib"
+	"go.tkw01536.de/pkglib/stream"
+	"go.tkw01536.de/pkglib/testlib"
 )
 
 //spellchecker:words gogit commita commitb worktree nolint tparallel paralleltest

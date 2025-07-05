@@ -8,7 +8,7 @@ import (
 
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/pattern"
-	"github.com/tkw1536/pkglib/collection"
+	"go.tkw01536.de/pkglib/collection"
 )
 
 //spellchecker:words worktree nolint

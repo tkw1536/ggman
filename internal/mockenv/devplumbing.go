@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/pkglib/stream"
+	"go.tkw01536.de/pkglib/stream"
 )
 
 // DevPlumbing is a version of a git.Plumbing that runs all URLs via a translation mapping

@@ -7,7 +7,7 @@ import (
 
 	"github.com/tkw1536/ggman/internal/parseurl"
 	"github.com/tkw1536/ggman/internal/split"
-	"github.com/tkw1536/pkglib/text"
+	"go.tkw01536.de/pkglib/text"
 
 	"github.com/jessevdk/go-flags"
 )

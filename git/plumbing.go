@@ -13,8 +13,8 @@ import (
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/tkw1536/pkglib/fsx"
-	"github.com/tkw1536/pkglib/stream"
+	"go.tkw01536.de/pkglib/fsx"
+	"go.tkw01536.de/pkglib/stream"
 )
 
 //spellchecker:words worktree bref reflike gogit gitgit wrapf storer

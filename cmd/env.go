@@ -7,8 +7,8 @@ import (
 	"al.essio.dev/pkg/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/pkglib/collection"
+	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/collection"
 )
 
 //spellchecker:words positionals nolint wrapcheck

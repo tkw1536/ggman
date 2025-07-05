@@ -12,7 +12,7 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/mockenv"
-	"github.com/tkw1536/pkglib/testlib"
+	"go.tkw01536.de/pkglib/testlib"
 )
 
 //spellchecker:words GGROOT logprefix

@@ -8,8 +8,8 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/parser"
+	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/goprogram/parser"
 )
 
 //spellchecker:words nolint wrapcheck canonicalize canonicalized

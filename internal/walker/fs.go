@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/tkw1536/pkglib/fsx"
+	"go.tkw01536.de/pkglib/fsx"
 )
 
 //spellchecker:words fsys

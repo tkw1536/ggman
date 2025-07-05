@@ -7,8 +7,8 @@ import (
 
 	"github.com/tkw1536/ggman/constants"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/meta"
+	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/goprogram/meta"
 )
 
 // info contains information about the ggman program.

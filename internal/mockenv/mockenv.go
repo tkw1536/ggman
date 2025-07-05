@@ -20,10 +20,10 @@ import (
 	gggit "github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/dirs"
 	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/pkglib/reflectx"
-	"github.com/tkw1536/pkglib/stream"
-	"github.com/tkw1536/pkglib/testlib"
+	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/reflectx"
+	"go.tkw01536.de/pkglib/stream"
+	"go.tkw01536.de/pkglib/testlib"
 )
 
 //spellchecker:words GGROOT workdir sandboxed

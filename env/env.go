@@ -12,8 +12,8 @@ import (
 	"github.com/tkw1536/ggman/git"
 	"github.com/tkw1536/ggman/internal/path"
 	"github.com/tkw1536/ggman/internal/walker"
-	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/pkglib/fsx"
+	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/fsx"
 )
 
 //spellchecker:words worktree canonicalized canonicalize CANFILE workdir GGNORM GGROOT Wrapf nolint wrapcheck

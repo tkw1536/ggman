@@ -14,8 +14,8 @@ package ggman
 //spellchecker:words github ggman goprogram exit
 import (
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/goprogram"
-	"github.com/tkw1536/goprogram/exit"
+	"go.tkw01536.de/goprogram"
+	"go.tkw01536.de/goprogram/exit"
 )
 
 type ggmanEnv = env.Env

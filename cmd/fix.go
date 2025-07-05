@@ -7,7 +7,7 @@ import (
 
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/goprogram/exit"
+	"go.tkw01536.de/goprogram/exit"
 )
 
 //spellchecker:words canonicalizes canonicalization nolint wrapcheck

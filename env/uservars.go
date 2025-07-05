@@ -5,7 +5,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/tkw1536/goprogram/meta"
+	"go.tkw01536.de/goprogram/meta"
 )
 
 //spellchecker:words GGROOT ggman workdir

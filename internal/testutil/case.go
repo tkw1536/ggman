@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tkw1536/pkglib/testlib"
+	"go.tkw01536.de/pkglib/testlib"
 )
 
 // CaseSensitive checks if two directories differing only in case can be successfully created inside a new temporary file.

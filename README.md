@@ -476,6 +476,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.25.0 (Upcoming)
 
+- move go import paths to custom domain
 - update dependencies
 
 ### 1.24.0 (Released [May 12 2025](https://github.com/tkw1536/ggman/releases/tag/v1.24.0))

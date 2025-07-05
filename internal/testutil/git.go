@@ -12,7 +12,7 @@ import (
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/tkw1536/pkglib/testlib"
+	"go.tkw01536.de/pkglib/testlib"
 )
 
 //spellchecker:words worktree nosec

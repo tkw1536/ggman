@@ -9,11 +9,11 @@ import (
 	"al.essio.dev/pkg/shellescape"
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/goprogram/parser"
-	"github.com/tkw1536/pkglib/sema"
-	"github.com/tkw1536/pkglib/status"
-	"github.com/tkw1536/pkglib/stream"
+	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/goprogram/parser"
+	"go.tkw01536.de/pkglib/sema"
+	"go.tkw01536.de/pkglib/status"
+	"go.tkw01536.de/pkglib/stream"
 )
 
 //spellchecker:words positionals compat nolint wrapcheck

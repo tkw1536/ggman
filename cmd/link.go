@@ -9,8 +9,8 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/env"
 	"github.com/tkw1536/ggman/internal/dirs"
-	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/pkglib/fsx"
+	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/fsx"
 )
 
 //spellchecker:words positionals nolint wrapcheck

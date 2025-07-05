@@ -5,7 +5,7 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/tkw1536/pkglib/reflectx"
+	"go.tkw01536.de/pkglib/reflectx"
 )
 
 //spellchecker:words ggman GGROOT CANFILE GGNORM

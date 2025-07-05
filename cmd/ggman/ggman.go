@@ -28,7 +28,7 @@
 //
 // Disable fuzzy filter matching. See Environment section below.
 //
-// See the Arguments type of the github.com/tkw1536/goprogram package for more details of argument parsing.
+// See the Arguments type of the go.tkw01536.de/goprogram package for more details of argument parsing.
 //
 // # Subcommands and their Arguments
 //
@@ -111,9 +111,9 @@ import (
 	"github.com/tkw1536/ggman"
 	"github.com/tkw1536/ggman/cmd"
 	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/goprogram"
-	"github.com/tkw1536/goprogram/exit"
-	"github.com/tkw1536/pkglib/stream"
+	"go.tkw01536.de/goprogram"
+	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/stream"
 )
 
 //spellchecker:words unsynced GGROOT GGNORM CANFILE shellrc workdir
