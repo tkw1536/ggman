@@ -12,8 +12,8 @@ linters:
       allow-no-explanation: ["paralleltest", "tparallel"]
     wrapcheck:
       ignore-package-globs:
-        - github.com/tkw1536/pkglib/errorsx
-        - github.com/tkw1536/goprogram/exit
+        - go.tkw01536.de/pkglib/errorsx
+        - go.tkw01536.de/goprogram/exit
   enable:
     - bidichk
     - bodyclose
