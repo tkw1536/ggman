@@ -13,7 +13,7 @@ package ggman
 
 //spellchecker:words github ggman goprogram exit
 import (
-	"github.com/tkw1536/ggman/env"
+	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram"
 	"go.tkw01536.de/goprogram/exit"
 )

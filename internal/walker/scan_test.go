@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/testutil"
-	"github.com/tkw1536/ggman/internal/walker"
+	"go.tkw01536.de/ggman/internal/testutil"
+	"go.tkw01536.de/ggman/internal/walker"
 	"go.tkw01536.de/pkglib/testlib"
 )
 

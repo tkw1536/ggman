@@ -7,8 +7,8 @@ import (
 	"os/exec"
 
 	"al.essio.dev/pkg/shellescape"
-	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/env"
+	"go.tkw01536.de/ggman"
+	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram/exit"
 	"go.tkw01536.de/goprogram/parser"
 	"go.tkw01536.de/pkglib/sema"

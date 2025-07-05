@@ -5,7 +5,7 @@ import (
 	_ "embed"
 	"fmt"
 
-	"github.com/tkw1536/ggman"
+	"go.tkw01536.de/ggman"
 )
 
 //spellchecker:words shellrc nolint wrapcheck

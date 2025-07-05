@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tkw1536/ggman/constants/legal"
+	"go.tkw01536.de/ggman/constants/legal"
 )
 
 //spellchecker:words ggman
@@ -17,7 +17,7 @@ func TestLicenses(t *testing.T) {
 	if legal.Notices == "" {
 		t.Errorf("Notices is empty")
 	}
-	if strings.Contains(legal.Notices, "github.com/tkw1536/ggman") {
+	if strings.Contains(legal.Notices, "go.tkw01536.de/ggman") {
 		t.Errorf("Notices contains legal information about ggman")
 	}
 }

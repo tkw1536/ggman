@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tkw1536/ggman/cmd"
-	"github.com/tkw1536/ggman/internal/mockenv"
+	"go.tkw01536.de/ggman/cmd"
+	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
 //spellchecker:words workdir GGROOT wrld

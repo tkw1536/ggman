@@ -1,4 +1,4 @@
-module github.com/tkw1536/ggman
+module go.tkw01536.de/ggman
 
 go 1.24.4
 

@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/go-git/go-git/v5"
-	"github.com/tkw1536/ggman/internal/testutil"
+	"go.tkw01536.de/ggman/internal/testutil"
 )
 
 func TestNewTestRepo(t *testing.T) {

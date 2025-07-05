@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/constants/legal"
-	"github.com/tkw1536/ggman/internal/mockenv"
+	"go.tkw01536.de/ggman"
+	"go.tkw01536.de/ggman/constants/legal"
+	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
 //spellchecker:words workdir

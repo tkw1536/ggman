@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/pattern"
+	"go.tkw01536.de/ggman/internal/pattern"
 )
 
 func TestNewPatternFilter(t *testing.T) {

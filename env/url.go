@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tkw1536/ggman/internal/parseurl"
-	"github.com/tkw1536/ggman/internal/split"
+	"go.tkw01536.de/ggman/internal/parseurl"
+	"go.tkw01536.de/ggman/internal/split"
 	"go.tkw01536.de/pkglib/text"
 
 	"github.com/jessevdk/go-flags"

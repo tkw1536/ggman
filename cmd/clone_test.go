@@ -4,8 +4,8 @@ package cmd_test
 import (
 	"testing"
 
-	"github.com/tkw1536/ggman/cmd"
-	"github.com/tkw1536/ggman/internal/mockenv"
+	"go.tkw01536.de/ggman/cmd"
+	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
 //spellchecker:words GGROOT nolint tparallel paralleltest

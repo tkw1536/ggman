@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/pattern"
+	"go.tkw01536.de/ggman/internal/pattern"
 )
 
 //spellchecker:words aaaab

@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/path"
-	"github.com/tkw1536/ggman/internal/testutil"
+	"go.tkw01536.de/ggman/internal/path"
+	"go.tkw01536.de/ggman/internal/testutil"
 	"go.tkw01536.de/pkglib/testlib"
 )
 

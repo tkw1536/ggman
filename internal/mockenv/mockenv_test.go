@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/internal/mockenv"
+	"go.tkw01536.de/ggman"
+	"go.tkw01536.de/ggman/env"
+	"go.tkw01536.de/ggman/internal/mockenv"
 	"go.tkw01536.de/pkglib/testlib"
 )
 

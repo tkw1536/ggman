@@ -19,7 +19,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/tkw1536/ggman/internal/dirs"
+	"go.tkw01536.de/ggman/internal/dirs"
 	"go.tkw01536.de/pkglib/stream"
 )
 

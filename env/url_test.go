@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tkw1536/ggman/env"
+	"go.tkw01536.de/ggman/env"
 )
 
 var urlTests = []struct {

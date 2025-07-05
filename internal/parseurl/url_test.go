@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/parseurl"
+	"go.tkw01536.de/ggman/internal/parseurl"
 )
 
 func Test_ParsePort(t *testing.T) {

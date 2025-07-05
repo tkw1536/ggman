@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/tkw1536/ggman/cmd"
-	"github.com/tkw1536/ggman/internal/mockenv"
-	"github.com/tkw1536/ggman/internal/testutil"
+	"go.tkw01536.de/ggman/cmd"
+	"go.tkw01536.de/ggman/internal/mockenv"
+	"go.tkw01536.de/ggman/internal/testutil"
 )
 
 //spellchecker:words workdir nolint tparallel paralleltest

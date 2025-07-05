@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/tkw1536/ggman/internal/path"
-	"github.com/tkw1536/ggman/internal/pattern"
+	"go.tkw01536.de/ggman/internal/path"
+	"go.tkw01536.de/ggman/internal/pattern"
 	"go.tkw01536.de/pkglib/collection"
 )
 

@@ -4,8 +4,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/constants/legal"
+	"go.tkw01536.de/ggman"
+	"go.tkw01536.de/ggman/constants/legal"
 )
 
 //spellchecker:words nolint wrapcheck
@@ -34,7 +34,7 @@ func (license) Run(context ggman.Context) error {
 
 const stringLicenseInfo = `
 ggman -- A golang script that can manage multiple git repositories locally
-https://github.com/tkw1536/ggman
+https://go.tkw01536.de/ggman
 
 ================================================================================
 ggman is licensed under the terms of the MIT License:

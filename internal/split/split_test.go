@@ -5,7 +5,7 @@ package split_test
 import (
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/split"
+	"go.tkw01536.de/ggman/internal/split"
 )
 
 func TestAfterRune(t *testing.T) {

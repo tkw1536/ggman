@@ -5,8 +5,8 @@ package path_test
 import (
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/path"
-	"github.com/tkw1536/ggman/internal/testutil"
+	"go.tkw01536.de/ggman/internal/path"
+	"go.tkw01536.de/ggman/internal/testutil"
 )
 
 func TestContains(t *testing.T) {

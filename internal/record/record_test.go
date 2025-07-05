@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/tkw1536/ggman/internal/record"
+	"go.tkw01536.de/ggman/internal/record"
 )
 
 func TestRecord_Record(t *testing.T) {

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/env"
-	"github.com/tkw1536/ggman/git"
+	"go.tkw01536.de/ggman"
+	"go.tkw01536.de/ggman/env"
+	"go.tkw01536.de/ggman/git"
 	"go.tkw01536.de/goprogram/exit"
 	"go.tkw01536.de/goprogram/parser"
 )

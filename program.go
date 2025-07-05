@@ -5,8 +5,8 @@ package ggman
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman/constants"
-	"github.com/tkw1536/ggman/env"
+	"go.tkw01536.de/ggman/constants"
+	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram/exit"
 	"go.tkw01536.de/goprogram/meta"
 )

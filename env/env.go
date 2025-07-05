@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/tkw1536/ggman/git"
-	"github.com/tkw1536/ggman/internal/path"
-	"github.com/tkw1536/ggman/internal/walker"
+	"go.tkw01536.de/ggman/git"
+	"go.tkw01536.de/ggman/internal/path"
+	"go.tkw01536.de/ggman/internal/walker"
 	"go.tkw01536.de/goprogram/exit"
 	"go.tkw01536.de/pkglib/fsx"
 )

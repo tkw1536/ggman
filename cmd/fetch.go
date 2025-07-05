@@ -4,8 +4,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/env"
+	"go.tkw01536.de/ggman"
+	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram/exit"
 )
 

@@ -12,7 +12,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/tkw1536/ggman/internal/record"
+	"go.tkw01536.de/ggman/internal/record"
 	"go.tkw01536.de/pkglib/sema"
 )
 

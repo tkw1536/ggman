@@ -32,7 +32,7 @@
 //
 // # Subcommands and their Arguments
 //
-// Each subcommand is defined as a single variable (and private associated struct) in the github.com/tkw1536/ggman/cmd package.
+// Each subcommand is defined as a single variable (and private associated struct) in the go.tkw01536.de/ggman/cmd package.
 //
 // As the name implies, ggman supports command specific arguments to be passed to each subcommand.
 // These are documented in the cmd package on a per-subcommand package.
@@ -91,13 +91,13 @@
 // This causes it to treat the latter url as the main one and uses it to clone the repository.
 // The exact canonical URLs being used can be configured by the user using a so-called 'CANFILE'.
 //
-// See Package github.com/tkw1536/ggman/env for more information about repository urls and the environment.
+// See Package go.tkw01536.de/ggman/env for more information about repository urls and the environment.
 //
 // # Exit Code
 //
 // When a subcommand succeeds, ggman exits with code 0.
 // When something goes wrong, it instead exits with a non-zero exit code.
-// Exit codes are defined by the ExitCode type in the github.com/tkw1536/ggman package.
+// Exit codes are defined by the ExitCode type in the go.tkw01536.de/ggman package.
 //
 //spellchecker:words main
 package main
@@ -108,9 +108,9 @@ import (
 	"os"
 	"runtime/debug"
 
-	"github.com/tkw1536/ggman"
-	"github.com/tkw1536/ggman/cmd"
-	"github.com/tkw1536/ggman/env"
+	"go.tkw01536.de/ggman"
+	"go.tkw01536.de/ggman/cmd"
+	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram"
 	"go.tkw01536.de/goprogram/exit"
 	"go.tkw01536.de/pkglib/stream"
@@ -207,7 +207,7 @@ The ggman program panicked and had to abort execution. This is usually
 indicative of a bug. If this occurs repeatedly you might want to consider
 filing an issue in the issue tracker at:
 
-https://github.com/tkw1536/ggman/issues
+https://go.tkw01536.de/ggman/issues
 
 Below is debug information that might help the developer track down what
 happened.

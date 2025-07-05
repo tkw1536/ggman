@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tkw1536/ggman/constants"
+	"go.tkw01536.de/ggman/constants"
 )
 
 func TestBuildVersion(t *testing.T) {

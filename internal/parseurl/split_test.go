@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	url "github.com/tkw1536/ggman/internal/parseurl"
+	url "go.tkw01536.de/ggman/internal/parseurl"
 )
 
 var slashSplitTests = []struct {
