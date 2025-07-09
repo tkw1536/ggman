@@ -479,6 +479,7 @@ ggman comes with the following builtin aliases:
 - move go import paths to custom domain
 - fix bug in shellrc (see #13, thanks @janezicmatej)
 - update dependencies
+- drop building a universal mac binary
 
 ### 1.24.0 (Released [May 12 2025](https://github.com/tkw1536/ggman/releases/tag/v1.24.0))
 
