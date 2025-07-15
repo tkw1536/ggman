@@ -11,6 +11,8 @@ import (
 	"go.tkw01536.de/goprogram/meta"
 )
 
+// TODO: Rework this once we have fully ported
+
 // info contains information about the ggman program.
 var info = meta.Info{
 	BuildVersion: constants.BuildVersion,
@@ -21,15 +23,19 @@ var info = meta.Info{
 }
 
 // newEnvironment makes a new runtime for ggman.
-func newEnvironment(params env.Parameters, context Context) (env.Env, error) {
+func newEnvironmentLegacy(params env.Parameters, context Context) (env.Env, error) {
+	return newEnvironment(context.Description.Requirements, params, context.Args.Flags)
+}
+
+func newEnvironment(requirements env.Requirement, params env.Parameters, flags env.Flags) (env.Env, error) {
 	// create a new environment
-	e, err := env.NewEnv(context.Description.Requirements, params)
+	e, err := env.NewEnv(requirements, params)
 	if err != nil {
 		return env.Env{}, fmt.Errorf("error creating env: %w", err)
 	}
 
 	// setup a filter for it!
-	f, err := env.NewFilter(context.Args.Flags, &e)
+	f, err := env.NewFilter(flags, &e)
 	if err != nil {
 		return e, fmt.Errorf("error creating filter: %w", err)
 	}
@@ -42,7 +48,7 @@ var errParseArgsNeedTwoAfterFor = exit.NewErrorWithCode("unable to parse argumen
 
 // NewProgram returns a new ggman program.
 func NewProgram() (p Program) {
-	p.NewEnvironment = newEnvironment
+	p.NewEnvironment = newEnvironmentLegacy
 	p.Info = info
 
 	p.RegisterKeyword("help", func(args *Arguments, pos *[]string) error {

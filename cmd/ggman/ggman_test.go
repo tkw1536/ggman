@@ -25,7 +25,7 @@ func Test_main_docs(t *testing.T) {
 			if !ok {
 				t.Fail()
 			}
-			code, _, _ := mock.Run(cmd, "", "", name, "--help")
+			code, _, _ := mock.RunLegacy(cmd, "", "", name, "--help")
 			if code != 0 {
 				t.Fail()
 			}

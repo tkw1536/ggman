@@ -20,6 +20,7 @@ type recordingT struct {
 func (f *recordingT) Errorf(format string, args ...any) {
 	f.message = fmt.Sprintf(format, args...)
 }
+func (f *recordingT) Helper() {}
 
 func TestMockEnv_AssertOutput(t *testing.T) {
 	t.Parallel()

@@ -14,7 +14,7 @@ func TestCommandShellRC(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	code, stdout, stderr := mock.Run(Shellrc, "", "", "shellrc")
+	code, stdout, stderr := mock.RunLegacy(Shellrc, "", "", "shellrc")
 	if code != 0 {
 		t.Errorf("Code = %d, wantCode = %d", code, 0)
 	}
