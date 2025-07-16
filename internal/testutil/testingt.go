@@ -7,24 +7,24 @@ import (
 	"testing"
 )
 
-// TestingT may be used instead of *testing.T.
-// We use an interface here to allow for testing the test code.
+// TestingT may be used instead of *testing.T to allow testing test code.
+// During tests, [RecordingT] should be used.
 type TestingT interface {
 	Errorf(format string, args ...any)
 	Helper()
 }
 
-// check that both types implement TestingT.
-var _ TestingT = (*testing.T)(nil)
-var _ TestingT = (*RecordingT)(nil)
+var (
+	_ TestingT = (*testing.T)(nil)
+	_ TestingT = (*RecordingT)(nil)
+)
 
-// RecordingT records a message passed to Errorf() and if the helper function has been called.
+// RecordingT implements [TestingT], recording any calls the helper and Errorf functions.
+// It is not safe to be used concurrently.
 type RecordingT struct {
 	Message      string
 	HelperCalled bool
 }
-
-// TODO: consider tests for this.
 
 func (t *RecordingT) Helper() {
 	t.HelperCalled = true
