@@ -1,11 +1,12 @@
 package cmd_test
 
-//spellchecker:words strconv testing ggman internal mockenv
+//spellchecker:words strconv testing ggman internal cmdtest mockenv
 import (
 	"strconv"
 	"testing"
 
 	"go.tkw01536.de/ggman/cmd"
+	"go.tkw01536.de/ggman/internal/cmdtest"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
@@ -61,4 +62,10 @@ func TestCommandLink(t *testing.T) {
 			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
 	}
+}
+
+func TestCommandLink_Overlap(t *testing.T) {
+	t.Parallel()
+
+	cmdtest.AssertFlagOverlap(t, cmd.Link, []string{})
 }

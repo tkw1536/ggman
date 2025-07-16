@@ -488,6 +488,7 @@ ggman comes with the following builtin aliases:
 ### 1.25.0 (Upcoming)
 
 - `ggman clone`: require `--` to separate flags to `git`
+- tests: check overlap between command and global flags
 - move go import paths to custom domain
 - fix bug in shellrc (see #13, thanks @janezicmatej)
 - update dependencies

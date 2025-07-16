@@ -1,12 +1,13 @@
 package cmd_test
 
-//spellchecker:words exec runtime testing ggman internal mockenv
+//spellchecker:words exec runtime testing ggman internal cmdtest mockenv
 import (
 	"os/exec"
 	"runtime"
 	"testing"
 
 	"go.tkw01536.de/ggman/cmd"
+	"go.tkw01536.de/ggman/internal/cmdtest"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
@@ -206,4 +207,10 @@ func TestCommandExec_simulate(t *testing.T) {
 			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
 	}
+}
+
+func TestCommandExec_Overlap(t *testing.T) {
+	t.Parallel()
+
+	cmdtest.AssertFlagOverlap(t, cmd.Exec, []string{"f", "n", "p", "s"})
 }

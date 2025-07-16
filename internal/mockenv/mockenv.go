@@ -186,16 +186,6 @@ func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, ar
 // regular expression used for substitution.
 var regexGGROOT = regexp.MustCompile(`.?\$\{GGROOT( [^\}]+)?\}.?`)
 
-// TestingT is implemented by *testing.T.
-// We use an interface to allow for testing the test code.
-type TestingT interface {
-	Errorf(format string, args ...any)
-	Helper()
-}
-
-// testing.T implements the TestingT interface.
-var _ TestingT = (*testing.T)(nil)
-
 // AssertOutput asserts that the standard error or output returned by Run() is equal to one of wants.
 // If this is not the case, calls TestingT.Errorf() with an error message relating to the last want.
 //
@@ -204,7 +194,7 @@ var _ TestingT = (*testing.T)(nil)
 // When text is instead surrounded by “s`s, (e.g. `${GGROOT a b c}`) shell escapes the string.
 //
 // Context should be additional information to be prefixed for the error message.
-func (mock *MockEnv) AssertOutput(t TestingT, prefix, got string, wants ...string) {
+func (mock *MockEnv) AssertOutput(t testutil.TestingT, prefix, got string, wants ...string) {
 	t.Helper()
 
 	var lastWant string

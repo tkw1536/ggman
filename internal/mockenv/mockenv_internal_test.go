@@ -12,20 +12,6 @@ import (
 
 //spellchecker:words logprefix ggroot GGROOT
 
-// recordingT records a message passed to Errorf().
-type recordingT struct {
-	message string
-	helper  bool
-}
-
-func (f *recordingT) Helper() {
-	f.helper = true
-}
-
-func (f *recordingT) Errorf(format string, args ...any) {
-	f.message = fmt.Sprintf(format, args...)
-}
-
 func TestMockEnv_AssertOutput(t *testing.T) {
 	t.Parallel()
 
@@ -68,15 +54,15 @@ func TestMockEnv_AssertOutput(t *testing.T) {
 				localRoot: tt.fields.localRoot,
 			}
 
-			var r recordingT
+			var r testutil.RecordingT
 			mock.AssertOutput(&r, tt.args.prefix, tt.args.got, tt.args.wants...)
 
-			if tt.wantMessage != r.message {
-				t.Errorf("mock.AssertOutput() message = %q, want = %q", r.message, tt.wantMessage)
+			if tt.wantMessage != r.Message {
+				t.Errorf("mock.AssertOutput() message = %q, want = %q", r.Message, tt.wantMessage)
 			}
 
-			if tt.wantHelper != r.helper {
-				t.Errorf("mock.AssertOutput() helper = %v, want = %v", r.helper, tt.wantHelper)
+			if tt.wantHelper != r.HelperCalled {
+				t.Errorf("mock.AssertOutput() helper = %v, want = %v", r.HelperCalled, tt.wantHelper)
 			}
 		})
 	}

@@ -9,7 +9,7 @@ require (
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
-	go.tkw01536.de/goprogram v0.9.6
+	go.tkw01536.de/goprogram v0.9.7
 	go.tkw01536.de/pkglib v0.0.0-20250705112844-d018fd9467cb
 )
 
