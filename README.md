@@ -356,6 +356,7 @@ ggman clone https://github.com/hello/world.git
 
 will do the same as the above command.
 
+
 When it is not desired that the canonical URL should be used, pass the `--exact-url` flag:
 
 ```bash
@@ -363,6 +364,16 @@ ggman clone --exact-url https://github.com/hello/world.git
 ```
 
 This will clone using the exact url into the same folder as above. 
+
+If ggman has access to a real `git` executable, it is also possible to pass additional arguments to it. 
+For example:
+
+```bash
+ggman clone --exact-url https://github.com/hello/world.git -- --branch dev --depth 2
+```
+
+will execute the command ```git clone git@github.com:hello/world.git --branch dev --depth 2``` under the hood. 
+The extra "--" is needed to allow ggman to separate the internal flags from the external flags. 
 
 However sometimes for various reasons a repository needs to live in a non-standard location outside of `GGROOT`. 
 For example, in the case of `go` packages these need to live within `$GOPATH`. 
@@ -476,6 +487,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.25.0 (Upcoming)
 
+- `ggman clone`: require `--` to separate flags to `git`
 - move go import paths to custom domain
 - fix bug in shellrc (see #13, thanks @janezicmatej)
 - update dependencies

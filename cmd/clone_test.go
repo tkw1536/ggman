@@ -19,6 +19,7 @@ func TestCommandClone(t *testing.T) {
 	mock.Register("https://github.com/hello/world.git", "git@github.com:hello/world.git")
 	mock.Register("https://github.com/hello/world2.git", "git@github.com:hello/world2.git")
 	mock.Register("https://github.com/hello/world3.git")
+	mock.Register("https://github.com/hello/world4.git", "git@github.com:hello/world4.git")
 
 	tests := []struct {
 		name    string
@@ -124,6 +125,18 @@ func TestCommandClone(t *testing.T) {
 			0,
 			"Cloning \"https://github.com/hello/world3.git\" into \"${GGROOT github.com hello world3}\" ...\n",
 			"",
+		},
+
+		{
+			"clone repository and args",
+			// this doesn't actually clone (because we don't have a real git)
+			// but at least parses the args
+			"",
+			[]string{"clone", "https://github.com/hello/world4.git", "--", "--depth", "1"},
+
+			1,
+			"Cloning \"git@github.com:hello/world4.git\" into \"${GGROOT github.com hello world4}\" ...\n",
+			"external `git` not found, can not pass any additional arguments to `git clone`: --depth 1\n",
 		},
 	}
 

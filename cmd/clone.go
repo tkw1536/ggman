@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 
+	"al.essio.dev/pkg/shellescape"
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/ggman/git"
 	"go.tkw01536.de/goprogram/exit"
-	"go.tkw01536.de/goprogram/parser"
 )
 
 //spellchecker:words nolint wrapcheck canonicalize canonicalized
@@ -26,7 +26,7 @@ var Clone ggman.Command = clone{}
 type clone struct {
 	Positional struct {
 		URL  string   `description:"URL of repository clone. Will be canonicalized by default. " positional-arg-name:"URL" required:"1-1"`
-		Args []string `description:"additional arguments to pass to \"git clone\"."              positional-arg-name:"ARG"`
+		Args []string `description:"additional arguments to pass to \"git clone\". "             positional-arg-name:"ARG"`
 	} `positional-args:"true"`
 	Force bool   `description:"do not complain when a repository already exists in the target directory" long:"force"     short:"f"`
 	Local bool   `description:"alias of \"--here\""                                                      long:"local"     short:"l"`
@@ -39,10 +39,6 @@ func (clone) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "clone",
 		Description: "clone a repository into a path described by \"ggman where\"",
-
-		ParserConfig: parser.Config{
-			IncludeUnknown: true,
-		},
 
 		Requirements: env.Requirement{
 			NeedsRoot:    true,
@@ -103,7 +99,7 @@ func (c clone) Run(context ggman.Context) error {
 		}
 		return errCloneAlreadyExists
 	case errors.Is(err, git.ErrArgumentsUnsupported):
-		return errCloneNoArguments
+		return fmt.Errorf("%w: %v", errCloneNoArguments, shellescape.QuoteCommand(c.Positional.Args))
 	default:
 		return fmt.Errorf("%w%w", errCloneOther, err)
 	}
