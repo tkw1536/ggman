@@ -111,7 +111,7 @@ func TestCommandClone(t *testing.T) {
 		{
 			"clone relative path (2)",
 			"",
-			[]string{"clone", "/some/example/path"},
+			[]string{"clone", "--", "/some/example/path"},
 
 			4,
 			"",
