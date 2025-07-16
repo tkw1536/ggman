@@ -1,7 +1,7 @@
 //spellchecker:words record
 package record_test
 
-//spellchecker:words sync atomic testing github ggman internal record
+//spellchecker:words sync atomic testing ggman internal record
 import (
 	"fmt"
 	"sync"

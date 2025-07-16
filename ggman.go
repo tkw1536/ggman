@@ -11,7 +11,7 @@
 //spellchecker:words ggman
 package ggman
 
-//spellchecker:words github ggman goprogram exit
+//spellchecker:words ggman goprogram exit
 import (
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram"

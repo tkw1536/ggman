@@ -3,7 +3,7 @@
 //spellchecker:words parseurl
 package parseurl
 
-//spellchecker:words errors math
+//spellchecker:words errors math strings
 import (
 	"errors"
 	"math"

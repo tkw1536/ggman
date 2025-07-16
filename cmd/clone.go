@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words errors github ggman goprogram exit parser
+//spellchecker:words errors essio shellescape ggman goprogram exit
 import (
 	"errors"
 	"fmt"

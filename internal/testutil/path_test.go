@@ -1,7 +1,7 @@
 //spellchecker:words testutil
 package testutil_test
 
-//spellchecker:words path filepath testing github ggman internal testutil
+//spellchecker:words path filepath testing ggman internal testutil
 import (
 	"os"
 	"path/filepath"

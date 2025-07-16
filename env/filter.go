@@ -1,6 +1,6 @@
 package env
 
-//spellchecker:words path filepath strings github ggman internal pattern pkglib collection
+//spellchecker:words path filepath strings ggman internal pattern pkglib collection
 import (
 	"os"
 	"path/filepath"

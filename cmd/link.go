@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words path filepath github ggman internal dirs goprogram exit pkglib
+//spellchecker:words path filepath ggman internal dirs goprogram exit pkglib
 import (
 	"fmt"
 	"os"

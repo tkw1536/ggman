@@ -1,7 +1,7 @@
 //spellchecker:words parseurl
 package parseurl_test
 
-//spellchecker:words math strconv testing github ggman internal parseurl
+//spellchecker:words math strconv testing ggman internal parseurl
 import (
 	"math"
 	"strconv"

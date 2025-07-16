@@ -1,6 +1,6 @@
 package cmd_test
 
-//spellchecker:words strconv testing github ggman internal mockenv
+//spellchecker:words strconv testing ggman internal mockenv
 import (
 	"strconv"
 	"testing"

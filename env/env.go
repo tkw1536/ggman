@@ -1,6 +1,6 @@
 package env
 
-//spellchecker:words errors path filepath strings github ggman internal walker goprogram exit pkglib
+//spellchecker:words errors path filepath strings ggman internal walker goprogram exit pkglib
 import (
 	"errors"
 	"fmt"

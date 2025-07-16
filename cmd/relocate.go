@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words errors path filepath essio shellescape github ggman internal dirs goprogram exit pkglib
+//spellchecker:words errors path filepath essio shellescape ggman internal dirs goprogram exit pkglib
 import (
 	"errors"
 	"fmt"

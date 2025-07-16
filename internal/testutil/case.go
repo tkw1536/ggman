@@ -1,7 +1,7 @@
 //spellchecker:words testutil
 package testutil
 
-//spellchecker:words errors path filepath testing github pkglib testlib
+//spellchecker:words errors path filepath testing pkglib testlib
 import (
 	"errors"
 	"io/fs"

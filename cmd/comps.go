@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words github ggman
+//spellchecker:words ggman
 import (
 	"fmt"
 

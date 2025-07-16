@@ -1,7 +1,7 @@
 //spellchecker:words parseurl
 package parseurl_test
 
-//spellchecker:words reflect testing github ggman internal parseurl
+//spellchecker:words reflect testing ggman internal parseurl
 import (
 	"reflect"
 	"testing"

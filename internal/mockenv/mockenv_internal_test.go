@@ -1,7 +1,7 @@
 //spellchecker:words mockenv
 package mockenv
 
-//spellchecker:words testing essio shellescape github ggman internal testutil
+//spellchecker:words testing essio shellescape ggman internal testutil
 import (
 	"fmt"
 	"testing"

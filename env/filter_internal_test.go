@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words reflect testing ggman internal pattern
 import (
 	"reflect"
 	"testing"

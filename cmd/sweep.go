@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words github ggman internal walker goprogram exit
+//spellchecker:words ggman internal walker goprogram exit
 import (
 	"fmt"
 

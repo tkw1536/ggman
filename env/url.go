@@ -1,6 +1,6 @@
 package env
 
-//spellchecker:words strconv strings github ggman internal parseurl split pkglib text jessevdk flags
+//spellchecker:words strconv strings ggman internal parseurl split pkglib text github jessevdk flags
 import (
 	"strconv"
 	"strings"

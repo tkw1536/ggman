@@ -1,7 +1,7 @@
 //spellchecker:words split
 package split_test
 
-//spellchecker:words testing github ggman internal split
+//spellchecker:words testing ggman internal split
 import (
 	"testing"
 

@@ -1,7 +1,7 @@
 //spellchecker:words legal
 package legal_test
 
-//spellchecker:words strings testing github ggman constants legal
+//spellchecker:words strings testing ggman constants legal
 import (
 	"strings"
 	"testing"

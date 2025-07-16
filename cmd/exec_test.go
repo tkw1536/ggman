@@ -1,6 +1,6 @@
 package cmd_test
 
-//spellchecker:words exec runtime testing github ggman internal mockenv
+//spellchecker:words exec runtime testing ggman internal mockenv
 import (
 	"os/exec"
 	"runtime"

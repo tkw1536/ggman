@@ -1,6 +1,6 @@
 package env
 
-//spellchecker:words reflect github pkglib reflectx
+//spellchecker:words reflect pkglib reflectx
 import (
 	"os"
 	"reflect"

@@ -1,6 +1,6 @@
 package env
 
-//spellchecker:words github goprogram meta
+//spellchecker:words goprogram meta
 import (
 	"go.tkw01536.de/goprogram"
 	"go.tkw01536.de/goprogram/meta"

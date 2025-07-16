@@ -1,7 +1,7 @@
 //spellchecker:words walker
 package walker_test
 
-//spellchecker:words path filepath reflect testing github ggman internal testutil walker pkglib testlib
+//spellchecker:words path filepath reflect testing ggman internal testutil walker pkglib testlib
 import (
 	"os"
 	"path/filepath"

@@ -1,7 +1,7 @@
 //spellchecker:words walker
 package walker
 
-//spellchecker:words path filepath github pkglib
+//spellchecker:words path filepath pkglib
 import (
 	"fmt"
 	"io/fs"

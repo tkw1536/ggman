@@ -1,7 +1,7 @@
 //spellchecker:words pattern
 package pattern_test
 
-//spellchecker:words reflect strings testing github ggman internal pattern
+//spellchecker:words reflect strings testing ggman internal pattern
 import (
 	"reflect"
 	"strings"

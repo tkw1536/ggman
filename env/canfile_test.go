@@ -1,6 +1,6 @@
 package env_test
 
-//spellchecker:words reflect strings testing github ggman
+//spellchecker:words reflect strings testing ggman
 import (
 	"reflect"
 	"strings"

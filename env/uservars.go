@@ -1,6 +1,6 @@
 package env
 
-//spellchecker:words slices strings github goprogram meta
+//spellchecker:words slices strings goprogram meta
 import (
 	"slices"
 	"strings"

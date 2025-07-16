@@ -1,7 +1,7 @@
 //spellchecker:words constants
 package constants_test
 
-//spellchecker:words reflect testing time github ggman constants
+//spellchecker:words reflect testing time ggman constants
 import (
 	"reflect"
 	"testing"

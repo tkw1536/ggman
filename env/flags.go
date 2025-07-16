@@ -1,6 +1,6 @@
 package env
 
-//spellchecker:words bufio strings github goprogram exit pkglib
+//spellchecker:words bufio strings goprogram exit pkglib
 import (
 	"bufio"
 	"fmt"

@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words essio shellescape github ggman goprogram exit pkglib collection
+//spellchecker:words essio shellescape ggman goprogram exit pkglib collection
 import (
 	"fmt"
 

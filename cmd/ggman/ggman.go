@@ -102,7 +102,7 @@
 //spellchecker:words main
 package main
 
-//spellchecker:words runtime debug github ggman goprogram exit pkglib stream
+//spellchecker:words runtime debug ggman goprogram exit pkglib stream
 import (
 	"fmt"
 	"os"

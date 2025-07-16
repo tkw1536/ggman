@@ -1,7 +1,7 @@
 // Package git contains an implementation of git functionality.
 package git
 
-//spellchecker:words path filepath testing github pkglib testlib
+//spellchecker:words path filepath testing pkglib testlib
 import (
 	"os"
 	"path/filepath"

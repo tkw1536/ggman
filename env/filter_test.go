@@ -1,6 +1,6 @@
 package env_test
 
-//spellchecker:words path filepath reflect testing github ggman internal pattern testutil pkglib testlib
+//spellchecker:words path filepath reflect testing ggman internal testutil pkglib testlib
 import (
 	"path/filepath"
 	"reflect"

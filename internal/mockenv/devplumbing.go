@@ -1,7 +1,7 @@
 //spellchecker:words mockenv
 package mockenv
 
-//spellchecker:words strconv github ggman pkglib stream
+//spellchecker:words strconv ggman pkglib stream
 import (
 	"fmt"
 	"io"
