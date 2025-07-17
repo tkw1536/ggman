@@ -97,20 +97,20 @@ type Process[S any] interface {
 	//
 	// Err is any error that may occur, and should typically be nil.
 	// An error immediately causes iteration on this node to be aborted, and the first error of any node will be returned to the caller of Walk.
-	Visit(context WalkContext[S]) (shouldVisitChildren bool, err error)
+	Visit(context *WalkContext[S]) (shouldVisitChildren bool, err error)
 
 	// VisitChild is called to determine if and how a child node should be processed.
 	//
 	// A child entry is valid if it can be recursively processed (i.e. is a directory).
 	//
 	// When child is valid, it determines how the child should be processed; otherwise action is ignored.
-	VisitChild(child fs.DirEntry, valid bool, context WalkContext[S]) (action Step, err error)
+	VisitChild(child fs.DirEntry, valid bool, context *WalkContext[S]) (action Step, err error)
 
 	// AfterVisitChild is called after a child has been visited synchronously.
 	//
 	// It is passed to special values, the returned snapshot (as returned from AfterVisit / Visit) and if the child was processed properly.
 	// The child was processed improperly when any of the Process functions on it returned an error, listing a directory failed, or it was already processed before (loop detection). In these cases resultValue is nil.
-	AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext[S]) (err error)
+	AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context *WalkContext[S]) (err error)
 
 	// AfterVisit is called after all children have been visited (or scheduled to be visited).
 	// It is not called for the case where Visit returns shouldVisitChildren = false.
@@ -118,7 +118,7 @@ type Process[S any] interface {
 	// result can be used to mark the current node, see also Visit.
 	//
 	// The returnValue returned from AfterVisit is passed to parent(s) if any.
-	AfterVisit(context WalkContext[S]) (err error)
+	AfterVisit(context *WalkContext[S]) (err error)
 }
 
 // Step describes how a child node should be processed.
@@ -134,34 +134,6 @@ const (
 	DoConcurrent
 )
 
-// WalkContext represents the current state of a Walker.
-// It may additionally hold a snapshot of the state of type S.
-//
-// Any instance of WalkContext should not be retained past any method it is passed to.
-type WalkContext[S any] interface {
-	// Root node this instance of the scan started from
-	Root() FS
-
-	// Current node being operated on
-	Node() FS
-
-	// Path to the current node
-	NodePath() string
-
-	// Path from the root node to this node
-	Path() []string
-
-	// Depth of this node, equivalent to len(Path())
-	Depth() int
-
-	// Update the snapshot corresponding to the current context
-	Snapshot(update func(snapshot S) (value S))
-
-	// Mark the current node as a result with the given priority.
-	// May be called multiple times, in which case the node is marked as a result multiple times.
-	Mark(priority float64)
-}
-
 // Walk begins recursively walking the directory tree starting at the roots defined in Config.
 //
 // Walk must be called at most once for each Walker and will panic() if called multiple times.
@@ -176,7 +148,7 @@ func (w *Walker[S]) Walk() error {
 
 	// setup a pool for new contexts
 	w.ctxPool.New = func() any {
-		return new(context[S])
+		return new(WalkContext[S])
 	}
 
 	// configure concurrency
@@ -245,7 +217,7 @@ func (w *Walker[S]) walkRoot(root FS) {
 }
 
 // walk walks recursively through the provided context.
-func (w *Walker[S]) walk(sync bool, ctx *context[S]) (ok bool) {
+func (w *Walker[S]) walk(sync bool, ctx *WalkContext[S]) (ok bool) {
 	defer w.wg.Done()
 
 	if !sync {
@@ -305,13 +277,13 @@ func (w *Walker[S]) walk(sync bool, ctx *context[S]) (ok bool) {
 			w.wg.Done()
 		case action == DoConcurrent:
 			// work asynchronously and discard the parent!
-			go func(cContext *context[S]) {
+			go func(cContext *WalkContext[S]) {
 				defer w.returnCtx(cContext)
 				w.walk(false, cContext)
 			}(ctx.sub(entry))
 		case action == DoSync:
 			// run the child processing!
-			ok, value := func(cContext *context[S]) (bool, any) {
+			ok, value := func(cContext *WalkContext[S]) (bool, any) {
 				defer w.returnCtx(cContext)
 
 				ok := w.walk(true, cContext)

@@ -37,7 +37,7 @@ func Sweep(visit SweepProcess, params Params) ([]string, error) {
 // SweepProcess implements Process and can be used with Walk.
 type SweepProcess func(path string, root FS, depth int) (stop bool)
 
-func (v SweepProcess) Visit(context WalkContext[bool]) (shouldRecurse bool, err error) {
+func (v SweepProcess) Visit(context *WalkContext[bool]) (shouldRecurse bool, err error) {
 	var shouldStop bool
 	if v != nil {
 		shouldStop = v(context.NodePath(), context.Root(), context.Depth())
@@ -48,7 +48,7 @@ func (v SweepProcess) Visit(context WalkContext[bool]) (shouldRecurse bool, err 
 	context.Snapshot(func(snapshot bool) bool { return true })
 	return true, nil // we should recurse!
 }
-func (SweepProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContext[bool]) (action Step, err error) {
+func (SweepProcess) VisitChild(child fs.DirEntry, valid bool, context *WalkContext[bool]) (action Step, err error) {
 	context.Snapshot(func(isEmpty bool) bool {
 		switch {
 		case !valid:
@@ -68,7 +68,7 @@ func (SweepProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContex
 	return action, nil
 }
 
-func (SweepProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext[bool]) (err error) {
+func (SweepProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context *WalkContext[bool]) (err error) {
 	context.Snapshot(func(isEmpty bool) bool {
 		// this directory remains empty iff all child directories are empty
 		if !resultOK || !resultValue.(bool) {
@@ -80,7 +80,7 @@ func (SweepProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK
 	return nil
 }
 
-func (SweepProcess) AfterVisit(context WalkContext[bool]) (err error) {
+func (SweepProcess) AfterVisit(context *WalkContext[bool]) (err error) {
 	context.Snapshot(func(isEmpty bool) bool {
 		if isEmpty {
 			context.Mark(float64(context.Depth()))

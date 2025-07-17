@@ -28,7 +28,7 @@ func Scan(visit ScanProcess, params Params) ([]string, error) {
 // ScanProcess implements Process and can be used with Walk.
 type ScanProcess func(path string, root FS, depth int) (score float64, cont bool, err error)
 
-func (v ScanProcess) Visit(context WalkContext[struct{}]) (shouldVisitChildren bool, err error) {
+func (v ScanProcess) Visit(context *WalkContext[struct{}]) (shouldVisitChildren bool, err error) {
 	// implement v == nil case
 	if v == nil {
 		context.Mark(0)
@@ -46,15 +46,15 @@ func (v ScanProcess) Visit(context WalkContext[struct{}]) (shouldVisitChildren b
 	return cont, nil
 }
 
-func (ScanProcess) VisitChild(child fs.DirEntry, valid bool, context WalkContext[struct{}]) (action Step, err error) {
+func (ScanProcess) VisitChild(child fs.DirEntry, valid bool, context *WalkContext[struct{}]) (action Step, err error) {
 	return DoConcurrent, nil
 }
 
-func (ScanProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context WalkContext[struct{}]) (err error) {
+func (ScanProcess) AfterVisitChild(child fs.DirEntry, resultValue any, resultOK bool, context *WalkContext[struct{}]) (err error) {
 	return nil
 }
 
-func (ScanProcess) AfterVisit(context WalkContext[struct{}]) (err error) {
+func (ScanProcess) AfterVisit(context *WalkContext[struct{}]) (err error) {
 	return nil
 }
 

@@ -7,8 +7,14 @@ import (
 	"slices"
 )
 
-// context implements WalkerContext.
-type context[S any] struct {
+// WalkContext represents the current state of a Walker.
+// It may additionally hold a snapshot of the state of type S.
+//
+// No caller should create a WalkContext by hand.
+//
+// Any instance of WalkContext must not be copied.
+// Any instance of WalkContext must not be retained past the function call it was initially created for.
+type WalkContext[S any] struct {
 	w *Walker[S] // walker this context comes from
 
 	root FS       // the root filesystem
@@ -26,13 +32,13 @@ type context[S any] struct {
 //
 
 // it is guaranteed to be empty and have a nil context.
-func (w *Walker[S]) getCtx() *context[S] {
-	return w.ctxPool.Get().(*context[S])
+func (w *Walker[S]) getCtx() *WalkContext[S] {
+	return w.ctxPool.Get().(*WalkContext[S])
 }
 
 // returnCtx returns a context to the walker-specific context pool.
 // the context is reset before it is put back.
-func (w *Walker[S]) returnCtx(ctx *context[S]) {
+func (w *Walker[S]) returnCtx(ctx *WalkContext[S]) {
 	ctx.w = nil
 	ctx.root = nil
 	ctx.node = nil
@@ -47,7 +53,7 @@ func (w *Walker[S]) returnCtx(ctx *context[S]) {
 }
 
 // newContext initializes a new context from the context-specific pool.
-func (w *Walker[S]) newContext(root FS) *context[S] {
+func (w *Walker[S]) newContext(root FS) *WalkContext[S] {
 	ctx := w.getCtx()
 
 	ctx.w = w
@@ -59,7 +65,7 @@ func (w *Walker[S]) newContext(root FS) *context[S] {
 }
 
 // sub creates a new sub-context for the given.
-func (w *context[S]) sub(entry fs.DirEntry) *context[S] {
+func (w *WalkContext[S]) sub(entry fs.DirEntry) *WalkContext[S] {
 	sub := w.w.getCtx()
 
 	sub.w = w.w
@@ -75,30 +81,43 @@ func (w *context[S]) sub(entry fs.DirEntry) *context[S] {
 	return sub
 }
 
-func (w context[S]) Root() FS {
+//
+// public methods
+//
+
+// Root returns the node the current scan was started from.
+func (w WalkContext[S]) Root() FS {
 	return w.root
 }
 
-func (w context[S]) Node() FS {
+// Returns the current node being operated on.
+func (w WalkContext[S]) Node() FS {
 	return w.node
 }
 
-func (w context[S]) NodePath() string {
+// Returns the path to the current node.
+func (w WalkContext[S]) NodePath() string {
 	return w.nodePath
 }
 
-func (w context[S]) Path() []string {
+// Path from the root node to this node.
+func (w WalkContext[S]) Path() []string {
 	return slices.Clone(w.path)
 }
 
-func (w context[S]) Depth() int {
+// Depth of this node, equivalent to len(Path()).
+func (w WalkContext[S]) Depth() int {
 	return len(w.path)
 }
 
-func (w context[S]) Mark(priority float64) {
+// Mark the current node as a result with the given priority.
+// May be called multiple times, in which case the node is marked as a result multiple times.
+func (w WalkContext[S]) Mark(priority float64) {
 	w.w.reportResult(w.nodePath, w.rNodePath, priority)
 }
 
-func (w *context[S]) Snapshot(update func(snapshot S) S) {
+// Update the snapshot contained in this WalkContext with the given function.
+// when update panic()s, the behavior is undefined.
+func (w *WalkContext[S]) Snapshot(update func(snapshot S) S) {
 	w.snapshot = update(w.snapshot)
 }
