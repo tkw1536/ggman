@@ -478,8 +478,8 @@ Variables are matched case-insensitive.
 
 ggman comes with the following builtin aliases:
 
-- `ggman git` behaves exactly like `ggman exec git`
-- `ggman show` behaves exactly like `ggman exec git -c core.pager= show HEAD` to show the most recent HEAD commit of a repository 
+- `ggman git` behaves exactly like `ggman exec -- git`
+- `ggman show` behaves exactly like `ggman exec -- git -c core.pager= show HEAD` to show the most recent HEAD commit of a repository 
 - `ggman require` behaves exactly like `ggman clone --force`
 - `ggman root` behaves exactly like `ggman env --raw GGROOT` (for backwards compatibility)
 

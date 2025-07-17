@@ -10,7 +10,6 @@ import (
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram/exit"
-	"go.tkw01536.de/goprogram/parser"
 	"go.tkw01536.de/pkglib/sema"
 	"go.tkw01536.de/pkglib/status"
 	"go.tkw01536.de/pkglib/stream"
@@ -69,9 +68,6 @@ func (exe) Description() ggman.Description {
 	return ggman.Description{
 		Command:     "exec",
 		Description: "execute a command for all repositories",
-		ParserConfig: parser.Config{
-			IncludeUnknown: true,
-		},
 
 		Requirements: env.Requirement{
 			AllowsFilter: true,

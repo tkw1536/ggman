@@ -145,6 +145,60 @@ func TestCommandExec_false(t *testing.T) {
 	}
 }
 
+func TestCommandExec_flags(t *testing.T) {
+	t.Parallel()
+
+	if _, err := exec.LookPath("echo"); err != nil {
+		t.Skip("echo not found in path")
+	}
+
+	mock := setupExecTest(t)
+
+	tests := []struct {
+		name    string
+		workdir string
+		args    []string
+
+		wantCode   uint8
+		wantStdout string
+		wantStderr string
+	}{
+
+		{
+			"echo without flags",
+			"",
+			[]string{"exec", "echo", "hello"},
+
+			0,
+			"hello\nhello\nhello\n",
+			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+		},
+
+		{
+			"echo with flags",
+			"",
+			[]string{"exec", "--", "echo", "--some-arg"},
+
+			0,
+			"--some-arg\n--some-arg\n--some-arg\n",
+			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			code, stdout, stderr := mock.Run(cmd.Exec, tt.workdir, "", tt.args...)
+			if code != tt.wantCode {
+				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
+			}
+			mock.AssertOutput(t, "Stdout", stdout, tt.wantStdout)
+			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
+		})
+	}
+}
+
 func TestCommandExec_simulate(t *testing.T) {
 	t.Parallel()
 
