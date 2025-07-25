@@ -75,5 +75,5 @@ func TestCommandSweep(t *testing.T) {
 func TestCommandSweep_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Sweep, []string{})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Sweep)
 }

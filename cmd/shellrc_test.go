@@ -11,5 +11,5 @@ import (
 func TestCommandShellRc_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Shellrc, []string{})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Shellrc)
 }

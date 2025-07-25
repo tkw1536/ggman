@@ -67,5 +67,5 @@ func TestCommandLink(t *testing.T) {
 func TestCommandLink_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Link, []string{})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Link)
 }

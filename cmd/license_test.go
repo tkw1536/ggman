@@ -11,5 +11,5 @@ import (
 func TestCmdLicense_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.License, []string{})
+	cmdtest.AssertNoFlagOverlap(t, cmd.License)
 }

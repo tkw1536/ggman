@@ -71,5 +71,5 @@ func TestCommandPull(t *testing.T) {
 func TestCommandPull_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Pull, []string{})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Pull)
 }

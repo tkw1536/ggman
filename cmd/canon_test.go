@@ -130,5 +130,5 @@ func TestCommandCanon(t *testing.T) {
 
 func TestCommandCanon_Overlap(t *testing.T) {
 	t.Parallel()
-	cmdtest.AssertFlagOverlap(t, cmd.Canon, []string{})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Canon)
 }

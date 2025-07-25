@@ -122,5 +122,5 @@ func TestCommandFindBranch(t *testing.T) {
 func TestCommandFindBranch_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.FindBranch, []string{})
+	cmdtest.AssertNoFlagOverlap(t, cmd.FindBranch)
 }

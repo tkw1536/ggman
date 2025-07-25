@@ -83,5 +83,5 @@ func TestCommandComps(t *testing.T) {
 func TestCommandComps_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Comps, []string{})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Comps)
 }

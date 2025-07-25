@@ -53,5 +53,5 @@ func TestCommandWhere(t *testing.T) {
 func TestCommandWhere_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Where, []string{})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Where)
 }
