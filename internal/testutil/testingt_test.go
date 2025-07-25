@@ -1,5 +1,7 @@
+//spellchecker:words testutil
 package testutil_test
 
+//spellchecker:words ggman internal testutil
 import (
 	"fmt"
 

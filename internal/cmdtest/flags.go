@@ -20,6 +20,19 @@ import (
 func AssertFlagOverlap(t testutil.TestingT, command ggman.Command, want []string) {
 	t.Helper()
 
+	assertFlagOverlap(t, command, want)
+}
+
+// AssertNoFlagOverlap asserts that there is no overlap between the flags for command and ggman global flags.
+func AssertNoFlagOverlap(t testutil.TestingT, command ggman.Command) {
+	t.Helper()
+
+	assertFlagOverlap(t, command, []string{})
+}
+
+func assertFlagOverlap(t testutil.TestingT, command ggman.Command, want []string) {
+	t.Helper()
+
 	cCommand, _ := reflectx.CopyInterface(command)
 	got := flagOverlap(cCommand)
 	if !reflect.DeepEqual(got, want) {
