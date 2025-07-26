@@ -16,13 +16,6 @@ import (
 	"go.tkw01536.de/pkglib/reflectx"
 )
 
-// AssertFlagOverlap asserts overlap between the flags for command and ggman global flags.
-func AssertFlagOverlap(t testutil.TestingT, command ggman.Command, want []string) {
-	t.Helper()
-
-	assertFlagOverlap(t, command, want)
-}
-
 // AssertNoFlagOverlap asserts that there is no overlap between the flags for command and ggman global flags.
 func AssertNoFlagOverlap(t testutil.TestingT, command ggman.Command) {
 	t.Helper()
