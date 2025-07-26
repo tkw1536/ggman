@@ -16,14 +16,12 @@ import (
 
 	"al.essio.dev/pkg/shellescape"
 	"github.com/go-git/go-git/v5"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/cmd/ggman-cobra/cmd"
 	"go.tkw01536.de/ggman/env"
 	gggit "go.tkw01536.de/ggman/git"
 	"go.tkw01536.de/ggman/internal/dirs"
 	"go.tkw01536.de/ggman/internal/testutil"
 	"go.tkw01536.de/goprogram/exit"
-	"go.tkw01536.de/pkglib/reflectx"
 	"go.tkw01536.de/pkglib/stream"
 	"go.tkw01536.de/pkglib/testlib"
 )
@@ -151,40 +149,6 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 	return repo
 }
 
-// RunLegacy runs the command with the provided arguments.
-// It afterwards resets the concrete value stored in command to it's zero value.
-//
-// The arguments should include the name of the command.
-// The command is provided the given string as standard input.
-//
-// Commands are not executed on the real system; instead they are executed within the sandboxed environment.
-// In particular all interactions with remote git repositories are intercepted, see the Register() method for details.
-//
-// RunLegacy returns the exit code of the provided command, along with standard output and standard error.
-func (mock *MockEnv) RunLegacy(command ggman.Command, workdir string, stdin string, argv ...string) (code uint8, stdout, stderr string) {
-	// create buffers
-	stdinReader := strings.NewReader(stdin)
-	stdoutBuffer := &bytes.Buffer{}
-	stderrBuffer := &bytes.Buffer{}
-
-	// create a program and run Main()
-	fakeGGMAN := ggman.NewProgram()
-	cCommand, _ := reflectx.CopyInterface(command)
-	fakeGGMAN.Register(cCommand)
-
-	stream := stream.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader)
-
-	// run the code
-	exitCode, _ := exit.CodeFromError(
-		fakeGGMAN.Main(stream, env.Parameters{
-			Variables: mock.vars,
-			Plumbing:  mock.plumbing,
-			Workdir:   workdir,
-		}, argv),
-	)
-	return uint8(exitCode), stdoutBuffer.String(), stderrBuffer.String()
-}
-
 // Run runs the command with the provided arguments.
 // It afterwards resets the concrete value stored in command to it's zero value.
 //
@@ -194,7 +158,7 @@ func (mock *MockEnv) RunLegacy(command ggman.Command, workdir string, stdin stri
 // Commands are not executed on the real system; instead they are executed within the sandboxed environment.
 // In particular all interactions with remote git repositories are intercepted, see the Register() method for details.
 //
-// RunLegacy returns the exit code of the provided command, along with standard output and standard error.
+// It returns the exit code of the provided command, along with standard output and standard error.
 func (mock *MockEnv) Run(t *testing.T, workdir string, stdin string, argv ...string) (code uint8, stdout, stderr string) {
 	t.Helper()
 
