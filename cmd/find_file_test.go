@@ -131,5 +131,5 @@ func TestCommandFindFile(t *testing.T) {
 func TestCommandFindFile_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.FindFile, []string{"p"})
+	cmdtest.AssertNoFlagOverlap(t, cmd.FindFile)
 }

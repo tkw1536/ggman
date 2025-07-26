@@ -11,7 +11,7 @@ import (
 )
 
 type withOverlap struct {
-	POverlapsShort   bool `long:"p-overlaps" short:"p"`
+	POverlapsShort   bool `long:"p-overlaps" short:"P"`
 	HereOverlapsLong bool `long:"here"       short:"q"`
 	DoesNotOverlap   bool `long:"no-overlap" short:"z"`
 }
@@ -52,14 +52,14 @@ func TestAssertFlagOverlap(t *testing.T) {
 			cmd:  &withOverlap{},
 			want: []string{},
 
-			wantMessage: "got FlagOverlap = [here p], but wanted []",
+			wantMessage: "got FlagOverlap = [P here], but wanted []",
 			wantHelper:  true,
 		},
 
 		{
 			name: "correct check on command with overlap",
 			cmd:  &withOverlap{},
-			want: []string{"here", "p"},
+			want: []string{"P", "here"},
 
 			wantMessage: "",
 			wantHelper:  true,
@@ -113,7 +113,7 @@ func TestAssertNoFlagOverlap(t *testing.T) {
 		{
 			name:        "command with overlap should fail",
 			cmd:         &withOverlap{},
-			wantMessage: "got FlagOverlap = [here p], but wanted []",
+			wantMessage: "got FlagOverlap = [P here], but wanted []",
 			wantHelper:  true,
 		},
 		{

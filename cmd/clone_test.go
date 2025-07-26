@@ -156,5 +156,5 @@ func TestCommandClone(t *testing.T) {
 func TestCommandClone_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Clone, []string{"f", "here", "t"})
+	cmdtest.AssertFlagOverlap(t, cmd.Clone, []string{"here"})
 }

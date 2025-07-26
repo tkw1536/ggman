@@ -144,5 +144,5 @@ func TestCommandEnv(t *testing.T) {
 func TestCommandEnv_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Env, []string{"d"})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Env)
 }

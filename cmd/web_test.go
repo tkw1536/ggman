@@ -282,11 +282,11 @@ func TestCommandURL(t *testing.T) {
 func TestCommandWeb_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Web, []string{"c", "f", "p", "t"})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Web)
 }
 
 func TestCommandURL_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.URL, []string{"c", "f", "p", "t"})
+	cmdtest.AssertNoFlagOverlap(t, cmd.URL)
 }

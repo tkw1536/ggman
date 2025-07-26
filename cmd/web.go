@@ -41,7 +41,7 @@ type urlweb struct {
 	BaseAsPrefix  bool   `description:"treat the base argument as a prefix, instead of the hostname"                                                          long:"prefix"          short:"p"`
 	Clone         bool   `description:"if provided to the url command, print a \"git clone\" command that can be used to clone the current repository"        long:"clone"           short:"c"`
 	ReClone       bool   `description:"like clone, but uses the current remote url as opposed to the https one"                                               long:"reclone"         short:"r"`
-	Remote        string `description:"optional name of git remote to show url for"                                                                           long:"remote"          short:"R"`
+	Remote        string `description:"optional name of git remote to show url for"                                                                           long:"remote"          short:"g"`
 }
 
 // WebBuiltInBases is a map of built-in bases for the url and web commands.

@@ -91,5 +91,5 @@ func TestCommandLsr(t *testing.T) {
 func TestCommandLsr_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Lsr, []string{"c"})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Lsr)
 }

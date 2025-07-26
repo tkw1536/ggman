@@ -266,5 +266,5 @@ func TestCommandExec_simulate(t *testing.T) {
 func TestCommandExec_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Exec, []string{"f", "n", "p", "s"})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Exec)
 }

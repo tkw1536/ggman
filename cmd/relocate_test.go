@@ -209,5 +209,5 @@ func TestCommandRelocate_existsPath(t *testing.T) {
 func TestCommandRelocate_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Relocate, []string{"s"})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Relocate)
 }
