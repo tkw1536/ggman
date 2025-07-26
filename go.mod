@@ -5,12 +5,12 @@ go 1.24.5
 require (
 	al.essio.dev/pkg/shellescape v1.6.0
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964
-	github.com/go-git/go-git/v5 v5.16.1
+	github.com/go-git/go-git/v5 v5.16.2
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	go.tkw01536.de/goprogram v0.9.7
-	go.tkw01536.de/pkglib v0.0.0-20250705112844-d018fd9467cb
+	go.tkw01536.de/pkglib v0.0.0-20250723145624-d942654d6d3b
 )
 
 require (
@@ -150,7 +150,7 @@ require (
 	github.com/nunnatsa/ginkgolinter v0.19.1 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
-	github.com/pjbgf/sha1cd v0.3.2 // indirect
+	github.com/pjbgf/sha1cd v0.4.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/polyfloyd/go-errorlint v1.7.1 // indirect
 	github.com/prometheus/client_golang v1.12.1 // indirect
@@ -215,16 +215,16 @@ require (
 	go.uber.org/automaxprocs v1.6.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
-	golang.org/x/crypto v0.39.0 // indirect
+	golang.org/x/crypto v0.40.0 // indirect
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f // indirect
 	golang.org/x/exp/typeparams v0.0.0-20250210185358-939b2ce775ac // indirect
 	golang.org/x/mod v0.25.0 // indirect
-	golang.org/x/net v0.41.0 // indirect
-	golang.org/x/sync v0.15.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/net v0.42.0 // indirect
+	golang.org/x/sync v0.16.0 // indirect
+	golang.org/x/sys v0.34.0 // indirect
 	golang.org/x/telemetry v0.0.0-20241220003058-cc96b6e0d3d9 // indirect
-	golang.org/x/term v0.32.0 // indirect
-	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/term v0.33.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
 	golang.org/x/tools v0.34.0 // indirect
 	golang.org/x/vuln v1.1.4 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
