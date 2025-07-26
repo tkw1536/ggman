@@ -47,7 +47,7 @@ func (me mockEnvRunCommand) Run(context ggman.Context) error {
 	return nil
 }
 
-func TestMockEnv_Run(t *testing.T) {
+func TestMockEnv_RunLegacy(t *testing.T) {
 	t.Parallel()
 
 	mock := mockenv.NewMockEnv(t)
@@ -78,7 +78,7 @@ func TestMockEnv_Run(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			gotCode, gotStdout, gotStderr := mock.Run(cmd, "", "", append([]string{"fake"}, tt.args...)...)
+			gotCode, gotStdout, gotStderr := mock.RunLegacy(cmd, "", "", append([]string{"fake"}, tt.args...)...)
 			if gotCode != tt.wantCode {
 				t.Errorf("MockEnv.Run() gotCode = %v, want %v", gotCode, tt.wantCode)
 			}

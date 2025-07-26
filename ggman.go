@@ -13,6 +13,10 @@ package ggman
 
 //spellchecker:words ggman goprogram exit
 import (
+	"context"
+	"fmt"
+
+	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram"
 	"go.tkw01536.de/goprogram/exit"
@@ -25,6 +29,81 @@ type ggmanFlags = env.Flags
 
 // Program is the type of the ggman Program.
 type Program = goprogram.Program[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]
+
+type cobraKey string
+
+const (
+	flagsKey        cobraKey = "flags"
+	requirementsKey cobraKey = "requirements"
+	envKey          cobraKey = "env"
+	parametersKey   cobraKey = "parameters"
+)
+
+// SetFlags sets the flags for a cobra.Command.
+func SetFlags(cmd *cobra.Command, flags *env.Flags) {
+	setType(cmd, flagsKey, flags)
+}
+
+// GetFlags gets the flags from a cobra command.
+func GetFlags(cmd *cobra.Command) env.Flags {
+	return getType[env.Flags](cmd, flagsKey)
+}
+
+// SetRequirements sets the requirements for a cobra.Command.
+func SetRequirements(cmd *cobra.Command, req *env.Requirement) {
+	setType(cmd, requirementsKey, req)
+}
+
+// GetFlags gets the flags from a cobra command.
+func GetRequirements(cmd *cobra.Command) env.Requirement {
+	return getType[env.Requirement](cmd, requirementsKey)
+}
+
+func SetParameters(cmd *cobra.Command, params *env.Parameters) {
+	setType(cmd, parametersKey, params)
+}
+func GetParameters(cmd *cobra.Command) env.Parameters {
+	return getType[env.Parameters](cmd, parametersKey)
+}
+
+func setType[T any](cmd *cobra.Command, key cobraKey, data *T) {
+	ctx := cmd.Context()
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	cmd.SetContext(context.WithValue(ctx, key, data))
+}
+
+func getType[T any](cmd *cobra.Command, key cobraKey) T {
+	flags := cmd.Context().Value(key)
+	data, ok := flags.(*T)
+	if !ok {
+		var zero T
+		return zero
+	}
+	return *data
+}
+
+var errNoEnv = exit.NewErrorWithCode("failed to initialize environment", env.ExitInvalidEnvironment)
+
+// GetEnv gets the environment of a ggman command.
+func GetEnv(cmd *cobra.Command) (env.Env, error) {
+	flags := cmd.Context().Value(envKey)
+	data, ok := flags.(env.Env)
+	if ok {
+		return data, nil
+	}
+
+	// make a new environment
+	ne, err := newEnvironment(GetRequirements(cmd), GetParameters(cmd), GetFlags(cmd))
+	if err != nil {
+		return env.Env{}, fmt.Errorf("%w: %w", errNoEnv, err)
+	}
+
+	// store the environment for future usage
+	cmd.SetContext(context.WithValue(cmd.Context(), envKey, ne))
+	return ne, nil
+}
 
 // Command is the type of a ggman Command.
 type Command = goprogram.Command[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]

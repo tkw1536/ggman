@@ -70,7 +70,7 @@ func TestCommandComps(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.Run(cmd.Comps, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.RunLegacy(cmd.Comps, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

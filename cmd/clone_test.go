@@ -134,7 +134,7 @@ func TestCommandClone(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			code, stdout, stderr := mock.Run(cmd.Clone, tt.workDir, "", tt.args...)
+			code, stdout, stderr := mock.RunLegacy(cmd.Clone, tt.workDir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

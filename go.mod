@@ -9,6 +9,7 @@ require (
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
+	github.com/spf13/cobra v1.9.1
 	go.tkw01536.de/goprogram v0.9.7
 	go.tkw01536.de/pkglib v0.0.0-20250723145624-d942654d6d3b
 )
@@ -182,7 +183,6 @@ require (
 	github.com/sourcegraph/go-diff v0.7.0 // indirect
 	github.com/spf13/afero v1.12.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
-	github.com/spf13/cobra v1.9.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/spf13/viper v1.20.1 // indirect
 	github.com/ssgreg/nlreturn/v2 v2.2.1 // indirect

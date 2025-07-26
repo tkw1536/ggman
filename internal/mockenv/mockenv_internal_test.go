@@ -12,6 +12,16 @@ import (
 
 //spellchecker:words logprefix ggroot GGROOT
 
+// recordingT records a message passed to Errorf().
+type recordingT struct {
+	message string
+}
+
+func (f *recordingT) Errorf(format string, args ...any) {
+	f.message = fmt.Sprintf(format, args...)
+}
+func (f *recordingT) Helper() {}
+
 func TestMockEnv_AssertOutput(t *testing.T) {
 	t.Parallel()
 

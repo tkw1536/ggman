@@ -6,6 +6,7 @@ package mockenv
 //spellchecker:words bytes path filepath regexp strconv strings testing essio shellescape github ggman gggit internal dirs testutil goprogram exit pkglib reflectx stream testlib
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -16,6 +17,7 @@ import (
 	"al.essio.dev/pkg/shellescape"
 	"github.com/go-git/go-git/v5"
 	"go.tkw01536.de/ggman"
+	"go.tkw01536.de/ggman/cmd/ggman-cobra/cmd"
 	"go.tkw01536.de/ggman/env"
 	gggit "go.tkw01536.de/ggman/git"
 	"go.tkw01536.de/ggman/internal/dirs"
@@ -149,7 +151,7 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 	return repo
 }
 
-// Run runs the command with the provided arguments.
+// RunLegacy runs the command with the provided arguments.
 // It afterwards resets the concrete value stored in command to it's zero value.
 //
 // The arguments should include the name of the command.
@@ -158,8 +160,8 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 // Commands are not executed on the real system; instead they are executed within the sandboxed environment.
 // In particular all interactions with remote git repositories are intercepted, see the Register() method for details.
 //
-// Run returns the exit code of the provided command, along with standard output and standard error.
-func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, argv ...string) (code uint8, stdout, stderr string) {
+// RunLegacy returns the exit code of the provided command, along with standard output and standard error.
+func (mock *MockEnv) RunLegacy(command ggman.Command, workdir string, stdin string, argv ...string) (code uint8, stdout, stderr string) {
 	// create buffers
 	stdinReader := strings.NewReader(stdin)
 	stdoutBuffer := &bytes.Buffer{}
@@ -183,8 +185,52 @@ func (mock *MockEnv) Run(command ggman.Command, workdir string, stdin string, ar
 	return uint8(exitCode), stdoutBuffer.String(), stderrBuffer.String()
 }
 
+// RunLegacy runs the command with the provided arguments.
+// It afterwards resets the concrete value stored in command to it's zero value.
+//
+// The arguments should include the name of the command.
+// The command is provided the given string as standard input.
+//
+// Commands are not executed on the real system; instead they are executed within the sandboxed environment.
+// In particular all interactions with remote git repositories are intercepted, see the Register() method for details.
+//
+// RunLegacy returns the exit code of the provided command, along with standard output and standard error.
+func (mock *MockEnv) Run(t *testing.T, workdir string, stdin string, argv ...string) (code uint8, stdout, stderr string) {
+	t.Helper()
+
+	stdinReader := strings.NewReader(stdin)
+	stdoutBuffer := &bytes.Buffer{}
+	stderrBuffer := &bytes.Buffer{}
+
+	stream := stream.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader)
+
+	fake := cmd.NewCommand(t.Context(), env.Parameters{
+		Variables: mock.vars,
+		Plumbing:  mock.plumbing,
+		Workdir:   workdir,
+	}, stream)
+
+	fake.SetArgs(argv)
+	cmdErr := fake.Execute()
+	exitCode, _ := exit.CodeFromError(cmdErr)
+	if exitCode != 0 {
+		errStr := fmt.Sprint(cmdErr)
+		if errStr != "" {
+			fmt.Fprintln(stderrBuffer, cmdErr)
+		}
+	}
+
+	return uint8(exitCode), stdoutBuffer.String(), stderrBuffer.String()
+}
+
 // regular expression used for substitution.
 var regexGGROOT = regexp.MustCompile(`.?\$\{GGROOT( [^\}]+)?\}.?`)
+
+// TestingT is an interface around TestingT.
+type TestingT interface {
+	Errorf(format string, args ...any)
+	Helper()
+}
 
 // AssertOutput asserts that the standard error or output returned by Run() is equal to one of wants.
 // If this is not the case, calls TestingT.Errorf() with an error message relating to the last want.
