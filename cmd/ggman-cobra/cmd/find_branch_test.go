@@ -1,13 +1,11 @@
 package cmd_test
 
-//spellchecker:words testing github config ggman internal cmdtest mockenv
+//spellchecker:words testing github config ggman internal mockenv
 import (
 	"testing"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
-	"go.tkw01536.de/ggman/cmd"
-	"go.tkw01536.de/ggman/internal/cmdtest"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
@@ -109,7 +107,7 @@ func TestCommandFindBranch(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.RunLegacy(cmd.FindBranch, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
@@ -117,10 +115,4 @@ func TestCommandFindBranch(t *testing.T) {
 			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
 	}
-}
-
-func TestCommandFindBranch_Overlap(t *testing.T) {
-	t.Parallel()
-
-	cmdtest.AssertNoFlagOverlap(t, cmd.FindBranch)
 }

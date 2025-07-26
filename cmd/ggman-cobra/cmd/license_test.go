@@ -1,17 +1,20 @@
 package cmd_test
 
-//spellchecker:words testing ggman internal cmdtest mockenv
+//spellchecker:words testing ggman constants legal internal mockenv
 import (
+	"fmt"
 	"testing"
 
-	"go.tkw01536.de/ggman/cmd"
-	"go.tkw01536.de/ggman/internal/cmdtest"
+	"go.tkw01536.de/ggman"
+	"go.tkw01536.de/ggman/constants/legal"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
-//spellchecker:words ggman GGROOT workdir
+//spellchecker:words testing ggman constants legal internal mockenv
 
-func TestCommandWhere(t *testing.T) {
+const stringLicenseInfo = "%s %s"
+
+func TestCommandLicense(t *testing.T) {
 	t.Parallel()
 
 	mock := mockenv.NewMockEnv(t)
@@ -26,12 +29,12 @@ func TestCommandWhere(t *testing.T) {
 		wantStderr string
 	}{
 		{
-			"show directory of repository",
+			"print license information",
 			"",
-			[]string{"where", "https://github.com/hello/world.git"},
+			[]string{"license"},
 
 			0,
-			"${GGROOT github.com hello world}\n",
+			fmt.Sprintf(stringLicenseInfo, ggman.License, legal.Notices),
 			"",
 		},
 	}
@@ -40,7 +43,7 @@ func TestCommandWhere(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.RunLegacy(cmd.Where, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
@@ -48,10 +51,4 @@ func TestCommandWhere(t *testing.T) {
 			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
 	}
-}
-
-func TestCommandWhere_Overlap(t *testing.T) {
-	t.Parallel()
-
-	cmdtest.AssertNoFlagOverlap(t, cmd.Where)
 }

@@ -1,12 +1,10 @@
 package cmd_test
 
-//spellchecker:words strconv testing ggman internal cmdtest mockenv testutil
+//spellchecker:words strconv testing ggman internal mockenv testutil
 import (
 	"strconv"
 	"testing"
 
-	"go.tkw01536.de/ggman/cmd"
-	"go.tkw01536.de/ggman/internal/cmdtest"
 	"go.tkw01536.de/ggman/internal/mockenv"
 	"go.tkw01536.de/ggman/internal/testutil"
 )
@@ -14,7 +12,7 @@ import (
 //spellchecker:words workdir nolint tparallel paralleltest
 
 //nolint:tparallel,paralleltest
-func TestCommandPull(t *testing.T) {
+func TestCommandFetch(t *testing.T) {
 	t.Parallel()
 
 	mock := mockenv.NewMockEnv(t)
@@ -36,29 +34,29 @@ func TestCommandPull(t *testing.T) {
 		wantStderr string
 	}{
 		{
-			"pull repository that has a new commit",
+			"fetch repository that has a new commit",
 			"",
-			[]string{"pull"},
+			[]string{"fetch"},
 
 			0,
-			"Pulling " + escapedClonePath + "\n",
+			"Fetching " + escapedClonePath + "\n",
 			"",
 		},
 
 		{
-			"pull repository that doesn't have new commits",
+			"fetch repository that doesn't have new commits",
 			"",
-			[]string{"pull"},
+			[]string{"fetch"},
 
 			0,
-			"Pulling " + escapedClonePath + "\nalready up-to-date\n",
+			"Fetching " + escapedClonePath + "\nalready up-to-date\n",
 			"",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			code, stdout, stderr := mock.RunLegacy(cmd.Pull, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
@@ -66,10 +64,4 @@ func TestCommandPull(t *testing.T) {
 			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
 	}
-}
-
-func TestCommandPull_Overlap(t *testing.T) {
-	t.Parallel()
-
-	cmdtest.AssertNoFlagOverlap(t, cmd.Pull)
 }

@@ -1,13 +1,11 @@
 package cmd_test
 
-//spellchecker:words exec runtime testing ggman internal cmdtest mockenv
+//spellchecker:words exec runtime testing ggman internal mockenv
 import (
 	"os/exec"
 	"runtime"
 	"testing"
 
-	"go.tkw01536.de/ggman/cmd"
-	"go.tkw01536.de/ggman/internal/cmdtest"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
@@ -81,7 +79,7 @@ func TestCommandExec_real(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.RunLegacy(cmd.Exec, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
@@ -135,7 +133,7 @@ func TestCommandExec_false(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.RunLegacy(cmd.Exec, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
@@ -189,7 +187,7 @@ func TestCommandExec_flags(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.RunLegacy(cmd.Exec, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
@@ -253,7 +251,7 @@ func TestCommandExec_simulate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.RunLegacy(cmd.Exec, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
@@ -261,10 +259,4 @@ func TestCommandExec_simulate(t *testing.T) {
 			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
 	}
-}
-
-func TestCommandExec_Overlap(t *testing.T) {
-	t.Parallel()
-
-	cmdtest.AssertNoFlagOverlap(t, cmd.Exec)
 }

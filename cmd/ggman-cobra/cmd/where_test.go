@@ -1,18 +1,15 @@
-package cmd
+package cmd_test
 
-//spellchecker:words testing ggman constants legal internal mockenv
+//spellchecker:words testing ggman internal mockenv
 import (
-	"fmt"
 	"testing"
 
-	"go.tkw01536.de/ggman"
-	"go.tkw01536.de/ggman/constants/legal"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
-//spellchecker:words workdir
+//spellchecker:words ggman GGROOT workdir
 
-func TestCommandLicense(t *testing.T) {
+func TestCommandWhere(t *testing.T) {
 	t.Parallel()
 
 	mock := mockenv.NewMockEnv(t)
@@ -27,12 +24,12 @@ func TestCommandLicense(t *testing.T) {
 		wantStderr string
 	}{
 		{
-			"print license information",
+			"show directory of repository",
 			"",
-			[]string{"license"},
+			[]string{"where", "https://github.com/hello/world.git"},
 
 			0,
-			fmt.Sprintf(stringLicenseInfo, ggman.License, legal.Notices),
+			"${GGROOT github.com hello world}\n",
 			"",
 		},
 	}
@@ -41,7 +38,7 @@ func TestCommandLicense(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.RunLegacy(License, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

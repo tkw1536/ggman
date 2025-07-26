@@ -185,7 +185,7 @@ func (mock *MockEnv) RunLegacy(command ggman.Command, workdir string, stdin stri
 	return uint8(exitCode), stdoutBuffer.String(), stderrBuffer.String()
 }
 
-// RunLegacy runs the command with the provided arguments.
+// Run runs the command with the provided arguments.
 // It afterwards resets the concrete value stored in command to it's zero value.
 //
 // The arguments should include the name of the command.
