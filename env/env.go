@@ -324,7 +324,7 @@ func (env Env) AtRoot(p string) (repo string, err error) {
 
 // Canonical returns the canonical version of the URL url.
 // This requires that CanFile is not nil.
-// See the CanonicalWith() method of URL.
+// See the [url.CanonicalWith] method of URL.
 //
 // This function is untested.
 func (env Env) Canonical(url URL) string {
