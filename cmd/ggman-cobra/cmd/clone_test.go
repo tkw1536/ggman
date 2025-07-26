@@ -4,8 +4,6 @@ package cmd_test
 import (
 	"testing"
 
-	"go.tkw01536.de/ggman/cmd"
-	"go.tkw01536.de/ggman/internal/cmdtest"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
@@ -134,7 +132,7 @@ func TestCommandClone(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			code, stdout, stderr := mock.RunLegacy(cmd.Clone, tt.workDir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, tt.workDir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
@@ -142,10 +140,4 @@ func TestCommandClone(t *testing.T) {
 			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
 	}
-}
-
-func TestCommandClone_Overlap(t *testing.T) {
-	t.Parallel()
-
-	cmdtest.AssertNoFlagOverlap(t, cmd.Clone)
 }

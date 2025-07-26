@@ -60,6 +60,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 	root.AddCommand(
 		NewLSCommand(),
 		NewCanonCommand(),
+		NewCloneCommand(),
 	)
 
 	// wrap all the argument errors
@@ -100,5 +101,14 @@ func wrapArgs(positionals cobra.PositionalArgs) cobra.PositionalArgs {
 			return nil
 		}
 		return fmt.Errorf("%w: %w", errInvalidArguments, err)
+	}
+}
+
+// streamFromCommand returns a stream.IOStream from
+func streamFromCommand(root *cobra.Command) stream.IOStream {
+	return stream.IOStream{
+		Stdout: root.OutOrStdout(),
+		Stderr: root.ErrOrStderr(),
+		Stdin:  root.InOrStdin(),
 	}
 }
