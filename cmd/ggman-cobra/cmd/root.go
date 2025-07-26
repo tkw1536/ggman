@@ -105,11 +105,11 @@ func wrapArgs(positionals cobra.PositionalArgs) cobra.PositionalArgs {
 	}
 }
 
-// streamFromCommand returns a stream.IOStream from
-func streamFromCommand(root *cobra.Command) stream.IOStream {
+// streamFromCommand returns a stream.IOStream from the given command.
+func streamFromCommand(cmd *cobra.Command) stream.IOStream {
 	return stream.IOStream{
-		Stdout: root.OutOrStdout(),
-		Stderr: root.ErrOrStderr(),
-		Stdin:  root.InOrStdin(),
+		Stdout: cmd.OutOrStdout(),
+		Stderr: cmd.ErrOrStderr(),
+		Stdin:  cmd.InOrStdin(),
 	}
 }

@@ -12,6 +12,8 @@ import (
 	"go.tkw01536.de/goprogram/exit"
 )
 
+//spellchecker:words nolint wrapcheck
+
 var (
 	errCloneInvalidDestFlags = exit.NewErrorWithCode(`invalid destination: "--to" and "--plain" may not be used together`, exit.ExitCommandArguments)
 	errCloneInvalidDest      = exit.NewErrorWithCode("unable to determine local destination", exit.ExitGeneralArguments)
@@ -63,17 +65,17 @@ func NewCloneCommand() *cobra.Command {
 				return fmt.Errorf("%q: %w", args[0], errCloneLocalURI)
 			}
 
-			// Determine remote and local paths
+			// determine paths
 			remote := args[0]
 			if !exact {
 				remote = environment.Canonical(url)
 			}
 			local, err := findDest(&environment, url, plain, to)
 			if err != nil {
-				return fmt.Errorf("%q: %w", args[0], err)
+				return fmt.Errorf("%w: %w", errCloneInvalidDest, err)
 			}
 
-			// Perform cloning
+			// do the clone!
 			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Cloning %q into %q ...\n", remote, local); err != nil {
 				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
@@ -82,7 +84,9 @@ func NewCloneCommand() *cobra.Command {
 				return nil
 			case errors.Is(err, git.ErrCloneAlreadyExists):
 				if force {
-					fmt.Fprintln(cmd.OutOrStdout(), "Clone already exists in target location, done.")
+					if _, err := fmt.Fprintln(cmd.OutOrStdout(), "Clone already exists in target location, done."); err != nil {
+						return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+					}
 					return nil
 				}
 				return errCloneAlreadyExists
@@ -105,6 +109,7 @@ func NewCloneCommand() *cobra.Command {
 	return clone
 }
 
+//nolint:wrapcheck // wrapped in the caller
 func findDest(environment *env.Env, url env.URL, plain bool, to string) (string, error) {
 	switch {
 	case plain:
