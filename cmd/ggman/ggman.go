@@ -124,8 +124,6 @@ var ggmanExe = ggman.NewProgram()
 func init() {
 	// register all the known commands to the ggman program!
 	for _, c := range []ggman.Command{
-		cmd.Clone,
-		cmd.Comps,
 		cmd.Exec,
 		cmd.Fetch,
 		cmd.FindBranch,

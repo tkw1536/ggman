@@ -50,6 +50,7 @@ func GetFlags(cmd *cobra.Command) env.Flags {
 }
 
 // SetRequirements sets the requirements for a cobra.Command.
+// TODO: move this into the cobra implementation
 func SetRequirements(cmd *cobra.Command, req *env.Requirement) {
 	setType(cmd, requirementsKey, req)
 }

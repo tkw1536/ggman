@@ -61,6 +61,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 		NewLSCommand(),
 		NewCanonCommand(),
 		NewCloneCommand(),
+		NewCompsCommand(),
 	)
 
 	// wrap all the argument errors
