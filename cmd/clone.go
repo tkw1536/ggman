@@ -28,11 +28,11 @@ type clone struct {
 		URL  string   `description:"URL of repository clone. Will be canonicalized by default. " positional-arg-name:"URL" required:"1-1"`
 		Args []string `description:"additional arguments to pass to \"git clone\". "             positional-arg-name:"ARG"`
 	} `positional-args:"true"`
-	Force bool   `description:"do not complain when a repository already exists in the target directory" long:"force"     short:"f"`
-	Local bool   `description:"alias of \"--here\""                                                      long:"local"     short:"l"`
-	Exact bool   `description:"don't canonicalize URL before cloning and use exactly the passed URL"     long:"exact-url" short:"e"`
-	Here  bool   `description:"clone into an appropriately named subdirectory of the current directory"  long:"here"`
-	To    string `description:"clone repository into specified directory"                                long:"to"        short:"t"`
+	Force bool   `description:"do not complain when a repository already exists in the target directory"                           long:"force"     short:"f"`
+	Local bool   `description:"alias of \"--plain\""                                                                               long:"local"     short:"l"`
+	Exact bool   `description:"don't canonicalize URL before cloning and use exactly the passed URL"                               long:"exact-url" short:"e"`
+	Plain bool   `description:"clone like a standard git would: into an appropriately named subdirectory of the current directory" long:"plain"`
+	To    string `description:"clone repository into specified directory"                                                          long:"to"        short:"t"`
 }
 
 func (clone) Description() ggman.Description {
@@ -48,14 +48,17 @@ func (clone) Description() ggman.Description {
 }
 
 func (c *clone) AfterParse() error {
-	if (c.Here || c.Local) && c.To != "" {
+	if c.Local {
+		c.Plain = true
+	}
+	if (c.Plain) && c.To != "" {
 		return errCloneInvalidDestFlags
 	}
 	return nil
 }
 
 var (
-	errCloneInvalidDestFlags = exit.NewErrorWithCode(`invalid destination: "--to" and "--here" may not be used together`, exit.ExitCommandArguments)
+	errCloneInvalidDestFlags = exit.NewErrorWithCode(`invalid destination: "--to" and "--plain" may not be used together`, exit.ExitCommandArguments)
 	errCloneInvalidDest      = exit.NewErrorWithCode("unable to determine local destination", exit.ExitGeneralArguments)
 	errCloneLocalURI         = exit.NewErrorWithCode("invalid remote URI: invalid scheme, not a remote path", exit.ExitCommandArguments)
 	errCloneAlreadyExists    = exit.NewErrorWithCode("unable to clone repository: another git repository already exists in target location", exit.ExitGeneric)
@@ -108,7 +111,7 @@ func (c clone) Run(context ggman.Context) error {
 // dest returns the destination path to clone the repository into.
 func (c clone) dest(context ggman.Context, url env.URL) (path string, err error) {
 	switch {
-	case c.Here || c.Local: // clone into directory named automatically
+	case c.Plain: // clone into directory named automatically
 		comps := url.Components()
 		if len(comps) == 0 {
 			return "", errCloneNoComps

@@ -488,6 +488,7 @@ ggman comes with the following builtin aliases:
 ### 1.25.0 (Upcoming)
 
 - change various short form options for consistency (global flags are upper case, local flags are lower case)
+- rename `--here` flag of `ggman clone` to `--plain` (to avoid conflicts with the global `--here` flag)
 - `ggman clone` and `ggman exec`: require `--` to separate flags to external commands
 - tests: check overlap between command and global flags
 - move go import paths to custom domain

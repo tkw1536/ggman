@@ -45,19 +45,10 @@ func TestCommandClone(t *testing.T) {
 		{
 			"clone repository into local path",
 			mock.Resolve(),
-			[]string{"clone", "--local", "https://github.com/hello/world.git"},
+			[]string{"clone", "--plain", "https://github.com/hello/world.git"},
 
 			0,
 			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT world}\" ...\n",
-			"",
-		},
-		{
-			"clone repository into here path",
-			mock.Resolve(),
-			[]string{"clone", "--here", "https://github.com/hello/world2.git"},
-
-			0,
-			"Cloning \"git@github.com:hello/world2.git\" into \"${GGROOT world2}\" ...\n",
 			"",
 		},
 		{
@@ -72,11 +63,11 @@ func TestCommandClone(t *testing.T) {
 		{
 			"clone repository into invalid path path",
 			mock.Resolve(),
-			[]string{"clone", "--here", "--to", "somewhere", "https://github.com/hello/world.git"},
+			[]string{"clone", "--plain", "--to", "somewhere", "https://github.com/hello/world.git"},
 
 			4,
 			"",
-			"invalid destination: \"--to\" and \"--here\" may not be used together\n",
+			"invalid destination: \"--to\" and \"--plain\" may not be used together\n",
 		},
 		{
 			"clone existing repository",
@@ -156,5 +147,5 @@ func TestCommandClone(t *testing.T) {
 func TestCommandClone_Overlap(t *testing.T) {
 	t.Parallel()
 
-	cmdtest.AssertFlagOverlap(t, cmd.Clone, []string{"here"})
+	cmdtest.AssertNoFlagOverlap(t, cmd.Clone)
 }
