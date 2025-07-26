@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words github cobra ggman goprogram exit
 import (
 	"fmt"
 

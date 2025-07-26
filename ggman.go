@@ -11,7 +11,7 @@
 //spellchecker:words ggman
 package ggman
 
-//spellchecker:words ggman goprogram exit
+//spellchecker:words context github cobra ggman goprogram exit
 import (
 	"context"
 	"fmt"

@@ -1,6 +1,6 @@
 package cmd_test
 
-//spellchecker:words testing ggman internal cmdtest mockenv
+//spellchecker:words testing ggman internal mockenv
 import (
 	"testing"
 

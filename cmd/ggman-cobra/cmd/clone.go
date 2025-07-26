@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words errors essio shellescape github cobra ggman goprogram exit
 import (
 	"errors"
 	"fmt"

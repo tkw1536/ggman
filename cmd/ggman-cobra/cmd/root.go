@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words context github cobra ggman goprogram exit pkglib stream
 import (
 	"context"
 	"fmt"

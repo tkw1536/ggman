@@ -1,8 +1,10 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 */
+//spellchecker:words main
 package main
 
+//spellchecker:words context runtime debug ggman cobra goprogram exit pkglib stream
 import (
 	"context"
 	"fmt"
