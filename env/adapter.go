@@ -1,5 +1,6 @@
 package env
 
+//spellchecker:words context github cobra
 import (
 	"context"
 	"fmt"

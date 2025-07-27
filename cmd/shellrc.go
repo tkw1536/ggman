@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words embed github cobra ggman
+//spellchecker:words embed github cobra
 import (
 	_ "embed"
 	"fmt"

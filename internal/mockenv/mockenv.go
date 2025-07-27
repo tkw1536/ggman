@@ -3,7 +3,7 @@
 //spellchecker:words mockenv
 package mockenv
 
-//spellchecker:words bytes path filepath regexp strconv strings testing essio shellescape github ggman gggit internal dirs testutil pkglib exit stream testlib
+//spellchecker:words bytes context path filepath regexp strconv strings testing essio shellescape github cobra ggman gggit internal dirs testutil pkglib exit stream testlib
 import (
 	"bytes"
 	"context"
