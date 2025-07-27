@@ -16,7 +16,7 @@ import (
 
 	"al.essio.dev/pkg/shellescape"
 	"github.com/go-git/go-git/v5"
-	"go.tkw01536.de/ggman/cmd/ggman-cobra/cmd"
+	"go.tkw01536.de/ggman/cmd"
 	"go.tkw01536.de/ggman/env"
 	gggit "go.tkw01536.de/ggman/git"
 	"go.tkw01536.de/ggman/internal/dirs"
