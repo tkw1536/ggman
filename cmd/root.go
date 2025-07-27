@@ -126,12 +126,6 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 			},
 			Expansion: []string{"--for"},
 		},
-		{
-			Command: &cobra.Command{
-				Use: "version",
-			},
-			Expansion: []string{"--version"},
-		},
 	} {
 		AddAlias(root, alias.Command, alias.Expansion...)
 	}
