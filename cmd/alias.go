@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words essio shellescape github cobra goprogram exit
+//spellchecker:words essio shellescape github cobra
 import (
 	"al.essio.dev/pkg/shellescape"
 	"github.com/spf13/cobra"

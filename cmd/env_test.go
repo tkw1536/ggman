@@ -29,7 +29,7 @@ func TestCommandEnv(t *testing.T) {
 			[]string{"env", "--list"},
 
 			0,
-			"GGMAN_TIME\nGGMAN_VERSION\nGGROOT\nGIT\nPWD\n",
+			"GGROOT\nGIT\nPWD\n",
 			"",
 		},
 		{
@@ -38,7 +38,7 @@ func TestCommandEnv(t *testing.T) {
 			[]string{"env", "--describe"},
 
 			0,
-			"GGMAN_TIME: the time this version of ggman was built\nGGMAN_VERSION: the version of ggman this version is\nGGROOT: root folder all ggman repositories will be cloned to\nGIT: path to the native git\nPWD: current working directory\n",
+			"GGROOT: root folder all ggman repositories will be cloned to\nGIT: path to the native git\nPWD: current working directory\n",
 			"",
 		},
 

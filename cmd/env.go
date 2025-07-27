@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words essio shellescape github cobra ggman goprogram exit meta pkglib collection
+//spellchecker:words essio shellescape github cobra ggman goprogram exit pkglib collection
 import (
 	"fmt"
 
@@ -9,7 +9,6 @@ import (
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram/exit"
-	"go.tkw01536.de/goprogram/meta"
 	"go.tkw01536.de/pkglib/collection"
 )
 
@@ -92,7 +91,7 @@ func (e *_env) Exec(cmd *cobra.Command, args []string) error {
 				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		case e.Raw:
-			if _, err := fmt.Fprintln(cmd.OutOrStdout(), v.Get(environment, meta.Info{})); err != nil {
+			if _, err := fmt.Fprintln(cmd.OutOrStdout(), v.Get(environment)); err != nil {
 				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		case e.Describe:
@@ -100,7 +99,7 @@ func (e *_env) Exec(cmd *cobra.Command, args []string) error {
 				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		default:
-			value := shellescape.Quote(v.Get(environment, meta.Info{}))
+			value := shellescape.Quote(v.Get(environment))
 			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "%s=%s\n", v.Key, value); err != nil {
 				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}

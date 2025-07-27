@@ -1,11 +1,9 @@
 package env
 
-//spellchecker:words slices strings goprogram meta
+//spellchecker:words slices strings
 import (
 	"slices"
 	"strings"
-
-	"go.tkw01536.de/goprogram/meta"
 )
 
 //spellchecker:words GGROOT ggman workdir
@@ -15,19 +13,19 @@ import (
 type UserVariable struct {
 	Key         string
 	Description string
-	Get         func(Env, meta.Info) string
+	Get         func(Env) string
 }
 
 var allVariables = []UserVariable{
 	{
 		Key:         "GGROOT",
 		Description: "root folder all ggman repositories will be cloned to",
-		Get:         func(env Env, info meta.Info) string { return env.Root },
+		Get:         func(env Env) string { return env.Root },
 	},
 	{
 		Key:         "PWD",
 		Description: "current working directory",
-		Get: func(env Env, info meta.Info) string {
+		Get: func(env Env) string {
 			workdir, err := env.Abs(".")
 			if err != nil {
 				return env.Workdir
@@ -39,23 +37,8 @@ var allVariables = []UserVariable{
 	{
 		Key:         "GIT",
 		Description: "path to the native git",
-		Get: func(e Env, i meta.Info) string {
+		Get: func(e Env) string {
 			return e.Git.GitPath()
-		},
-	},
-
-	{
-		Key:         "GGMAN_VERSION",
-		Description: "the version of ggman this version is",
-		Get: func(e Env, i meta.Info) string {
-			return i.BuildVersion
-		},
-	},
-	{
-		Key:         "GGMAN_TIME",
-		Description: "the time this version of ggman was built",
-		Get: func(e Env, i meta.Info) string {
-			return i.BuildTime.String()
 		},
 	},
 }
