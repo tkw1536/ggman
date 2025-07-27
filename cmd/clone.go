@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words errors essio shellescape github cobra ggman goprogram exit
+//spellchecker:words errors essio shellescape github cobra ggman pkglib exit
 import (
 	"errors"
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/ggman/git"
-	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/exit"
 )
 
 func NewCloneCommand() *cobra.Command {

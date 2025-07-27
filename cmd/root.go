@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words context github cobra ggman constants goprogram exit pkglib stream
+//spellchecker:words context github cobra ggman constants pkglib exit stream
 import (
 	"context"
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/constants"
 	"go.tkw01536.de/ggman/env"
-	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/exit"
 	"go.tkw01536.de/pkglib/stream"
 )
 

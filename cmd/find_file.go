@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words path filepath github cobra ggman goprogram exit pkglib
+//spellchecker:words path filepath github cobra ggman pkglib exit
 import (
 	"fmt"
 	"path/filepath"
@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
-	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/exit"
 	"go.tkw01536.de/pkglib/fsx"
 )
 

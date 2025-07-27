@@ -1,7 +1,5 @@
 package env
 
-//spellchecker:words goprogram meta
-
 // Requirement represents a set of requirements on the Environment.
 type Requirement struct {
 	// Does the environment require a root directory?

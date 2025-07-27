@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words sync github cobra ggman goprogram exit
+//spellchecker:words sync github cobra ggman pkglib exit
 import (
 	"fmt"
 	"sync"
@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
-	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/exit"
 )
 
 func NewFixCommand() *cobra.Command {

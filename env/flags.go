@@ -1,13 +1,13 @@
 package env
 
-//spellchecker:words bufio strings goprogram exit pkglib
+//spellchecker:words bufio strings pkglib exit
 import (
 	"bufio"
 	"fmt"
 	"os"
 	"strings"
 
-	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/exit"
 	"go.tkw01536.de/pkglib/fsx"
 )
 

@@ -3,7 +3,7 @@
 //spellchecker:words mockenv
 package mockenv
 
-//spellchecker:words bytes path filepath regexp strconv strings testing essio shellescape github ggman gggit internal dirs testutil goprogram exit pkglib stream testlib
+//spellchecker:words bytes path filepath regexp strconv strings testing essio shellescape github ggman gggit internal dirs testutil pkglib exit stream testlib
 import (
 	"bytes"
 	"fmt"
@@ -21,7 +21,7 @@ import (
 	gggit "go.tkw01536.de/ggman/git"
 	"go.tkw01536.de/ggman/internal/dirs"
 	"go.tkw01536.de/ggman/internal/testutil"
-	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/exit"
 	"go.tkw01536.de/pkglib/stream"
 	"go.tkw01536.de/pkglib/testlib"
 )

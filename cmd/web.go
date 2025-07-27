@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words path filepath slices github browser cobra ggman internal goprogram exit
+//spellchecker:words path filepath slices github browser cobra ggman internal pkglib exit
 import (
 	"fmt"
 	"path/filepath"
@@ -11,7 +11,7 @@ import (
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/ggman/internal/path"
-	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/exit"
 )
 
 //spellchecker:words CANSPEC godoc localgodoc reclone urlweb positionals GGROOT worktree weburl workdir nolint wrapcheck

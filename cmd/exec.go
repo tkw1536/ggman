@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words errors exec essio shellescape github cobra ggman goprogram exit pkglib sema status stream
+//spellchecker:words errors exec essio shellescape github cobra ggman pkglib exit sema status stream
 import (
 	"errors"
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
-	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/exit"
 	"go.tkw01536.de/pkglib/sema"
 	"go.tkw01536.de/pkglib/status"
 	"go.tkw01536.de/pkglib/stream"

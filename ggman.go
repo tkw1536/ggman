@@ -11,14 +11,14 @@
 //spellchecker:words ggman
 package ggman
 
-//spellchecker:words context github cobra ggman goprogram exit
+//spellchecker:words context github cobra ggman pkglib exit
 import (
 	"context"
 	"fmt"
 
 	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman/env"
-	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/exit"
 )
 
 type cobraKey int

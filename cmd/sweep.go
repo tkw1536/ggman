@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words github cobra ggman internal walker goprogram exit
+//spellchecker:words github cobra ggman internal walker pkglib exit
 import (
 	"fmt"
 
@@ -8,7 +8,7 @@ import (
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/ggman/internal/walker"
-	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/pkglib/exit"
 )
 
 //spellchecker:words GGROOT nolint wrapcheck
