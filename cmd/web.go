@@ -8,7 +8,7 @@ import (
 
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman/env"
+	"go.tkw01536.de/ggman/internal/env"
 	"go.tkw01536.de/ggman/internal/path"
 	"go.tkw01536.de/pkglib/exit"
 )

@@ -9,7 +9,7 @@ import (
 	"runtime/debug"
 
 	"go.tkw01536.de/ggman/cmd"
-	"go.tkw01536.de/ggman/env"
+	"go.tkw01536.de/ggman/internal/env"
 	"go.tkw01536.de/pkglib/exit"
 )
 

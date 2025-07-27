@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"go.tkw01536.de/ggman/env"
+	"go.tkw01536.de/ggman/internal/env"
 )
 
 //spellchecker:words canfile

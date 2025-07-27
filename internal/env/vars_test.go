@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"go.tkw01536.de/ggman/env"
+	"go.tkw01536.de/ggman/internal/env"
 )
 
 //spellchecker:words GGROOT CANFILE GGNORM USERPROFILE GGMAN
