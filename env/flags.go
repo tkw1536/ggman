@@ -15,21 +15,21 @@ import (
 
 // Flags represents a set of filter flags used for the ggman goprogram.
 type Flags struct {
-	For           []string `description:"filter list of repositories by FILTER. FILTER can be a relative or absolute path, or a glob pattern which will be matched against the normalized repository url" long:"for"             short:"F" value-name:"FILTER"`
-	FromFile      []string `description:"filter list of repositories to only those matching filters in FILE. FILE should contain one filter per line, with common comment chars being ignored"            long:"from-file"       short:"I" value-name:"FILE"`
-	NoFuzzyFilter bool     `description:"disable fuzzy matching for filters"                                                                                                                              long:"no-fuzzy-filter" short:"N"`
+	For           []string
+	FromFile      []string
+	NoFuzzyFilter bool
 
-	Here bool     `description:"filter list of repositories to only contain those that are in the current directory or subtree. alias for \"-p .\""    long:"here" short:"H"`
-	Path []string `description:"filter list of repositories to only contain those that are in or under the specified path. may be used multiple times" long:"path" short:"P"`
+	Here bool
+	Path []string
 
-	Dirty bool `description:"filter list of repositories to only contain repositories with uncommited changes"    long:"dirty" short:"D"`
-	Clean bool `description:"filter list of repositories to only contain repositories without uncommited changes" long:"clean" short:"C"`
+	Dirty bool
+	Clean bool
 
-	Synced   bool `description:"filter list of repositories to only contain those which are up-to-date with remote" long:"synced"   short:"S"`
-	UnSynced bool `description:"filter list of repositories to only contain those not up-to-date with remote"       long:"unsynced" short:"U"`
+	Synced   bool
+	UnSynced bool
 
-	Tarnished bool `description:"filter list of repositories to only contain those that are dirty or unsynced" long:"tarnished" short:"T"`
-	Pristine  bool `description:"filter list of repositories to only contain those that are clean and synced"  long:"pristine"  short:"R"`
+	Tarnished bool
+	Pristine  bool
 }
 
 var errNotADirectory = exit.NewErrorWithCode("not a directory", ExitInvalidRepo)
