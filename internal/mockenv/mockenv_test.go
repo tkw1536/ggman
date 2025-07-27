@@ -3,7 +3,7 @@
 //spellchecker:words mockenv
 package mockenv_test
 
-//spellchecker:words path filepath testing ggman internal mockenv pkglib testlib
+//spellchecker:words testing ggman internal mockenv pkglib testlib
 import (
 	"testing"
 

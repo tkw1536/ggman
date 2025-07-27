@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words errors exec essio shellescape ggman goprogram exit pkglib sema status stream
+//spellchecker:words errors exec essio shellescape github cobra ggman goprogram exit pkglib sema status stream
 import (
 	"errors"
 	"fmt"

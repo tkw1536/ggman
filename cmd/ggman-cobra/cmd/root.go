@@ -13,6 +13,8 @@ import (
 	"go.tkw01536.de/pkglib/stream"
 )
 
+//spellchecker:words pflags nolint contextcheck
+
 var errInvalidFlags = exit.NewErrorWithCode("unknown flags passed", exit.ExitGeneralArguments)
 var errNoArgumentsProvided = exit.NewErrorWithCode("need at least one argument. use `ggman license` to view licensing information", exit.ExitGeneralArguments)
 
@@ -65,6 +67,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 		NewCompsCommand(),
 		NewEnvCommand(),
 		NewExecCommand(),
+		NewFetchCommand(),
 	)
 
 	// wrap all the argument errors
@@ -122,6 +125,7 @@ type AfterParse interface {
 }
 
 // PreRunE implements Pre-Run for all commands.
+// TODO: move the requirements directly into the GetEnv call, and invoke it directly
 func PreRunE(command Command) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		requirements := command.Description().Requirements
