@@ -76,7 +76,7 @@ func (e *_env) ParseArgs(cmd *cobra.Command, args []string) error {
 func (e *_env) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := ggman.GetEnv(cmd, env.Requirement{NeedsRoot: true})
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
 	}
 
 	variables, err := e.variables()

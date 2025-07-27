@@ -39,7 +39,7 @@ func (sweep) Exec(cmd *cobra.Command, args []string) error {
 		NeedsRoot: true,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
 	}
 
 	results, err := walker.Sweep(func(path string, root walker.FS, depth int) (stop bool) {

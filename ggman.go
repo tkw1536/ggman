@@ -77,13 +77,13 @@ func GetEnv(cmd *cobra.Command, requirements env.Requirement) (env.Env, error) {
 	// create a new environment
 	ne, err := env.NewEnv(requirements, GetParameters(cmd))
 	if err != nil {
-		return env.Env{}, fmt.Errorf("%w: %w", ErrGenericEnvironment, err)
+		return env.Env{}, fmt.Errorf("error creating environment: %w", err)
 	}
 
 	// setup a filter for it!
 	f, err := env.NewFilter(GetFlags(cmd), &ne)
 	if err != nil {
-		return ne, fmt.Errorf("%w: error creating filter: %w", ErrGenericEnvironment, err)
+		return ne, fmt.Errorf("error creating filter: %w", err)
 	}
 	ne.Filter = f
 

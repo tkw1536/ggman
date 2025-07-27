@@ -44,7 +44,7 @@ func (f *fix) Exec(cmd *cobra.Command, args []string) error {
 		AllowsFilter: true,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
 	}
 
 	simulate := f.Simulate

@@ -82,7 +82,7 @@ func (e *exe) Exec(cmd *cobra.Command, args []string) error {
 		NeedsRoot:    true,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
 	}
 
 	if e.Simulate {

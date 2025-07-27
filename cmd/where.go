@@ -47,7 +47,7 @@ func (w *where) Exec(cmd *cobra.Command, args []string) error {
 		NeedsRoot: true,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
 	}
 
 	localPath, err := environment.Local(env.ParseURL(w.Positionals.URL))

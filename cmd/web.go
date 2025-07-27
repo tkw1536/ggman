@@ -141,7 +141,7 @@ func (uw *urlweb) Exec(cmd *cobra.Command, args []string) error {
 		NeedsRoot: true,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
 	}
 
 	// get the remote url of the current repository

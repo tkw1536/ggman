@@ -56,7 +56,7 @@ func (r *relocate) Exec(cmd *cobra.Command, args []string) error {
 		AllowsFilter: true,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
 	}
 
 	for _, gotPath := range environment.Repos(false) {

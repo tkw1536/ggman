@@ -59,7 +59,7 @@ var (
 func (f *findFile) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := ggman.GetEnv(cmd, env.Requirement{NeedsRoot: true})
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
 	}
 	foundRepo := false
 	for _, repo := range environment.Repos(true) {

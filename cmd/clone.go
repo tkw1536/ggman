@@ -84,7 +84,7 @@ func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 		NeedsCanFile: true,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
 	}
 
 	// grab the url to clone and make sure it is not local
