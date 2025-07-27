@@ -1,5 +1,6 @@
 package cmd
 
+//spellchecker:words essio shellescape github cobra goprogram exit
 import (
 	"al.essio.dev/pkg/shellescape"
 	"github.com/spf13/cobra"
@@ -16,21 +17,34 @@ func NewAlias(root *cobra.Command, alias *cobra.Command, expansion ...string) *c
 	if alias.Long == "" {
 		alias.Long = "alias for '" + shellescape.QuoteCommand(append([]string{root.Name()}, expansion...)) + "'"
 	}
-	alias.RunE = func(cmd *cobra.Command, args []string) error {
-		// build the complete expanded command line
-		full := make([]string, 0, len(expansion)+len(args))
-		full = append(full, expansion...)
-		full = append(full, args...)
+	return newModifier(root, alias, func(args []string) ([]string, error) {
+		argv := make([]string, 0, len(expansion)+len(args))
+		argv = append(argv, expansion...)
+		argv = append(argv, args...)
+		return argv, nil
+	})
+}
+
+// newModifier configures cmd to be a modifier command using the transform function.
+// Instead of being invoked normally, a transform command does not parse arguments and instead transforms them using the given function.
+// It then invokes the root command with these arguments.
+func newModifier(root *cobra.Command, cmd *cobra.Command, transform func(args []string) ([]string, error)) *cobra.Command {
+	cmd.DisableFlagParsing = true
+	cmd.RunE = func(cmd *cobra.Command, args []string) error {
+		argv, err := transform(args)
+		if err != nil {
+			return err
+		}
 
 		// setup state
 		root.SetContext(cmd.Context())
 		root.SetIn(cmd.InOrStdin())
 		root.SetOut(cmd.OutOrStdout())
 		root.SetErr(cmd.ErrOrStderr())
-		root.SetArgs(full)
+		root.SetArgs(argv)
 
 		// and execute it!
 		return root.Execute()
 	}
-	return alias
+	return cmd
 }

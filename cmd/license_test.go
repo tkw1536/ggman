@@ -1,6 +1,6 @@
 package cmd_test
 
-//spellchecker:words testing ggman cobra constants legal internal mockenv
+//spellchecker:words testing ggman constants legal internal mockenv
 import (
 	"fmt"
 	"testing"

@@ -1,7 +1,7 @@
 //spellchecker:words main
 package main
 
-//spellchecker:words context runtime debug ggman cobra goprogram exit pkglib stream
+//spellchecker:words context runtime debug ggman goprogram exit pkglib stream
 import (
 	"context"
 	"fmt"

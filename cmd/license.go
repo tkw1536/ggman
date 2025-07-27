@@ -11,9 +11,6 @@ import (
 
 //spellchecker:words nolint wrapcheck
 
-// NewLicenseCommand creates the 'ggman license' command.
-//
-// The license command prints to standard output legal notices about the ggman program.
 func NewLicenseCommand() *cobra.Command {
 	impl := new(license)
 

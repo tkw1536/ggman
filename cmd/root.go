@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words context github cobra ggman goprogram exit pkglib stream
+//spellchecker:words context github cobra ggman constants goprogram exit pkglib stream
 import (
 	"context"
 	"fmt"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman"
+	"go.tkw01536.de/ggman/constants"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram/exit"
 	"go.tkw01536.de/pkglib/stream"
@@ -25,6 +26,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 	// TODO: don't use stream.IOStream here!
 	root := &cobra.Command{
 		Use:     "ggman",
+		Version: constants.BuildVersion,
 		Aliases: []string{os.Args[0]},
 		Short:   "A golang tool that can manage all your git repositories. ",
 
@@ -83,9 +85,10 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 		NewWhereCommand(),
 		NewWebCommand(),
 		NewURLCommand(),
+		NewVersionCommand(),
 	)
 
-	aliases := []struct {
+	for _, alias := range []struct {
 		Command   *cobra.Command
 		Expansion []string
 	}{
@@ -117,9 +120,19 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 			},
 			Expansion: []string{"exec", "--", "git", "-c", "core.pager=", "show", "HEAD"},
 		},
-	}
-
-	for _, alias := range aliases {
+		{
+			Command: &cobra.Command{
+				Use: "for",
+			},
+			Expansion: []string{"--for"},
+		},
+		{
+			Command: &cobra.Command{
+				Use: "version",
+			},
+			Expansion: []string{"--version"},
+		},
+	} {
 		root.AddCommand(NewAlias(root, alias.Command, alias.Expansion...))
 	}
 
