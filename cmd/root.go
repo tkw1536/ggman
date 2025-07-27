@@ -133,7 +133,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 			Expansion: []string{"--version"},
 		},
 	} {
-		root.AddCommand(NewAlias(root, alias.Command, alias.Expansion...))
+		AddAlias(root, alias.Command, alias.Expansion...)
 	}
 
 	// wrap all the argument errors
