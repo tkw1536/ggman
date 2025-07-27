@@ -6,13 +6,12 @@ import (
 	"testing"
 
 	"go.tkw01536.de/ggman"
+	"go.tkw01536.de/ggman/cmd/ggman-cobra/cmd"
 	"go.tkw01536.de/ggman/constants/legal"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
 //spellchecker:words testing ggman constants legal internal mockenv
-
-const stringLicenseInfo = "%s %s"
 
 func TestCommandLicense(t *testing.T) {
 	t.Parallel()
@@ -34,7 +33,7 @@ func TestCommandLicense(t *testing.T) {
 			[]string{"license"},
 
 			0,
-			fmt.Sprintf(stringLicenseInfo, ggman.License, legal.Notices),
+			fmt.Sprintf(cmd.StringLicenseInfo, ggman.License, legal.Notices),
 			"",
 		},
 	}

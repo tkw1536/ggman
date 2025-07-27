@@ -71,6 +71,8 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 		NewFindBranchCommand(),
 		NewFindFileCommand(),
 		NewFixCommand(),
+		NewHereCommand(),
+		NewLicenseCommand(),
 	)
 
 	// wrap all the argument errors
