@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman/constants"
+	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/pkglib/exit"
 	"go.tkw01536.de/pkglib/stream"
@@ -29,7 +29,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 
 	root := &cobra.Command{
 		Use:     "ggman",
-		Version: constants.BuildVersion,
+		Version: ggman.BuildVersion,
 		Aliases: []string{os.Args[0]},
 		Short:   "A golang tool that can manage all your git repositories. ",
 

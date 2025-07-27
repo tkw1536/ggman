@@ -6,7 +6,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman"
-	"go.tkw01536.de/ggman/constants/legal"
 )
 
 //spellchecker:words nolint wrapcheck
@@ -29,7 +28,7 @@ func NewLicenseCommand() *cobra.Command {
 type license struct{}
 
 func (license) Exec(cmd *cobra.Command, args []string) error {
-	_, err := fmt.Fprintf(cmd.OutOrStdout(), stringLicenseInfo, ggman.License, legal.Notices)
+	_, err := fmt.Fprintf(cmd.OutOrStdout(), stringLicenseInfo, ggman.License, ggman.Notices)
 	if err != nil {
 		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}

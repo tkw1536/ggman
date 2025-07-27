@@ -9,7 +9,7 @@ GOMOD=$(GOCMD) mod
 GOGENERATE=$(GOCMD) generate
 
 # Flags for versioning
-GGMANVERSIONFLAGS=-X 'go.tkw01536.de/ggman/constants.buildVersion=$(shell git describe --tags HEAD)' -X 'go.tkw01536.de/ggman/constants.buildTime=$(shell date +%s)'
+GGMANVERSIONFLAGS=-X 'go.tkw01536.de/ggman.buildVersion=$(shell git describe --tags HEAD)' -X 'go.tkw01536.de/ggman.buildTime=$(shell date +%s)'
 
 # Binary paths
 DIST_DIR=dist

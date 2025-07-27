@@ -1,5 +1,5 @@
-//spellchecker:words constants
-package constants
+//spellchecker:wo
+package ggman
 
 //spellchecker:words strconv time
 import (
