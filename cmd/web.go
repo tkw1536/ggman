@@ -238,7 +238,7 @@ func (uw *urlweb) listBases(cmd *cobra.Command) error {
 }
 
 // getRemoteURL gets the remote url of current repository in the context.
-func (uw *urlweb) getRemoteURL(environment env.Env) (root string, remote string, relative string, err error) {
+func (uw *urlweb) getRemoteURL(environment *env.Env) (root string, remote string, relative string, err error) {
 	if uw.ForceRepoHere { // don't use a repository, instead fake one!
 		return uw.getRemoteURLFake(environment)
 	}
@@ -246,7 +246,7 @@ func (uw *urlweb) getRemoteURL(environment env.Env) (root string, remote string,
 	return uw.getRemoteURLReal(environment)
 }
 
-func (uw *urlweb) getRemoteURLReal(environment env.Env) (root string, remote string, relative string, err error) {
+func (uw *urlweb) getRemoteURLReal(environment *env.Env) (root string, remote string, relative string, err error) {
 	// find the repository at the current location
 	root, relative, err = environment.At(".")
 	if err != nil {
@@ -266,7 +266,7 @@ func (uw *urlweb) getRemoteURLReal(environment env.Env) (root string, remote str
 	return
 }
 
-func (uw *urlweb) getRemoteURLFake(environment env.Env) (root string, remote string, relative string, err error) {
+func (uw *urlweb) getRemoteURLFake(environment *env.Env) (root string, remote string, relative string, err error) {
 	// get the absolute path to the current working directory
 	workdir, err := environment.Abs("")
 	if err != nil {

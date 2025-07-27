@@ -25,8 +25,6 @@ import (
 //
 // An environment consists of four parts, each are defined as a part of this struct.
 // See NewEnv on the defaults used by ggman.
-//
-//nolint:recvcheck // TODO: rework this at a later point
 type Env struct {
 	// Git is a method of interacting with on-disk git repositories.
 	Git git.Git
@@ -54,7 +52,7 @@ type Env struct {
 }
 
 // Normalization returns the path Normalization used by this environment.
-func (env Env) Normalization() path.Normalization {
+func (env *Env) Normalization() path.Normalization {
 	switch strings.ToLower(env.Vars.GGNORM) {
 	case "exact":
 		return path.NoNorm
@@ -84,8 +82,8 @@ type Parameters struct {
 // If r.AllowsFilter is true, a filter may be passed via the filter argument.
 //
 // This function is untested.
-func NewEnv(r Requirement, params Parameters) (Env, error) {
-	env := Env{
+func NewEnv(r Requirement, params Parameters) (*Env, error) {
+	env := &Env{
 		Git:     git.NewGitFromPlumbing(params.Plumbing, params.PATH),
 		Vars:    params.Variables,
 		Filter:  NoFilter,
@@ -94,13 +92,13 @@ func NewEnv(r Requirement, params Parameters) (Env, error) {
 
 	if r.NeedsRoot || r.AllowsFilter { // AllowsFilter implies NeedsRoot
 		if err := env.LoadDefaultRoot(); err != nil {
-			return Env{}, err
+			return nil, err
 		}
 	}
 
 	if r.NeedsCanFile {
 		if _, err := env.LoadDefaultCANFILE(); err != nil {
-			return Env{}, err
+			return nil, err
 		}
 	}
 
@@ -113,7 +111,7 @@ var errMissingRoot = exit.NewErrorWithCode("unable to find GGROOT directory", Ex
 // If the root directory is not set, returns an error of type Error.
 //
 // This function is untested.
-func (env Env) absRoot() (string, error) {
+func (env *Env) absRoot() (string, error) {
 	if env.Root == "" {
 		return "", errMissingRoot
 	}
@@ -210,7 +208,7 @@ var (
 
 // Local returns the path that a repository named URL should be cloned to.
 // Normalization of paths is controlled by the norm parameter.
-func (env Env) Local(url URL) (string, error) {
+func (env *Env) Local(url URL) (string, error) {
 	root, err := env.absRoot()
 	if err != nil {
 		panic("Env.Local: Root not resolved")
@@ -240,7 +238,7 @@ var (
 
 // Abs returns the absolute path to path, unless it is already absolute.
 // path is resolved relative to the working directory of this environment.
-func (env Env) Abs(path string) (string, error) {
+func (env *Env) Abs(path string) (string, error) {
 	if filepath.IsAbs(path) {
 		return path, nil
 	}
@@ -266,7 +264,7 @@ const atMaxIterCount = 1000
 // Assumes that the root directory is set.
 // If that is not the case, calls panic().
 // If no repository is found, returns an error possible wrapping type Error.
-func (env Env) At(p string) (repo, worktree string, err error) {
+func (env *Env) At(p string) (repo, worktree string, err error) {
 	// Changes here should be reflected in AtRoot().
 	root, err := env.absRoot()
 	if err != nil {
@@ -308,7 +306,7 @@ func (env Env) At(p string) (repo, worktree string, err error) {
 // When true it returns the absolute path to p, and no error.
 // When false, returns the empty string and no error.
 // When something goes wrong, returns an error.
-func (env Env) AtRoot(p string) (repo string, err error) {
+func (env *Env) AtRoot(p string) (repo string, err error) {
 	// This function could check if At(p) returns worktree = "."
 	// but that would create additional disk I/O!
 
@@ -329,7 +327,7 @@ func (env Env) AtRoot(p string) (repo string, err error) {
 // See the [url.CanonicalWith] method of URL.
 //
 // This function is untested.
-func (env Env) Canonical(url URL) string {
+func (env *Env) Canonical(url URL) string {
 	if env.CanFile == nil {
 		panic("Env.Canonical: CanFile is nil")
 	}
@@ -352,7 +350,7 @@ const reposMaxParallelScan = 0
 // This method silently ignores all errors.
 //
 // See the ScanReposScores() method for more control.
-func (env Env) RepoScores(resolved bool) ([]string, []float64) {
+func (env *Env) RepoScores(resolved bool) ([]string, []float64) {
 	// NOTE: This function is untested, because only the score-less variant is tested.
 	repos, scores, _ := env.ScanReposScores("", resolved)
 	return repos, scores
@@ -363,7 +361,7 @@ func (env Env) RepoScores(resolved bool) ([]string, []float64) {
 // This method silently ignores all errors.
 //
 // See the ScanRepos() method for more control.
-func (env Env) Repos(resolved bool) []string {
+func (env *Env) Repos(resolved bool) []string {
 	// NOTE: This function is untested, because ScanRepos() is tested.
 	repos, _ := env.RepoScores(resolved)
 	return repos
@@ -374,7 +372,7 @@ func (env Env) Repos(resolved bool) []string {
 // Repositories are returned in order of their scores, which are returned in the second argument.
 //
 // When an error occurs, this function may still return a list of (incomplete) repositories along with an error.
-func (env Env) ScanReposScores(folder string, resolved bool) ([]string, []float64, error) {
+func (env *Env) ScanReposScores(folder string, resolved bool) ([]string, []float64, error) {
 	// NOTE: This function is untested, only ScanRepos() itself is tested
 	if folder == "" {
 		var err error
@@ -422,7 +420,7 @@ func (env Env) ScanReposScores(folder string, resolved bool) ([]string, []float6
 }
 
 // ScanRepos is like ScanReposScores, but returns only the first and last return value.
-func (env Env) ScanRepos(folder string, resolved bool) ([]string, error) {
+func (env *Env) ScanRepos(folder string, resolved bool) ([]string, error) {
 	results, _, err := env.ScanReposScores(folder, resolved)
 	return results, err
 }

@@ -91,7 +91,7 @@ func (e *exe) Exec(cmd *cobra.Command, args []string) error {
 }
 
 // execReal implements ggman exec for simulate = False.
-func (e *exe) execReal(cmd *cobra.Command, environment env.Env) (err error) {
+func (e *exe) execReal(cmd *cobra.Command, environment *env.Env) (err error) {
 	repos := environment.Repos(true)
 
 	statusIO := e.Parallel != 1 && !e.Quiet
@@ -168,7 +168,7 @@ func (e *exe) execRepo(io stream.IOStream, repo string) error {
 }
 
 // execSimulate runs the --simulate flag.
-func (e *exe) execSimulate(cmd *cobra.Command, environment env.Env) (err error) {
+func (e *exe) execSimulate(cmd *cobra.Command, environment *env.Env) (err error) {
 	if e.Parallel != 1 {
 		return fmt.Errorf("%w, but got %d", errExecNoParallelSimulate, e.Parallel)
 	}

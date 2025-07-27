@@ -97,7 +97,7 @@ func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 	if !c.Exact {
 		remote = environment.Canonical(url)
 	}
-	local, err := c.dest(&environment, url)
+	local, err := c.dest(environment, url)
 	if err != nil {
 		return fmt.Errorf("%q: %w: %w", c.Positional.URL, errCloneInvalidDest, err)
 	}

@@ -34,7 +34,7 @@ func setupFilterTest(t *testing.T) (root, exampleClonePath, otherClonePath strin
 
 type testFilter struct{}
 
-func (testFilter) Score(env env.Env, clonePath string) float64 { panic("never reached") }
+func (testFilter) Score(env *env.Env, clonePath string) float64 { panic("never reached") }
 
 type testFilterWithCandidates struct {
 	testFilter
@@ -81,7 +81,7 @@ func TestPathFilter_Score(t *testing.T) {
 		Paths []string
 	}
 	type args struct {
-		env       env.Env
+		env       *env.Env
 		clonePath string
 	}
 
@@ -97,7 +97,7 @@ func TestPathFilter_Score(t *testing.T) {
 				Paths: []string{exampleClonePath, otherClonePath},
 			},
 			args{
-				env.Env{Root: root},
+				&env.Env{Root: root},
 				root,
 			},
 			env.FilterDoesNotMatch,
@@ -108,7 +108,7 @@ func TestPathFilter_Score(t *testing.T) {
 				Paths: []string{exampleClonePath, otherClonePath},
 			},
 			args{
-				env.Env{Root: root},
+				&env.Env{Root: root},
 				"/outside/",
 			},
 			env.FilterDoesNotMatch,
@@ -119,7 +119,7 @@ func TestPathFilter_Score(t *testing.T) {
 				Paths: []string{exampleClonePath, otherClonePath},
 			},
 			args{
-				env.Env{Root: root},
+				&env.Env{Root: root},
 				exampleClonePath,
 			},
 			1,
@@ -130,7 +130,7 @@ func TestPathFilter_Score(t *testing.T) {
 				Paths: []string{exampleClonePath, otherClonePath},
 			},
 			args{
-				env.Env{Root: root},
+				&env.Env{Root: root},
 				otherClonePath,
 			},
 			1,
@@ -248,7 +248,7 @@ func TestPatternFilter_Score(t *testing.T) {
 
 			pat.Set(tt.patternValue)
 			if got := pat.Score(
-				env.Env{
+				&env.Env{
 					Root: root,
 					Git:  git.NewGitFromPlumbing(nil, ""),
 				},
@@ -383,7 +383,7 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 				Clauses: tt.fields.Clauses,
 			}
 			if got := or.Score(
-				env.Env{Root: testutil.ToOSPath(tt.args.root)},
+				&env.Env{Root: testutil.ToOSPath(tt.args.root)},
 				testutil.ToOSPath(tt.args.clonePath),
 			); got != tt.want {
 				t.Errorf("DisjunctionFilter.Score() = %v, want %v", got, tt.want)

@@ -13,19 +13,19 @@ import (
 type UserVariable struct {
 	Key         string
 	Description string
-	Get         func(Env) string
+	Get         func(*Env) string
 }
 
 var allVariables = []UserVariable{
 	{
 		Key:         "GGROOT",
 		Description: "root folder all ggman repositories will be cloned to",
-		Get:         func(env Env) string { return env.Root },
+		Get:         func(env *Env) string { return env.Root },
 	},
 	{
 		Key:         "PWD",
 		Description: "current working directory",
-		Get: func(env Env) string {
+		Get: func(env *Env) string {
 			workdir, err := env.Abs(".")
 			if err != nil {
 				return env.Workdir
@@ -37,7 +37,7 @@ var allVariables = []UserVariable{
 	{
 		Key:         "GIT",
 		Description: "path to the native git",
-		Get: func(e Env) string {
+		Get: func(e *Env) string {
 			return e.Git.GitPath()
 		},
 	},

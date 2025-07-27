@@ -24,7 +24,7 @@ type Filter interface {
 	//
 	// When it does match, returns a float64 between 0 and 1 (inclusive on both ends),
 	// If the filter does not match, returns a negative number such as [FilterDoesNotMatch].
-	Score(env Env, clonePath string) float64
+	Score(env *Env, clonePath string) float64
 }
 
 // FilterDoesNotMatch should is used by a [Filter] to indicate that it does not match.
@@ -35,7 +35,7 @@ var NoFilter Filter = emptyFilter{}
 
 type emptyFilter struct{}
 
-func (emptyFilter) Score(env Env, clonePath string) float64 {
+func (emptyFilter) Score(env *Env, clonePath string) float64 {
 	return 1
 }
 
@@ -68,7 +68,7 @@ type PathFilter struct {
 
 // Score checks if a repository at clonePath matches this filter, and if so returns 1.
 // See Filter.Score.
-func (pf PathFilter) Score(env Env, clonePath string) float64 {
+func (pf PathFilter) Score(env *Env, clonePath string) float64 {
 	for _, p := range pf.Paths {
 		if path.HasChild(p, clonePath) {
 			return 1
@@ -111,7 +111,7 @@ func (pat *PatternFilter) Set(value string) {
 
 // Matches checks if this filter matches the repository at clonePath.
 // The caller may assume that there is a repository at clonePath.
-func (pat *PatternFilter) Score(env Env, clonePath string) float64 {
+func (pat *PatternFilter) Score(env *Env, clonePath string) float64 {
 	// find the remote url to use
 	remote, err := env.Git.GetRemote(clonePath, "")
 	if err != nil {
@@ -151,7 +151,7 @@ type DisjunctionFilter struct {
 
 // Matches checks if this filter matches any of the filters that were joined.
 // It returns the highest possible score.
-func (or DisjunctionFilter) Score(env Env, clonePath string) float64 {
+func (or DisjunctionFilter) Score(env *Env, clonePath string) float64 {
 	score := FilterDoesNotMatch
 	for _, f := range or.Clauses {
 		if fScore := f.Score(env, clonePath); fScore > score {
@@ -182,7 +182,7 @@ type predicateFilter struct {
 	Filter Filter
 
 	// Predicate is the predicate to apply.
-	Predicate func(env Env, clonePath string) bool
+	Predicate func(env *Env, clonePath string) bool
 
 	// IncludeTrue and IncludeFalse determine
 	// which values of the predicate should be included.
@@ -193,7 +193,7 @@ func (pf predicateFilter) Candidates() []string {
 	return Candidates(pf.Filter)
 }
 
-func (pf predicateFilter) Score(env Env, clonePath string) float64 {
+func (pf predicateFilter) Score(env *Env, clonePath string) float64 {
 	// include nothing
 	if !pf.IncludeTrue && !pf.IncludeFalse {
 		return FilterDoesNotMatch
@@ -226,7 +226,7 @@ func (pf predicateFilter) Score(env Env, clonePath string) float64 {
 func NewWorktreeFilter(filter Filter, dirty, clean bool) Filter {
 	return predicateFilter{
 		Filter: filter,
-		Predicate: func(env Env, clonePath string) bool {
+		Predicate: func(env *Env, clonePath string) bool {
 			dirty, err := env.Git.IsDirty(clonePath)
 			return err == nil && dirty
 		},
@@ -240,7 +240,7 @@ func NewWorktreeFilter(filter Filter, dirty, clean bool) Filter {
 func NewStatusFilter(filter Filter, synced, unSynced bool) Filter {
 	return predicateFilter{
 		Filter: filter,
-		Predicate: func(env Env, clonePath string) bool {
+		Predicate: func(env *Env, clonePath string) bool {
 			sync, err := env.Git.IsSync(clonePath)
 			return err == nil && sync
 		},
@@ -255,7 +255,7 @@ func NewStatusFilter(filter Filter, synced, unSynced bool) Filter {
 func NewTarnishFilter(filter Filter, tarnished, pristine bool) Filter {
 	return predicateFilter{
 		Filter: filter,
-		Predicate: func(env Env, clonePath string) bool {
+		Predicate: func(env *Env, clonePath string) bool {
 			dirty, err := env.Git.IsDirty(clonePath)
 			if err != nil {
 				return false

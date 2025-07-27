@@ -94,7 +94,7 @@ func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
 // A 'for' filter may be either:
 //   - a (relative or absolute) path to the root of a repository (see env.AtRoot)
 //   - a repository url or pattern (see NewPatternFilter)
-func (env Env) NewForFilter(filter string, fuzzy bool) Filter {
+func (env *Env) NewForFilter(filter string, fuzzy bool) Filter {
 	// check if 'pat' represents the root of a repository
 	if repo, err := env.AtRoot(filter); err == nil && repo != "" {
 		return PathFilter{Paths: []string{repo}}
@@ -108,7 +108,7 @@ func (env Env) NewForFilter(filter string, fuzzy bool) Filter {
 //
 // To create a filter, p is opened and each (whitespace-trimmed) line is passed to env.NewForFilter.
 // Blank lines, or those starting with ';', '//' or '#' are ignored.
-func (env Env) NewFromFileFilter(p string, fuzzy bool) (filters []Filter, err error) {
+func (env *Env) NewFromFileFilter(p string, fuzzy bool) (filters []Filter, err error) {
 	// resolve the path
 	path, err := env.Abs(p)
 	if err != nil {
@@ -156,7 +156,7 @@ func (env Env) NewFromFileFilter(p string, fuzzy bool) (filters []Filter, err er
 // p must be an existing absolute absolute or relative path pointing to:
 //   - a repository directory (see env.At)
 //   - a (possibly nested) directory containing repositories
-func (env Env) ResolvePathFilter(p string) (path string, err error) {
+func (env *Env) ResolvePathFilter(p string) (path string, err error) {
 	// a repository directly
 	path, _, err = env.At(p)
 	if err == nil {
