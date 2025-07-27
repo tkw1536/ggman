@@ -85,6 +85,21 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 		NewURLCommand(),
 	)
 
+	aliases := []struct {
+		Name        string
+		Description string
+		Expansion   []string
+	}{
+		{Name: "git", Description: "Execute a git command using a native 'git' executable. ", Expansion: []string{"exec", "--", "git"}},
+		{Name: "root", Description: "Print the ggman root folder. ", Expansion: []string{"env", "--raw", "GGROOT"}},
+		{Name: "require", Description: "Require a remote git repository to be installed locally. ", Expansion: []string{"clone", "--", "--force"}},
+		{Name: "show", Description: "Show the most recent commit of a repository. ", Expansion: []string{"exec", "--", "git", "-c", "core.pager=", "show", "HEAD"}},
+	}
+
+	for _, alias := range aliases {
+		root.AddCommand(NewAlias(root, alias.Name, alias.Description, alias.Expansion...))
+	}
+
 	// wrap all the argument errors
 	var wrapAllArgs func(cmd *cobra.Command)
 	wrapAllArgs = func(cmd *cobra.Command) {
