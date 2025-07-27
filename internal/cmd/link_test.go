@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"go.tkw01536.de/ggman/cmd"
+	"go.tkw01536.de/ggman/internal/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 

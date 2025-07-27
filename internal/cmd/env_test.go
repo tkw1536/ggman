@@ -4,7 +4,7 @@ package cmd_test
 import (
 	"testing"
 
-	"go.tkw01536.de/ggman/cmd"
+	"go.tkw01536.de/ggman/internal/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 

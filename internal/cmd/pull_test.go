@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"go.tkw01536.de/ggman/cmd"
+	"go.tkw01536.de/ggman/internal/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
 	"go.tkw01536.de/ggman/internal/testutil"
 )
@@ -13,7 +13,7 @@ import (
 //spellchecker:words workdir nolint tparallel paralleltest
 
 //nolint:tparallel,paralleltest
-func TestCommandFetch(t *testing.T) {
+func TestCommandPull(t *testing.T) {
 	t.Parallel()
 
 	mock := mockenv.NewMockEnv(t)
@@ -35,22 +35,22 @@ func TestCommandFetch(t *testing.T) {
 		wantStderr string
 	}{
 		{
-			"fetch repository that has a new commit",
+			"pull repository that has a new commit",
 			"",
-			[]string{"fetch"},
+			[]string{"pull"},
 
 			0,
-			"Fetching " + escapedClonePath + "\n",
+			"Pulling " + escapedClonePath + "\n",
 			"",
 		},
 
 		{
-			"fetch repository that doesn't have new commits",
+			"pull repository that doesn't have new commits",
 			"",
-			[]string{"fetch"},
+			[]string{"pull"},
 
 			0,
-			"Fetching " + escapedClonePath + "\nalready up-to-date\n",
+			"Pulling " + escapedClonePath + "\nalready up-to-date\n",
 			"",
 		},
 	}
