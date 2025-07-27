@@ -7,6 +7,7 @@ import (
 	"slices"
 
 	"github.com/pkg/browser"
+	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/ggman/internal/path"
@@ -15,33 +16,69 @@ import (
 
 //spellchecker:words CANSPEC godoc localgodoc reclone urlweb positionals GGROOT worktree weburl workdir nolint wrapcheck
 
-// Optional name of git remote to show url for.
-var Web ggman.Command = urlweb{
-	isWebCommand: true,
+// NewWebCommand creates the 'ggman web' command.
+func NewWebCommand() *cobra.Command {
+	impl := &urlweb{isWebCommand: true}
+	cmd := &cobra.Command{
+		Use:   "web [BASE]",
+		Short: "open the URL of this repository in a web browser",
+		Long:  "The ggman web command opens the URL of this repository in a web browser.",
+		Args:  cobra.MaximumNArgs(1),
+
+		PreRunE: PreRunE(impl),
+		RunE:    impl.Exec,
+	}
+
+	addURLWebFlags(cmd, impl)
+
+	return cmd
 }
 
-// URL is the 'ggman url' command.
-//
-// The ggman url command behaves exactly like the ggman web command, except that instead of opening the URL in a web browser it prints it to standard output.
-var URL ggman.Command = urlweb{
-	isWebCommand: false,
+func NewURLCommand() *cobra.Command {
+	impl := &urlweb{isWebCommand: false}
+
+	cmd := &cobra.Command{
+		Use:   "url [BASE]",
+		Short: "print the URL to this repository for opening a web browser",
+		Long:  "The 'ggman url' command behaves exactly like the 'ggman web' command, except that instead of opening the URL in a web browser it prints it to standard output.",
+		Args:  cobra.MaximumNArgs(1),
+
+		PreRunE: PreRunE(impl),
+		RunE:    impl.Exec,
+	}
+
+	addURLWebFlags(cmd, impl)
+
+	return cmd
+}
+
+func addURLWebFlags(cmd *cobra.Command, impl *urlweb) {
+	flags := cmd.Flags()
+	flags.BoolVarP(&impl.List, "list-bases", "l", false, "print a list of all predefined base URLs")
+	flags.BoolVarP(&impl.ForceRepoHere, "force-repo-here", "f", false, "pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url")
+	flags.BoolVarP(&impl.Branch, "branch", "b", false, "if provided, include the HEAD reference in the resolved URL")
+	flags.BoolVarP(&impl.Tree, "tree", "t", false, "if provided, additionally use the HEAD reference and relative path to the root of the git worktree")
+	flags.BoolVarP(&impl.BaseAsPrefix, "prefix", "p", false, "treat the base argument as a prefix, instead of the hostname")
+	flags.BoolVarP(&impl.Clone, "clone", "c", false, "if provided to the url command, print a \"git clone\" command that can be used to clone the current repository")
+	flags.BoolVarP(&impl.ReClone, "reclone", "r", false, "like clone, but uses the current remote url as opposed to the https one")
+	flags.StringVarP(&impl.Remote, "remote", "g", "", "optional name of git remote to show url for")
 }
 
 type urlweb struct {
 	isWebCommand bool // if true, execute the web command; else the url command
 
 	Positionals struct {
-		Base string `description:"if provided, replace the first component with the provided base url. alternatively you can use one of the predefined base URLs. use \"--list-bases\" to see a list of predefined base URLs" positional-arg-name:"BASE"`
-	} `positional-args:"true"`
-	List bool `description:"print a list of all predefined base URLs" long:"list-bases" short:"l"`
+		Base string
+	}
 
-	ForceRepoHere bool   `description:"pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url" long:"force-repo-here" short:"f"`
-	Branch        bool   `description:"if provided, include the HEAD reference in the resolved URL"                                                           long:"branch"          short:"b"`
-	Tree          bool   `description:"if provided, additionally use the HEAD reference and relative path to the root of the git worktree"                    long:"tree"            short:"t"`
-	BaseAsPrefix  bool   `description:"treat the base argument as a prefix, instead of the hostname"                                                          long:"prefix"          short:"p"`
-	Clone         bool   `description:"if provided to the url command, print a \"git clone\" command that can be used to clone the current repository"        long:"clone"           short:"c"`
-	ReClone       bool   `description:"like clone, but uses the current remote url as opposed to the https one"                                               long:"reclone"         short:"r"`
-	Remote        string `description:"optional name of git remote to show url for"                                                                           long:"remote"          short:"g"`
+	List          bool
+	ForceRepoHere bool
+	Branch        bool
+	Tree          bool
+	BaseAsPrefix  bool
+	Clone         bool
+	ReClone       bool
+	Remote        string
 }
 
 // WebBuiltInBases is a map of built-in bases for the url and web commands.
@@ -55,7 +92,7 @@ var WebBuiltInBases = map[string]struct {
 	"localgodoc": {"http://localhost:6060/pkg/", true},
 }
 
-func (uw urlweb) Description() ggman.Description {
+func (uw *urlweb) Description() ggman.Description {
 	var Name string
 	if uw.isWebCommand {
 		Name = "web"
@@ -80,11 +117,15 @@ func (uw urlweb) Description() ggman.Description {
 	}
 }
 
-func (uw urlweb) AfterParse() error {
+func (uw *urlweb) AfterParse(cmd *cobra.Command, args []string) error {
+	if len(args) > 0 {
+		uw.Positionals.Base = args[0]
+	}
+
 	var cloneFlag string
 	if uw.Clone {
 		cloneFlag = "clone"
-	} else {
+	} else if uw.ReClone {
 		cloneFlag = "reclone"
 	}
 
@@ -116,13 +157,18 @@ var (
 	errURLFailedBrowser    = exit.NewErrorWithCode("failed to open browser", exit.ExitGeneric)
 )
 
-func (uw urlweb) Run(context ggman.Context) error {
+func (uw *urlweb) Exec(cmd *cobra.Command, args []string) error {
 	if uw.List {
-		return uw.listBases(context)
+		return uw.listBases(cmd)
+	}
+
+	environment, err := ggman.GetEnv(cmd)
+	if err != nil {
+		return err
 	}
 
 	// get the remote url of the current repository
-	root, remote, relative, err := uw.getRemoteURL(context)
+	root, remote, relative, err := uw.getRemoteURL(environment)
 	if err != nil {
 		return err
 	}
@@ -168,7 +214,7 @@ func (uw urlweb) Run(context ggman.Context) error {
 	}
 
 	if root != "" && (uw.Tree || uw.Branch) {
-		ref, err := context.Environment.Git.GetHeadRef(root)
+		ref, err := environment.Git.GetHeadRef(root)
 		if err != nil {
 			return errURLWebOutsideRepository
 		}
@@ -190,16 +236,16 @@ func (uw urlweb) Run(context ggman.Context) error {
 			return fmt.Errorf("%w: %w", errURLFailedBrowser, err)
 		}
 		return nil
-	} else {
-		_, err := context.Println(weburl)
-		if err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
-		}
-		return nil
 	}
+
+	_, err = fmt.Fprintln(cmd.OutOrStdout(), weburl)
+	if err != nil {
+		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+	}
+	return nil
 }
 
-func (uw urlweb) listBases(context ggman.Context) error {
+func (uw *urlweb) listBases(cmd *cobra.Command) error {
 	bases := make([]string, 0, len(WebBuiltInBases))
 	for key := range WebBuiltInBases {
 		bases = append(bases, key)
@@ -208,7 +254,7 @@ func (uw urlweb) listBases(context ggman.Context) error {
 
 	for _, name := range bases {
 		base := WebBuiltInBases[name]
-		if _, err := context.Printf("%s: %s\n", name, base.URL); err != nil {
+		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "%s: %s\n", name, base.URL); err != nil {
 			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 	}
@@ -216,17 +262,17 @@ func (uw urlweb) listBases(context ggman.Context) error {
 }
 
 // getRemoteURL gets the remote url of current repository in the context.
-func (uw urlweb) getRemoteURL(context ggman.Context) (root string, remote string, relative string, err error) {
+func (uw *urlweb) getRemoteURL(environment env.Env) (root string, remote string, relative string, err error) {
 	if uw.ForceRepoHere { // don't use a repository, instead fake one!
-		return uw.getRemoteURLFake(context)
+		return uw.getRemoteURLFake(environment)
 	}
 
-	return uw.getRemoteURLReal(context)
+	return uw.getRemoteURLReal(environment)
 }
 
-func (uw urlweb) getRemoteURLReal(context ggman.Context) (root string, remote string, relative string, err error) {
+func (uw *urlweb) getRemoteURLReal(environment env.Env) (root string, remote string, relative string, err error) {
 	// find the repository at the current location
-	root, relative, err = context.Environment.At(".")
+	root, relative, err = environment.At(".")
 	if err != nil {
 		return "", "", "", fmt.Errorf("failed to get local path to repository: %w", err)
 	}
@@ -236,7 +282,7 @@ func (uw urlweb) getRemoteURLReal(context ggman.Context) (root string, remote st
 	}
 
 	// get the remote
-	remote, err = context.Environment.Git.GetRemote(root, uw.Remote)
+	remote, err = environment.Git.GetRemote(root, uw.Remote)
 	if err != nil {
 		return "", "", "", errURLWebOutsideRepository
 	}
@@ -244,20 +290,20 @@ func (uw urlweb) getRemoteURLReal(context ggman.Context) (root string, remote st
 	return
 }
 
-func (uw urlweb) getRemoteURLFake(context ggman.Context) (root string, remote string, relative string, err error) {
+func (uw *urlweb) getRemoteURLFake(environment env.Env) (root string, remote string, relative string, err error) {
 	// get the absolute path to the current working directory
-	workdir, err := context.Environment.Abs("")
+	workdir, err := environment.Abs("")
 	if err != nil {
 		return "", "", "", fmt.Errorf("failed to get absolute path: %w", err)
 	}
 
 	// check that the
-	if !path.HasChild(context.Environment.Root, workdir) {
+	if !path.HasChild(environment.Root, workdir) {
 		return "", "", "", errURLWebNoRelative
 	}
 
 	// determine the relative path to the root directory
-	relPath, err := filepath.Rel(context.Environment.Root, workdir)
+	relPath, err := filepath.Rel(environment.Root, workdir)
 	if err != nil {
 		return "", "", "", errURLWebNoRelative
 	}

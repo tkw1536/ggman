@@ -81,6 +81,8 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 		NewShellrcCommand(),
 		NewSweepCommand(),
 		NewWhereCommand(),
+		NewWebCommand(),
+		NewURLCommand(),
 	)
 
 	// wrap all the argument errors
