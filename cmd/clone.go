@@ -91,7 +91,10 @@ var (
 
 func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 	// get the environment
-	environment, err := ggman.GetEnv(cmd)
+	environment, err := ggman.GetEnv(cmd, env.Requirement{
+		NeedsRoot:    true,
+		NeedsCanFile: true,
+	})
 	if err != nil {
 		return err
 	}

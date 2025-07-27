@@ -59,7 +59,7 @@ func (c *canon) Exec(cmd *cobra.Command, args []string) error {
 	var file env.CanFile
 
 	if c.Positional.CANSPEC == "" {
-		env, err := ggman.GetEnv(cmd)
+		env, err := ggman.GetEnv(cmd, env.Requirement{})
 		if err != nil {
 			return fmt.Errorf("failed to get environment: %w", err)
 		}

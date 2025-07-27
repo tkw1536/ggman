@@ -178,9 +178,6 @@ func wrapArgs(positionals cobra.PositionalArgs) cobra.PositionalArgs {
 }
 
 type Command interface {
-	// Description is the description of this command.
-	Description() ggman.Description
-
 	// Exec executes this command
 	Exec(cmd *cobra.Command, args []string) error
 }
@@ -193,9 +190,6 @@ type AfterParse interface {
 // TODO: move the requirements directly into the GetEnv call, and invoke it directly.
 func PreRunE(command Command) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		requirements := command.Description().Requirements
-		ggman.SetRequirements(cmd, &requirements)
-
 		ap, ok := command.(AfterParse)
 		if !ok {
 			return nil

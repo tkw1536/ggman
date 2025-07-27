@@ -30,13 +30,12 @@ type ggmanFlags = env.Flags
 // Program is the type of the ggman Program.
 type Program = goprogram.Program[ggmanEnv, ggmanParameters, ggmanFlags, ggmanRequirements]
 
-type cobraKey string
+type cobraKey int
 
 const (
-	flagsKey        cobraKey = "flags"
-	requirementsKey cobraKey = "requirements"
-	envKey          cobraKey = "env"
-	parametersKey   cobraKey = "parameters"
+	flagsKey cobraKey = iota
+	envKey
+	parametersKey
 )
 
 // SetFlags sets the flags for a cobra.Command.
@@ -47,17 +46,6 @@ func SetFlags(cmd *cobra.Command, flags *env.Flags) {
 // GetFlags gets the flags from a cobra command.
 func GetFlags(cmd *cobra.Command) env.Flags {
 	return getType[env.Flags](cmd, flagsKey)
-}
-
-// SetRequirements sets the requirements for a cobra.Command.
-// TODO: move this into the cobra implementation.
-func SetRequirements(cmd *cobra.Command, req *env.Requirement) {
-	setType(cmd, requirementsKey, req)
-}
-
-// GetFlags gets the flags from a cobra command.
-func GetRequirements(cmd *cobra.Command) env.Requirement {
-	return getType[env.Requirement](cmd, requirementsKey)
 }
 
 func SetParameters(cmd *cobra.Command, params *env.Parameters) {
@@ -88,7 +76,7 @@ func getType[T any](cmd *cobra.Command, key cobraKey) T {
 var ErrGenericEnvironment = exit.NewErrorWithCode("failed to initialize environment", env.ExitInvalidEnvironment)
 
 // GetEnv gets the environment of a ggman command.
-func GetEnv(cmd *cobra.Command) (env.Env, error) {
+func GetEnv(cmd *cobra.Command, requirements env.Requirement) (env.Env, error) {
 	flags := cmd.Context().Value(envKey)
 	data, ok := flags.(env.Env)
 	if ok {
@@ -96,7 +84,7 @@ func GetEnv(cmd *cobra.Command) (env.Env, error) {
 	}
 
 	// make a new environment
-	ne, err := newEnvironment(GetRequirements(cmd), GetParameters(cmd), GetFlags(cmd))
+	ne, err := newEnvironment(requirements, GetParameters(cmd), GetFlags(cmd))
 	if err != nil {
 		return env.Env{}, fmt.Errorf("%w: %w", ErrGenericEnvironment, err)
 	}

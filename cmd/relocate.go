@@ -68,7 +68,11 @@ func (r *relocate) AfterParse(cmd *cobra.Command, args []string) error {
 }
 
 func (r *relocate) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd)
+	environment, err := ggman.GetEnv(cmd, env.Requirement{
+		NeedsRoot:    true,
+		NeedsCanFile: true,
+		AllowsFilter: true,
+	})
 	if err != nil {
 		return err
 	}

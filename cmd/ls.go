@@ -70,7 +70,10 @@ func (l *ls) AfterParse(cmd *cobra.Command, args []string) error {
 }
 
 func (l *ls) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd)
+	environment, err := ggman.GetEnv(cmd, env.Requirement{
+		AllowsFilter: true,
+		NeedsRoot:    true,
+	})
 	if err != nil {
 		return err
 	}

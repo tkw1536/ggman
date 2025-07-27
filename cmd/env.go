@@ -86,7 +86,7 @@ func (e *_env) AfterParse(cmd *cobra.Command, args []string) error {
 }
 
 func (e *_env) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd)
+	environment, err := ggman.GetEnv(cmd, env.Requirement{NeedsRoot: true})
 	if err != nil {
 		return err
 	}

@@ -47,7 +47,10 @@ func (fetch) Description() ggman.Description {
 var errFetchCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
 
 func (fetch) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd)
+	environment, err := ggman.GetEnv(cmd, env.Requirement{
+		AllowsFilter: true,
+		NeedsRoot:    true,
+	})
 	if err != nil {
 		return err
 	}
