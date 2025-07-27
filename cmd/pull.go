@@ -30,18 +30,6 @@ func NewPullCommand() *cobra.Command {
 
 type pull struct{}
 
-func (pull) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "pull",
-		Description: "run \"git pull\" on locally cloned repositories",
-
-		Requirements: env.Requirement{
-			AllowsFilter: true,
-			NeedsRoot:    true,
-		},
-	}
-}
-
 var errPullCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
 
 func (*pull) AfterParse(cmd *cobra.Command, args []string) error {

@@ -36,13 +36,6 @@ type canon struct {
 	}
 }
 
-func (canon) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "canon",
-		Description: "print the canonical version of a URL",
-	}
-}
-
 var (
 	errCanonUnableCanFile = exit.NewErrorWithCode("unable to load default CANFILE", exit.ExitContext)
 )

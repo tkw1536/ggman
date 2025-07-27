@@ -52,18 +52,6 @@ type clone struct {
 	To    string
 }
 
-func (*clone) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "clone",
-		Description: "clone a repository into a path described by \"ggman where\"",
-
-		Requirements: env.Requirement{
-			NeedsRoot:    true,
-			NeedsCanFile: true,
-		},
-	}
-}
-
 func (c *clone) AfterParse(cmd *cobra.Command, args []string) error {
 	if c.Local {
 		c.Plain = true

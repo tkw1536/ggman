@@ -39,17 +39,6 @@ type findBranch struct {
 	ExitCode bool
 }
 
-func (*findBranch) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "find-branch",
-		Description: "list repositories containing a specific branch",
-
-		Requirements: env.Requirement{
-			NeedsRoot: true,
-		},
-	}
-}
-
 func (f *findBranch) AfterParse(cmd *cobra.Command, args []string) error {
 	f.Positionals.Branch = args[0]
 	return nil

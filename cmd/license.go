@@ -29,13 +29,6 @@ func NewLicenseCommand() *cobra.Command {
 
 type license struct{}
 
-func (license) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "license",
-		Description: "print license information about ggman and exit",
-	}
-}
-
 func (*license) AfterParse(cmd *cobra.Command, args []string) error {
 	return nil
 }

@@ -35,18 +35,6 @@ type lsr struct {
 	Canonical bool
 }
 
-func (lsr) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "lsr",
-		Description: "list remote URLs to all locally cloned repositories",
-
-		Requirements: env.Requirement{
-			AllowsFilter: true,
-			NeedsRoot:    true,
-		},
-	}
-}
-
 var errLSRInvalidCanfile = exit.NewErrorWithCode("invalid CANFILE found", env.ExitInvalidEnvironment)
 
 func (l *lsr) AfterParse(cmd *cobra.Command, args []string) error {

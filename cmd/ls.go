@@ -41,18 +41,6 @@ type ls struct {
 	Limit    int
 }
 
-func (ls) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "ls",
-		Description: "list local paths to all locally cloned repositories",
-
-		Requirements: env.Requirement{
-			AllowsFilter: true,
-			NeedsRoot:    true,
-		},
-	}
-}
-
 var (
 	errLSExitFlag             = exit.NewErrorWithCode("", exit.ExitGeneric)
 	errLsOnlyOneOfOneAndLimit = exit.NewErrorWithCode("only one of `--one` and `--count` may be provided", exit.ExitCommandArguments)

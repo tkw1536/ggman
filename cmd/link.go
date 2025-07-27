@@ -38,17 +38,6 @@ type link struct {
 	}
 }
 
-func (link) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "link",
-		Description: "symlink a repository into the local repository structure",
-
-		Requirements: env.Requirement{
-			NeedsRoot: true,
-		},
-	}
-}
-
 var (
 	errLinkDoesNotExist  = exit.NewErrorWithCode("can not open source repository", exit.ExitGeneric)
 	errLinkSamePath      = exit.NewErrorWithCode("link source and target are identical", exit.ExitGeneric)

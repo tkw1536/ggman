@@ -37,17 +37,6 @@ type where struct {
 	}
 }
 
-func (where) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "where",
-		Description: "print the location where a repository would be cloned to",
-
-		Requirements: env.Requirement{
-			NeedsRoot: true,
-		},
-	}
-}
-
 func (w *where) AfterParse(cmd *cobra.Command, args []string) error {
 	w.Positionals.URL = args[0]
 	return nil

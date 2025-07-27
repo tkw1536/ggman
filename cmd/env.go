@@ -49,17 +49,6 @@ type _env struct {
 	Raw      bool
 }
 
-func (_env) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "env",
-		Description: "print information about the ggman environment",
-
-		Requirements: env.Requirement{
-			NeedsRoot: true,
-		},
-	}
-}
-
 var (
 	errEnvInvalidVar        = exit.NewErrorWithCode("unknown environment variable", exit.ExitCommandArguments)
 	errEnvModesIncompatible = exit.NewErrorWithCode("at most one of `--raw`, `--list` and `--describe` may be given", exit.ExitCommandArguments)

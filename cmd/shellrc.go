@@ -29,13 +29,6 @@ func NewShellrcCommand() *cobra.Command {
 
 type shellrc struct{}
 
-func (shellrc) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "shellrc",
-		Description: "print additional aliases to be used in shell profiles in conjunction with ggman",
-	}
-}
-
 // TODO: Make this private again
 //
 //go:embed shellrc.sh

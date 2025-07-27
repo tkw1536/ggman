@@ -43,17 +43,6 @@ type findFile struct {
 	ExitCode      bool
 }
 
-func (*findFile) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "find-file",
-		Description: "list repositories containing a specific file",
-
-		Requirements: env.Requirement{
-			NeedsRoot: true,
-		},
-	}
-}
-
 func (f *findFile) AfterParse(cmd *cobra.Command, args []string) error {
 	f.Positionals.Path = args[0]
 	if !filepath.IsLocal(f.Positionals.Path) {

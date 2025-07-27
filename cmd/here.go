@@ -34,17 +34,6 @@ type here struct {
 	Tree bool
 }
 
-func (here) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "here",
-		Description: "print the root path to the repository in the current repository",
-
-		Requirements: env.Requirement{
-			NeedsRoot: true,
-		},
-	}
-}
-
 func (h *here) AfterParse(cmd *cobra.Command, args []string) error {
 	return nil
 }

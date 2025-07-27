@@ -33,17 +33,6 @@ The command takes no arguments, and produces them in an order such that they can
 
 type sweep struct{}
 
-func (sweep) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "sweep",
-		Description: "find empty folders in the root folder",
-
-		Requirements: env.Requirement{
-			NeedsRoot: true,
-		},
-	}
-}
-
 var errSweepScan = exit.NewErrorWithCode("error scanning for empty directories", exit.ExitGeneric)
 
 func (*sweep) AfterParse(cmd *cobra.Command, args []string) error {

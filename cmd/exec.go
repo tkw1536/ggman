@@ -59,18 +59,6 @@ type exe struct {
 	Force    bool
 }
 
-func (exe) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "exec",
-		Description: "execute a command for all repositories",
-
-		Requirements: env.Requirement{
-			AllowsFilter: true,
-			NeedsRoot:    true,
-		},
-	}
-}
-
 var (
 	errExecFatal              = exit.NewErrorWithCode("", exit.ExitGeneric)
 	errExecParallelNegative   = exit.NewErrorWithCode("argument for `--parallel` must be non-negative", exit.ExitCommandArguments)

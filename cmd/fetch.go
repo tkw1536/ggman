@@ -32,18 +32,6 @@ func (fetch) AfterParse(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (fetch) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "fetch",
-		Description: "run \"git fetch --all\" on locally cloned repositories",
-
-		Requirements: env.Requirement{
-			AllowsFilter: true,
-			NeedsRoot:    true,
-		},
-	}
-}
-
 var errFetchCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
 
 func (fetch) Exec(cmd *cobra.Command, args []string) error {

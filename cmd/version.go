@@ -29,13 +29,6 @@ func NewVersionCommand() *cobra.Command {
 
 type version struct{}
 
-func (version) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "version",
-		Description: "print a version message and exit",
-	}
-}
-
 func (*version) AfterParse(cmd *cobra.Command, args []string) error {
 	return nil
 }

@@ -42,19 +42,6 @@ type relocate struct {
 	Simulate bool
 }
 
-func (relocate) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "relocate",
-		Description: "move locally cloned repositories into locations as per \"ggman where\"",
-
-		Requirements: env.Requirement{
-			NeedsRoot:    true,
-			NeedsCanFile: true,
-			AllowsFilter: true,
-		},
-	}
-}
-
 var (
 	errRelocateCreateParent = exit.NewErrorWithCode("unable to create parent directory for destination", exit.ExitGeneric)
 	errRelocateMove         = exit.NewErrorWithCode("unable to move repository", exit.ExitGeneric)

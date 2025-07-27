@@ -92,31 +92,6 @@ var WebBuiltInBases = map[string]struct {
 	"localgodoc": {"http://localhost:6060/pkg/", true},
 }
 
-func (uw *urlweb) Description() ggman.Description {
-	var Name string
-	if uw.isWebCommand {
-		Name = "web"
-	} else {
-		Name = "url"
-	}
-
-	var Description string
-	if uw.isWebCommand {
-		Description = "open the URL of this repository in a web browser"
-	} else {
-		Description = "print the URL to this repository for opening a web browser"
-	}
-
-	return ggman.Description{
-		Command:     Name,
-		Description: Description,
-
-		Requirements: env.Requirement{
-			NeedsRoot: true,
-		},
-	}
-}
-
 func (uw *urlweb) AfterParse(cmd *cobra.Command, args []string) error {
 	if len(args) > 0 {
 		uw.Positionals.Base = args[0]

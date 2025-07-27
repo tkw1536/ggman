@@ -40,18 +40,6 @@ func (*fix) AfterParse(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (fix) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "fix",
-		Description: "canonicalizes remote URLs for cloned repositories",
-		Requirements: env.Requirement{
-			NeedsRoot:    true,
-			NeedsCanFile: true,
-			AllowsFilter: true,
-		},
-	}
-}
-
 var errFixCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
 
 func (f *fix) Exec(cmd *cobra.Command, args []string) error {

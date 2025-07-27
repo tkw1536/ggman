@@ -39,13 +39,6 @@ func (c *comps) AfterParse(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (*comps) Description() ggman.Description {
-	return ggman.Description{
-		Command:     "comps",
-		Description: "print the components of a URL",
-	}
-}
-
 func (c *comps) Exec(cmd *cobra.Command, args []string) error {
 	for _, comp := range c.Positional.URL.Components() {
 		if _, err := fmt.Fprintln(cmd.OutOrStdout(), comp); err != nil {
