@@ -185,13 +185,12 @@ type Command interface {
 	Exec(cmd *cobra.Command, args []string) error
 }
 
-// TODO: rename this to something more appropriate
+// TODO: rename this to something more appropriate.
 type AfterParse interface {
 	AfterParse(cmd *cobra.Command, args []string) error
 }
 
-// PreRunE implements Pre-Run for all commands.
-// TODO: move the requirements directly into the GetEnv call, and invoke it directly
+// TODO: move the requirements directly into the GetEnv call, and invoke it directly.
 func PreRunE(command Command) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		requirements := command.Description().Requirements

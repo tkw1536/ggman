@@ -4,10 +4,7 @@ package cmd
 import (
 	"al.essio.dev/pkg/shellescape"
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/goprogram/exit"
 )
-
-var errUnableToFindAliasedCommand = exit.NewErrorWithCode("unable to find aliased command", exit.ExitCommandArguments)
 
 // AddAlias adds command to act as an alias for another command of root.
 // root is the root command the alias is to be added to.

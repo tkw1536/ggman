@@ -102,7 +102,6 @@ func (e *exe) Exec(cmd *cobra.Command, args []string) error {
 
 // execReal implements ggman exec for simulate = False.
 func (e *exe) execReal(cmd *cobra.Command, environment env.Env) (err error) {
-
 	repos := environment.Repos(true)
 
 	statusIO := e.Parallel != 1 && !e.Quiet

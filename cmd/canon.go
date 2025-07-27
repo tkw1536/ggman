@@ -73,9 +73,9 @@ func (c *canon) Exec(cmd *cobra.Command, args []string) error {
 
 	// print out the canonical version of the file
 	canonical := c.Positional.URL.CanonicalWith(file)
-	_, err := fmt.Fprintln(cmd.OutOrStdout(), canonical)
-	if err != nil {
-		return err
+
+	if _, err := fmt.Fprintln(cmd.OutOrStdout(), canonical); err != nil {
+		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 	}
 	return nil
 }
