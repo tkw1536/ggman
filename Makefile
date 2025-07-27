@@ -9,7 +9,6 @@ GOMOD=$(GOCMD) mod
 GOGENERATE=$(GOCMD) generate
 
 # Flags for versioning
-# TODO: Rework this for cobra
 GGMANVERSIONFLAGS=-X 'go.tkw01536.de/ggman/constants.buildVersion=$(shell git describe --tags HEAD)' -X 'go.tkw01536.de/ggman/constants.buildTime=$(shell date +%s)'
 
 # Binary paths
