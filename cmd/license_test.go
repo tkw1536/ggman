@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"go.tkw01536.de/ggman"
-	"go.tkw01536.de/ggman/cmd/ggman-cobra/cmd"
+	"go.tkw01536.de/ggman/cmd"
 	"go.tkw01536.de/ggman/constants/legal"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
