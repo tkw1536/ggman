@@ -22,7 +22,7 @@ var errNoArgumentsProvided = exit.NewErrorWithCode("need at least one argument. 
 // Command returns the main ggman command
 //
 //nolint:contextcheck // don't need to pass down the context
-func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IOStream) *cobra.Command {
+func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 	// TODO: don't use stream.IOStream here!
 	root := &cobra.Command{
 		Use:     "ggman",
@@ -140,12 +140,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 	}
 	wrapAllArgs(root)
 
-	// setup the command
-
-	root.SetIn(stream.Stdin)
-	root.SetOut(stream.Stdout)
-	root.SetErr(stream.Stderr)
-
+	// setup more flags
 	root.SilenceErrors = true
 	root.SilenceUsage = true
 

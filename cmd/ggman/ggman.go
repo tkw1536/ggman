@@ -11,7 +11,6 @@ import (
 	"go.tkw01536.de/ggman/cmd"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/pkglib/exit"
-	"go.tkw01536.de/pkglib/stream"
 )
 
 const fatalPanicMessage = `Fatal Error: Panic
@@ -40,8 +39,7 @@ func main() {
 		}
 	}()
 
-	// build new io streams
-	streams := stream.FromEnv()
+	// build the parameters
 	params := env.Parameters{
 		Variables: env.ReadVariables(),
 		Plumbing:  nil,
@@ -49,10 +47,10 @@ func main() {
 	}
 
 	// and run the command
-	cmd := cmd.NewCommand(context.Background(), params, streams)
+	cmd := cmd.NewCommand(context.Background(), params)
 	if err := cmd.Execute(); err != nil {
 		code, _ := exit.CodeFromError(err)
-		_, _ = streams.EPrintln(err)
+		_, _ = fmt.Fprintln(cmd.ErrOrStderr(), err)
 		code.Return()
 	}
 }

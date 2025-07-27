@@ -166,13 +166,14 @@ func (mock *MockEnv) Run(t *testing.T, workdir string, stdin string, argv ...str
 	stdoutBuffer := &bytes.Buffer{}
 	stderrBuffer := &bytes.Buffer{}
 
-	stream := stream.NewIOStream(stdoutBuffer, stderrBuffer, stdinReader)
-
 	fake := cmd.NewCommand(t.Context(), env.Parameters{
 		Variables: mock.vars,
 		Plumbing:  mock.plumbing,
 		Workdir:   workdir,
-	}, stream)
+	})
+	fake.SetIn(stdinReader)
+	fake.SetOut(stdoutBuffer)
+	fake.SetErr(stderrBuffer)
 
 	fake.SetArgs(argv)
 	cmdErr := fake.Execute()
