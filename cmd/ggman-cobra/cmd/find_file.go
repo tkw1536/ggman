@@ -30,8 +30,6 @@ The provided path may be relative to the root of the repository.`,
 	flags.BoolVarP(&impl.PrintFilePath, "print-file", "p", false, "instead of printing the repository paths, print the file paths")
 	flags.BoolVarP(&impl.ExitCode, "exit-code", "e", false, "exit with status code 1 when no repositories with provided file exist")
 
-	// TODO: port the flags here
-
 	return cmd
 }
 

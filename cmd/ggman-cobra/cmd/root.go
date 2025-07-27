@@ -70,6 +70,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 		NewFetchCommand(),
 		NewFindBranchCommand(),
 		NewFindFileCommand(),
+		NewFixCommand(),
 	)
 
 	// wrap all the argument errors
