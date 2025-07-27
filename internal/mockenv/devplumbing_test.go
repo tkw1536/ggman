@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
-	gggit "go.tkw01536.de/ggman/git"
+	gggit "go.tkw01536.de/ggman/internal/git"
 	"go.tkw01536.de/ggman/internal/mockenv"
 	"go.tkw01536.de/ggman/internal/testutil"
 	"go.tkw01536.de/pkglib/stream"

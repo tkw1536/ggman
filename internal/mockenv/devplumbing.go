@@ -7,7 +7,7 @@ import (
 	"io"
 	"strconv"
 
-	"go.tkw01536.de/ggman/git"
+	"go.tkw01536.de/ggman/internal/git"
 	"go.tkw01536.de/pkglib/stream"
 )
 

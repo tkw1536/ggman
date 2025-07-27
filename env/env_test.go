@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"go.tkw01536.de/ggman/env"
-	"go.tkw01536.de/ggman/git"
+	"go.tkw01536.de/ggman/internal/git"
 	"go.tkw01536.de/ggman/internal/path"
 	"go.tkw01536.de/ggman/internal/testutil"
 	"go.tkw01536.de/pkglib/testlib"

@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"go.tkw01536.de/ggman/git"
+	"go.tkw01536.de/ggman/internal/git"
 	"go.tkw01536.de/ggman/internal/path"
 	"go.tkw01536.de/ggman/internal/walker"
 	"go.tkw01536.de/pkglib/exit"
