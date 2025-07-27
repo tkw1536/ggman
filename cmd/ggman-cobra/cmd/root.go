@@ -20,6 +20,7 @@ var errNoArgumentsProvided = exit.NewErrorWithCode("need at least one argument. 
 //
 //nolint:contextcheck // don't need to pass down the context
 func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IOStream) *cobra.Command {
+	// TODO: don't use stream.IOStream here!
 	root := &cobra.Command{
 		Use:     "ggman",
 		Aliases: []string{os.Args[0]},
@@ -63,6 +64,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 		NewCloneCommand(),
 		NewCompsCommand(),
 		NewEnvCommand(),
+		NewExecCommand(),
 	)
 
 	// wrap all the argument errors
