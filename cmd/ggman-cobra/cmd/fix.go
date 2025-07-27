@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words sync ggman goprogram exit
+//spellchecker:words sync github cobra ggman goprogram exit
 import (
 	"fmt"
 	"sync"

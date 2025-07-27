@@ -73,6 +73,14 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 		NewFixCommand(),
 		NewHereCommand(),
 		NewLicenseCommand(),
+		NewLinkCommand(),
+		NewLsCommand(),
+		NewLsrCommand(),
+		NewPullCommand(),
+		NewRelocateCommand(),
+		NewShellrcCommand(),
+		NewSweepCommand(),
+		NewWhereCommand(),
 	)
 
 	// wrap all the argument errors

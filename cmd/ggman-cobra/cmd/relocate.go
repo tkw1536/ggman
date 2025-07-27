@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words errors path filepath essio shellescape ggman internal dirs goprogram exit pkglib
+//spellchecker:words errors path filepath essio shellescape github cobra ggman internal dirs goprogram exit pkglib
 import (
 	"errors"
 	"fmt"
@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"al.essio.dev/pkg/shellescape"
+	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/ggman/internal/dirs"
@@ -18,13 +19,27 @@ import (
 
 //spellchecker:words nolint wrapcheck
 
-// Relocate is the 'ggman relocate' command.
-//
-// Relocate moves all repositories to the location where they should be moved to if they had been cloned with 'ggman clone'.
-var Relocate ggman.Command = relocate{}
+func NewRelocateCommand() *cobra.Command {
+	impl := new(relocate)
+
+	cmd := &cobra.Command{
+		Use:   "relocate",
+		Short: "move locally cloned repositories into locations as per \"ggman where\"",
+		Long:  "Relocate moves all repositories to the location where they should be moved to if they had been cloned with 'ggman clone'.",
+		Args:  cobra.NoArgs,
+
+		PreRunE: PreRunE(impl),
+		RunE:    impl.Exec,
+	}
+
+	flags := cmd.Flags()
+	flags.BoolVarP(&impl.Simulate, "simulate", "s", false, "only print unix-like commands to move repositories around")
+
+	return cmd
+}
 
 type relocate struct {
-	Simulate bool `description:"only print unix-like commands to move repositories around" long:"simulate" short:"s"`
+	Simulate bool
 }
 
 func (relocate) Description() ggman.Description {
@@ -48,14 +63,23 @@ var (
 	errRelocatePathExists = exit.NewErrorWithCode("path already exists", exit.ExitGeneric)
 )
 
-func (r relocate) Run(context ggman.Context) error {
-	for _, gotPath := range context.Environment.Repos(false) {
+func (r *relocate) AfterParse(cmd *cobra.Command, args []string) error {
+	return nil
+}
+
+func (r *relocate) Exec(cmd *cobra.Command, args []string) error {
+	environment, err := ggman.GetEnv(cmd)
+	if err != nil {
+		return err
+	}
+
+	for _, gotPath := range environment.Repos(false) {
 		// determine the remote path and where it should go
-		remote, err := context.Environment.Git.GetRemote(gotPath, "")
+		remote, err := environment.Git.GetRemote(gotPath, "")
 		if err != nil || remote == "" { // ignore remotes that don't exist
 			continue
 		}
-		shouldPath, err := context.Environment.Local(env.ParseURL(remote))
+		shouldPath, err := environment.Local(env.ParseURL(remote))
 		if err != nil {
 			return fmt.Errorf("%w: %w", env.ErrUnableLocalPath, err)
 		}
@@ -68,10 +92,10 @@ func (r relocate) Run(context ggman.Context) error {
 		parentPath := filepath.Dir(shouldPath)
 
 		// print what is being done
-		if _, err := context.Printf("mkdir -p %s\n", shellescape.Quote(parentPath)); err != nil {
+		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "mkdir -p %s\n", shellescape.Quote(parentPath)); err != nil {
 			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
-		if _, err := context.Printf("mv %s %s\n", shellescape.Quote(gotPath), shellescape.Quote(shouldPath)); err != nil {
+		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "mv %s %s\n", shellescape.Quote(gotPath), shellescape.Quote(shouldPath)); err != nil {
 			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 		}
 		if r.Simulate {
@@ -85,7 +109,7 @@ func (r relocate) Run(context ggman.Context) error {
 
 		// if there already is a target repository at the path
 		{
-			got, err := context.Environment.AtRoot(shouldPath)
+			got, err := environment.AtRoot(shouldPath)
 			if err != nil {
 				return fmt.Errorf("%w: %w", errRelocateMove, err)
 			}

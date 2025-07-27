@@ -4,10 +4,9 @@ package cmd_test
 import (
 	"testing"
 
+	"go.tkw01536.de/ggman/cmd/ggman-cobra/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
-
-const shellrcSh = "unused"
 
 func TestCommandShellRC(t *testing.T) {
 	t.Parallel()
@@ -18,8 +17,8 @@ func TestCommandShellRC(t *testing.T) {
 	if code != 0 {
 		t.Errorf("Code = %d, wantCode = %d", code, 0)
 	}
-	if stdout != shellrcSh {
-		t.Errorf("Got stdout = %s, expected = %s", stdout, shellrcSh)
+	if stdout != cmd.ShellrcSh {
+		t.Errorf("Got stdout = %s, expected = %s", stdout, cmd.ShellrcSh)
 	}
 	if stderr != "" {
 		t.Errorf("Got stderr = %s, expected = %s", stderr, "")
