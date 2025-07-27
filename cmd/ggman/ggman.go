@@ -19,7 +19,7 @@ The ggman program panicked and had to abort execution. This is usually
 indicative of a bug. If this occurs repeatedly you might want to consider
 filing an issue in the issue tracker at:
 
-https://go.tkw01536.de/ggman/issues
+https://github.com/tkw1536/ggman/issues
 
 Below is debug information that might help the developer track down what
 happened.
