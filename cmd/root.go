@@ -86,18 +86,41 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 	)
 
 	aliases := []struct {
-		Name        string
-		Description string
-		Expansion   []string
+		Command   *cobra.Command
+		Expansion []string
 	}{
-		{Name: "git", Description: "Execute a git command using a native 'git' executable. ", Expansion: []string{"exec", "--", "git"}},
-		{Name: "root", Description: "Print the ggman root folder. ", Expansion: []string{"env", "--raw", "GGROOT"}},
-		{Name: "require", Description: "Require a remote git repository to be installed locally. ", Expansion: []string{"clone", "--", "--force"}},
-		{Name: "show", Description: "Show the most recent commit of a repository. ", Expansion: []string{"exec", "--", "git", "-c", "core.pager=", "show", "HEAD"}},
+		{
+			Command: &cobra.Command{
+				Use:   "git",
+				Short: "Execute a git command using a native 'git' executable. ",
+			},
+			Expansion: []string{"exec", "--", "git"},
+		},
+		{
+			Command: &cobra.Command{
+				Use:   "root",
+				Short: "Print the ggman root folder. ",
+			},
+			Expansion: []string{"env", "--raw", "GGROOT"},
+		},
+		{
+			Command: &cobra.Command{
+				Use:   "require",
+				Short: "Require a remote git repository to be installed locally. ",
+			},
+			Expansion: []string{"clone", "--", "--force"},
+		},
+		{
+			Command: &cobra.Command{
+				Use:   "show",
+				Short: "Show the most recent commit of a repository. ",
+			},
+			Expansion: []string{"exec", "--", "git", "-c", "core.pager=", "show", "HEAD"},
+		},
 	}
 
 	for _, alias := range aliases {
-		root.AddCommand(NewAlias(root, alias.Name, alias.Description, alias.Expansion...))
+		root.AddCommand(NewAlias(root, alias.Command, alias.Expansion...))
 	}
 
 	// wrap all the argument errors
