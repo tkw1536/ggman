@@ -1,4 +1,4 @@
-package cmd_test
+package cmd
 
 //spellchecker:words testing ggman constants legal internal mockenv
 import (
@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"go.tkw01536.de/ggman"
-	"go.tkw01536.de/ggman/cmd"
 	"go.tkw01536.de/ggman/constants/legal"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
@@ -33,7 +32,7 @@ func TestCommandLicense(t *testing.T) {
 			[]string{"license"},
 
 			0,
-			fmt.Sprintf(cmd.StringLicenseInfo, ggman.License, legal.Notices),
+			fmt.Sprintf(stringLicenseInfo, ggman.License, legal.Notices),
 			"",
 		},
 	}
@@ -42,7 +41,7 @@ func TestCommandLicense(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.Run(t, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, NewCommand, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

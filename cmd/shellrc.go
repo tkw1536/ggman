@@ -27,13 +27,11 @@ func NewShellrcCommand() *cobra.Command {
 
 type shellrc struct{}
 
-// TODO: Make this private again
-//
 //go:embed shellrc.sh
-var ShellrcSh string
+var shellrcSh string
 
 func (shellrc) Exec(cmd *cobra.Command, args []string) error {
-	_, err := fmt.Fprint(cmd.OutOrStdout(), ShellrcSh)
+	_, err := fmt.Fprint(cmd.OutOrStdout(), shellrcSh)
 	if err != nil {
 		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}

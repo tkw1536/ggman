@@ -29,15 +29,14 @@ func NewLicenseCommand() *cobra.Command {
 type license struct{}
 
 func (license) Exec(cmd *cobra.Command, args []string) error {
-	_, err := fmt.Fprintf(cmd.OutOrStdout(), StringLicenseInfo, ggman.License, legal.Notices)
+	_, err := fmt.Fprintf(cmd.OutOrStdout(), stringLicenseInfo, ggman.License, legal.Notices)
 	if err != nil {
 		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 	return nil
 }
 
-// TODO: Make this private again?
-const StringLicenseInfo = `
+const stringLicenseInfo = `
 ggman -- A golang script that can manage multiple git repositories locally
 https://go.tkw01536.de/ggman
 

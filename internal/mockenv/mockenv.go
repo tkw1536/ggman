@@ -6,6 +6,7 @@ package mockenv
 //spellchecker:words bytes path filepath regexp strconv strings testing essio shellescape github ggman gggit internal dirs testutil pkglib exit stream testlib
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -16,7 +17,7 @@ import (
 
 	"al.essio.dev/pkg/shellescape"
 	"github.com/go-git/go-git/v5"
-	"go.tkw01536.de/ggman/cmd"
+	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman/env"
 	gggit "go.tkw01536.de/ggman/git"
 	"go.tkw01536.de/ggman/internal/dirs"
@@ -147,6 +148,7 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 }
 
 // Run runs the command with the provided arguments.
+// cmdFactory should be a factory function to create the root command, typically [cmd.NewCommand].
 // It afterwards resets the concrete value stored in command to it's zero value.
 //
 // The arguments should include the name of the command.
@@ -156,14 +158,14 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 // In particular all interactions with remote git repositories are intercepted, see the Register() method for details.
 //
 // It returns the exit code of the provided command, along with standard output and standard error.
-func (mock *MockEnv) Run(t *testing.T, workdir string, stdin string, argv ...string) (code uint8, stdout, stderr string) {
+func (mock *MockEnv) Run(t *testing.T, cmdFactory func(context.Context, env.Parameters) *cobra.Command, workdir string, stdin string, argv ...string) (code uint8, stdout, stderr string) {
 	t.Helper()
 
 	stdinReader := strings.NewReader(stdin)
 	stdoutBuffer := &bytes.Buffer{}
 	stderrBuffer := &bytes.Buffer{}
 
-	fake := cmd.NewCommand(t.Context(), env.Parameters{
+	fake := cmdFactory(t.Context(), env.Parameters{
 		Variables: mock.vars,
 		Plumbing:  mock.plumbing,
 		Workdir:   workdir,

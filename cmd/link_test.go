@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"testing"
 
+	"go.tkw01536.de/ggman/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
@@ -52,7 +53,7 @@ func TestCommandLink(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			code, stdout, stderr := mock.Run(t, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, cmd.NewCommand, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

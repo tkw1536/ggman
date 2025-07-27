@@ -1,10 +1,9 @@
-package cmd_test
+package cmd
 
 //spellchecker:words testing ggman internal mockenv
 import (
 	"testing"
 
-	"go.tkw01536.de/ggman/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
@@ -13,12 +12,12 @@ func TestCommandShellRC(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	code, stdout, stderr := mock.Run(t, "", "", "shellrc")
+	code, stdout, stderr := mock.Run(t, NewCommand, "", "", "shellrc")
 	if code != 0 {
 		t.Errorf("Code = %d, wantCode = %d", code, 0)
 	}
-	if stdout != cmd.ShellrcSh {
-		t.Errorf("Got stdout = %s, expected = %s", stdout, cmd.ShellrcSh)
+	if stdout != shellrcSh {
+		t.Errorf("Got stdout = %s, expected = %s", stdout, shellrcSh)
 	}
 	if stderr != "" {
 		t.Errorf("Got stderr = %s, expected = %s", stderr, "")

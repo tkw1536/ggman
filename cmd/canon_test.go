@@ -4,6 +4,7 @@ package cmd_test
 import (
 	"testing"
 
+	"go.tkw01536.de/ggman/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
@@ -116,7 +117,7 @@ func TestCommandCanon(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.Run(t, tt.workDir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, cmd.NewCommand, tt.workDir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}
