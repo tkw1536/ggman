@@ -31,7 +31,7 @@ type license struct{}
 func (license) Exec(cmd *cobra.Command, args []string) error {
 	_, err := fmt.Fprintf(cmd.OutOrStdout(), StringLicenseInfo, ggman.License, legal.Notices)
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 	return nil
 }

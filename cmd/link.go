@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/ggman/internal/dirs"
 	"go.tkw01536.de/pkglib/exit"
@@ -52,11 +51,11 @@ func (l *link) ParseArgs(cmd *cobra.Command, args []string) error {
 }
 
 func (l *link) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd, env.Requirement{
+	environment, err := env.GetEnv(cmd, env.Requirement{
 		NeedsRoot: true,
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	// make sure that the path is absolute
@@ -96,7 +95,7 @@ func (l *link) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Linking %q -> %q\n", to, from); err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 
 	// make the parent folder

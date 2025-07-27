@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/ggman/internal/walker"
 	"go.tkw01536.de/pkglib/exit"
@@ -35,11 +34,11 @@ type sweep struct{}
 var errSweepScan = exit.NewErrorWithCode("error scanning for empty directories", exit.ExitGeneric)
 
 func (sweep) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd, env.Requirement{
+	environment, err := env.GetEnv(cmd, env.Requirement{
 		NeedsRoot: true,
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	results, err := walker.Sweep(func(path string, root walker.FS, depth int) (stop bool) {
@@ -53,7 +52,7 @@ func (sweep) Exec(cmd *cobra.Command, args []string) error {
 
 	for _, r := range results {
 		if _, err := fmt.Fprintln(cmd.OutOrStdout(), r); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 	}
 	return nil

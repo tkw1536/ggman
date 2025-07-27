@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 )
 
@@ -42,7 +41,7 @@ func (c *comps) ParseArgs(cmd *cobra.Command, args []string) error {
 func (c *comps) Exec(cmd *cobra.Command, args []string) error {
 	for _, comp := range c.Positional.URL.Components() {
 		if _, err := fmt.Fprintln(cmd.OutOrStdout(), comp); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 	}
 

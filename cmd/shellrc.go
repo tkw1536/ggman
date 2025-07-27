@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 )
 
 //spellchecker:words shellrc
@@ -36,7 +35,7 @@ var ShellrcSh string
 func (shellrc) Exec(cmd *cobra.Command, args []string) error {
 	_, err := fmt.Fprint(cmd.OutOrStdout(), ShellrcSh)
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 	return nil
 }

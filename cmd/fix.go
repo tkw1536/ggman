@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/pkglib/exit"
 )
@@ -38,13 +37,13 @@ type fix struct {
 var errFixCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
 
 func (f *fix) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd, env.Requirement{
+	environment, err := env.GetEnv(cmd, env.Requirement{
 		NeedsRoot:    true,
 		NeedsCanFile: true,
 		AllowsFilter: true,
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	simulate := f.Simulate
@@ -65,11 +64,11 @@ func (f *fix) Exec(cmd *cobra.Command, args []string) error {
 			initialMessage.Do(func() {
 				if !simulate {
 					if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Fixing remote of %q", repo); err != nil {
-						innerError = fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+						innerError = fmt.Errorf("%w: %w", errGenericOutput, err)
 					}
 				} else {
 					if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Simulate fixing remote of %q", repo); err != nil {
-						innerError = fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+						innerError = fmt.Errorf("%w: %w", errGenericOutput, err)
 					}
 				}
 			})
@@ -79,7 +78,7 @@ func (f *fix) Exec(cmd *cobra.Command, args []string) error {
 			}
 
 			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Updating %s: %s -> %s\n", remoteName, url, canon); err != nil {
-				return "", fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+				return "", fmt.Errorf("%w: %w", errGenericOutput, err)
 			}
 
 			// either return the canonical url, or (if we're simulating) the old url

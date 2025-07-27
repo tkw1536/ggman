@@ -8,7 +8,6 @@ import (
 
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/ggman/internal/path"
 	"go.tkw01536.de/pkglib/exit"
@@ -137,11 +136,11 @@ func (uw *urlweb) Exec(cmd *cobra.Command, args []string) error {
 		return uw.listBases(cmd)
 	}
 
-	environment, err := ggman.GetEnv(cmd, env.Requirement{
+	environment, err := env.GetEnv(cmd, env.Requirement{
 		NeedsRoot: true,
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	// get the remote url of the current repository
@@ -217,7 +216,7 @@ func (uw *urlweb) Exec(cmd *cobra.Command, args []string) error {
 
 	_, err = fmt.Fprintln(cmd.OutOrStdout(), weburl)
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 	return nil
 }
@@ -232,7 +231,7 @@ func (uw *urlweb) listBases(cmd *cobra.Command) error {
 	for _, name := range bases {
 		base := WebBuiltInBases[name]
 		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "%s: %s\n", name, base.URL); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 	}
 	return nil

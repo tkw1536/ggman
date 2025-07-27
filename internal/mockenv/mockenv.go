@@ -28,9 +28,6 @@ import (
 
 //spellchecker:words GGROOT workdir sandboxed
 
-// TODO: Consider generalizing this part of the test suite.
-// so that we can re-use it for other programs too.
-
 // MockEnv represents a new environment that can be used for testing ggman commands.
 //
 // The mocked environment creates a temporary folder which can be used to hold repositories.

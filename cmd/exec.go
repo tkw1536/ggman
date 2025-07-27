@@ -8,7 +8,6 @@ import (
 
 	"al.essio.dev/pkg/shellescape"
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/pkglib/exit"
 	"go.tkw01536.de/pkglib/sema"
@@ -77,12 +76,12 @@ func (e *exe) ParseArgs(cmd *cobra.Command, args []string) error {
 }
 
 func (e *exe) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd, env.Requirement{
+	environment, err := env.GetEnv(cmd, env.Requirement{
 		AllowsFilter: true,
 		NeedsRoot:    true,
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	if e.Simulate {
@@ -125,7 +124,7 @@ func (e *exe) execReal(cmd *cobra.Command, environment env.Env) (err error) {
 
 		if !e.NoRepo && !statusIO {
 			if _, err := io.EPrintln(repo); err != nil {
-				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+				return fmt.Errorf("%w: %w", errGenericOutput, err)
 			}
 		}
 
@@ -176,15 +175,15 @@ func (e *exe) execSimulate(cmd *cobra.Command, environment env.Env) (err error) 
 
 	// print header of the bash script
 	if _, err := fmt.Fprintln(cmd.OutOrStdout(), "#!/bin/bash"); err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 	if !e.Force {
 		if _, err := fmt.Fprintln(cmd.OutOrStdout(), "set -e"); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 	}
 	if _, err := fmt.Fprintln(cmd.OutOrStdout(), ""); err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 
 	exec := shellescape.QuoteCommand(append([]string{e.Positionals.Exe}, e.Positionals.Args...))
@@ -193,19 +192,19 @@ func (e *exe) execSimulate(cmd *cobra.Command, environment env.Env) (err error) 
 	// then print each of the commands to be run!
 	for _, repo := range environment.Repos(true) {
 		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "cd %s\n", shellescape.Quote(repo)); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 		if !e.NoRepo {
 			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "echo %s\n", shellescape.Quote(repo)); err != nil {
-				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+				return fmt.Errorf("%w: %w", errGenericOutput, err)
 			}
 		}
 
 		if _, err := fmt.Fprintln(cmd.OutOrStdout(), exec); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 		if _, err := fmt.Fprintln(cmd.OutOrStdout(), ""); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 	}
 

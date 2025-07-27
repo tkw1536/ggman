@@ -6,7 +6,6 @@ import (
 
 	"al.essio.dev/pkg/shellescape"
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/pkglib/collection"
 	"go.tkw01536.de/pkglib/exit"
@@ -74,9 +73,9 @@ func (e *_env) ParseArgs(cmd *cobra.Command, args []string) error {
 }
 
 func (e *_env) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd, env.Requirement{NeedsRoot: true})
+	environment, err := env.GetEnv(cmd, env.Requirement{NeedsRoot: true})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	variables, err := e.variables()
@@ -88,20 +87,20 @@ func (e *_env) Exec(cmd *cobra.Command, args []string) error {
 		switch {
 		case e.List:
 			if _, err := fmt.Fprintln(cmd.OutOrStdout(), v.Key); err != nil {
-				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+				return fmt.Errorf("%w: %w", errGenericOutput, err)
 			}
 		case e.Raw:
 			if _, err := fmt.Fprintln(cmd.OutOrStdout(), v.Get(environment)); err != nil {
-				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+				return fmt.Errorf("%w: %w", errGenericOutput, err)
 			}
 		case e.Describe:
 			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "%s: %s\n", v.Key, v.Description); err != nil {
-				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+				return fmt.Errorf("%w: %w", errGenericOutput, err)
 			}
 		default:
 			value := shellescape.Quote(v.Get(environment))
 			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "%s=%s\n", v.Key, value); err != nil {
-				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+				return fmt.Errorf("%w: %w", errGenericOutput, err)
 			}
 		}
 	}

@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 )
 
@@ -34,11 +33,11 @@ type here struct {
 }
 
 func (h *here) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd, env.Requirement{
+	environment, err := env.GetEnv(cmd, env.Requirement{
 		NeedsRoot: true,
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	root, worktree, err := environment.At(".")
@@ -47,11 +46,11 @@ func (h *here) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	if _, err := fmt.Fprintln(cmd.OutOrStdout(), root); err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 	if h.Tree {
 		if _, err := fmt.Fprintln(cmd.OutOrStdout(), worktree); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 	}
 

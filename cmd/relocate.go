@@ -10,7 +10,6 @@ import (
 
 	"al.essio.dev/pkg/shellescape"
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/ggman/internal/dirs"
 	"go.tkw01536.de/pkglib/exit"
@@ -50,13 +49,13 @@ var (
 )
 
 func (r *relocate) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd, env.Requirement{
+	environment, err := env.GetEnv(cmd, env.Requirement{
 		NeedsRoot:    true,
 		NeedsCanFile: true,
 		AllowsFilter: true,
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	for _, gotPath := range environment.Repos(false) {
@@ -79,10 +78,10 @@ func (r *relocate) Exec(cmd *cobra.Command, args []string) error {
 
 		// print what is being done
 		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "mkdir -p %s\n", shellescape.Quote(parentPath)); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "mv %s %s\n", shellescape.Quote(gotPath), shellescape.Quote(shouldPath)); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 		if r.Simulate {
 			continue

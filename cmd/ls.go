@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/pkglib/exit"
 )
@@ -58,12 +57,12 @@ func (l *ls) ParseArgs(cmd *cobra.Command, args []string) error {
 }
 
 func (l *ls) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd, env.Requirement{
+	environment, err := env.GetEnv(cmd, env.Requirement{
 		AllowsFilter: true,
 		NeedsRoot:    true,
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	if l.One {
@@ -76,12 +75,12 @@ func (l *ls) Exec(cmd *cobra.Command, args []string) error {
 	for i, repo := range repos {
 		if l.Scores {
 			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "%f %s\n", scores[i], repo); err != nil {
-				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+				return fmt.Errorf("%w: %w", errGenericOutput, err)
 			}
 			continue
 		}
 		if _, err := fmt.Fprintln(cmd.OutOrStdout(), repo); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 	}
 

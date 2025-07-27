@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/pkglib/exit"
 )
@@ -37,12 +36,12 @@ type lsr struct {
 var errLSRInvalidCanfile = exit.NewErrorWithCode("invalid CANFILE found", env.ExitInvalidEnvironment)
 
 func (l *lsr) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd, env.Requirement{
+	environment, err := env.GetEnv(cmd, env.Requirement{
 		AllowsFilter: true,
 		NeedsRoot:    true,
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	var lines env.CanFile
@@ -63,7 +62,7 @@ func (l *lsr) Exec(cmd *cobra.Command, args []string) error {
 			remote = env.ParseURL(remote).CanonicalWith(lines)
 		}
 		if _, err := fmt.Fprintln(cmd.OutOrStdout(), remote); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 	}
 

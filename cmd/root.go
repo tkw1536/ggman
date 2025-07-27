@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/constants"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/pkglib/exit"
@@ -15,15 +14,17 @@ import (
 )
 
 //spellchecker:words pflags nolint contextcheck
-
-var errInvalidFlags = exit.NewErrorWithCode("unknown flags passed", exit.ExitGeneralArguments)
-var errNoArgumentsProvided = exit.NewErrorWithCode("need at least one argument. use `ggman license` to view licensing information", exit.ExitGeneralArguments)
+var (
+	errInvalidFlags        = exit.NewErrorWithCode("unknown flags passed", exit.ExitGeneralArguments)
+	errNoArgumentsProvided = exit.NewErrorWithCode("need at least one argument. use `ggman license` to view licensing information", exit.ExitGeneralArguments)
+	errGenericOutput       = exit.NewErrorWithCode("unknown output error", exit.ExitGeneric)
+	errGenericEnvironment  = exit.NewErrorWithCode("failed to initialize environment", env.ExitInvalidEnvironment)
+)
 
 // Command returns the main ggman command
 //
 //nolint:contextcheck // don't need to pass down the context
 func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
-	// TODO: don't use stream.IOStream here!
 	root := &cobra.Command{
 		Use:     "ggman",
 		Version: constants.BuildVersion,
@@ -40,8 +41,8 @@ func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 	})
 
 	var flags env.Flags
-	ggman.SetFlags(root, &flags)
-	ggman.SetParameters(root, &parameters)
+	env.SetFlags(root, &flags)
+	env.SetParameters(root, &parameters)
 
 	// setup flags
 	pflags := root.PersistentFlags()

@@ -7,7 +7,6 @@ import (
 
 	"al.essio.dev/pkg/shellescape"
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/ggman/git"
 	"go.tkw01536.de/pkglib/exit"
@@ -79,12 +78,12 @@ var (
 
 func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 	// get the environment
-	environment, err := ggman.GetEnv(cmd, env.Requirement{
+	environment, err := env.GetEnv(cmd, env.Requirement{
 		NeedsRoot:    true,
 		NeedsCanFile: true,
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	// grab the url to clone and make sure it is not local
@@ -105,7 +104,7 @@ func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 
 	// do the actual cloning!
 	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Cloning %q into %q ...\n", remote, local); err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 	switch err := environment.Git.Clone(streamFromCommand(cmd), remote, local, c.Positional.Args...); {
 	case err == nil:
@@ -114,7 +113,7 @@ func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 		if c.Force {
 			_, err := fmt.Fprintln(cmd.OutOrStdout(), "Clone already exists in target location, done.")
 			if err != nil {
-				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+				return fmt.Errorf("%w: %w", errGenericOutput, err)
 			}
 			return nil
 		}

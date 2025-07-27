@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/pkglib/exit"
 )
@@ -52,7 +51,7 @@ func (c *canon) Exec(cmd *cobra.Command, args []string) error {
 	var file env.CanFile
 
 	if c.Positional.CANSPEC == "" {
-		env, err := ggman.GetEnv(cmd, env.Requirement{})
+		env, err := env.GetEnv(cmd, env.Requirement{})
 		if err != nil {
 			return fmt.Errorf("failed to get environment: %w", err)
 		}
@@ -68,7 +67,7 @@ func (c *canon) Exec(cmd *cobra.Command, args []string) error {
 	canonical := c.Positional.URL.CanonicalWith(file)
 
 	if _, err := fmt.Fprintln(cmd.OutOrStdout(), canonical); err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 	return nil
 }

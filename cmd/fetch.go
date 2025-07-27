@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/pkglib/exit"
 )
@@ -30,12 +29,12 @@ type fetch struct{}
 var errFetchCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
 
 func (fetch) Exec(cmd *cobra.Command, args []string) error {
-	environment, err := ggman.GetEnv(cmd, env.Requirement{
+	environment, err := env.GetEnv(cmd, env.Requirement{
 		AllowsFilter: true,
 		NeedsRoot:    true,
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %w", ggman.ErrGenericEnvironment, err)
+		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
 	hasError := false
@@ -43,11 +42,11 @@ func (fetch) Exec(cmd *cobra.Command, args []string) error {
 	// iterate over all the repositories, and run git fetch
 	for _, repo := range environment.Repos(true) {
 		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Fetching %q\n", repo); err != nil {
-			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
 		if e := environment.Git.Fetch(streamFromCommand(cmd), repo); e != nil {
 			if _, err := fmt.Fprintln(cmd.ErrOrStderr(), e.Error()); err != nil {
-				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+				return fmt.Errorf("%w: %w", errGenericOutput, err)
 			}
 			hasError = true
 		}
