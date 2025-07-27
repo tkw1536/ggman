@@ -83,10 +83,11 @@ func (pf PathFilter) Candidates() []string {
 }
 
 // NewPatternFilter returns a new pattern filter with the appropriate value.
-func NewPatternFilter(value string, fuzzy bool) (pat PatternFilter) {
+func NewPatternFilter(value string, fuzzy bool) *PatternFilter {
+	var pat PatternFilter
 	pat.fuzzy = fuzzy
 	pat.Set(value)
-	return
+	return &pat
 }
 
 // PatternFilter implements FilterValue.
@@ -96,7 +97,7 @@ type PatternFilter struct {
 	pattern pattern.SplitPattern
 }
 
-func (pat PatternFilter) String() string {
+func (pat *PatternFilter) String() string {
 	return pat.value
 }
 
@@ -110,7 +111,7 @@ func (pat *PatternFilter) Set(value string) {
 
 // Matches checks if this filter matches the repository at clonePath.
 // The caller may assume that there is a repository at clonePath.
-func (pat PatternFilter) Score(env Env, clonePath string) float64 {
+func (pat *PatternFilter) Score(env Env, clonePath string) float64 {
 	// find the remote url to use
 	remote, err := env.Git.GetRemote(clonePath, "")
 	if err != nil {
@@ -138,7 +139,7 @@ func (pat PatternFilter) Score(env Env, clonePath string) float64 {
 }
 
 // MatchesURL checks if this filter matches a url.
-func (pat PatternFilter) MatchesURL(url URL) bool {
+func (pat *PatternFilter) MatchesURL(url URL) bool {
 	parts := strings.Join(url.Components(), string(os.PathSeparator))
 	return pat.pattern.Score(parts) >= 0
 }

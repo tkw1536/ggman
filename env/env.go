@@ -16,7 +16,7 @@ import (
 	"go.tkw01536.de/pkglib/fsx"
 )
 
-//spellchecker:words worktree canonicalized canonicalize CANFILE workdir GGNORM GGROOT Wrapf nolint wrapcheck
+//spellchecker:words worktree canonicalized canonicalize CANFILE workdir GGNORM GGROOT Wrapf nolint wrapcheck recvcheck
 
 // Env represents an environment to be used by ggman.
 //
@@ -25,6 +25,8 @@ import (
 //
 // An environment consists of four parts, each are defined as a part of this struct.
 // See NewEnv on the defaults used by ggman.
+//
+//nolint:recvcheck // TODO: rework this at a later point
 type Env struct {
 	// Git is a method of interacting with on-disk git repositories.
 	Git git.Git

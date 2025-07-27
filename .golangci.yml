@@ -43,6 +43,7 @@ linters:
     - prealloc
     - predeclared
     - reassign
+    - recvcheck
     - staticcheck
     - tagalign
     - testableexamples

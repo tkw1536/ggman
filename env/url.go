@@ -8,8 +8,6 @@ import (
 	"go.tkw01536.de/ggman/internal/parseurl"
 	"go.tkw01536.de/ggman/internal/split"
 	"go.tkw01536.de/pkglib/text"
-
-	"github.com/jessevdk/go-flags"
 )
 
 //spellchecker:words mydomain nolint recvcheck
@@ -68,16 +66,6 @@ func (url URL) String() string {
 	}
 
 	return builder.String()
-}
-
-var (
-	_ flags.Unmarshaler = (*URL)(nil)
-)
-
-// UnmarshalFlag implements the flags.Unmarshaler interface.
-func (u *URL) UnmarshalFlag(value string) error {
-	*u = ParseURL(value)
-	return nil
 }
 
 var windowsReplacer = strings.NewReplacer("\\", "/")

@@ -18,12 +18,12 @@ func TestNewPatternFilter(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		wantPat PatternFilter
+		wantPat *PatternFilter
 	}{
 		{
 			"a/b (non-fuzzy)",
 			args{"a/b", false},
-			PatternFilter{
+			&PatternFilter{
 				value:   "a/b",
 				pattern: pattern.NewSplitGlobPattern("a/b", ComponentsOf, false),
 			},
@@ -31,7 +31,7 @@ func TestNewPatternFilter(t *testing.T) {
 		{
 			"'' (non-fuzzy)",
 			args{"", false},
-			PatternFilter{
+			&PatternFilter{
 				value:   "",
 				pattern: pattern.NewSplitGlobPattern("", ComponentsOf, false),
 			},
@@ -40,7 +40,7 @@ func TestNewPatternFilter(t *testing.T) {
 		{
 			"a/b (fuzzy)",
 			args{"a/b", true},
-			PatternFilter{
+			&PatternFilter{
 				value:   "a/b",
 				fuzzy:   true,
 				pattern: pattern.NewSplitGlobPattern("a/b", ComponentsOf, true),
@@ -49,7 +49,7 @@ func TestNewPatternFilter(t *testing.T) {
 		{
 			"'' (fuzzy)",
 			args{"", true},
-			PatternFilter{
+			&PatternFilter{
 				value:   "",
 				fuzzy:   true,
 				pattern: pattern.NewSplitGlobPattern("", ComponentsOf, true),

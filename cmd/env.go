@@ -109,7 +109,7 @@ func (e *_env) Exec(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (e _env) variables() ([]env.UserVariable, error) {
+func (e *_env) variables() ([]env.UserVariable, error) {
 	// no variables provided => use all of them
 	if len(e.Positionals.Vars) == 0 {
 		return env.GetUserVariables(), nil
