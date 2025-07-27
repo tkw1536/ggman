@@ -10,57 +10,72 @@ import (
 	"go.tkw01536.de/goprogram/exit"
 )
 
-//spellchecker:words CANSPEC CANFILE nolint wrapcheck
+//spellchecker:words github cobra ggman goprogram exit
+
+func NewCanonCommand() *cobra.Command {
+	impl := new(canon)
+
+	cmd := &cobra.Command{
+		Use:   "canon URL [CANSPEC]",
+		Short: "print the canonical version of a URL",
+		Long: `The 'ggman canon' command prints to standard output the canonical version of the URL passed as the first argument.
+		An optional second argument determines the CANSPEC to use for canonizing the URL.`,
+		Args: cobra.RangeArgs(1, 2),
+
+		PreRunE: PreRunE(impl),
+		RunE:    impl.Exec,
+	}
+
+	return cmd
+}
+
+type canon struct {
+	Positional struct {
+		URL     env.URL
+		CANSPEC string
+	}
+}
+
+func (canon) Description() ggman.Description {
+	return ggman.Description{
+		Command:     "canon",
+		Description: "print the canonical version of a URL",
+	}
+}
 
 var (
 	errCanonUnableCanFile = exit.NewErrorWithCode("unable to load default CANFILE", exit.ExitContext)
 )
 
-func NewCanonCommand() *cobra.Command {
-	var (
-		URL     env.URL
-		CANSPEC string
-	)
+func (c *canon) AfterParse(cmd *cobra.Command, args []string) error {
+	c.Positional.URL = env.ParseURL(args[0])
+	if len(args) == 2 {
+		c.Positional.CANSPEC = args[1]
+	}
+	return nil
+}
 
-	canon := &cobra.Command{
-		Use:   "canon URL [CANSPEC]",
-		Short: "print the canonical version of a URL",
+func (c *canon) Exec(cmd *cobra.Command, args []string) error {
+	var file env.CanFile
 
-		Args: cobra.RangeArgs(1, 2),
+	if c.Positional.CANSPEC == "" {
+		env, err := ggman.GetEnv(cmd)
+		if err != nil {
+			return fmt.Errorf("failed to get environment: %w", err)
+		}
 
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			URL = env.ParseURL(args[0])
-			if len(args) >= 2 {
-				CANSPEC = args[1]
-			}
-			return nil
-		},
-
-		RunE: func(cmd *cobra.Command, args []string) error {
-			var file env.CanFile
-
-			if CANSPEC == "" {
-				env, err := ggman.GetEnv(cmd)
-				if err != nil {
-					return fmt.Errorf("failed to get environment: %w", err)
-				}
-
-				if file, err = env.LoadDefaultCANFILE(); err != nil {
-					return fmt.Errorf("%w: %w", errCanonUnableCanFile, err)
-				}
-			} else {
-				file = []env.CanLine{{Pattern: "", Canonical: CANSPEC}}
-			}
-
-			// print out the canonical version of the file
-			canonical := URL.CanonicalWith(file)
-			_, err := fmt.Fprintln(cmd.OutOrStdout(), canonical)
-			if err != nil {
-				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
-			}
-			return nil
-		},
+		if file, err = env.LoadDefaultCANFILE(); err != nil {
+			return fmt.Errorf("%w: %w", errCanonUnableCanFile, err)
+		}
+	} else {
+		file = []env.CanLine{{Pattern: "", Canonical: c.Positional.CANSPEC}}
 	}
 
-	return canon
+	// print out the canonical version of the file
+	canonical := c.Positional.URL.CanonicalWith(file)
+	_, err := fmt.Fprintln(cmd.OutOrStdout(), canonical)
+	if err != nil {
+		return err
+	}
+	return nil
 }

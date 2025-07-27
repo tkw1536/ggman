@@ -5,45 +5,48 @@ import (
 	"fmt"
 
 	"al.essio.dev/pkg/shellescape"
+	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram/exit"
+	"go.tkw01536.de/goprogram/meta"
 	"go.tkw01536.de/pkglib/collection"
 )
 
-//spellchecker:words positionals nolint wrapcheck
+func NewEnvCommand() *cobra.Command {
+	impl := new(_env)
 
-// Env is the 'ggman env' command.
-//
-// Env prints "name=value" pairs about the environment the ggman command is running in to standard output.
-// value is escaped for use in a shell.
-//
-// By default, env prints information about all known variables.
-// To print information about a subset of variables, they can be provided as positional arguments.
-// Variables names are matched case-insensitively.
-//
-//	--list
-//
-// Instead of printing "name=value" pairs, print only the name.
-//
-//	--describe
-//
-// Instead of printing "name=value" pairs, print "name: description" pairs.
-// The description explains what the value does.
-//
-//	--raw
-//
-// Instead of printing "name=value" pairs, print only the raw, unescaped value.
-var Env ggman.Command = _env{}
+	cmd := &cobra.Command{
+		Use:   "env [VAR...]",
+		Short: "print information about the ggman environment",
+		Long: `Env prints "name=value" pairs about the environment the ggman command is running in to standard output.
+value is escaped for use in a shell.
+
+By default, env prints information about all known variables.
+To print information about a subset of variables, they can be provided as positional arguments.
+Variables names are matched case-insensitively.`,
+		Args: cobra.ArbitraryArgs,
+
+		PreRunE: PreRunE(impl),
+		RunE:    impl.Exec,
+	}
+
+	flags := cmd.Flags()
+	flags.BoolVarP(&impl.List, "list", "l", false, "instead of \"name=value\" pairs print only the variable")
+	flags.BoolVarP(&impl.Describe, "describe", "d", false, "instead of \"name=value\" pairs print \"name: description\" pairs describing the use of variables")
+	flags.BoolVarP(&impl.Raw, "raw", "r", false, "instead of \"name=value\" pairs print only the unescaped value")
+
+	return cmd
+}
 
 type _env struct {
 	Positionals struct {
-		Vars []string `description:"print only information about specified variables" positional-arg-name:"VAR"`
-	} `positional-args:"true"`
+		Vars []string
+	}
 
-	List     bool `description:"instead of \"name=value\" pairs print only the variable"                                           long:"list"     short:"l"`
-	Describe bool `description:"instead of \"name=value\" pairs print \"name: description\" pairs describing the use of variables" long:"describe" short:"d"`
-	Raw      bool `description:"instead of \"name=value\" pairs print only the unescaped value"                                    long:"raw"      short:"r"`
+	List     bool
+	Describe bool
+	Raw      bool
 }
 
 func (_env) Description() ggman.Description {
@@ -62,7 +65,7 @@ var (
 	errEnvModesIncompatible = exit.NewErrorWithCode("at most one of `--raw`, `--list` and `--describe` may be given", exit.ExitCommandArguments)
 )
 
-func (e _env) AfterParse() error {
+func (e *_env) AfterParse(cmd *cobra.Command, args []string) error {
 	// check that at most one mode was given
 	count := 0
 	if e.Describe {
@@ -77,10 +80,17 @@ func (e _env) AfterParse() error {
 	if count > 1 {
 		return errEnvModesIncompatible
 	}
+
+	e.Positionals.Vars = args
 	return nil
 }
 
-func (e _env) Run(context ggman.Context) error {
+func (e *_env) Exec(cmd *cobra.Command, args []string) error {
+	environment, err := ggman.GetEnv(cmd)
+	if err != nil {
+		return err
+	}
+
 	variables, err := e.variables()
 	if err != nil {
 		return err
@@ -89,20 +99,20 @@ func (e _env) Run(context ggman.Context) error {
 	for _, v := range variables {
 		switch {
 		case e.List:
-			if _, err := context.Println(v.Key); err != nil {
+			if _, err := fmt.Fprintln(cmd.OutOrStdout(), v.Key); err != nil {
 				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		case e.Raw:
-			if _, err := context.Println(v.Get(context.Environment, context.Program.Info)); err != nil {
+			if _, err := fmt.Fprintln(cmd.OutOrStdout(), v.Get(environment, meta.Info{})); err != nil {
 				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		case e.Describe:
-			if _, err := context.Printf("%s: %s\n", v.Key, v.Description); err != nil {
+			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "%s: %s\n", v.Key, v.Description); err != nil {
 				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		default:
-			value := shellescape.Quote(v.Get(context.Environment, context.Program.Info))
-			if _, err := context.Printf("%s=%s\n", v.Key, value); err != nil {
+			value := shellescape.Quote(v.Get(environment, meta.Info{}))
+			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "%s=%s\n", v.Key, value); err != nil {
 				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
 			}
 		}

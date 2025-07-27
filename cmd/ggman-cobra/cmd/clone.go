@@ -13,7 +13,70 @@ import (
 	"go.tkw01536.de/goprogram/exit"
 )
 
-//spellchecker:words nolint wrapcheck
+func NewCloneCommand() *cobra.Command {
+	impl := new(clone)
+
+	cmd := &cobra.Command{
+		Use:   "clone URL [ARGS...]",
+		Short: "clone a repository into a path described by \"ggman where\"",
+		Long: `Clone clones the remote repository in the first argument into the path described to by 'ggman where'.
+It canonizes the url before cloning it.
+It optionally takes any argument that would be passed to the normal invocation of a git command.
+
+When 'git' is not available on the system ggman is running on, additional arguments may not be supported.`,
+		Args: cobra.ArbitraryArgs,
+
+		PreRunE: PreRunE(impl),
+		RunE:    impl.Exec,
+	}
+
+	flags := cmd.Flags()
+	flags.BoolVarP(&impl.Force, "force", "f", false, "do not complain when a repository already exists in the target directory")
+	flags.BoolVarP(&impl.Local, "local", "l", false, "alias of \"--plain\"")
+	flags.BoolVarP(&impl.Exact, "exact-url", "e", false, "don't canonicalize URL before cloning and use exactly the passed URL")
+	flags.BoolVar(&impl.Plain, "plain", false, "clone like a standard git would: into an appropriately named subdirectory of the current directory")
+	flags.StringVarP(&impl.To, "to", "t", "", "clone repository into specified directory")
+
+	return cmd
+}
+
+type clone struct {
+	Positional struct {
+		URL  string
+		Args []string
+	}
+	Force bool
+	Local bool
+	Exact bool
+	Plain bool
+	To    string
+}
+
+func (*clone) Description() ggman.Description {
+	return ggman.Description{
+		Command:     "clone",
+		Description: "clone a repository into a path described by \"ggman where\"",
+
+		Requirements: env.Requirement{
+			NeedsRoot:    true,
+			NeedsCanFile: true,
+		},
+	}
+}
+
+func (c *clone) AfterParse(cmd *cobra.Command, args []string) error {
+	if c.Local {
+		c.Plain = true
+	}
+	if (c.Plain) && c.To != "" {
+		return errCloneInvalidDestFlags
+	}
+
+	c.Positional.URL = args[0]
+	c.Positional.Args = args[1:]
+
+	return nil
+}
 
 var (
 	errCloneInvalidDestFlags = exit.NewErrorWithCode(`invalid destination: "--to" and "--plain" may not be used together`, exit.ExitCommandArguments)
@@ -22,106 +85,73 @@ var (
 	errCloneAlreadyExists    = exit.NewErrorWithCode("unable to clone repository: another git repository already exists in target location", exit.ExitGeneric)
 	errCloneNoArguments      = exit.NewErrorWithCode("external `git` not found, can not pass any additional arguments to `git clone`", exit.ExitGeneric)
 	errCloneOther            = exit.NewErrorWithCode("", exit.ExitGeneric)
-	errCloneNoComps          = errors.New("unable to find components of URI")
+
+	errCloneNoComps = errors.New("unable to find components of URI")
 )
 
-func NewCloneCommand() *cobra.Command {
-	// Introduce variables for flags
-	var (
-		force bool
-		local bool
-		exact bool
-		plain bool
-		to    string
-	)
-
-	clone := &cobra.Command{
-		Use:   "clone",                                                       // Set old command name
-		Short: "clone a repository into a path described by \"ggman where\"", // Copy old description
-		Args:  cobra.MinimumNArgs(1),                                         // Set appropriate argument validation
-
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			ggman.SetRequirements(cmd, &env.Requirement{
-				NeedsRoot:    true,
-				NeedsCanFile: true,
-			})
-
-			if local {
-				plain = true
-			}
-			if plain && to != "" {
-				return errCloneInvalidDestFlags
-			}
-			return nil
-		},
-
-		RunE: func(cmd *cobra.Command, args []string) error {
-			environment, err := ggman.GetEnv(cmd)
-			if err != nil {
-				return fmt.Errorf("failed to get environment: %w", err)
-			}
-
-			url := env.ParseURL(args[0])
-			if url.IsLocal() {
-				return fmt.Errorf("%q: %w", args[0], errCloneLocalURI)
-			}
-
-			// determine paths
-			remote := args[0]
-			if !exact {
-				remote = environment.Canonical(url)
-			}
-			local, err := findDest(&environment, url, plain, to)
-			if err != nil {
-				return fmt.Errorf("%w: %w", errCloneInvalidDest, err)
-			}
-
-			// do the clone!
-			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Cloning %q into %q ...\n", remote, local); err != nil {
-				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
-			}
-			switch err := environment.Git.Clone(streamFromCommand(cmd), remote, local, args[1:]...); {
-			case err == nil:
-				return nil
-			case errors.Is(err, git.ErrCloneAlreadyExists):
-				if force {
-					if _, err := fmt.Fprintln(cmd.OutOrStdout(), "Clone already exists in target location, done."); err != nil {
-						return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
-					}
-					return nil
-				}
-				return errCloneAlreadyExists
-			case errors.Is(err, git.ErrArgumentsUnsupported):
-				return fmt.Errorf("%w: %v", errCloneNoArguments, shellescape.QuoteCommand(args[1:]))
-			default:
-				return fmt.Errorf("%w%w", errCloneOther, err)
-			}
-		},
+func (c *clone) Exec(cmd *cobra.Command, args []string) error {
+	// get the environment
+	environment, err := ggman.GetEnv(cmd)
+	if err != nil {
+		return err
 	}
 
-	// Add flags
-	flags := clone.Flags()
-	flags.BoolVarP(&force, "force", "f", false, "do not complain when a repository already exists in the target directory")
-	flags.BoolVarP(&local, "local", "l", false, "alias of \"--plain\"")
-	flags.BoolVarP(&exact, "exact-url", "e", false, "don't canonicalize URL before cloning and use exactly the passed URL")
-	flags.BoolVar(&plain, "plain", false, "clone like a standard git would: into an appropriately named subdirectory of the current directory")
-	flags.StringVarP(&to, "to", "t", "", "clone repository into specified directory")
+	// grab the url to clone and make sure it is not local
+	url := env.ParseURL(c.Positional.URL)
+	if url.IsLocal() {
+		return fmt.Errorf("%q: %w", c.Positional.URL, errCloneLocalURI)
+	}
 
-	return clone
+	// find the remote and local paths to clone to / from
+	remote := c.Positional.URL
+	if !c.Exact {
+		remote = environment.Canonical(url)
+	}
+	local, err := c.dest(&environment, url)
+	if err != nil {
+		return fmt.Errorf("%q: %w: %w", c.Positional.URL, errCloneInvalidDest, err)
+	}
+
+	// do the actual cloning!
+	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Cloning %q into %q ...\n", remote, local); err != nil {
+		return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+	}
+	switch err := environment.Git.Clone(streamFromCommand(cmd), remote, local, c.Positional.Args...); {
+	case err == nil:
+		return nil
+	case errors.Is(err, git.ErrCloneAlreadyExists):
+		if c.Force {
+			_, err := fmt.Fprintln(cmd.OutOrStdout(), "Clone already exists in target location, done.")
+			if err != nil {
+				return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+			}
+			return nil
+		}
+		return errCloneAlreadyExists
+	case errors.Is(err, git.ErrArgumentsUnsupported):
+		return fmt.Errorf("%w: %v", errCloneNoArguments, shellescape.QuoteCommand(c.Positional.Args))
+	default:
+		return fmt.Errorf("%w%w", errCloneOther, err)
+	}
 }
 
-//nolint:wrapcheck // wrapped in the caller
-func findDest(environment *env.Env, url env.URL, plain bool, to string) (string, error) {
+// dest returns the destination path to clone the repository into.
+func (c *clone) dest(environment *env.Env, url env.URL) (path string, err error) {
 	switch {
-	case plain:
+	case c.Plain: // clone into directory named automatically
 		comps := url.Components()
 		if len(comps) == 0 {
 			return "", errCloneNoComps
 		}
-		return environment.Abs(comps[len(comps)-1])
-	case to != "":
-		return environment.Abs(to)
-	default:
-		return environment.Local(url)
+		path, err = environment.Abs(comps[len(comps)-1])
+	case c.To != "": // clone directory into a directory
+		path, err = environment.Abs(c.To)
+	default: // normal clone!
+		path, err = environment.Local(url)
 	}
+
+	if err != nil {
+		return "", fmt.Errorf("%q: failed to get destination: %w", url.String(), err)
+	}
+	return path, nil
 }

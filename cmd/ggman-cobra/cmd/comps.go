@@ -10,25 +10,48 @@ import (
 )
 
 func NewCompsCommand() *cobra.Command {
-	comps := &cobra.Command{
-		Use:   "comps",
-		Short: "print the components of a URL",
-		Args:  cobra.ExactArgs(1),
+	impl := new(comps)
 
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			ggman.SetRequirements(cmd, &env.Requirement{})
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			url := args[0]
-			for _, comp := range env.ComponentsOf(url) {
-				if _, err := fmt.Fprintf(cmd.OutOrStdout(), "%s\n", comp); err != nil {
-					return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
-				}
-			}
-			return nil
-		},
+	cmd := &cobra.Command{
+		Use:   "comps URL",
+		Short: "print the components of a URL",
+		Long: `When invoked, it prints the components of the first argument passed to it.
+Each component is printed on a separate line of standard output.`,
+		Args: cobra.ExactArgs(1),
+
+		PreRunE: PreRunE(impl),
+		RunE:    impl.Exec,
 	}
 
-	return comps
+	return cmd
+}
+
+//spellchecker:words nolint wrapcheck
+
+type comps struct {
+	Positional struct {
+		URL env.URL
+	}
+}
+
+func (c *comps) AfterParse(cmd *cobra.Command, args []string) error {
+	c.Positional.URL = env.ParseURL(args[0])
+	return nil
+}
+
+func (*comps) Description() ggman.Description {
+	return ggman.Description{
+		Command:     "comps",
+		Description: "print the components of a URL",
+	}
+}
+
+func (c *comps) Exec(cmd *cobra.Command, args []string) error {
+	for _, comp := range c.Positional.URL.Components() {
+		if _, err := fmt.Fprintln(cmd.OutOrStdout(), comp); err != nil {
+			return fmt.Errorf("%w: %w", ggman.ErrGenericOutput, err)
+		}
+	}
+
+	return nil
 }

@@ -109,7 +109,6 @@ import (
 	"runtime/debug"
 
 	"go.tkw01536.de/ggman"
-	"go.tkw01536.de/ggman/cmd"
 	"go.tkw01536.de/ggman/env"
 	"go.tkw01536.de/goprogram"
 	"go.tkw01536.de/goprogram/exit"
@@ -123,25 +122,7 @@ var ggmanExe = ggman.NewProgram()
 
 func init() {
 	// register all the known commands to the ggman program!
-	for _, c := range []ggman.Command{
-		cmd.Exec,
-		cmd.Fetch,
-		cmd.FindBranch,
-		cmd.FindFile,
-		cmd.Fix,
-		cmd.Here,
-		cmd.License,
-		cmd.Link,
-		cmd.Lsr,
-		cmd.Pull,
-		cmd.Relocate,
-		cmd.Env,
-		cmd.Sweep,
-		cmd.URL,
-		cmd.Web,
-		cmd.Where,
-		cmd.Shellrc,
-	} {
+	for _, c := range []ggman.Command{} {
 		ggmanExe.Register(c)
 	}
 

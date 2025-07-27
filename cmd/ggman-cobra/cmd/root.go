@@ -59,10 +59,10 @@ func NewCommand(ctx context.Context, parameters env.Parameters, stream stream.IO
 
 	// add all the commands
 	root.AddCommand(
-		NewLSCommand(),
 		NewCanonCommand(),
 		NewCloneCommand(),
 		NewCompsCommand(),
+		NewEnvCommand(),
 	)
 
 	// wrap all the argument errors
@@ -103,6 +103,33 @@ func wrapArgs(positionals cobra.PositionalArgs) cobra.PositionalArgs {
 			return nil
 		}
 		return fmt.Errorf("%w: %w", errInvalidArguments, err)
+	}
+}
+
+type Command interface {
+	// Description is the description of this command.
+	Description() ggman.Description
+
+	// Exec executes this command
+	Exec(cmd *cobra.Command, args []string) error
+}
+
+// TODO: rename this to something more appropriate
+type AfterParse interface {
+	AfterParse(cmd *cobra.Command, args []string) error
+}
+
+// PreRunE implements Pre-Run for all commands.
+func PreRunE(command Command) func(cmd *cobra.Command, args []string) error {
+	return func(cmd *cobra.Command, args []string) error {
+		requirements := command.Description().Requirements
+		ggman.SetRequirements(cmd, &requirements)
+
+		ap, ok := command.(AfterParse)
+		if !ok {
+			return nil
+		}
+		return ap.AfterParse(cmd, args)
 	}
 }
 

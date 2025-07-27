@@ -85,7 +85,7 @@ func getType[T any](cmd *cobra.Command, key cobraKey) T {
 	return *data
 }
 
-var errNoEnv = exit.NewErrorWithCode("failed to initialize environment", env.ExitInvalidEnvironment)
+var ErrGenericEnvironment = exit.NewErrorWithCode("failed to initialize environment", env.ExitInvalidEnvironment)
 
 // GetEnv gets the environment of a ggman command.
 func GetEnv(cmd *cobra.Command) (env.Env, error) {
@@ -98,7 +98,7 @@ func GetEnv(cmd *cobra.Command) (env.Env, error) {
 	// make a new environment
 	ne, err := newEnvironment(GetRequirements(cmd), GetParameters(cmd), GetFlags(cmd))
 	if err != nil {
-		return env.Env{}, fmt.Errorf("%w: %w", errNoEnv, err)
+		return env.Env{}, fmt.Errorf("%w: %w", ErrGenericEnvironment, err)
 	}
 
 	// store the environment for future usage
