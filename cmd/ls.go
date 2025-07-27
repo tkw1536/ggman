@@ -21,7 +21,7 @@ func NewLsCommand() *cobra.Command {
 		Long:  `When called, the ggman ls command prints a list of paths to all locally cloned repositories to standard output.`,
 		Args:  cobra.NoArgs,
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -47,7 +47,7 @@ var (
 	errLsLimitNegative        = exit.NewErrorWithCode("`--count` may not be negative", exit.ExitCommandArguments)
 )
 
-func (l *ls) AfterParse(cmd *cobra.Command, args []string) error {
+func (l *ls) ParseArgs(cmd *cobra.Command, args []string) error {
 	if l.Limit < 0 {
 		return errLsLimitNegative
 	}

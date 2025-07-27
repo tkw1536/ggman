@@ -20,18 +20,13 @@ func NewVersionCommand() *cobra.Command {
 		Short: "print version information and exit",
 		Args:  cobra.NoArgs,
 
-		PreRunE: PreRunE(impl),
-		RunE:    impl.Exec,
+		RunE: impl.Exec,
 	}
 
 	return cmd
 }
 
 type version struct{}
-
-func (*version) AfterParse(cmd *cobra.Command, args []string) error {
-	return nil
-}
 
 func (version) Exec(cmd *cobra.Command, args []string) error {
 	_, err := fmt.Fprintf(cmd.OutOrStdout(), "%s, built %s, using %s\n", constants.BuildVersion, constants.BuildTime, runtime.Version())

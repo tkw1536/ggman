@@ -28,8 +28,7 @@ func NewRelocateCommand() *cobra.Command {
 		Long:  "Relocate moves all repositories to the location where they should be moved to if they had been cloned with 'ggman clone'.",
 		Args:  cobra.NoArgs,
 
-		PreRunE: PreRunE(impl),
-		RunE:    impl.Exec,
+		RunE: impl.Exec,
 	}
 
 	flags := cmd.Flags()
@@ -49,10 +48,6 @@ var (
 	errRelocateRepoExists = exit.NewErrorWithCode("repository already exists", exit.ExitGeneric)
 	errRelocatePathExists = exit.NewErrorWithCode("path already exists", exit.ExitGeneric)
 )
-
-func (r *relocate) AfterParse(cmd *cobra.Command, args []string) error {
-	return nil
-}
 
 func (r *relocate) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := ggman.GetEnv(cmd, env.Requirement{

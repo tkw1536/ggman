@@ -20,8 +20,7 @@ func NewHereCommand() *cobra.Command {
 		Long:  `'ggman here' prints the path to the root of the repository in the current working directory to standard output.`,
 		Args:  cobra.NoArgs,
 
-		PreRunE: PreRunE(impl),
-		RunE:    impl.Exec,
+		RunE: impl.Exec,
 	}
 
 	flags := cmd.Flags()
@@ -32,10 +31,6 @@ func NewHereCommand() *cobra.Command {
 
 type here struct {
 	Tree bool
-}
-
-func (h *here) AfterParse(cmd *cobra.Command, args []string) error {
-	return nil
 }
 
 func (h *here) Exec(cmd *cobra.Command, args []string) error {

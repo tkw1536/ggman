@@ -26,7 +26,7 @@ It optionally takes any argument that would be passed to the normal invocation o
 When 'git' is not available on the system ggman is running on, additional arguments may not be supported.`,
 		Args: cobra.ArbitraryArgs,
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -52,7 +52,7 @@ type clone struct {
 	To    string
 }
 
-func (c *clone) AfterParse(cmd *cobra.Command, args []string) error {
+func (c *clone) ParseArgs(cmd *cobra.Command, args []string) error {
 	if c.Local {
 		c.Plain = true
 	}

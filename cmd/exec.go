@@ -32,7 +32,7 @@ By default, 'ggman exec' exits with the exit code as soon as the first program t
 If all programs return code 0, 'ggman exec' also exits with code 0.`,
 		Args: cobra.MinimumNArgs(1),
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -65,7 +65,7 @@ var (
 	errExecNoParallelSimulate = exit.NewErrorWithCode("`--simulate` expects `--parallel` to be 1", exit.ExitCommandArguments)
 )
 
-func (e *exe) AfterParse(cmd *cobra.Command, args []string) error {
+func (e *exe) ParseArgs(cmd *cobra.Command, args []string) error {
 	if e.Parallel < 0 {
 		return errExecParallelNegative
 	}

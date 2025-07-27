@@ -26,7 +26,7 @@ To print information about a subset of variables, they can be provided as positi
 Variables names are matched case-insensitively.`,
 		Args: cobra.ArbitraryArgs,
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -53,7 +53,7 @@ var (
 	errEnvModesIncompatible = exit.NewErrorWithCode("at most one of `--raw`, `--list` and `--describe` may be given", exit.ExitCommandArguments)
 )
 
-func (e *_env) AfterParse(cmd *cobra.Command, args []string) error {
+func (e *_env) ParseArgs(cmd *cobra.Command, args []string) error {
 	// check that at most one mode was given
 	count := 0
 	if e.Describe {

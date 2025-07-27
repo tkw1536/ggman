@@ -22,7 +22,7 @@ func NewCanonCommand() *cobra.Command {
 		An optional second argument determines the CANSPEC to use for canonizing the URL.`,
 		Args: cobra.RangeArgs(1, 2),
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -40,7 +40,7 @@ var (
 	errCanonUnableCanFile = exit.NewErrorWithCode("unable to load default CANFILE", exit.ExitContext)
 )
 
-func (c *canon) AfterParse(cmd *cobra.Command, args []string) error {
+func (c *canon) ParseArgs(cmd *cobra.Command, args []string) error {
 	c.Positional.URL = env.ParseURL(args[0])
 	if len(args) == 2 {
 		c.Positional.CANSPEC = args[1]

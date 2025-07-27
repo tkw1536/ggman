@@ -20,8 +20,7 @@ func NewFixCommand() *cobra.Command {
 		Long:  `The 'ggman fix' command canonicalizes the urls of all remotes of a repository.`,
 		Args:  cobra.NoArgs,
 
-		PreRunE: PreRunE(impl),
-		RunE:    impl.Exec,
+		RunE: impl.Exec,
 	}
 
 	flags := cmd.Flags()
@@ -34,10 +33,6 @@ func NewFixCommand() *cobra.Command {
 
 type fix struct {
 	Simulate bool
-}
-
-func (*fix) AfterParse(cmd *cobra.Command, args []string) error {
-	return nil
 }
 
 var errFixCustom = exit.NewErrorWithCode("", exit.ExitGeneric)

@@ -25,7 +25,7 @@ func NewLinkCommand() *cobra.Command {
 		Long:  "The 'ggman link' symlinks the repository in the path passed as the first argument where it would have been cloned to inside 'ggman root'.",
 		Args:  cobra.ExactArgs(1),
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -46,7 +46,7 @@ var (
 	errLinkUnknown       = exit.NewErrorWithCode("unknown linking error", exit.ExitGeneric)
 )
 
-func (l *link) AfterParse(cmd *cobra.Command, args []string) error {
+func (l *link) ParseArgs(cmd *cobra.Command, args []string) error {
 	l.Positionals.Path = args[0]
 	return nil
 }

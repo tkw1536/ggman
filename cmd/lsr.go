@@ -21,8 +21,7 @@ func NewLsrCommand() *cobra.Command {
 		Long:  "When provided, instead of printing the urls directly, prints the canonical remotes of all repositories.",
 		Args:  cobra.NoArgs,
 
-		PreRunE: PreRunE(impl),
-		RunE:    impl.Exec,
+		RunE: impl.Exec,
 	}
 
 	flags := cmd.Flags()
@@ -36,10 +35,6 @@ type lsr struct {
 }
 
 var errLSRInvalidCanfile = exit.NewErrorWithCode("invalid CANFILE found", env.ExitInvalidEnvironment)
-
-func (l *lsr) AfterParse(cmd *cobra.Command, args []string) error {
-	return nil
-}
 
 func (l *lsr) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := ggman.GetEnv(cmd, env.Requirement{

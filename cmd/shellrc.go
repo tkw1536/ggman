@@ -20,8 +20,7 @@ func NewShellrcCommand() *cobra.Command {
 		Long:  "The 'ggman shellrc' command prints aliases to be used for shell profiles in conjunction with ggman.",
 		Args:  cobra.NoArgs,
 
-		PreRunE: PreRunE(impl),
-		RunE:    impl.Exec,
+		RunE: impl.Exec,
 	}
 
 	return cmd
@@ -33,10 +32,6 @@ type shellrc struct{}
 //
 //go:embed shellrc.sh
 var ShellrcSh string
-
-func (*shellrc) AfterParse(cmd *cobra.Command, args []string) error {
-	return nil
-}
 
 func (shellrc) Exec(cmd *cobra.Command, args []string) error {
 	_, err := fmt.Fprint(cmd.OutOrStdout(), ShellrcSh)

@@ -24,8 +24,7 @@ Such directories are left behind after running the 'ggman relocate' command, or 
 The command takes no arguments, and produces them in an order such that they can be passed to 'rmdir' and be deleted.`,
 		Args: cobra.NoArgs,
 
-		PreRunE: PreRunE(impl),
-		RunE:    impl.Exec,
+		RunE: impl.Exec,
 	}
 
 	return cmd
@@ -34,10 +33,6 @@ The command takes no arguments, and produces them in an order such that they can
 type sweep struct{}
 
 var errSweepScan = exit.NewErrorWithCode("error scanning for empty directories", exit.ExitGeneric)
-
-func (*sweep) AfterParse(cmd *cobra.Command, args []string) error {
-	return nil
-}
 
 func (sweep) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := ggman.GetEnv(cmd, env.Requirement{

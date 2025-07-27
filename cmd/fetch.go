@@ -19,18 +19,13 @@ func NewFetchCommand() *cobra.Command {
 		Long:  `'ggman fetch' is the equivalent of running 'git fetch --all' on all locally cloned repositories.`,
 		Args:  cobra.NoArgs,
 
-		PreRunE: PreRunE(impl),
-		RunE:    impl.Exec,
+		RunE: impl.Exec,
 	}
 
 	return cmd
 }
 
 type fetch struct{}
-
-func (fetch) AfterParse(cmd *cobra.Command, args []string) error {
-	return nil
-}
 
 var errFetchCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
 

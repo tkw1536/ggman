@@ -25,7 +25,7 @@ func NewWebCommand() *cobra.Command {
 		Long:  "The ggman web command opens the URL of this repository in a web browser.",
 		Args:  cobra.MaximumNArgs(1),
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -43,7 +43,7 @@ func NewURLCommand() *cobra.Command {
 		Long:  "The 'ggman url' command behaves exactly like the 'ggman web' command, except that instead of opening the URL in a web browser it prints it to standard output.",
 		Args:  cobra.MaximumNArgs(1),
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -92,7 +92,7 @@ var WebBuiltInBases = map[string]struct {
 	"localgodoc": {"http://localhost:6060/pkg/", true},
 }
 
-func (uw *urlweb) AfterParse(cmd *cobra.Command, args []string) error {
+func (uw *urlweb) ParseArgs(cmd *cobra.Command, args []string) error {
 	if len(args) > 0 {
 		uw.Positionals.Base = args[0]
 	}

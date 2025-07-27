@@ -21,8 +21,7 @@ func NewPullCommand() *cobra.Command {
 		Long:  "'ggman pull' is the equivalent of running 'git pull' on all locally installed repositories.",
 		Args:  cobra.NoArgs,
 
-		PreRunE: PreRunE(impl),
-		RunE:    impl.Exec,
+		RunE: impl.Exec,
 	}
 
 	return cmd
@@ -31,10 +30,6 @@ func NewPullCommand() *cobra.Command {
 type pull struct{}
 
 var errPullCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
-
-func (*pull) AfterParse(cmd *cobra.Command, args []string) error {
-	return nil
-}
 
 func (pull) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := ggman.GetEnv(cmd, env.Requirement{

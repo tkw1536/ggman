@@ -20,7 +20,7 @@ func NewFindBranchCommand() *cobra.Command {
 The remotes will be listed in dictionary order of their local installation paths.`,
 		Args: cobra.ExactArgs(1),
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -39,7 +39,7 @@ type findBranch struct {
 	ExitCode bool
 }
 
-func (f *findBranch) AfterParse(cmd *cobra.Command, args []string) error {
+func (f *findBranch) ParseArgs(cmd *cobra.Command, args []string) error {
 	f.Positionals.Branch = args[0]
 	return nil
 }

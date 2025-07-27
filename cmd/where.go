@@ -24,7 +24,7 @@ Each segment of the path corresponding to a component of the repository url.
 This command does not perform any interactions with the remote repository or the local disk, in particular it does not require access to the remote repository or require it to be installed.`,
 		Args: cobra.ExactArgs(1),
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -37,7 +37,7 @@ type where struct {
 	}
 }
 
-func (w *where) AfterParse(cmd *cobra.Command, args []string) error {
+func (w *where) ParseArgs(cmd *cobra.Command, args []string) error {
 	w.Positionals.URL = args[0]
 	return nil
 }

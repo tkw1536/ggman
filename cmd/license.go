@@ -20,18 +20,13 @@ func NewLicenseCommand() *cobra.Command {
 		Long:  "The license command prints to standard output legal notices about the ggman program.",
 		Args:  cobra.NoArgs,
 
-		PreRunE: PreRunE(impl),
-		RunE:    impl.Exec,
+		RunE: impl.Exec,
 	}
 
 	return cmd
 }
 
 type license struct{}
-
-func (*license) AfterParse(cmd *cobra.Command, args []string) error {
-	return nil
-}
 
 func (license) Exec(cmd *cobra.Command, args []string) error {
 	_, err := fmt.Fprintf(cmd.OutOrStdout(), StringLicenseInfo, ggman.License, legal.Notices)

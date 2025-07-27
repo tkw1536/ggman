@@ -22,7 +22,7 @@ func NewFindFileCommand() *cobra.Command {
 The provided path may be relative to the root of the repository.`,
 		Args: cobra.ExactArgs(1),
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -43,7 +43,7 @@ type findFile struct {
 	ExitCode      bool
 }
 
-func (f *findFile) AfterParse(cmd *cobra.Command, args []string) error {
+func (f *findFile) ParseArgs(cmd *cobra.Command, args []string) error {
 	f.Positionals.Path = args[0]
 	if !filepath.IsLocal(f.Positionals.Path) {
 		return errFindFileNotLocal

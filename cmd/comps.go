@@ -19,7 +19,7 @@ func NewCompsCommand() *cobra.Command {
 Each component is printed on a separate line of standard output.`,
 		Args: cobra.ExactArgs(1),
 
-		PreRunE: PreRunE(impl),
+		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
 
@@ -34,7 +34,7 @@ type comps struct {
 	}
 }
 
-func (c *comps) AfterParse(cmd *cobra.Command, args []string) error {
+func (c *comps) ParseArgs(cmd *cobra.Command, args []string) error {
 	c.Positional.URL = env.ParseURL(args[0])
 	return nil
 }

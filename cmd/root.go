@@ -177,27 +177,6 @@ func wrapArgs(positionals cobra.PositionalArgs) cobra.PositionalArgs {
 	}
 }
 
-type Command interface {
-	// Exec executes this command
-	Exec(cmd *cobra.Command, args []string) error
-}
-
-// TODO: rename this to something more appropriate.
-type AfterParse interface {
-	AfterParse(cmd *cobra.Command, args []string) error
-}
-
-// TODO: move the requirements directly into the GetEnv call, and invoke it directly.
-func PreRunE(command Command) func(cmd *cobra.Command, args []string) error {
-	return func(cmd *cobra.Command, args []string) error {
-		ap, ok := command.(AfterParse)
-		if !ok {
-			return nil
-		}
-		return ap.AfterParse(cmd, args)
-	}
-}
-
 // streamFromCommand returns a stream.IOStream from the given command.
 func streamFromCommand(cmd *cobra.Command) stream.IOStream {
 	return stream.IOStream{
