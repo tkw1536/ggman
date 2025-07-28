@@ -16,8 +16,8 @@ func NewCanonCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "canon URL [CANSPEC]",
-		Short: "print the canonical version of a URL",
-		Long: `The 'ggman canon' command prints to standard output the canonical version of the URL passed as the first argument.
+		Short: "Print the canonical version of a URL",
+		Long: `Canon prints to standard output the canonical version of the URL passed as the first argument.
 		An optional second argument determines the CANSPEC to use for canonizing the URL.`,
 		Args: cobra.RangeArgs(1, 2),
 

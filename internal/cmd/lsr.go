@@ -16,8 +16,8 @@ func NewLsrCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "lsr",
-		Short: "list remote URLs to all locally cloned repositories",
-		Long:  "When provided, instead of printing the urls directly, prints the canonical remotes of all repositories.",
+		Short: "List remote URLs to all repositories",
+		Long:  "Lsr is like ls, but prints the remote URLs of all repositories.",
 		Args:  cobra.NoArgs,
 
 		RunE: impl.Exec,

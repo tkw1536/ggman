@@ -19,7 +19,7 @@ func NewCloneCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "clone URL [ARGS...]",
-		Short: "clone a repository into a path described by \"ggman where\"",
+		Short: "Clone a repository into the local directory structure",
 		Long: `Clone clones the remote repository in the first argument into the path described to by 'ggman where'.
 It canonizes the url before cloning it.
 It optionally takes any argument that would be passed to the normal invocation of a git command.

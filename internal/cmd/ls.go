@@ -16,8 +16,8 @@ func NewLsCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "ls",
-		Short: "list local paths to all locally cloned repositories",
-		Long:  `When called, the ggman ls command prints a list of paths to all locally cloned repositories to standard output.`,
+		Short: "List local paths of cloned repositories",
+		Long:  `Ls prints a list of paths to all locally cloned repositories to standard output.`,
 		Args:  cobra.NoArgs,
 
 		PreRunE: impl.ParseArgs,

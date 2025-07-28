@@ -20,8 +20,8 @@ func NewWebCommand() *cobra.Command {
 	impl := &urlweb{isWebCommand: true}
 	cmd := &cobra.Command{
 		Use:   "web [BASE]",
-		Short: "open the URL of this repository in a web browser",
-		Long:  "The ggman web command opens the URL of this repository in a web browser.",
+		Short: "Open the URL of this repository in a web browser",
+		Long:  "Web opens the URL of this repository in a web browser.",
 		Args:  cobra.MaximumNArgs(1),
 
 		PreRunE: impl.ParseArgs,
@@ -38,8 +38,8 @@ func NewURLCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "url [BASE]",
-		Short: "print the URL to this repository for opening a web browser",
-		Long:  "The 'ggman url' command behaves exactly like the 'ggman web' command, except that instead of opening the URL in a web browser it prints it to standard output.",
+		Short: "Print the URL to this repository for opening a web browser",
+		Long:  "Url behaves exactly like the 'ggman web' command, except that instead of opening the URL in a web browser it prints it to standard output.",
 		Args:  cobra.MaximumNArgs(1),
 
 		PreRunE: impl.ParseArgs,

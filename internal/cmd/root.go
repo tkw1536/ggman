@@ -131,7 +131,8 @@ func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 		},
 		{
 			Command: &cobra.Command{
-				Use: "for",
+				Use:   "for",
+				Short: "Filter repositories by a given filter. ",
 			},
 			Expansion: []string{"--for"},
 		},

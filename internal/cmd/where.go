@@ -15,12 +15,10 @@ func NewWhereCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "where URL",
-		Short: "print the location where a repository would be cloned to",
-		Long: `When invoked, the ggman where command prints to standard output the location where the remote repository described by the first argument would be cloned to. 
-This location is a subfolder of the directory outputted by 'ggman root'. 
-Each segment of the path corresponding to a component of the repository url.
-
-This command does not perform any interactions with the remote repository or the local disk, in particular it does not require access to the remote repository or require it to be installed.`,
+		Short: "Print the location where a repository would be cloned to",
+		Long: `Where prints to standard output the location where the remote repository described by the first argument would be cloned to. 
+This location is a subfolder of the directory outputted by 'ggman root'.
+Each segment of the path corresponds to a component of the repository url.`,
 		Args: cobra.ExactArgs(1),
 
 		PreRunE: impl.ParseArgs,

@@ -14,8 +14,8 @@ func NewFetchCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "fetch",
-		Short: "run \"git fetch --all\" on locally cloned repositories",
-		Long:  `'ggman fetch' is the equivalent of running 'git fetch --all' on all locally cloned repositories.`,
+		Short: "Run \"git fetch --all\" on all repositories",
+		Long:  `Fetch is the equivalent of running 'git fetch --all' on all repositories.`,
 		Args:  cobra.NoArgs,
 
 		RunE: impl.Exec,

@@ -22,7 +22,7 @@ func NewExecCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "exec EXE [ARGS...]",
-		Short: "execute a command for all repositories",
+		Short: "Execute a command for all repositories",
 		Long: `Exec executes an external command for every repository known to ggman.
 
 Each program is run with a working directory set to the root of the provided repository.

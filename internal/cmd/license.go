@@ -15,8 +15,8 @@ func NewLicenseCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "license",
-		Short: "print license information about ggman and exit",
-		Long:  "The license command prints to standard output legal notices about the ggman program.",
+		Short: "Print license information about ggman and exit",
+		Long:  "License prints to standard output legal notices about the ggman program.",
 		Args:  cobra.NoArgs,
 
 		RunE: impl.Exec,

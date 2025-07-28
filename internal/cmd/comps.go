@@ -15,8 +15,8 @@ func NewCompsCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "comps URL",
-		Short: "print the components of a URL",
-		Long: `When invoked, it prints the components of the first argument passed to it.
+		Short: "Print the components of a URL",
+		Long: `Comps prints the components of the first argument passed to it.
 Each component is printed on a separate line of standard output.`,
 		Args: cobra.ExactArgs(1),
 

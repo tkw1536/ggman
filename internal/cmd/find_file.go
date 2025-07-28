@@ -16,8 +16,8 @@ func NewFindFileCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "find-file PATH",
-		Short: "list repositories containing a specific file",
-		Long: `The 'find-file' command lists all repositories that currently contain a file or directory with the provided name.
+		Short: "List repositories containing a specific file",
+		Long: `Find-file lists all repositories that currently contain a file or directory with the provided name.
 The provided path may be relative to the root of the repository.`,
 		Args: cobra.ExactArgs(1),
 

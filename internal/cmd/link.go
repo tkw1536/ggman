@@ -20,8 +20,8 @@ func NewLinkCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "link PATH",
-		Short: "symlink a repository into the local repository structure",
-		Long:  "The 'ggman link' symlinks the repository in the path passed as the first argument where it would have been cloned to inside 'ggman root'.",
+		Short: "Symlink a repository into the local repository structure",
+		Long:  "Link symlinks the repository in the path passed as the first argument where it would have been cloned to inside 'ggman root'.",
 		Args:  cobra.ExactArgs(1),
 
 		PreRunE: impl.ParseArgs,

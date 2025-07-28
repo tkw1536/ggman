@@ -15,8 +15,8 @@ func NewShellrcCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "shellrc",
-		Short: "print additional aliases to be used in shell profiles in conjunction with ggman",
-		Long:  "The 'ggman shellrc' command prints aliases to be used for shell profiles in conjunction with ggman.",
+		Short: "Print additional aliases to be used in shell profiles in conjunction with ggman",
+		Long:  "Shellrc prints aliases to be used for shell profiles in conjunction with ggman.",
 		Args:  cobra.NoArgs,
 
 		RunE: impl.Exec,

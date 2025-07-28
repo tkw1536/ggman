@@ -14,8 +14,8 @@ func NewFindBranchCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "find-branch BRANCH",
-		Short: "list repositories containing a specific branch",
-		Long: `The 'find-branch' command lists all repositories that contain a branch with the provided name.
+		Short: "List repositories containing a specific branch",
+		Long: `Find-branch lists all repositories that contain a branch with the provided name.
 The remotes will be listed in dictionary order of their local installation paths.`,
 		Args: cobra.ExactArgs(1),
 

@@ -16,7 +16,7 @@ func NewEnvCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "env [VAR...]",
-		Short: "print information about the ggman environment",
+		Short: "Print information about the ggman environment",
 		Long: `Env prints "name=value" pairs about the environment the ggman command is running in to standard output.
 value is escaped for use in a shell.
 

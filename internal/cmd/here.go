@@ -15,8 +15,8 @@ func NewHereCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "here",
-		Short: "print the root path to the repository in the current repository",
-		Long:  `'ggman here' prints the path to the root of the repository in the current working directory to standard output.`,
+		Short: "Print the root path to the repository in the current repository",
+		Long:  `Here prints the path to the root of the repository in the current working directory to standard output.`,
 		Args:  cobra.NoArgs,
 
 		RunE: impl.Exec,
