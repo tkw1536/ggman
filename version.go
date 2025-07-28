@@ -1,4 +1,5 @@
 //spellchecker:wo
+//spellchecker:words ggman
 package ggman
 
 //spellchecker:words strconv time

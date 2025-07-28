@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words sync github cobra ggman pkglib exit
+//spellchecker:words sync github cobra ggman internal pkglib exit
 import (
 	"fmt"
 	"sync"

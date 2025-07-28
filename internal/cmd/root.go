@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words context github cobra ggman constants pkglib exit stream
+//spellchecker:words context github cobra ggman internal pkglib exit stream
 import (
 	"context"
 	"fmt"

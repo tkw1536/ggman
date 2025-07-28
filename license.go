@@ -1,3 +1,4 @@
+//spellchecker:words ggman
 package ggman
 
 //spellchecker:words embed

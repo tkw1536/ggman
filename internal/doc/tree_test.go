@@ -1,5 +1,6 @@
 package doc_test
 
+//spellchecker:words testing github cobra ggman internal
 import (
 	"testing"
 

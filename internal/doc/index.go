@@ -1,5 +1,6 @@
 package doc
 
+//spellchecker:words strings github cobra
 import (
 	"strings"
 

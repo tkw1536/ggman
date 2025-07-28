@@ -1,5 +1,6 @@
 package doc
 
+//spellchecker:words bytes html http strings github cobra yuin goldmark
 import (
 	"bytes"
 	"fmt"

@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words essio shellescape github cobra ggman pkglib collection exit
+//spellchecker:words essio shellescape github cobra ggman internal pkglib collection exit
 import (
 	"fmt"
 

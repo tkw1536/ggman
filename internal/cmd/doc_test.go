@@ -1,6 +1,6 @@
 package cmd_test
 
-//spellchecker:words testing ggman internal mockenv
+//spellchecker:words context http strconv testing ggman internal mockenv testutil
 import (
 	"context"
 	"fmt"

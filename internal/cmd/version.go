@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words runtime github cobra ggman constants
+//spellchecker:words runtime github cobra ggman
 import (
 	"fmt"
 	"runtime"

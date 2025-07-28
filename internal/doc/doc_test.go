@@ -1,5 +1,6 @@
 package doc_test
 
+//spellchecker:words http httptest strings testing github cobra ggman internal
 import (
 	"fmt"
 	"net/http"

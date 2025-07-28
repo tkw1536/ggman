@@ -1,5 +1,6 @@
 package doc
 
+//spellchecker:words iter github cobra
 import (
 	"iter"
 

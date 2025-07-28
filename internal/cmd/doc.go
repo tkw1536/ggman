@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words github cobra ggman constants legal
+//spellchecker:words context http strconv time github browser cobra ggman internal pkglib exit
 import (
 	"context"
 	"fmt"

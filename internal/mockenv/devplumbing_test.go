@@ -1,7 +1,7 @@
 //spellchecker:words mockenv
 package mockenv_test
 
-//spellchecker:words reflect testing github config ggman gggit internal mockenv testutil pkglib stream testlib
+//spellchecker:words reflect testing github config ggman internal gggit mockenv testutil pkglib stream testlib
 import (
 	"reflect"
 	"testing"

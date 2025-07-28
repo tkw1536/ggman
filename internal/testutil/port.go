@@ -1,5 +1,7 @@
+//spellchecker:words testutil
 package testutil
 
+//spellchecker:words context time
 import (
 	"context"
 	"fmt"

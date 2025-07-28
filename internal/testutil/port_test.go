@@ -1,5 +1,7 @@
+//spellchecker:words testutil
 package testutil_test
 
+//spellchecker:words context strconv ggman internal testutil
 import (
 	"context"
 	"fmt"

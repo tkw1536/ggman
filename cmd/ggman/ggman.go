@@ -1,7 +1,7 @@
 //spellchecker:words main
 package main
 
-//spellchecker:words context runtime debug ggman pkglib exit
+//spellchecker:words context runtime debug ggman internal pkglib exit
 import (
 	"context"
 	"fmt"
