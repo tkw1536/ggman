@@ -497,17 +497,18 @@ ggman comes with the following builtin aliases:
 ### 1.25.0 (Upcoming)
 
 - replace goprogram by [cobra](https://cobra.dev) as a command line framework
-- change various short form options for consistency (global flags are upper case, local flags are lower case)
+	- existing long flag remain mostly compatible, some short flags have been renamed. 
+	- all global flags are now upper case, all local flags are lower case.
 	- rename `--here` flag of `ggman clone` to `--plain` (to avoid conflicts with the global `--here` flag)
-- add `ggman doc` command to spin up a html documentation server
-- add `gg[do]` and `ggcursor` aliases
-- `ggman clone` and `ggman exec`: require `--` to separate flags to external commands
-- tests: check overlap between command and global flags
-- ci: Run spellcheck
+	- `ggman clone` and `ggman exec`: require `--` to separate flags to external commands
+- add new `ggman doc` command to spin up a html documentation server about ggman itself
+- imrpove `ggman shellrc` command
+	- add `gg[do]` and `ggcursor` aliases
+	- fix minor bug (see #13, thanks @janezicmatej)
+- ci: run spellcheck after every commit
 - move go import paths to custom domain
-- fix bug in shellrc (see #13, thanks @janezicmatej)
-- update dependencies
 - drop building a universal mac binary
+- minor bug fixes and improvements
 
 ### 1.24.0 (Released [May 12 2025](https://github.com/tkw1536/ggman/releases/tag/v1.24.0))
 
