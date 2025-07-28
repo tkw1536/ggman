@@ -8,7 +8,7 @@ import (
 	"go.tkw01536.de/ggman/internal/env"
 )
 
-//spellchecker:words GGROOT CANFILE GGNORM USERPROFILE GGMAN
+//spellchecker:words GGROOT GGNORM USERPROFILE GGMAN
 
 func TestReadVariables(t *testing.T) {
 	// set fake environment variables for test

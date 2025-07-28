@@ -1,0 +1,16 @@
+{
+  "language": "en",
+  "words": [
+    "Wiesing",
+    "ggman",
+    "Positionals",
+    "nolint",
+    "CANSPEC",
+    "CANFILE",
+  ],
+  "ignorePaths": [
+    "LICENSE",
+    "go.mod",
+    "go.sum"
+  ]
+}

@@ -11,9 +11,9 @@ import (
 	"go.tkw01536.de/pkglib/fsx"
 )
 
-//spellchecker:words ggman unsynced uncommited worktree wrapf
+//spellchecker:words ggman unsynced worktree
 
-// Flags represents a set of filter flags used for the ggman goprogram.
+// Flags represents a set of filter flags used for the ggman program.
 type Flags struct {
 	For           []string
 	FromFile      []string

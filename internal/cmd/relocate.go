@@ -16,7 +16,7 @@ import (
 	"go.tkw01536.de/pkglib/fsx"
 )
 
-//spellchecker:words nolint wrapcheck
+//spellchecker:words wrapcheck
 
 func NewRelocateCommand() *cobra.Command {
 	impl := new(relocate)

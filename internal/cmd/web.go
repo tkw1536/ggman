@@ -13,7 +13,7 @@ import (
 	"go.tkw01536.de/pkglib/exit"
 )
 
-//spellchecker:words CANSPEC godoc localgodoc reclone urlweb positionals GGROOT worktree weburl workdir nolint wrapcheck
+//spellchecker:words godoc localgodoc reclone urlweb positionals GGROOT worktree weburl workdir wrapcheck
 
 // NewWebCommand creates the 'ggman web' command.
 func NewWebCommand() *cobra.Command {

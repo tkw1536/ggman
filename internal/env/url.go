@@ -10,7 +10,7 @@ import (
 	"go.tkw01536.de/pkglib/text"
 )
 
-//spellchecker:words mydomain nolint recvcheck
+//spellchecker:words mydomain recvcheck
 
 // URL represents a URL to a single git repository.
 //

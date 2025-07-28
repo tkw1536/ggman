@@ -8,7 +8,7 @@ import (
 	"go.tkw01536.de/pkglib/reflectx"
 )
 
-//spellchecker:words ggman GGROOT CANFILE GGNORM
+//spellchecker:words ggman GGROOT GGNORM
 
 // Variables represents the values of specific environment variables.
 // Unset variables are represented as the empty string.

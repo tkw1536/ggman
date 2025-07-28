@@ -9,7 +9,7 @@ import (
 	"go.tkw01536.de/ggman"
 )
 
-//spellchecker:words nolint wrapcheck
+//spellchecker:words wrapcheck
 
 func NewVersionCommand() *cobra.Command {
 	impl := new(version)

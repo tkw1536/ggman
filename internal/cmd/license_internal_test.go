@@ -17,9 +17,9 @@ func TestCommandLicense(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	tests := []struct {
-		name    string
-		workdir string
-		args    []string
+		name string
+		cwd  string
+		args []string
 
 		wantCode   uint8
 		wantStdout string
@@ -40,7 +40,7 @@ func TestCommandLicense(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.Run(t, nil, NewCommand, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, nil, NewCommand, tt.cwd, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

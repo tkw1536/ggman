@@ -18,7 +18,7 @@ import (
 	"go.tkw01536.de/pkglib/testlib"
 )
 
-//spellchecker:words gogit commita commitb worktree nolint tparallel paralleltest
+//spellchecker:words gogit commita commitb worktree tparallel paralleltest
 
 func Test_gogit_IsRepository(t *testing.T) {
 	t.Parallel()

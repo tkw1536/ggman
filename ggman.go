@@ -4,4 +4,5 @@
 //spellchecker:words ggman
 package ggman
 
+//spellchecker:words gogenlicense
 //go:generate go tool gogenlicense -m -o notices.go

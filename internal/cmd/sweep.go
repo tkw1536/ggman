@@ -10,7 +10,7 @@ import (
 	"go.tkw01536.de/pkglib/exit"
 )
 
-//spellchecker:words GGROOT nolint wrapcheck
+//spellchecker:words GGROOT wrapcheck
 
 func NewSweepCommand() *cobra.Command {
 	impl := new(sweep)

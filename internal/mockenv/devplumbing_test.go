@@ -15,7 +15,7 @@ import (
 	"go.tkw01536.de/pkglib/testlib"
 )
 
-//spellchecker:words gogit nolint tparallel paralleltest
+//spellchecker:words gogit tparallel paralleltest
 
 func TestDevPlumbing_Forward(t *testing.T) {
 	t.Parallel()

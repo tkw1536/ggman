@@ -22,7 +22,7 @@ var (
 	errDocOpenBrowser = exit.NewErrorWithCode("failed to open browser", exit.ExitGeneric)
 )
 
-//spellchecker:words nolint wrapcheck
+//spellchecker:words wrapcheck
 
 func NewDocCommand() *cobra.Command {
 	impl := new(_doc)

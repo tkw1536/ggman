@@ -9,7 +9,7 @@ import (
 	"go.tkw01536.de/pkglib/exit"
 )
 
-//spellchecker:words nolint wrapcheck
+//spellchecker:words wrapcheck
 
 func NewPullCommand() *cobra.Command {
 	impl := new(pull)

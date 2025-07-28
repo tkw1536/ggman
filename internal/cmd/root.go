@@ -13,7 +13,7 @@ import (
 	"go.tkw01536.de/pkglib/stream"
 )
 
-//spellchecker:words pflags nolint contextcheck
+//spellchecker:words contextcheck unsynced pflags shellrc GGROOT
 var (
 	errInvalidFlags        = exit.NewErrorWithCode("unknown flags passed", exit.ExitGeneralArguments)
 	errNoArgumentsProvided = exit.NewErrorWithCode("need at least one argument. use `ggman license` to view licensing information", exit.ExitGeneralArguments)
@@ -158,14 +158,14 @@ var errInvalidArguments = exit.NewErrorWithCode("invalid arguments passed", exit
 
 // wrapArgs wraps a [cobra.PositionalArgs] error with the given error.
 // The wrapping occurs by calling [fmt.Errorf] with a string of "%w: %w" and [errInvalidArguments].
-// If positionals is nil, it is passed through as-is.
-func wrapArgs(positionals cobra.PositionalArgs) cobra.PositionalArgs {
-	if positionals == nil {
-		return positionals
+// If pos is nil, it is passed through as-is.
+func wrapArgs(pos cobra.PositionalArgs) cobra.PositionalArgs {
+	if pos == nil {
+		return pos
 	}
 
 	return func(cmd *cobra.Command, args []string) error {
-		err := positionals(cmd, args)
+		err := pos(cmd, args)
 		if err == nil {
 			return nil
 		}

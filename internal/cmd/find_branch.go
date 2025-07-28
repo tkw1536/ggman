@@ -29,7 +29,7 @@ The remotes will be listed in dictionary order of their local installation paths
 	return cmd
 }
 
-//spellchecker:words positionals nolint wrapcheck
+//spellchecker:words positionals wrapcheck
 
 type findBranch struct {
 	Positionals struct {

@@ -16,7 +16,7 @@ import (
 	"go.tkw01536.de/pkglib/fsx"
 )
 
-//spellchecker:words worktree canonicalized canonicalize CANFILE workdir GGNORM GGROOT Wrapf nolint wrapcheck recvcheck
+//spellchecker:words worktree canonicalized canonicalize CANFILE workdir GGNORM GGROOT Wrapf wrapcheck recvcheck
 
 // Env represents an environment to be used by ggman.
 //

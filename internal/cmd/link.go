@@ -13,7 +13,7 @@ import (
 	"go.tkw01536.de/pkglib/fsx"
 )
 
-//spellchecker:words positionals nolint wrapcheck
+//spellchecker:words positionals wrapcheck
 
 func NewLinkCommand() *cobra.Command {
 	impl := new(link)

@@ -13,6 +13,8 @@ import (
 	"go.tkw01536.de/pkglib/exit"
 )
 
+//spellchecker:words workdir
+
 const fatalPanicMessage = `Fatal Error: Panic
 
 The ggman program panicked and had to abort execution. This is usually

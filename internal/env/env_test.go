@@ -14,7 +14,7 @@ import (
 	"go.tkw01536.de/pkglib/testlib"
 )
 
-//spellchecker:words GGNORM GGROOT CANFILE worktree
+//spellchecker:words GGNORM GGROOT worktree
 
 func TestEnv_LoadDefaultRoot(t *testing.T) {
 	t.Parallel()

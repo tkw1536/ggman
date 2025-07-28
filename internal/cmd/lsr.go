@@ -9,7 +9,7 @@ import (
 	"go.tkw01536.de/pkglib/exit"
 )
 
-//spellchecker:words canonicalized CANFILE nolint wrapcheck
+//spellchecker:words canonicalized wrapcheck
 
 func NewLsrCommand() *cobra.Command {
 	impl := new(lsr)

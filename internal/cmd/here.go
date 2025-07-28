@@ -8,7 +8,7 @@ import (
 	"go.tkw01536.de/ggman/internal/env"
 )
 
-//spellchecker:words worktree nolint wrapcheck
+//spellchecker:words worktree wrapcheck
 
 func NewHereCommand() *cobra.Command {
 	impl := new(here)

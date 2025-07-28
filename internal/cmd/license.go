@@ -8,7 +8,7 @@ import (
 	"go.tkw01536.de/ggman"
 )
 
-//spellchecker:words nolint wrapcheck
+//spellchecker:words wrapcheck
 
 func NewLicenseCommand() *cobra.Command {
 	impl := new(license)

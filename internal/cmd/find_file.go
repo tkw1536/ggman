@@ -32,7 +32,7 @@ The provided path may be relative to the root of the repository.`,
 	return cmd
 }
 
-//spellchecker:words positionals nolint wrapcheck
+//spellchecker:words positionals wrapcheck
 
 type findFile struct {
 	Positionals struct {

@@ -66,7 +66,7 @@ func genDocs(cmd *cobra.Command, docs *Docs, buffer *bytes.Buffer, builder *stri
 	builder.WriteString("<!DOCTYPE html>")
 	builder.WriteString("<html lang='en'>")
 	builder.WriteString("<title>" + html.EscapeString(cmd.CommandPath()) + "</title>")
-	builder.WriteString("<style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}a{color:blue;}</style>")
+	builder.WriteString("<style>body{font-family:-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;}a{color:blue;}</style>")
 
 	if err := m.Convert(buffer.Bytes(), builder); err != nil {
 		return fmt.Errorf("failed to generate html: %w", err)

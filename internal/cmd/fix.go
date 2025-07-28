@@ -28,7 +28,7 @@ func NewFixCommand() *cobra.Command {
 	return cmd
 }
 
-//spellchecker:words canonicalizes canonicalization nolint wrapcheck
+//spellchecker:words canonicalizes canonicalization wrapcheck
 
 type fix struct {
 	Simulate bool

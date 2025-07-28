@@ -8,7 +8,7 @@ import (
 	"go.tkw01536.de/ggman/internal/env"
 )
 
-//spellchecker:words positionals nolint wrapcheck
+//spellchecker:words positionals wrapcheck
 
 func NewWhereCommand() *cobra.Command {
 	impl := new(where)

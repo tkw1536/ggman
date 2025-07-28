@@ -1,3 +1,5 @@
+# spellchecker:disable
+
 # Go itself
 GOCMD=go
 GOBUILD=$(GOCMD) build

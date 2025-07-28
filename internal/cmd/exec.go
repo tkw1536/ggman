@@ -15,6 +15,8 @@ import (
 	"go.tkw01536.de/pkglib/stream"
 )
 
+//spellchecker:words compat
+
 func NewExecCommand() *cobra.Command {
 	impl := new(exe)
 

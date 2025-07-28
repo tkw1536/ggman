@@ -28,7 +28,7 @@ import (
 	"go.tkw01536.de/pkglib/testlib"
 )
 
-//spellchecker:words GGROOT workdir sandboxed
+//spellchecker:words GGROOT workdir sandboxed contextcheck
 
 // MockEnv represents a new environment that can be used for testing ggman commands.
 //

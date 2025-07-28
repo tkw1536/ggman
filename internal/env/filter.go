@@ -11,7 +11,7 @@ import (
 	"go.tkw01536.de/pkglib/collection"
 )
 
-//spellchecker:words worktree nolint
+//spellchecker:words worktree
 
 // Filter is a predicate that scores repositories inside an environment.
 //

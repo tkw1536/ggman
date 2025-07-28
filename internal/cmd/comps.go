@@ -8,6 +8,8 @@ import (
 	"go.tkw01536.de/ggman/internal/env"
 )
 
+//spellchecker:words wrapcheck
+
 func NewCompsCommand() *cobra.Command {
 	impl := new(comps)
 
@@ -24,8 +26,6 @@ Each component is printed on a separate line of standard output.`,
 
 	return cmd
 }
-
-//spellchecker:words nolint wrapcheck
 
 type comps struct {
 	Positional struct {

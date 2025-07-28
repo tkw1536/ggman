@@ -8,7 +8,7 @@ import (
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
-//spellchecker:words GGROOT workdir nolint tparallel paralleltest
+//spellchecker:words GGROOT workdir tparallel paralleltest
 
 //nolint:tparallel,paralleltest
 func TestCommandFix(t *testing.T) {

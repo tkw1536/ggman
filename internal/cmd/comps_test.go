@@ -8,6 +8,8 @@ import (
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
+//spellchecker:words workdir
+
 func TestCommandComps(t *testing.T) {
 	t.Parallel()
 

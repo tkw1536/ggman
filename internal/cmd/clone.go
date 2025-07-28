@@ -12,6 +12,8 @@ import (
 	"go.tkw01536.de/pkglib/exit"
 )
 
+//spellchecker:words canonicalize
+
 func NewCloneCommand() *cobra.Command {
 	impl := new(clone)
 
