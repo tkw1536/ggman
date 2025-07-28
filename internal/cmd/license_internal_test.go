@@ -40,7 +40,7 @@ func TestCommandLicense(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			code, stdout, stderr := mock.Run(t, NewCommand, tt.workdir, "", tt.args...)
+			code, stdout, stderr := mock.Run(t, nil, NewCommand, tt.workdir, "", tt.args...)
 			if code != tt.wantCode {
 				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
 			}

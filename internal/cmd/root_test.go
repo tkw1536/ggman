@@ -14,7 +14,7 @@ func Test_main_docs(t *testing.T) {
 	t.Parallel()
 
 	mock := mockenv.NewMockEnv(t)
-	code, _, _ := mock.Run(t, cmd.NewCommand, "", "", "--help")
+	code, _, _ := mock.Run(t, nil, cmd.NewCommand, "", "", "--help")
 	if code != 0 {
 		t.Fail()
 	}

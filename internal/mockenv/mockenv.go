@@ -6,6 +6,7 @@ package mockenv
 //spellchecker:words bytes context path filepath regexp strconv strings testing essio shellescape github cobra ggman gggit internal dirs testutil pkglib exit stream testlib
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"fmt"
 	"os"
@@ -148,6 +149,7 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 }
 
 // Run runs the command with the provided arguments.
+// When ctx is nil, the context from t is used instead.
 // cmdFactory should be a factory function to create the root command, typically [cmd.NewCommand].
 // It afterwards resets the concrete value stored in command to it's zero value.
 //
@@ -158,18 +160,22 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 // In particular all interactions with remote git repositories are intercepted, see the Register() method for details.
 //
 // It returns the exit code of the provided command, along with standard output and standard error.
-func (mock *MockEnv) Run(t *testing.T, cmdFactory func(context.Context, env.Parameters) *cobra.Command, workdir string, stdin string, argv ...string) (code uint8, stdout, stderr string) {
+func (mock *MockEnv) Run(t *testing.T, ctx context.Context, cmdFactory func(context.Context, env.Parameters) *cobra.Command, workdir string, stdin string, argv ...string) (code uint8, stdout, stderr string) {
 	t.Helper()
 
 	stdinReader := strings.NewReader(stdin)
 	stdoutBuffer := &bytes.Buffer{}
 	stderrBuffer := &bytes.Buffer{}
 
-	fake := cmdFactory(t.Context(), env.Parameters{
-		Variables: mock.vars,
-		Plumbing:  mock.plumbing,
-		Workdir:   workdir,
-	})
+	//nolint:contextcheck // we explicitly want to set a context here
+	fake := cmdFactory(
+		cmp.Or(ctx, t.Context()),
+		env.Parameters{
+			Variables: mock.vars,
+			Plumbing:  mock.plumbing,
+			Workdir:   workdir,
+		},
+	)
 	fake.SetIn(stdinReader)
 	fake.SetOut(stdoutBuffer)
 	fake.SetErr(stderrBuffer)

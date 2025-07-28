@@ -94,6 +94,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 		NewWebCommand(),
 		NewURLCommand(),
 		NewVersionCommand(),
+		NewDocCommand(),
 	)
 
 	for _, alias := range []struct {
