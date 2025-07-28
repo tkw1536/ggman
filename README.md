@@ -1,6 +1,6 @@
 # ggman
 
-<!-- spellchecker:words ggman ggroot shellrc ggcd ggclone ggshow ggcode ggnorm wrld cspec gopath godoc goprogram unsynced jessevdk struct POSIX pflag localgodoc CANSPEC CANFILE worktree reclone testutil subpackage -->
+<!-- spellchecker:words CANFILE CANSPEC cspec fnmatch ggcd ggclone ggcode ggcursor ggdo ggman ggnorm ggroot ggshow godoc gopath goprogram janezicmatej jessevdk localgodoc pflag pkglib POSIX reclone shellrc struct subpackage testutil unsynced worktree wrld -->
 
 ![CI Status](https://github.com/tkw1536/ggman/workflows/CI/badge.svg)
 
@@ -136,6 +136,15 @@ eval "$(ggman shellrc)"
 For example, `ggcd github.com/hello/world` will cd into the directory where the `github.com/hello/world` repository is checked out. 
 This also works with any pattern matching a repository, e.g. `ggcd world` will cd into the first repository matching `world`.
 
+#### gg and ggdo
+
+`gg` is a generalized version of `ggcd`. 
+Instead of only taking a pattern, it takes two arguments: a pattern and a command to execute.
+For example, `gg $PATTERN cd` is equivalent to `ggcd $PATTERN`. 
+
+Because users might have `gg` aliased to something else, the `gg` is also available as `ggdo`.
+The `gg` alias is only set if it is not otherwise taken. 
+
 #### ggclone
 
 `ggclone` behaves similar to `ggman clone` and `ggcd`.
@@ -147,9 +156,9 @@ Furthermore, after finishing the clone, automatically `cd`s into the cloned repo
 ggshow is like ggcd, except that it prints the target directory and also shows the most recent `HEAD` commit.
 This requires a locally installed git.
 
-#### ggcode
+#### ggcode and ggcursor
 
-ggcode is like ggcd, except it opens an editor (here vscode) instead of cd-ing.
+These are aliases to open a project folder in `vscode` and `cursor`, respectively. 
 
 ## the `ggman` command
 
@@ -491,6 +500,7 @@ ggman comes with the following builtin aliases:
 - change various short form options for consistency (global flags are upper case, local flags are lower case)
 	- rename `--here` flag of `ggman clone` to `--plain` (to avoid conflicts with the global `--here` flag)
 - add `ggman doc` command to spin up a html documentation server
+- add `gg[do]` and `ggcursor` aliases
 - `ggman clone` and `ggman exec`: require `--` to separate flags to external commands
 - tests: check overlap between command and global flags
 - move go import paths to custom domain
