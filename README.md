@@ -503,6 +503,7 @@ ggman comes with the following builtin aliases:
 - add `gg[do]` and `ggcursor` aliases
 - `ggman clone` and `ggman exec`: require `--` to separate flags to external commands
 - tests: check overlap between command and global flags
+- ci: Run spellcheck
 - move go import paths to custom domain
 - fix bug in shellrc (see #13, thanks @janezicmatej)
 - update dependencies

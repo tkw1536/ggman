@@ -9,6 +9,7 @@ GOTEST=$(GOCMD) test
 GOTOOL=$(GOCMD) tool
 GOMOD=$(GOCMD) mod
 GOGENERATE=$(GOCMD) generate
+CSPELL=cspell
 
 # Flags for versioning
 GGMANVERSIONFLAGS=-X 'go.tkw01536.de/ggman.buildVersion=$(shell git describe --tags HEAD)' -X 'go.tkw01536.de/ggman.buildTime=$(shell date +%s)'
@@ -60,6 +61,8 @@ lint:
 	$(GOTOOL) golangci-lint run ./...
 	$(GOTOOL) govulncheck
 
+spellcheck:
+	$(CSPELL) lint .
 
 generate:
 	$(GOGENERATE) -v ./...
