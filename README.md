@@ -502,7 +502,7 @@ ggman comes with the following builtin aliases:
 	- rename `--here` flag of `ggman clone` to `--plain` (to avoid conflicts with the global `--here` flag)
 	- `ggman clone` and `ggman exec`: require `--` to separate flags to external commands
 - add new `ggman doc` command to spin up a html documentation server about ggman itself
-- imrpove `ggman shellrc` command
+- improve `ggman shellrc` command
 	- add `gg[do]` and `ggcursor` aliases
 	- fix minor bug (see #13, thanks @janezicmatej)
 - ci: run spellcheck after every commit

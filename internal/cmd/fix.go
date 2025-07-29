@@ -10,6 +10,8 @@ import (
 	"go.tkw01536.de/pkglib/exit"
 )
 
+//spellchecker:words canonicalize
+
 func NewFixCommand() *cobra.Command {
 	impl := new(fix)
 
