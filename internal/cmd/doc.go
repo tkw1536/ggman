@@ -101,6 +101,9 @@ func (d *_doc) Exec(cmd *cobra.Command, args []string) (e error) {
 
 	select {
 	case <-cmd.Context().Done():
+		if _, err := fmt.Fprintln(cmd.OutOrStdout(), "shutting down server"); err != nil {
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
+		}
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := server.Shutdown(shutdownCtx); err != nil {

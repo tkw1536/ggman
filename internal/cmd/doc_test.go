@@ -73,7 +73,7 @@ func TestCommandDoc(t *testing.T) {
 	}
 
 	// check that the output is as expected
-	mock.AssertOutput(t, "Stdout", stdout, "server listening at http://"+addr+"\n")
+	mock.AssertOutput(t, "Stdout", stdout, "server listening at http://"+addr+"\nshutting down server\n")
 	mock.AssertOutput(t, "Stderr", stderr, "")
 
 	select {

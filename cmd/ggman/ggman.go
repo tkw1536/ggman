@@ -6,7 +6,9 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/signal"
 	"runtime/debug"
+	"syscall"
 
 	"go.tkw01536.de/ggman/internal/cmd"
 	"go.tkw01536.de/ggman/internal/env"
@@ -48,8 +50,12 @@ func main() {
 		Workdir:   "",
 	}
 
+	// create a context that can be cancelled with Ctrl+C
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
 	// and run the command
-	cmd := cmd.NewCommand(context.Background(), params)
+	cmd := cmd.NewCommand(ctx, params)
 	if err := cmd.Execute(); err != nil {
 		code, _ := exit.CodeFromError(err)
 		_, _ = fmt.Fprintln(cmd.ErrOrStderr(), err)
