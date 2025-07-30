@@ -15,10 +15,12 @@ ggdo () {
 		echo "Usage: gg <pattern> <command> [args...]" >&2
 		return 1
 	fi
-	
-	PATTERN="$1"
+
+	REPO="$(ggman --for "$1" ls --exit-code --one 2>&1)" || return $?
 	shift
-	REPO="$(ggman --for "$PATTERN" ls --exit-code --one 2>&1)" && echo "$REPO" && "$@" "$REPO" || return $?
+	
+	echo "$REPO"
+	"$@" "$REPO" || return $?
 }
 
 # To avoid conflicts with other aliases, don't override gg if it's already set. 
@@ -38,12 +40,16 @@ ggcd () {
 
 # ggcode is like 'gg $1 code'
 ggcode () {
-	ggdo "$1" code "$@" || return $?
+	PATTERN="$1" 
+	shift
+	ggdo "$PATTERN" code "$@" || return $?
 }
 
 # ggcursor is like 'gg $1 cursor'
 ggcursor () {
-	ggdo "$1" cursor "$@" || return $?
+	PATTERN="$1" 
+	shift
+	ggdo "$PATTERN" cursor "$@" || return $?
 }
 
 # ggshow is like ggcd, except that it runs ggman show on the output
