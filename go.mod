@@ -10,7 +10,7 @@ require (
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/spf13/cobra v1.9.1
 	github.com/yuin/goldmark v1.4.13
-	go.tkw01536.de/pkglib v0.0.0-20250730090648-983bb9e96507
+	go.tkw01536.de/pkglib v0.0.0-20250730191753-6dba249f8f6b
 )
 
 require (

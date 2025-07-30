@@ -13,6 +13,7 @@ import (
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"go.tkw01536.de/pkglib/exit"
 	"go.tkw01536.de/pkglib/fsx"
 	"go.tkw01536.de/pkglib/stream"
 )
@@ -238,7 +239,7 @@ func (gg *gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, ext
 
 	var exitError *exec.ExitError
 	if errors.As(err, &exitError) {
-		err = ExitError{error: err, Code: exitError.ExitCode()}
+		err = exit.FromExitError(exitError)
 	}
 
 	return err
@@ -256,7 +257,7 @@ func (gg *gitgit) Fetch(stream stream.IOStream, clonePath string, cache any) err
 
 	var exitError *exec.ExitError
 	if errors.As(err, &exitError) {
-		err = ExitError{error: err, Code: exitError.ExitCode()}
+		err = exit.FromExitError(exitError)
 	}
 	return err
 }
@@ -273,7 +274,7 @@ func (gg *gitgit) Pull(stream stream.IOStream, clonePath string, cache any) erro
 
 	var exitError *exec.ExitError
 	if errors.As(err, &exitError) {
-		err = ExitError{error: err, Code: exitError.ExitCode()}
+		err = exit.FromExitError(exitError)
 	}
 	return err
 }
@@ -291,7 +292,7 @@ func (gg *gitgit) IsDirty(clonePath string, cache any) (dirty bool, err error) {
 		if exitError.ExitCode() == 1 {
 			return true, nil
 		}
-		err = ExitError{error: err, Code: exitError.ExitCode()}
+		err = exit.FromExitError(exitError)
 	}
 	return false, err
 }
@@ -510,7 +511,7 @@ func (gogit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArg
 	// run a plain git clone but intercept all errors
 	_, err := git.PlainClone(clonePath, false, &git.CloneOptions{URL: remoteURI, Progress: stream.Stderr})
 	if err != nil {
-		err = ExitError{error: fmt.Errorf("%q: unable clone repository: %w", remoteURI, err), Code: 1}
+		err = fmt.Errorf("%w: %w", exit.NewErrorWithCode(fmt.Sprintf("%q: unable clone repository", remoteURI), 1), err)
 	}
 
 	return err
