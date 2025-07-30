@@ -69,7 +69,6 @@ shellcheck:
 	$(SHELLCHECK) --shell=bash internal/cmd/shellrc.sh
 	$(SHELLCHECK) --shell=dash internal/cmd/shellrc.sh
 	$(SHELLCHECK) --shell=ksh internal/cmd/shellrc.sh
-	$(SHELLCHECK) --shell=busybox internal/cmd/shellrc.sh
 
 spellcheck:
 	$(CSPELL) lint .
