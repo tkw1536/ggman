@@ -15,10 +15,9 @@ import (
 
 //spellchecker:words contextcheck unsynced pflags shellrc GGROOT
 var (
-	errInvalidFlags        = exit.NewErrorWithCode("unknown flags passed", env.ExitGeneralArguments)
-	errNoArgumentsProvided = exit.NewErrorWithCode("need at least one argument. use `ggman license` to view licensing information", env.ExitGeneralArguments)
-	errGenericOutput       = exit.NewErrorWithCode("unknown output error", env.ExitGeneric)
-	errGenericEnvironment  = exit.NewErrorWithCode("failed to initialize environment", env.ExitInvalidEnvironment)
+	errInvalidFlags       = exit.NewErrorWithCode("unknown flags passed", env.ExitGeneralArguments)
+	errGenericOutput      = exit.NewErrorWithCode("unknown output error", env.ExitGeneric)
+	errGenericEnvironment = exit.NewErrorWithCode("failed to initialize environment", env.ExitInvalidEnvironment)
 )
 
 // Command returns the main ggman command
@@ -32,10 +31,6 @@ func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 		Version: ggman.BuildVersion,
 		Aliases: []string{os.Args[0]},
 		Short:   "A golang tool that can manage all your git repositories. ",
-
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return errNoArgumentsProvided
-		},
 	}
 
 	// setup flags
