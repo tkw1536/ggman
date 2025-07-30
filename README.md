@@ -493,7 +493,6 @@ Variables are matched case-insensitive.
 ggman comes with the following builtin aliases:
 
 - `ggman git` behaves exactly like `ggman exec -- git`
-- `ggman show` behaves exactly like `ggman exec -- git -c core.pager= show HEAD` to show the most recent HEAD commit of a repository 
 - `ggman require` behaves exactly like `ggman clone --force`
 - `ggman root` behaves exactly like `ggman env --raw GGROOT` (for backwards compatibility)
 
@@ -511,6 +510,7 @@ ggman comes with the following builtin aliases:
 	- add `gg[do]` and `ggcursor` aliases
 	- fix minor bug (see #13, thanks @janezicmatej)
 - add tab completion script via `ggman completion <shell>`
+- remove `ggman show` alias as it doesn't work well with the new framework
 - ci: run spellcheck after every commit
 - ci: run shellcheck on shellrc.sh after every commit
 - move go import paths to custom domain

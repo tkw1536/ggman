@@ -125,13 +125,6 @@ func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 		},
 		{
 			Command: &cobra.Command{
-				Use:   "show",
-				Short: "Show the most recent commit of a repository. ",
-			},
-			Expansion: []string{"exec", "--", "git", "-c", "core.pager=", "show", "HEAD"},
-		},
-		{
-			Command: &cobra.Command{
 				Use:   "for",
 				Short: "Filter repositories by a given filter. ",
 			},
