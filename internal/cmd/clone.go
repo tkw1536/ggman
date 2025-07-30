@@ -68,12 +68,12 @@ func (c *clone) ParseArgs(cmd *cobra.Command, args []string) error {
 }
 
 var (
-	errCloneInvalidDestFlags = exit.NewErrorWithCode(`invalid destination: "--to" and "--plain" may not be used together`, exit.ExitCommandArguments)
-	errCloneInvalidDest      = exit.NewErrorWithCode("unable to determine local destination", exit.ExitGeneralArguments)
-	errCloneLocalURI         = exit.NewErrorWithCode("invalid remote URI: invalid scheme, not a remote path", exit.ExitCommandArguments)
-	errCloneAlreadyExists    = exit.NewErrorWithCode("unable to clone repository: another git repository already exists in target location", exit.ExitGeneric)
-	errCloneNoArguments      = exit.NewErrorWithCode("external `git` not found, can not pass any additional arguments to `git clone`", exit.ExitGeneric)
-	errCloneOther            = exit.NewErrorWithCode("", exit.ExitGeneric)
+	errCloneInvalidDestFlags = exit.NewErrorWithCode(`invalid destination: "--to" and "--plain" may not be used together`, env.ExitCommandArguments)
+	errCloneInvalidDest      = exit.NewErrorWithCode("unable to determine local destination", env.ExitGeneralArguments)
+	errCloneLocalURI         = exit.NewErrorWithCode("invalid remote URI: invalid scheme, not a remote path", env.ExitCommandArguments)
+	errCloneAlreadyExists    = exit.NewErrorWithCode("unable to clone repository: another git repository already exists in target location", env.ExitGeneric)
+	errCloneNoArguments      = exit.NewErrorWithCode("external `git` not found, can not pass any additional arguments to `git clone`", env.ExitGeneric)
+	errCloneOther            = exit.NewErrorWithCode("", env.ExitGeneric)
 
 	errCloneNoComps = errors.New("unable to find components of URI")
 )

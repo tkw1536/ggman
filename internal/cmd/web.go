@@ -125,10 +125,10 @@ var (
 	errURLWebNoRemote          = exit.NewErrorWithCode("repository does not have a remote", env.ExitInvalidRepo)
 	errURLWebOutsideRepository = exit.NewErrorWithCode("not inside a ggman-controlled repository", env.ExitInvalidRepo)
 
-	errWebFlagUnsupported = exit.NewErrorWithCode("flag unsupported by `ggman web`", exit.ExitCommandArguments)
+	errWebFlagUnsupported = exit.NewErrorWithCode("flag unsupported by `ggman web`", env.ExitCommandArguments)
 
-	errURLFlagsUnsupported = exit.NewErrorWithCode("flag combination unsupported by `ggman url`", exit.ExitCommandArguments)
-	errURLFailedBrowser    = exit.NewErrorWithCode("failed to open browser", exit.ExitGeneric)
+	errURLFlagsUnsupported = exit.NewErrorWithCode("flag combination unsupported by `ggman url`", env.ExitCommandArguments)
+	errURLFailedBrowser    = exit.NewErrorWithCode("failed to open browser", env.ExitGeneric)
 )
 
 func (uw *urlweb) Exec(cmd *cobra.Command, args []string) error {

@@ -41,11 +41,11 @@ type relocate struct {
 }
 
 var (
-	errRelocateCreateParent = exit.NewErrorWithCode("unable to create parent directory for destination", exit.ExitGeneric)
-	errRelocateMove         = exit.NewErrorWithCode("unable to move repository", exit.ExitGeneric)
+	errRelocateCreateParent = exit.NewErrorWithCode("unable to create parent directory for destination", env.ExitGeneric)
+	errRelocateMove         = exit.NewErrorWithCode("unable to move repository", env.ExitGeneric)
 
-	errRelocateRepoExists = exit.NewErrorWithCode("repository already exists", exit.ExitGeneric)
-	errRelocatePathExists = exit.NewErrorWithCode("path already exists", exit.ExitGeneric)
+	errRelocateRepoExists = exit.NewErrorWithCode("repository already exists", env.ExitGeneric)
+	errRelocatePathExists = exit.NewErrorWithCode("path already exists", env.ExitGeneric)
 )
 
 func (r *relocate) Exec(cmd *cobra.Command, args []string) error {

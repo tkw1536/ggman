@@ -15,9 +15,9 @@ import (
 
 //spellchecker:words contextcheck unsynced pflags shellrc GGROOT
 var (
-	errInvalidFlags        = exit.NewErrorWithCode("unknown flags passed", exit.ExitGeneralArguments)
-	errNoArgumentsProvided = exit.NewErrorWithCode("need at least one argument. use `ggman license` to view licensing information", exit.ExitGeneralArguments)
-	errGenericOutput       = exit.NewErrorWithCode("unknown output error", exit.ExitGeneric)
+	errInvalidFlags        = exit.NewErrorWithCode("unknown flags passed", env.ExitGeneralArguments)
+	errNoArgumentsProvided = exit.NewErrorWithCode("need at least one argument. use `ggman license` to view licensing information", env.ExitGeneralArguments)
+	errGenericOutput       = exit.NewErrorWithCode("unknown output error", env.ExitGeneric)
 	errGenericEnvironment  = exit.NewErrorWithCode("failed to initialize environment", env.ExitInvalidEnvironment)
 )
 
@@ -156,7 +156,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 	return root
 }
 
-var errInvalidArguments = exit.NewErrorWithCode("invalid arguments passed", exit.ExitCommandArguments)
+var errInvalidArguments = exit.NewErrorWithCode("invalid arguments passed", env.ExitCommandArguments)
 
 // wrapArgs wraps a [cobra.PositionalArgs] error with the given error.
 // The wrapping occurs by calling [fmt.Errorf] with a string of "%w: %w" and [errInvalidArguments].

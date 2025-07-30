@@ -48,8 +48,8 @@ type _env struct {
 }
 
 var (
-	errEnvInvalidVar        = exit.NewErrorWithCode("unknown environment variable", exit.ExitCommandArguments)
-	errEnvModesIncompatible = exit.NewErrorWithCode("at most one of `--raw`, `--list` and `--describe` may be given", exit.ExitCommandArguments)
+	errEnvInvalidVar        = exit.NewErrorWithCode("unknown environment variable", env.ExitCommandArguments)
+	errEnvModesIncompatible = exit.NewErrorWithCode("at most one of `--raw`, `--list` and `--describe` may be given", env.ExitCommandArguments)
 )
 
 func (e *_env) ParseArgs(cmd *cobra.Command, args []string) error {

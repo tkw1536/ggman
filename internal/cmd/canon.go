@@ -36,7 +36,7 @@ type canon struct {
 }
 
 var (
-	errCanonUnableCanFile = exit.NewErrorWithCode("unable to load default CANFILE", exit.ExitContext)
+	errCanonUnableCanFile = exit.NewErrorWithCode("unable to load default CANFILE", env.ExitContext)
 )
 
 func (c *canon) ParseArgs(cmd *cobra.Command, args []string) error {

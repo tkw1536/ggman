@@ -12,14 +12,15 @@ import (
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman/internal/doc"
+	"go.tkw01536.de/ggman/internal/env"
 	"go.tkw01536.de/pkglib/exit"
 )
 
 var (
-	errDocGenerate    = exit.NewErrorWithCode("failed to generate docs", exit.ExitGeneric)
-	errServerListen   = exit.NewErrorWithCode("failed to listen", exit.ExitGeneric)
-	errServerShutdown = exit.NewErrorWithCode("failed to shutdown server", exit.ExitGeneric)
-	errDocOpenBrowser = exit.NewErrorWithCode("failed to open browser", exit.ExitGeneric)
+	errDocGenerate    = exit.NewErrorWithCode("failed to generate docs", env.ExitGeneric)
+	errServerListen   = exit.NewErrorWithCode("failed to listen", env.ExitGeneric)
+	errServerShutdown = exit.NewErrorWithCode("failed to shutdown server", env.ExitGeneric)
+	errDocOpenBrowser = exit.NewErrorWithCode("failed to open browser", env.ExitGeneric)
 )
 
 //spellchecker:words wrapcheck

@@ -28,7 +28,7 @@ func NewPullCommand() *cobra.Command {
 
 type pull struct{}
 
-var errPullCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
+var errPullCustom = exit.NewErrorWithCode("", env.ExitGeneric)
 
 func (pull) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := env.GetEnv(cmd, env.Requirement{

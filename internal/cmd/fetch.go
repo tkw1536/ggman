@@ -26,7 +26,7 @@ func NewFetchCommand() *cobra.Command {
 
 type fetch struct{}
 
-var errFetchCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
+var errFetchCustom = exit.NewErrorWithCode("", env.ExitGeneric)
 
 func (fetch) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := env.GetEnv(cmd, env.Requirement{

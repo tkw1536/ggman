@@ -36,7 +36,7 @@ type fix struct {
 	Simulate bool
 }
 
-var errFixCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
+var errFixCustom = exit.NewErrorWithCode("", env.ExitGeneric)
 
 func (f *fix) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := env.GetEnv(cmd, env.Requirement{

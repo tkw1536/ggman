@@ -51,8 +51,8 @@ func (f *findFile) ParseArgs(cmd *cobra.Command, args []string) error {
 }
 
 var (
-	errFindFileCustom   = exit.NewErrorWithCode("", exit.ExitGeneric)
-	errFindFileNotLocal = exit.NewErrorWithCode("path argument is not a local path", exit.ExitCommandArguments)
+	errFindFileCustom   = exit.NewErrorWithCode("", env.ExitGeneric)
+	errFindFileNotLocal = exit.NewErrorWithCode("path argument is not a local path", env.ExitCommandArguments)
 )
 
 func (f *findFile) Exec(cmd *cobra.Command, args []string) error {

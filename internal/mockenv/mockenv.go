@@ -182,7 +182,7 @@ func (mock *MockEnv) Run(t *testing.T, ctx context.Context, cmdFactory func(cont
 
 	fake.SetArgs(argv)
 	cmdErr := fake.Execute()
-	exitCode, _ := exit.CodeFromError(cmdErr)
+	exitCode, _ := exit.CodeFromError(cmdErr, env.ExitGeneric)
 	if exitCode != 0 {
 		errStr := fmt.Sprint(cmdErr)
 		if errStr != "" {

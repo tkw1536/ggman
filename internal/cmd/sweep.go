@@ -31,7 +31,7 @@ The command takes no arguments, and produces them in an order such that they can
 
 type sweep struct{}
 
-var errSweepScan = exit.NewErrorWithCode("error scanning for empty directories", exit.ExitGeneric)
+var errSweepScan = exit.NewErrorWithCode("error scanning for empty directories", env.ExitGeneric)
 
 func (sweep) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := env.GetEnv(cmd, env.Requirement{

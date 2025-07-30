@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"go.tkw01536.de/ggman/internal/env"
 	"go.tkw01536.de/pkglib/exit"
 )
 
@@ -80,7 +81,7 @@ type completion struct {
 	}
 }
 
-var errNoShell = exit.NewErrorWithCode("no shell name provided", exit.ExitCommandArguments)
+var errNoShell = exit.NewErrorWithCode("no shell name provided", env.ExitCommandArguments)
 
 func (c *completion) ParseArgs(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {

@@ -39,7 +39,7 @@ func main() {
 		if err := recover(); err != nil {
 			fmt.Fprintf(os.Stderr, fatalPanicMessage, err)
 			debug.PrintStack()
-			exit.ExitPanic.Return()
+			env.ExitPanic.Return()
 		}
 	}()
 
@@ -57,7 +57,7 @@ func main() {
 	// and run the command
 	cmd := cmd.NewCommand(ctx, params)
 	if err := cmd.Execute(); err != nil {
-		code, _ := exit.CodeFromError(err)
+		code, _ := exit.CodeFromError(err, env.ExitGeneric)
 		_, _ = fmt.Fprintln(cmd.ErrOrStderr(), err)
 		code.Return()
 	}

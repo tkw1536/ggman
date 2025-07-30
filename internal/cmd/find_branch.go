@@ -43,7 +43,7 @@ func (f *findBranch) ParseArgs(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-var errFindBranchCustom = exit.NewErrorWithCode("", exit.ExitGeneric)
+var errFindBranchCustom = exit.NewErrorWithCode("", env.ExitGeneric)
 
 func (f *findBranch) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := env.GetEnv(cmd, env.Requirement{
