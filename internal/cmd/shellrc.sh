@@ -54,7 +54,8 @@ ggcursor () {
 
 # ggshow is like ggcd, except that it runs ggman show on the output
 ggshow () {
-	REPO="$(ggman --for "$1" ls --exit-code --one 2>&1)" && ggman --for "$REPO" show --no-patch 2>&1 || return $?
+	REPO="$(ggman --for "$1" ls --exit-code --one 2>&1)" || return $?
+	cd "$REPO" && git show --no-patch . 2>&1 || return $?
 }
 
 # ggclone clones a repository if it does not yet exist, and then cds into the correct directory.
