@@ -10,6 +10,7 @@ GOTOOL=$(GOCMD) tool
 GOMOD=$(GOCMD) mod
 GOGENERATE=$(GOCMD) generate
 CSPELL=cspell
+SHELLCHECK=shellcheck
 
 # Flags for versioning
 GGMANVERSIONFLAGS=-X 'go.tkw01536.de/ggman.buildVersion=$(shell git describe --tags HEAD)' -X 'go.tkw01536.de/ggman.buildTime=$(shell date +%s)'
@@ -29,7 +30,7 @@ GGMAN_CMD_SRC=./cmd/ggman
 # almost all the targets are phony
 
 all: dist
-.PHONY: all install test lint testdeps clean deps dist generate
+.PHONY: all install test lint testdeps clean deps dist generate shellcheck spellcheck golint
 
 $(BINARY_NAME): deps
 	CGO_ENABLED=0 $(GOBUILD) -ldflags="$(GGMANVERSIONFLAGS)" -o $(BINARY_NAME) $(GGMAN_CMD_SRC)
@@ -56,10 +57,19 @@ test: testdeps
 testdeps:
 	$(GOMOD) download
 
-lint:
-	test -z $(shell gofmt -l .)
+lint: golint shellcheck spellcheck 
+
+golint:
+	test -z $(shell $(GOTOOL) gofmt -l .)
 	$(GOTOOL) golangci-lint run ./...
 	$(GOTOOL) govulncheck
+
+shellcheck:
+	$(SHELLCHECK) --shell=sh internal/cmd/shellrc.sh
+	$(SHELLCHECK) --shell=bash internal/cmd/shellrc.sh
+	$(SHELLCHECK) --shell=dash internal/cmd/shellrc.sh
+	$(SHELLCHECK) --shell=ksh internal/cmd/shellrc.sh
+	$(SHELLCHECK) --shell=busybox internal/cmd/shellrc.sh
 
 spellcheck:
 	$(CSPELL) lint .

@@ -506,6 +506,7 @@ ggman comes with the following builtin aliases:
 	- add `gg[do]` and `ggcursor` aliases
 	- fix minor bug (see #13, thanks @janezicmatej)
 - ci: run spellcheck after every commit
+- ci: run shellcheck on shellrc.sh after every commit
 - move go import paths to custom domain
 - drop building a universal mac binary
 - minor bug fixes and improvements

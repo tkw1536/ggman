@@ -1,8 +1,9 @@
-# shellcheck shell=bash
+# shellcheck shell=sh
 # spellchecker:words ggcd ggshow ggcode ggclone ggman ggdo ggcursor
 
 # This file contains useful shell aliases by ggman. 
-# It is checked with shellcheck against bash, but should be compatible with at least zsh as well. 
+# The comment above says to check against sh, but this is only for IDE support. 
+# In reality, it is checked against sh, bash, dash, ksh and busybox.
 
 # gg is a function that takes a for-style ggman pattern and a command to execute.
 # It first resolves the pattern, and then executes the command on the first matching repository. 
@@ -15,15 +16,13 @@ ggdo () {
 		return 1
 	fi
 	
-	local PATTERN="$1"
+	PATTERN="$1"
 	shift
-	local COMMAND=("$@")
-	
-	REPO="$(ggman --for "$PATTERN" ls --exit-code --one 2>&1)" && echo "$REPO" && "${COMMAND[@]}" "$REPO" || return $?
+	REPO="$(ggman --for "$PATTERN" ls --exit-code --one 2>&1)" && echo "$REPO" && "$@" "$REPO" || return $?
 }
 
 # To avoid conflicts with other aliases, don't override gg if it's already set. 
-if ! type -t gg >/dev/null 2>&1; then
+if ! command -v gg >/dev/null 2>&1; then
 	alias gg=ggdo
 fi
 
@@ -54,7 +53,6 @@ ggshow () {
 
 # ggclone clones a repository if it does not yet exist, and then cds into the correct directory.
 ggclone () {
-	local DEST
 	DEST="$(ggman --no-fuzzy-filter --for "$1" ls --one)"
 	if [ "$DEST" = "" ]; then
 		ggman clone "$@" || return $?

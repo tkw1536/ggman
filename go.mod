@@ -239,6 +239,7 @@ require (
 )
 
 tool (
+	cmd/gofmt
 	github.com/golangci/golangci-lint/v2/cmd/golangci-lint
 	go.tkw01536.de/gogenlicense/cmd/gogenlicense
 	golang.org/x/vuln/cmd/govulncheck
