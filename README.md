@@ -160,6 +160,11 @@ This requires a locally installed git.
 
 These are aliases to open a project folder in `vscode` and `cursor`, respectively. 
 
+### Optional: Tab completion
+
+The cli framework ggman is using automatically generates a tab completion script. 
+Installation instructions are dependent on your shell, and can be seen by typing `ggman completion --help`. 
+
 ## the `ggman` command
 
 The `ggman` command is implemented in golang and can be compiled using standard golang tools. 
@@ -505,6 +510,7 @@ ggman comes with the following builtin aliases:
 - improve `ggman shellrc` command
 	- add `gg[do]` and `ggcursor` aliases
 	- fix minor bug (see #13, thanks @janezicmatej)
+- add tab completion script via `ggman completion <shell>`
 - ci: run spellcheck after every commit
 - ci: run shellcheck on shellrc.sh after every commit
 - move go import paths to custom domain
