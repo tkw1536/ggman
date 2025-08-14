@@ -500,6 +500,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.25.0 (Upcoming)
 
+
 - replace goprogram by [cobra](https://cobra.dev) as a command line framework
 	- existing long flag remain mostly compatible, some short flags have been renamed. 
 	- all global flags are now upper case, all local flags are lower case.
@@ -510,6 +511,7 @@ ggman comes with the following builtin aliases:
 	- add `gg[do]` and `ggcursor` aliases
 	- fix minor bug (see #13, thanks @janezicmatej)
 - add tab completion script via `ggman completion <shell>`
+- update to go1.25
 - remove `ggman show` alias as it doesn't work well with the new framework
 - ci: run spellcheck after every commit
 - ci: run shellcheck on shellrc.sh after every commit
