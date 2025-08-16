@@ -1,6 +1,6 @@
 package git
 
-//spellchecker:words errors exec path filepath runtime slices github plumbing pkglib stream
+//spellchecker:words errors exec path filepath runtime slices github plumbing pkglib exit stream
 import (
 	"errors"
 	"fmt"

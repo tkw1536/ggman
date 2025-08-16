@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words github cobra pkglib exit
+//spellchecker:words github cobra ggman internal pkglib exit
 import (
 	"fmt"
 	"os"

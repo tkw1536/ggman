@@ -1,6 +1,6 @@
 package cmd_test
 
-//spellchecker:words testing ggman internal mockenv
+//spellchecker:words slices strings testing github cobra ggman internal mockenv
 import (
 	"slices"
 	"strings"
