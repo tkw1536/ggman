@@ -498,8 +498,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.25.0 (Upcoming)
+### 1.26.0 (Upcoming)
 
+### 1.25.0 (Released [Aug 16 2025](https://github.com/tkw1536/ggman/releases/tag/v1.25.0))
 
 - replace goprogram by [cobra](https://cobra.dev) as a command line framework
 	- existing long flag remain mostly compatible, some short flags have been renamed. 
