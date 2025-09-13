@@ -58,9 +58,9 @@ func (r *relocate) Exec(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
-	for _, gotPath := range environment.Repos(false) {
+	for _, gotPath := range environment.Repos(cmd.Context(), false) {
 		// determine the remote path and where it should go
-		remote, err := environment.Git.GetRemote(gotPath, "")
+		remote, err := environment.Git.GetRemote(cmd.Context(), gotPath, "")
 		if err != nil || remote == "" { // ignore remotes that don't exist
 			continue
 		}
@@ -94,7 +94,7 @@ func (r *relocate) Exec(cmd *cobra.Command, args []string) error {
 
 		// if there already is a target repository at the path
 		{
-			got, err := environment.AtRoot(shouldPath)
+			got, err := environment.AtRoot(cmd.Context(), shouldPath)
 			if err != nil {
 				return fmt.Errorf("%w: %w", errRelocateMove, err)
 			}

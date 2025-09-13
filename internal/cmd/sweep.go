@@ -42,7 +42,7 @@ func (sweep) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	results, err := walker.Sweep(func(path string, root walker.FS, depth int) (stop bool) {
-		return environment.Git.IsRepository(path)
+		return environment.Git.IsRepository(cmd.Context(), path)
 	}, walker.Params{
 		Root: walker.NewRealFS(environment.Root, false),
 	})

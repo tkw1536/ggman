@@ -40,7 +40,7 @@ func (h *here) Exec(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
-	root, worktree, err := environment.At(".")
+	root, worktree, err := environment.At(cmd.Context(), ".")
 	if err != nil {
 		return fmt.Errorf("%w: %w", env.ErrUnableLocalPath, err)
 	}

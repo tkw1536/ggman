@@ -53,8 +53,8 @@ func (l *lsr) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	// and print them
-	for _, repo := range environment.Repos(true) {
-		remote, err := environment.Git.GetRemote(repo, "")
+	for _, repo := range environment.Repos(cmd.Context(), true) {
+		remote, err := environment.Git.GetRemote(cmd.Context(), repo, "")
 		if err != nil {
 			continue
 		}

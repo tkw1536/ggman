@@ -1,8 +1,9 @@
 package env
 
-//spellchecker:words bufio strings pkglib exit
+//spellchecker:words bufio context strings pkglib exit
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -35,16 +36,16 @@ type Flags struct {
 var errNotADirectory = exit.NewErrorWithCode("not a directory", ExitInvalidRepo)
 
 // NewFilter creates a new filter corresponding to the given Flags and Environment.
-func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
+func NewFilter(ctx context.Context, flags Flags, env *Env) (filter Filter, err error) {
 	// generate pattern filters for the "--for" arguments
 	clauses := make([]Filter, len(flags.For))
 	for i, pat := range flags.For {
-		clauses[i] = env.NewForFilter(pat, !flags.NoFuzzyFilter)
+		clauses[i] = env.NewForFilter(ctx, pat, !flags.NoFuzzyFilter)
 	}
 
 	// read filters from file
 	for _, p := range flags.FromFile {
-		filters, err := env.NewFromFileFilter(p, !flags.NoFuzzyFilter)
+		filters, err := env.NewFromFileFilter(ctx, p, !flags.NoFuzzyFilter)
 		if err != nil {
 			return nil, err
 		}
@@ -59,7 +60,7 @@ func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
 	// for each of the candidate paths, add a path filter
 	pf := PathFilter{Paths: make([]string, len(flags.Path))}
 	for i, p := range flags.Path {
-		pf.Paths[i], err = env.ResolvePathFilter(p)
+		pf.Paths[i], err = env.ResolvePathFilter(ctx, p)
 		if err != nil {
 			return nil, err
 		}
@@ -77,13 +78,13 @@ func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
 
 	// setup some additional filters
 	if flags.Dirty || flags.Clean {
-		filter = NewWorktreeFilter(filter, flags.Dirty, flags.Clean)
+		filter = NewWorktreeFilter(ctx, filter, flags.Dirty, flags.Clean)
 	}
 	if flags.Synced || flags.UnSynced {
-		filter = NewStatusFilter(filter, flags.Synced, flags.UnSynced)
+		filter = NewStatusFilter(ctx, filter, flags.Synced, flags.UnSynced)
 	}
 	if flags.Tarnished || flags.Pristine {
-		filter = NewTarnishFilter(filter, flags.Tarnished, flags.Pristine)
+		filter = NewTarnishFilter(ctx, filter, flags.Tarnished, flags.Pristine)
 	}
 
 	return
@@ -94,9 +95,9 @@ func NewFilter(flags Flags, env *Env) (filter Filter, err error) {
 // A 'for' filter may be either:
 //   - a (relative or absolute) path to the root of a repository (see env.AtRoot)
 //   - a repository url or pattern (see NewPatternFilter)
-func (env *Env) NewForFilter(filter string, fuzzy bool) Filter {
+func (env *Env) NewForFilter(ctx context.Context, filter string, fuzzy bool) Filter {
 	// check if 'pat' represents the root of a repository
-	if repo, err := env.AtRoot(filter); err == nil && repo != "" {
+	if repo, err := env.AtRoot(ctx, filter); err == nil && repo != "" {
 		return PathFilter{Paths: []string{repo}}
 	}
 
@@ -108,7 +109,7 @@ func (env *Env) NewForFilter(filter string, fuzzy bool) Filter {
 //
 // To create a filter, p is opened and each (whitespace-trimmed) line is passed to env.NewForFilter.
 // Blank lines, or those starting with ';', '//' or '#' are ignored.
-func (env *Env) NewFromFileFilter(p string, fuzzy bool) (filters []Filter, err error) {
+func (env *Env) NewFromFileFilter(ctx context.Context, p string, fuzzy bool) (filters []Filter, err error) {
 	// resolve the path
 	path, err := env.Abs(p)
 	if err != nil {
@@ -141,7 +142,7 @@ func (env *Env) NewFromFileFilter(p string, fuzzy bool) (filters []Filter, err e
 		if line == "" || line[0] == ';' || line[0] == '#' || strings.HasPrefix(line, "//") {
 			continue
 		}
-		filters = append(filters, env.NewForFilter(line, fuzzy))
+		filters = append(filters, env.NewForFilter(ctx, line, fuzzy))
 	}
 
 	if err = scanner.Err(); err != nil {
@@ -156,9 +157,9 @@ func (env *Env) NewFromFileFilter(p string, fuzzy bool) (filters []Filter, err e
 // p must be an existing absolute absolute or relative path pointing to:
 //   - a repository directory (see env.At)
 //   - a (possibly nested) directory containing repositories
-func (env *Env) ResolvePathFilter(p string) (path string, err error) {
+func (env *Env) ResolvePathFilter(ctx context.Context, p string) (path string, err error) {
 	// a repository directly
-	path, _, err = env.At(p)
+	path, _, err = env.At(ctx, p)
 	if err == nil {
 		return
 	}

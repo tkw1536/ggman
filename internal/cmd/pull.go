@@ -40,11 +40,11 @@ func (pull) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	hasError := false
-	for _, repo := range environment.Repos(true) {
+	for _, repo := range environment.Repos(cmd.Context(), true) {
 		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Pulling %q\n", repo); err != nil {
 			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}
-		if e := environment.Git.Pull(streamFromCommand(cmd), repo); e != nil {
+		if e := environment.Git.Pull(cmd.Context(), streamFromCommand(cmd), repo); e != nil {
 			if _, err := fmt.Fprintln(cmd.ErrOrStderr(), e); err != nil {
 				return fmt.Errorf("%w: %w", errGenericOutput, err)
 			}

@@ -225,7 +225,7 @@ func TestEnv_At(t *testing.T) {
 				Git:  git.NewGitFromPlumbing(nil, ""),
 				Root: root,
 			}
-			gotRepo, gotWorktree, err := env.At(tt.path)
+			gotRepo, gotWorktree, err := env.At(t.Context(), tt.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Env.At() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -280,7 +280,7 @@ func TestEnv_AtRoot(t *testing.T) {
 				Git:  git.NewGitFromPlumbing(nil, ""),
 				Root: root,
 			}
-			gotRepo, err := env.AtRoot(tt.path)
+			gotRepo, err := env.AtRoot(t.Context(), tt.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Env.AtRoot() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -378,7 +378,7 @@ func TestEnv_ScanRepos(t *testing.T) {
 
 				Filter: env.NewPatternFilter(tt.Filter, false),
 			}
-			got, err := env.ScanRepos(root, true)
+			got, err := env.ScanRepos(t.Context(), root, true)
 			wantErr := false
 			if (err != nil) != wantErr {
 				t.Errorf("Env.ScanRepos() error = %v, wantErr %v", err, wantErr)
@@ -455,7 +455,7 @@ func TestEnv_ScanRepos_fuzzy(t *testing.T) {
 
 				Filter: env.NewPatternFilter(tt.Filter, true),
 			}
-			got, err := env.ScanRepos(root, true)
+			got, err := env.ScanRepos(t.Context(), root, true)
 			wantErr := false
 			if (err != nil) != wantErr {
 				t.Errorf("Env.ScanRepos() error = %v, wantErr %v", err, wantErr)

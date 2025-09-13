@@ -108,7 +108,7 @@ func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Cloning %q into %q ...\n", remote, local); err != nil {
 		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
-	switch err := environment.Git.Clone(streamFromCommand(cmd), remote, local, c.Positional.Args...); {
+	switch err := environment.Git.Clone(cmd.Context(), streamFromCommand(cmd), remote, local, c.Positional.Args...); {
 	case err == nil:
 		return nil
 	case errors.Is(err, git.ErrCloneAlreadyExists):

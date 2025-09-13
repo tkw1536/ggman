@@ -54,9 +54,9 @@ func (f *findBranch) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	foundRepo := false
-	for _, repo := range environment.Repos(true) {
+	for _, repo := range environment.Repos(cmd.Context(), true) {
 		// check if the repository has the branch!
-		hasBranch, err := environment.Git.ContainsBranch(repo, f.Positionals.Branch)
+		hasBranch, err := environment.Git.ContainsBranch(cmd.Context(), repo, f.Positionals.Branch)
 		if err != nil {
 			panic(err)
 		}

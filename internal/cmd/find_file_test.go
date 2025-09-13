@@ -19,7 +19,7 @@ func TestCommandFindFile(t *testing.T) {
 
 	// with file 'example.txt'
 	{
-		clonePath := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
+		clonePath := mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
 		if err := os.WriteFile(filepath.Join(clonePath, "example.txt"), nil, 0600); err != nil {
 			panic(err)
 		}
@@ -27,7 +27,7 @@ func TestCommandFindFile(t *testing.T) {
 
 	// with file 'example/example.txt'
 	{
-		clonePath := mock.Clone("user@server.com/repo", "server.com", "user", "repo")
+		clonePath := mock.Clone(t.Context(), "user@server.com/repo", "server.com", "user", "repo")
 		if err := os.Mkdir(filepath.Join(clonePath, "example"), 0750); err != nil {
 			panic(err)
 		}
@@ -37,7 +37,7 @@ func TestCommandFindFile(t *testing.T) {
 	}
 
 	// with nothing
-	mock.Clone("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	mock.Clone(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
 	tests := []struct {
 		name    string

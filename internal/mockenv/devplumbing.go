@@ -1,8 +1,9 @@
 //spellchecker:words mockenv
 package mockenv
 
-//spellchecker:words strconv ggman internal pkglib stream
+//spellchecker:words context strconv ggman internal pkglib stream
 import (
+	"context"
 	"fmt"
 	"io"
 	"strconv"
@@ -60,8 +61,8 @@ func (dp DevPlumbing) Backward(url string) string {
 }
 
 // Clone translates remoteURI and calls Clone on the underlying Plumbing.
-func (dp DevPlumbing) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
-	err := dp.Plumbing.Clone(dp.stream(stream), dp.Forward(remoteURI), clonePath, extraArgs...)
+func (dp DevPlumbing) Clone(ctx context.Context, stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
+	err := dp.Plumbing.Clone(ctx, dp.stream(stream), dp.Forward(remoteURI), clonePath, extraArgs...)
 	if err != nil {
 		return fmt.Errorf("%q: failed to clone: %w", remoteURI, err)
 	}
@@ -69,8 +70,8 @@ func (dp DevPlumbing) Clone(stream stream.IOStream, remoteURI, clonePath string,
 }
 
 // Fetch called Fetch on the underlying Plumbing.
-func (dp DevPlumbing) Fetch(stream stream.IOStream, clonePath string, cache any) error {
-	err := dp.Plumbing.Fetch(dp.stream(stream), clonePath, cache)
+func (dp DevPlumbing) Fetch(ctx context.Context, stream stream.IOStream, clonePath string, cache any) error {
+	err := dp.Plumbing.Fetch(ctx, dp.stream(stream), clonePath, cache)
 	if err != nil {
 		return fmt.Errorf("%q: failed to fetch: %w", clonePath, err)
 	}
@@ -78,8 +79,8 @@ func (dp DevPlumbing) Fetch(stream stream.IOStream, clonePath string, cache any)
 }
 
 // Fetch calls Pull on the underlying Plumbing.
-func (dp DevPlumbing) Pull(stream stream.IOStream, clonePath string, cache any) error {
-	err := dp.Plumbing.Pull(dp.stream(stream), clonePath, cache)
+func (dp DevPlumbing) Pull(ctx context.Context, stream stream.IOStream, clonePath string, cache any) error {
+	err := dp.Plumbing.Pull(ctx, dp.stream(stream), clonePath, cache)
 	if err != nil {
 		return fmt.Errorf("%q: failed to pull: %w", clonePath, err)
 	}
@@ -87,8 +88,8 @@ func (dp DevPlumbing) Pull(stream stream.IOStream, clonePath string, cache any) 
 }
 
 // GetRemotes calls GetRemotes() on the underlying Plumbing and translates the returned URLs.
-func (dp DevPlumbing) GetRemotes(clonePath string, repoObject any) (remotes map[string][]string, err error) {
-	remotes, err = dp.Plumbing.GetRemotes(clonePath, repoObject)
+func (dp DevPlumbing) GetRemotes(ctx context.Context, clonePath string, repoObject any) (remotes map[string][]string, err error) {
+	remotes, err = dp.Plumbing.GetRemotes(ctx, clonePath, repoObject)
 	for k := range remotes {
 		for i := range remotes[k] {
 			remotes[k][i] = dp.Backward(remotes[k][i])
@@ -98,8 +99,8 @@ func (dp DevPlumbing) GetRemotes(clonePath string, repoObject any) (remotes map[
 }
 
 // GetCanonicalRemote calls GetCanonicalRemote() on the underlying Plumbing and translates all returned urls.
-func (dp DevPlumbing) GetCanonicalRemote(clonePath string, repoObject any) (name string, urls []string, err error) {
-	name, urls, err = dp.Plumbing.GetCanonicalRemote(clonePath, repoObject)
+func (dp DevPlumbing) GetCanonicalRemote(ctx context.Context, clonePath string, repoObject any) (name string, urls []string, err error) {
+	name, urls, err = dp.Plumbing.GetCanonicalRemote(ctx, clonePath, repoObject)
 	for i := range urls {
 		urls[i] = dp.Backward(urls[i])
 	}
@@ -107,12 +108,12 @@ func (dp DevPlumbing) GetCanonicalRemote(clonePath string, repoObject any) (name
 }
 
 // SetRemoteURLs translates urls and calls SetRemoteURLs() on the underlying Plumbing.
-func (dp DevPlumbing) SetRemoteURLs(clonePath string, repoObject any, name string, urls []string) error {
+func (dp DevPlumbing) SetRemoteURLs(ctx context.Context, clonePath string, repoObject any, name string, urls []string) error {
 	for i := range urls {
 		urls[i] = dp.Forward(urls[i])
 	}
 
-	err := dp.Plumbing.SetRemoteURLs(clonePath, repoObject, name, urls)
+	err := dp.Plumbing.SetRemoteURLs(ctx, clonePath, repoObject, name, urls)
 	if err != nil {
 		return fmt.Errorf("%q: failed to set remote URLs: %w", clonePath, err)
 	}

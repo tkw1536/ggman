@@ -90,9 +90,9 @@ func (mock *MockEnv) Resolve(path ...string) string {
 // When the remote has not been registered, consider using Install instead.
 //
 // If something goes wrong, calls panic().
-func (mock *MockEnv) Install(remote string, path ...string) string {
+func (mock *MockEnv) Install(ctx context.Context, remote string, path ...string) string {
 	clonePath := mock.Resolve(path...)
-	err := mock.plumbing.Clone(stream.FromNil(), remote, clonePath)
+	err := mock.plumbing.Clone(ctx, stream.FromNil(), remote, clonePath)
 	if err != nil {
 		panic(err)
 	}
@@ -103,9 +103,9 @@ func (mock *MockEnv) Install(remote string, path ...string) string {
 // Returns the return value of Install.
 //
 // This function is untested because Register and Install are tested.
-func (mock *MockEnv) Clone(remote string, path ...string) (clonePath string) {
+func (mock *MockEnv) Clone(ctx context.Context, remote string, path ...string) (clonePath string) {
 	mock.Register(remote)
-	return mock.Install(remote, path...)
+	return mock.Install(ctx, remote, path...)
 }
 
 // Register registers a new remote repository with the provided urls.

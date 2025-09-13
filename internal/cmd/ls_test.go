@@ -28,9 +28,9 @@ func TestCommandLs(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	ghHelloWorld := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
-	serverRepo := mock.Clone("user@server.com/repo", "server.com", "user", "repo")
-	glHelloWorld := mock.Clone("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	ghHelloWorld := mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	serverRepo := mock.Clone(t.Context(), "user@server.com/repo", "server.com", "user", "repo")
+	glHelloWorld := mock.Clone(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
 	inputFile := mock.Resolve("file.txt")
 	if err := os.WriteFile(inputFile, []byte(testInputFile), 0600); err != nil {

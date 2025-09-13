@@ -18,7 +18,7 @@ func TestCommandFindBranch(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	// with branch 'branch'
-	clonePath := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
+	clonePath := mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
 	repo, err := git.PlainOpen(clonePath)
 	if err != nil {
 		panic(err)
@@ -28,7 +28,7 @@ func TestCommandFindBranch(t *testing.T) {
 	}
 
 	// with branch 'branch'
-	clonePath = mock.Clone("user@server.com/repo", "server.com", "user", "repo")
+	clonePath = mock.Clone(t.Context(), "user@server.com/repo", "server.com", "user", "repo")
 	repo, err = git.PlainOpen(clonePath)
 	if err != nil {
 		panic(err)
@@ -42,7 +42,7 @@ func TestCommandFindBranch(t *testing.T) {
 	if err := repo.CreateBranch(&config.Branch{Name: "branchC"}); err != nil {
 		panic(err)
 	}
-	mock.Install("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	mock.Install(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
 	tests := []struct {
 		name    string

@@ -56,7 +56,7 @@ func Test_gogit_IsRepository(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			_, gotIsRepo := gg.IsRepository(tt.args.localPath)
+			_, gotIsRepo := gg.IsRepository(t.Context(), tt.args.localPath)
 			if gotIsRepo != tt.wantIsRepo {
 				t.Errorf("gogit.IsRepository() gotIsRepo = %v, want %v", gotIsRepo, tt.wantIsRepo)
 			}
@@ -101,7 +101,7 @@ func Test_gogit_IsRepositoryUnsafe(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			gotIsRepo := gg.IsRepositoryUnsafe(tt.args.localPath)
+			gotIsRepo := gg.IsRepositoryUnsafe(t.Context(), tt.args.localPath)
 			if gotIsRepo != tt.wantIsRepo {
 				t.Errorf("gogit.IsRepositoryUnsafe() gotIsRepo = %v, want %v", gotIsRepo, tt.wantIsRepo)
 			}
@@ -160,12 +160,12 @@ func Test_gogit_GetHeadRef(t *testing.T) {
 			t.Parallel()
 
 			// get the repo object
-			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
+			ggRepoObject, isRepo := gg.IsRepository(t.Context(), tt.args.clonePath)
 			if !isRepo {
 				panic("IsRepository() failed")
 			}
 
-			got, err := gg.GetHeadRef(tt.args.clonePath, ggRepoObject)
+			got, err := gg.GetHeadRef(t.Context(), tt.args.clonePath, ggRepoObject)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("gogit.GetHeadRef() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -219,7 +219,7 @@ func Test_gogit_GetRemotes(t *testing.T) {
 	t.Run("GetRemotes() on a repository with a single remote", func(t *testing.T) {
 		t.Parallel()
 
-		ggRepoObject, isRepo := gg.IsRepository(cloneA)
+		ggRepoObject, isRepo := gg.IsRepository(t.Context(), cloneA)
 		if !isRepo {
 			panic("IsRepository() failed")
 		}
@@ -227,7 +227,7 @@ func Test_gogit_GetRemotes(t *testing.T) {
 		wantRemotes := map[string][]string{
 			"origin": {remote},
 		}
-		remotes, err := gg.GetRemotes(cloneA, ggRepoObject)
+		remotes, err := gg.GetRemotes(t.Context(), cloneA, ggRepoObject)
 		if err != nil {
 			t.Error("GetRemotes() got err != nil, want err == nil")
 		}
@@ -240,7 +240,7 @@ func Test_gogit_GetRemotes(t *testing.T) {
 	t.Run("GetRemotes() on a repository with more than one remote", func(t *testing.T) {
 		t.Parallel()
 
-		ggRepoObject, isRepo := gg.IsRepository(cloneB)
+		ggRepoObject, isRepo := gg.IsRepository(t.Context(), cloneB)
 		if !isRepo {
 			panic("IsRepository() failed")
 		}
@@ -249,7 +249,7 @@ func Test_gogit_GetRemotes(t *testing.T) {
 			"upstream": {remote},
 			"origin":   {cloneA},
 		}
-		remotes, err := gg.GetRemotes(cloneB, ggRepoObject)
+		remotes, err := gg.GetRemotes(t.Context(), cloneB, ggRepoObject)
 		if err != nil {
 			t.Error("GetRemotes() got err != nil, want err == nil")
 		}
@@ -301,7 +301,7 @@ func Test_gogit_GetCanonicalRemote(t *testing.T) {
 	t.Run("GetCanonicalRemote() on a repository with a single remote", func(t *testing.T) {
 		t.Parallel()
 
-		ggRepoObject, isRepo := gg.IsRepository(cloneA)
+		ggRepoObject, isRepo := gg.IsRepository(t.Context(), cloneA)
 		if !isRepo {
 			panic("IsRepository() failed")
 		}
@@ -309,7 +309,7 @@ func Test_gogit_GetCanonicalRemote(t *testing.T) {
 		wantName := "origin"
 		wantURLs := []string{remote}
 
-		name, urls, err := gg.GetCanonicalRemote(cloneA, ggRepoObject)
+		name, urls, err := gg.GetCanonicalRemote(t.Context(), cloneA, ggRepoObject)
 		if err != nil {
 			t.Error("GetCanonicalRemote() got err != nil, want err == nil")
 		}
@@ -325,7 +325,7 @@ func Test_gogit_GetCanonicalRemote(t *testing.T) {
 	t.Run("GetCanonicalRemote() on a repository with more than a single remote", func(t *testing.T) {
 		t.Parallel()
 
-		ggRepoObject, isRepo := gg.IsRepository(cloneB)
+		ggRepoObject, isRepo := gg.IsRepository(t.Context(), cloneB)
 		if !isRepo {
 			panic("IsRepository() failed")
 		}
@@ -333,7 +333,7 @@ func Test_gogit_GetCanonicalRemote(t *testing.T) {
 		wantName := "origin"
 		wantURLs := []string{cloneA}
 
-		name, urls, err := gg.GetCanonicalRemote(cloneB, ggRepoObject)
+		name, urls, err := gg.GetCanonicalRemote(t.Context(), cloneB, ggRepoObject)
 		if err != nil {
 			t.Error("GetCanonicalRemote() got err != nil, want err == nil")
 		}
@@ -371,7 +371,7 @@ func Test_gogit_SetRemoteURLs(t *testing.T) {
 	}
 
 	// get a repo object
-	ggRepoObject, isRepo := gg.IsRepository(clone)
+	ggRepoObject, isRepo := gg.IsRepository(t.Context(), clone)
 	if !isRepo {
 		panic("IsRepository() failed")
 	}
@@ -379,7 +379,7 @@ func Test_gogit_SetRemoteURLs(t *testing.T) {
 	t.Run("setting existing remote with correct length", func(t *testing.T) {
 		urls := []string{"https://example.com"}
 
-		err := gg.SetRemoteURLs(clone, ggRepoObject, "origin", urls)
+		err := gg.SetRemoteURLs(t.Context(), clone, ggRepoObject, "origin", urls)
 		if err != nil {
 			t.Error("SetRemoteURLs() got err != nil, want err = nil")
 		}
@@ -398,7 +398,7 @@ func Test_gogit_SetRemoteURLs(t *testing.T) {
 	t.Run("setting existing remote with incorrect length", func(t *testing.T) {
 		urls := []string{"https://example.com", "https://example2.com"}
 
-		err := gg.SetRemoteURLs(clone, ggRepoObject, "origin", urls)
+		err := gg.SetRemoteURLs(t.Context(), clone, ggRepoObject, "origin", urls)
 		if err == nil {
 			t.Error("SetRemoteURLs() got err = nil, want err != nil")
 		}
@@ -417,7 +417,7 @@ func Test_gogit_SetRemoteURLs(t *testing.T) {
 	t.Run("setting non-existent remote", func(t *testing.T) {
 		urls := []string{"https://example.com", "https://example2.com"}
 
-		err := gg.SetRemoteURLs(clone, ggRepoObject, "upstream", urls)
+		err := gg.SetRemoteURLs(t.Context(), clone, ggRepoObject, "upstream", urls)
 		if err == nil {
 			t.Error("SetRemoteURLs() got err = nil, want err != nil")
 		}
@@ -438,7 +438,7 @@ func Test_gogit_Clone(t *testing.T) {
 
 		clone := testlib.TempDirAbs(t)
 
-		err := gg.Clone(stream.FromNil(), remote, clone)
+		err := gg.Clone(t.Context(), stream.FromNil(), remote, clone)
 		if err != nil {
 			t.Error("Clone() got err != nil, want err = nil")
 		}
@@ -453,7 +453,7 @@ func Test_gogit_Clone(t *testing.T) {
 
 		clone := testlib.TempDirAbs(t)
 
-		err := gg.Clone(stream.FromNil(), remote, clone, "--branch", "main")
+		err := gg.Clone(t.Context(), stream.FromNil(), remote, clone, "--branch", "main")
 		if !errors.Is(err, ErrArgumentsUnsupported) {
 			t.Error("Clone() got err != ErrArgumentsUnsupported, want err = ErrArgumentsUnsupported")
 		}
@@ -505,13 +505,13 @@ func Test_gogit_Fetch(t *testing.T) {
 	_, commitB2 := testutil.CommitTestFiles(remoteRepo, map[string]string{"commitb2.txt": "Commit B2"})
 
 	// get a repo object
-	ggRepoObject, isRepo := gg.IsRepository(clone)
+	ggRepoObject, isRepo := gg.IsRepository(t.Context(), clone)
 	if !isRepo {
 		panic("IsRepository() failed")
 	}
 
 	t.Run("fetching fetches all remotes", func(t *testing.T) {
-		err := gg.Fetch(stream.FromNil(), clone, ggRepoObject)
+		err := gg.Fetch(t.Context(), stream.FromNil(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Fetch() returned err != nil, want err = nil")
 		}
@@ -543,7 +543,7 @@ func Test_gogit_Fetch(t *testing.T) {
 	})
 
 	t.Run("fetching an up-to-date repo returns no error", func(t *testing.T) {
-		err := gg.Fetch(stream.FromNil(), clone, ggRepoObject)
+		err := gg.Fetch(t.Context(), stream.FromNil(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Fetch() returned err != nil, want err = nil")
 		}
@@ -576,13 +576,13 @@ func Test_gogit_Pull(t *testing.T) {
 	_, commitB := testutil.CommitTestFiles(originRepo, map[string]string{"commitb.txt": "Commit B"})
 
 	// get a repo object
-	ggRepoObject, isRepo := gg.IsRepository(clone)
+	ggRepoObject, isRepo := gg.IsRepository(t.Context(), clone)
 	if !isRepo {
 		panic("IsRepository() failed")
 	}
 
 	t.Run("pulling pulls a repository", func(t *testing.T) {
-		err := gg.Pull(stream.FromNil(), clone, ggRepoObject)
+		err := gg.Pull(t.Context(), stream.FromNil(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Pull() returned err != nil, want err = nil")
 		}
@@ -598,7 +598,7 @@ func Test_gogit_Pull(t *testing.T) {
 	})
 
 	t.Run("pulling an up-to-date repo returns no error", func(t *testing.T) {
-		err := gg.Pull(stream.FromNil(), clone, ggRepoObject)
+		err := gg.Pull(t.Context(), stream.FromNil(), clone, ggRepoObject)
 		if err != nil {
 			t.Error("Pull() returned err != nil, want err = nil")
 		}
@@ -645,12 +645,12 @@ func Test_gogit_GetBranches(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
+			ggRepoObject, isRepo := gg.IsRepository(t.Context(), tt.args.clonePath)
 			if !isRepo {
 				panic("IsRepository() failed")
 			}
 
-			gotBranches, err := gg.GetBranches(tt.args.clonePath, ggRepoObject)
+			gotBranches, err := gg.GetBranches(t.Context(), tt.args.clonePath, ggRepoObject)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("gogit.GetBranches() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -699,12 +699,12 @@ func Test_gogit_ContainsBranch(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ggRepoObject, isRepo := gg.IsRepository(clone)
+			ggRepoObject, isRepo := gg.IsRepository(t.Context(), clone)
 			if !isRepo {
 				panic("IsRepository() failed")
 			}
 
-			gotContains, err := gg.ContainsBranch(clone, ggRepoObject, tt.args.branch)
+			gotContains, err := gg.ContainsBranch(t.Context(), clone, ggRepoObject, tt.args.branch)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("gogit.ContainsBranch() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -745,12 +745,12 @@ func Test_gogit_IsDirty(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
+			ggRepoObject, isRepo := gg.IsRepository(t.Context(), tt.args.clonePath)
 			if !isRepo {
 				panic("IsRepository() failed")
 			}
 
-			gotDirty, err := gg.IsDirty(tt.args.clonePath, ggRepoObject)
+			gotDirty, err := gg.IsDirty(t.Context(), tt.args.clonePath, ggRepoObject)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("gogit.IsDirty() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -823,12 +823,12 @@ func Test_gogit_IsSync(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			ggRepoObject, isRepo := gg.IsRepository(tt.args.clonePath)
+			ggRepoObject, isRepo := gg.IsRepository(t.Context(), tt.args.clonePath)
 			if !isRepo {
 				panic("IsRepository() failed")
 			}
 
-			gotSync, err := gg.IsSync(tt.args.clonePath, ggRepoObject)
+			gotSync, err := gg.IsSync(t.Context(), tt.args.clonePath, ggRepoObject)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("gogit.IsSync() error = %v, wantErr %v", err, tt.wantErr)
 				return

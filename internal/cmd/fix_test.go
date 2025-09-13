@@ -17,13 +17,13 @@ func TestCommandFix(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	mock.Register("https://github.com/hello/world.git", "git@github.com:hello/world.git")
-	mock.Install("https://github.com/hello/world.git", "github.com", "hello", "world")
+	mock.Install(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
 
 	mock.Register("user@server.com/repo", "git@server.com:user/repo.git")
-	mock.Install("user@server.com/repo", "server.com", "user", "repo")
+	mock.Install(t.Context(), "user@server.com/repo", "server.com", "user", "repo")
 
 	mock.Register("https://gitlab.com/hello/world.git", "git@gitlab.com:hello/world.git")
-	mock.Install("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	mock.Install(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
 	tests := []struct {
 		name    string

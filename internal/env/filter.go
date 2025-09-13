@@ -1,7 +1,8 @@
 package env
 
-//spellchecker:words path filepath strings ggman internal pattern pkglib collection
+//spellchecker:words context path filepath strings ggman internal pattern pkglib collection
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"strings"
@@ -24,7 +25,7 @@ type Filter interface {
 	//
 	// When it does match, returns a float64 between 0 and 1 (inclusive on both ends),
 	// If the filter does not match, returns a negative number such as [FilterDoesNotMatch].
-	Score(env *Env, clonePath string) float64
+	Score(ctx context.Context, env *Env, clonePath string) float64
 }
 
 // FilterDoesNotMatch should is used by a [Filter] to indicate that it does not match.
@@ -35,7 +36,7 @@ var NoFilter Filter = emptyFilter{}
 
 type emptyFilter struct{}
 
-func (emptyFilter) Score(env *Env, clonePath string) float64 {
+func (emptyFilter) Score(ctx context.Context, env *Env, clonePath string) float64 {
 	return 1
 }
 
@@ -68,7 +69,7 @@ type PathFilter struct {
 
 // Score checks if a repository at clonePath matches this filter, and if so returns 1.
 // See Filter.Score.
-func (pf PathFilter) Score(env *Env, clonePath string) float64 {
+func (pf PathFilter) Score(ctx context.Context, env *Env, clonePath string) float64 {
 	for _, p := range pf.Paths {
 		if path.HasChild(p, clonePath) {
 			return 1
@@ -111,9 +112,9 @@ func (pat *PatternFilter) Set(value string) {
 
 // Matches checks if this filter matches the repository at clonePath.
 // The caller may assume that there is a repository at clonePath.
-func (pat *PatternFilter) Score(env *Env, clonePath string) float64 {
+func (pat *PatternFilter) Score(ctx context.Context, env *Env, clonePath string) float64 {
 	// find the remote url to use
-	remote, err := env.Git.GetRemote(clonePath, "")
+	remote, err := env.Git.GetRemote(ctx, clonePath, "")
 	if err != nil {
 		return FilterDoesNotMatch
 	}
@@ -151,10 +152,10 @@ type DisjunctionFilter struct {
 
 // Matches checks if this filter matches any of the filters that were joined.
 // It returns the highest possible score.
-func (or DisjunctionFilter) Score(env *Env, clonePath string) float64 {
+func (or DisjunctionFilter) Score(ctx context.Context, env *Env, clonePath string) float64 {
 	score := FilterDoesNotMatch
 	for _, f := range or.Clauses {
-		if fScore := f.Score(env, clonePath); fScore > score {
+		if fScore := f.Score(ctx, env, clonePath); fScore > score {
 			score = fScore
 		}
 	}
@@ -193,14 +194,14 @@ func (pf predicateFilter) Candidates() []string {
 	return Candidates(pf.Filter)
 }
 
-func (pf predicateFilter) Score(env *Env, clonePath string) float64 {
+func (pf predicateFilter) Score(ctx context.Context, env *Env, clonePath string) float64 {
 	// include nothing
 	if !pf.IncludeTrue && !pf.IncludeFalse {
 		return FilterDoesNotMatch
 	}
 
 	// does the underlying filter match?
-	score := pf.Filter.Score(env, clonePath)
+	score := pf.Filter.Score(ctx, env, clonePath)
 	if score < 0 {
 		return FilterDoesNotMatch
 	}
@@ -223,11 +224,11 @@ func (pf predicateFilter) Score(env *Env, clonePath string) float64 {
 }
 
 // NewWorktreeFilter returns a filter that filters by repositories having a dirty or clean working directory.
-func NewWorktreeFilter(filter Filter, dirty, clean bool) Filter {
+func NewWorktreeFilter(ctx context.Context, filter Filter, dirty, clean bool) Filter {
 	return predicateFilter{
 		Filter: filter,
 		Predicate: func(env *Env, clonePath string) bool {
-			dirty, err := env.Git.IsDirty(clonePath)
+			dirty, err := env.Git.IsDirty(ctx, clonePath)
 			return err == nil && dirty
 		},
 
@@ -237,11 +238,11 @@ func NewWorktreeFilter(filter Filter, dirty, clean bool) Filter {
 }
 
 // NewStatusFilter returns  new Filter that filters by repositories being synced or un-synced with the remote.
-func NewStatusFilter(filter Filter, synced, unSynced bool) Filter {
+func NewStatusFilter(ctx context.Context, filter Filter, synced, unSynced bool) Filter {
 	return predicateFilter{
 		Filter: filter,
 		Predicate: func(env *Env, clonePath string) bool {
-			sync, err := env.Git.IsSync(clonePath)
+			sync, err := env.Git.IsSync(ctx, clonePath)
 			return err == nil && sync
 		},
 
@@ -252,11 +253,11 @@ func NewStatusFilter(filter Filter, synced, unSynced bool) Filter {
 
 // NewTarnishFilter returns new Filter that filters by if they have been tarnished or not.
 // A repository is tarnished if it has a dirty working directory, or is un-synced with the remote.
-func NewTarnishFilter(filter Filter, tarnished, pristine bool) Filter {
+func NewTarnishFilter(ctx context.Context, filter Filter, tarnished, pristine bool) Filter {
 	return predicateFilter{
 		Filter: filter,
 		Predicate: func(env *Env, clonePath string) bool {
-			dirty, err := env.Git.IsDirty(clonePath)
+			dirty, err := env.Git.IsDirty(ctx, clonePath)
 			if err != nil {
 				return false
 			}
@@ -264,7 +265,7 @@ func NewTarnishFilter(filter Filter, tarnished, pristine bool) Filter {
 				return true
 			}
 
-			synced, err := env.Git.IsSync(clonePath)
+			synced, err := env.Git.IsSync(ctx, clonePath)
 			if err != nil {
 				return false
 			}

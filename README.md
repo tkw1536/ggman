@@ -500,6 +500,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.26.0 (Upcoming)
 
+- pass `context.Context` into additional internal functions
 - update dependencies
 
 ### 1.25.0 (Released [Aug 16 2025](https://github.com/tkw1536/ggman/releases/tag/v1.25.0))

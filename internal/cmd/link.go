@@ -66,7 +66,7 @@ func (l *link) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	// open the source repository and get the remote
-	r, e := environment.Git.GetRemote(from, "")
+	r, e := environment.Git.GetRemote(cmd.Context(), from, "")
 	if e != nil {
 		return errLinkDoesNotExist
 	}

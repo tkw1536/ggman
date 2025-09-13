@@ -1,7 +1,8 @@
 package git
 
-//spellchecker:words errors exec path filepath runtime slices github plumbing pkglib exit stream
+//spellchecker:words context errors exec path filepath runtime slices github plumbing pkglib exit stream
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -53,26 +54,26 @@ type Plumbing interface {
 	// Note that the repoObject may be used for more than one subsequent call.
 	//
 	// This function suppresses all errors, and if something goes wrong assumed that isRepo is false.
-	IsRepository(localPath string) (repoObject any, isRepo bool)
+	IsRepository(ctx context.Context, localPath string) (repoObject any, isRepo bool)
 
 	// IsRepositoryUnsafe efficiently checks if the directly at localPath contains a repository.
 	// It is like IsRepository, except that it may return false positives, but no false negatives.
 	// This function is optimized to be called a lot of times.
-	IsRepositoryUnsafe(localPath string) bool
+	IsRepositoryUnsafe(ctx context.Context, localPath string) bool
 
 	// GetHeadRef returns a reference to the current head of the repository cloned at clonePath.
 	// The string ref should contain a git REFLIKE, that is a branch, a tag or a commit id.
 	//
 	// This function should only be called if IsRepository(clonePath) returns true.
 	// The second parameter must be the returned value from IsRepository().
-	GetHeadRef(clonePath string, repoObject any) (ref string, err error)
+	GetHeadRef(ctx context.Context, clonePath string, repoObject any) (ref string, err error)
 
 	// GetRemotes returns the names and urls of the remotes of the repository cloned at clonePath.
 	// If determining the remotes is not possible, and error is returned instead.
 	//
 	// This function should only be called if IsRepository(clonePath) returns true.
 	// The second parameter must be the returned value from IsRepository().
-	GetRemotes(clonePath string, repoObject any) (remotes map[string][]string, err error)
+	GetRemotes(ctx context.Context, clonePath string, repoObject any) (remotes map[string][]string, err error)
 
 	// GetCanonicalRemote gets the name of the canonical remote of the repository cloned at clonePath.
 	// The Plumbing is free to decided what the canonical remote is, but it is typically the remote of the currently checked out branch or the 'origin' remote.
@@ -80,7 +81,7 @@ type Plumbing interface {
 	//
 	// This function should only be called if IsRepository(clonePath) returns true.
 	// The second parameter must be the returned value from IsRepository().
-	GetCanonicalRemote(clonePath string, repoObject any) (name string, urls []string, err error)
+	GetCanonicalRemote(ctx context.Context, clonePath string, repoObject any) (name string, urls []string, err error)
 
 	// SetRemoteURLs set the remote 'remote' of the repository at clonePath to urls.
 	// The remote 'name' must exist.
@@ -88,7 +89,7 @@ type Plumbing interface {
 	//
 	// This function should only be called if IsRepository(clonePath) returns true.
 	// The second parameter must be the returned value from IsRepository().
-	SetRemoteURLs(clonePath string, repoObject any, name string, urls []string) (err error)
+	SetRemoteURLs(ctx context.Context, clonePath string, repoObject any, name string, urls []string) (err error)
 
 	// Clone tries to clone the repository at 'from' to the folder 'to'.
 	// May attempt to read credentials from stream.Stdin.
@@ -104,7 +105,7 @@ type Plumbing interface {
 	// If the clone succeeds returns, err = nil.
 	// If the underlying clone command returns a non-zero code, returns an error of type ExitError.
 	// If something else goes wrong, may return any other error type.
-	Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error
+	Clone(ctx context.Context, stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error
 
 	// Fetch should fetch new objects and refs from all remotes of the repository cloned at clonePath.
 	// May attempt to read credentials from stream.Stdin.
@@ -112,7 +113,7 @@ type Plumbing interface {
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
-	Fetch(stream stream.IOStream, clonePath string, cache any) (err error)
+	Fetch(ctx context.Context, stream stream.IOStream, clonePath string, cache any) (err error)
 
 	// Pull should fetch new objects and refs from all remotes of the repository cloned at clonePath.
 	// It then merges them into the local branch wherever an upstream is set.
@@ -121,31 +122,31 @@ type Plumbing interface {
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
-	Pull(stream stream.IOStream, clonePath string, cache any) (err error)
+	Pull(ctx context.Context, stream stream.IOStream, clonePath string, cache any) (err error)
 
 	// GetBranches gets the names of all branches contained in the repository at clonePath.
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
-	GetBranches(clonePath string, cache any) (branches []string, err error)
+	GetBranches(ctx context.Context, clonePath string, cache any) (branches []string, err error)
 
 	// ContainsBranch checks if the repository at clonePath contains a branch with the provided branch.
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
-	ContainsBranch(clonePath string, cache any, branch string) (contains bool, err error)
+	ContainsBranch(ctx context.Context, clonePath string, cache any, branch string) (contains bool, err error)
 
 	// IsDirty checks if the repository at clonePath contains uncommitted changes.
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
-	IsDirty(clonePath string, cache any) (dirty bool, err error)
+	IsDirty(ctx context.Context, clonePath string, cache any) (dirty bool, err error)
 
 	// IsSync checks if the repository at clonePath does not have branches synced with their upstream.
 	//
 	// This function will only be called if IsRepository(clonePath) returns true.
 	// The second parameter passed will be the returned value from IsRepository().
-	IsSync(clonePath string, cache any) (dirty bool, err error)
+	IsSync(ctx context.Context, clonePath string, cache any) (dirty bool, err error)
 }
 
 // NewPlumbing returns an implementation of a plumbing that has no external dependencies.
@@ -226,7 +227,7 @@ func (gg *gitgit) findGitByExtension(exts []string) (git string, err error) {
 	return "", exec.ErrNotFound
 }
 
-func (gg *gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
+func (gg *gitgit) Clone(ctx context.Context, stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
 	gitArgs := append([]string{"clone", remoteURI, clonePath}, extraArgs...)
 
 	cmd := exec.Command(gg.gitPath, gitArgs...) /* #nosec G204  -- user-controlled by design */
@@ -245,7 +246,7 @@ func (gg *gitgit) Clone(stream stream.IOStream, remoteURI, clonePath string, ext
 	return err
 }
 
-func (gg *gitgit) Fetch(stream stream.IOStream, clonePath string, cache any) error {
+func (gg *gitgit) Fetch(ctx context.Context, stream stream.IOStream, clonePath string, cache any) error {
 	cmd := exec.Command(gg.gitPath, "fetch", "--all") /* #nosec G204  -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 	cmd.Stdin = stream.Stdin
@@ -262,7 +263,7 @@ func (gg *gitgit) Fetch(stream stream.IOStream, clonePath string, cache any) err
 	return err
 }
 
-func (gg *gitgit) Pull(stream stream.IOStream, clonePath string, cache any) error {
+func (gg *gitgit) Pull(ctx context.Context, stream stream.IOStream, clonePath string, cache any) error {
 	cmd := exec.Command(gg.gitPath, "pull") /* #nosec G204  -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 	cmd.Stdin = stream.Stdin
@@ -279,7 +280,7 @@ func (gg *gitgit) Pull(stream stream.IOStream, clonePath string, cache any) erro
 	return err
 }
 
-func (gg *gitgit) IsDirty(clonePath string, cache any) (dirty bool, err error) {
+func (gg *gitgit) IsDirty(ctx context.Context, clonePath string, cache any) (dirty bool, err error) {
 	cmd := exec.Command(gg.gitPath, "diff", "--quiet") /* #nosec G204 -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 
@@ -308,7 +309,7 @@ func (gogit) Init() error {
 	return nil
 }
 
-func (gogit) IsRepository(localPath string) (repoObject any, isRepo bool) {
+func (gogit) IsRepository(ctx context.Context, localPath string) (repoObject any, isRepo bool) {
 	defer func() {
 		if recover() != nil {
 			repoObject = nil
@@ -319,7 +320,7 @@ func (gogit) IsRepository(localPath string) (repoObject any, isRepo bool) {
 	return repoObject, err == nil
 }
 
-func (gogit) IsRepositoryUnsafe(localPath string) bool {
+func (gogit) IsRepositoryUnsafe(ctx context.Context, localPath string) bool {
 	// path to .git
 	gitPath := path.Join(localPath, ".git")
 
@@ -328,7 +329,7 @@ func (gogit) IsRepositoryUnsafe(localPath string) bool {
 	return ok
 }
 
-func (gogit) GetHeadRef(clonePath string, repoObject any) (string, error) {
+func (gogit) GetHeadRef(ctx context.Context, clonePath string, repoObject any) (string, error) {
 	repo := repoObject.(*git.Repository)
 
 	// first get the name of the current HEAD
@@ -349,7 +350,7 @@ func (gogit) GetHeadRef(clonePath string, repoObject any) (string, error) {
 	return head.Hash().String(), nil
 }
 
-func (gogit) GetRemotes(clonePath string, repoObject any) (remotes map[string][]string, err error) {
+func (gogit) GetRemotes(ctx context.Context, clonePath string, repoObject any) (remotes map[string][]string, err error) {
 	// get the repository
 	r := repoObject.(*git.Repository)
 
@@ -373,9 +374,9 @@ func (gogit) GetRemotes(clonePath string, repoObject any) (remotes map[string][]
 // originRemoteName is the name of the canonical remote.
 const originRemoteName = "origin"
 
-func (gg gogit) GetCanonicalRemote(clonePath string, repoObject any) (name string, urls []string, err error) {
+func (gg gogit) GetCanonicalRemote(ctx context.Context, clonePath string, repoObject any) (name string, urls []string, err error) {
 	// get a map of remotes
-	remotes, err := gg.GetRemotes(clonePath, repoObject)
+	remotes, err := gg.GetRemotes(ctx, clonePath, repoObject)
 	if err != nil {
 		err = fmt.Errorf("%q: unable to get remotes: %w", clonePath, err)
 		return
@@ -462,7 +463,7 @@ func (gg gogit) getCurrentBranchRemote(r *git.Repository) (name string, err erro
 
 var errLengthMustBeEqual = errors.New("cannot set remoteURL: Length of old and new urls must be identical")
 
-func (gogit) SetRemoteURLs(clonePath string, repoObject any, name string, urls []string) (err error) {
+func (gogit) SetRemoteURLs(ctx context.Context, clonePath string, repoObject any, name string, urls []string) (err error) {
 	// get the repository
 	r := repoObject.(*git.Repository)
 
@@ -502,7 +503,7 @@ func (gogit) SetRemoteURLs(clonePath string, repoObject any, name string, urls [
 	return
 }
 
-func (gogit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
+func (gogit) Clone(ctx context.Context, stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
 	// doesn't support extra arguments
 	if len(extraArgs) > 0 {
 		return ErrArgumentsUnsupported
@@ -517,7 +518,7 @@ func (gogit) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArg
 	return err
 }
 
-func (gogit) Fetch(stream stream.IOStream, clonePath string, cache any) (err error) {
+func (gogit) Fetch(ctx context.Context, stream stream.IOStream, clonePath string, cache any) (err error) {
 	// get the repository
 	r := cache.(*git.Repository)
 
@@ -543,7 +544,7 @@ func (gogit) Fetch(stream stream.IOStream, clonePath string, cache any) (err err
 	return
 }
 
-func (gogit) Pull(stream stream.IOStream, clonePath string, cache any) (err error) {
+func (gogit) Pull(ctx context.Context, stream stream.IOStream, clonePath string, cache any) (err error) {
 	// get the repository
 	r := cache.(*git.Repository)
 
@@ -574,7 +575,7 @@ func ignoreErrUpToDate(stream stream.IOStream, err error) error {
 	return err
 }
 
-func (gogit) GetBranches(clonePath string, cache any) (branches []string, err error) {
+func (gogit) GetBranches(ctx context.Context, clonePath string, cache any) (branches []string, err error) {
 	// get the repository
 	r := cache.(*git.Repository)
 
@@ -596,7 +597,7 @@ func (gogit) GetBranches(clonePath string, cache any) (branches []string, err er
 	return
 }
 
-func (gogit) ContainsBranch(clonePath string, cache any, branch string) (contains bool, err error) {
+func (gogit) ContainsBranch(ctx context.Context, clonePath string, cache any, branch string) (contains bool, err error) {
 	// get the repository
 	r := cache.(*git.Repository)
 
@@ -612,7 +613,7 @@ func (gogit) ContainsBranch(clonePath string, cache any, branch string) (contain
 	}
 }
 
-func (gogit) IsDirty(clonePath string, cache any) (dirty bool, err error) {
+func (gogit) IsDirty(ctx context.Context, clonePath string, cache any) (dirty bool, err error) {
 	// get the repository
 	r := cache.(*git.Repository)
 
@@ -632,11 +633,11 @@ func (gogit) IsDirty(clonePath string, cache any) (dirty bool, err error) {
 	return !status.IsClean(), nil
 }
 
-func (gg gogit) IsSync(clonePath string, cache any) (sync bool, err error) {
+func (gg gogit) IsSync(ctx context.Context, clonePath string, cache any) (sync bool, err error) {
 	r := cache.(*git.Repository)
 
 	// get all the branches
-	branches, err := gg.GetBranches(clonePath, cache)
+	branches, err := gg.GetBranches(ctx, clonePath, cache)
 	if err != nil {
 		return false, fmt.Errorf("%q: unable to get branch names: %w", clonePath, err)
 	}

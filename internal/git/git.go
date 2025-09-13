@@ -11,8 +11,9 @@
 // For this reason, implementation of the Plumbing interface are not exported.
 package git
 
-//spellchecker:words errors path filepath sync ggman internal dirs pkglib stream
+//spellchecker:words context errors path filepath sync ggman internal dirs pkglib stream
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -37,11 +38,11 @@ type Git interface {
 	Plumbing() Plumbing
 
 	// IsRepository checks if the directory at localPath is the root of a git repository.
-	IsRepository(localPath string) bool
+	IsRepository(ctx context.Context, localPath string) bool
 
 	// IsRepositoryQuick efficiently checks if the directly at localPath contains a repository.
 	// It is like IsRepository, except that it returns false more quickly than IsRepository.
-	IsRepositoryQuick(localPath string) bool
+	IsRepositoryQuick(ctx context.Context, localPath string) bool
 
 	// Clone clones a remote repository from remoteURI to clonePath.
 	// May attempt to read credentials from stream.Stdin.
@@ -55,14 +56,14 @@ type Git interface {
 	// If the underlying 'git' process exits abnormally, returns.
 	// If extraArgs is non-empty and extra arguments are not supported by this Wrapper, returns ErrArgumentsUnsupported.
 	// May return other error types for other errors.
-	Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error
+	Clone(ctx context.Context, stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error
 
 	// GetHeadRef gets a resolved reference to head at the repository at clonePath.
 	//
 	// When getting the reference succeeded, returns err = nil.
 	// If there is no repository at clonePath returns err = ErrNotARepository.
 	// May return other error types for other errors.
-	GetHeadRef(clonePath string) (ref string, err error)
+	GetHeadRef(ctx context.Context, clonePath string) (ref string, err error)
 
 	// Fetch fetches all remotes of the repository at clonePath.
 	// May attempt to read credentials from stream.Stdin.
@@ -71,7 +72,7 @@ type Git interface {
 	// When fetching succeeded, returns nil.
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	Fetch(stream stream.IOStream, clonePath string) error
+	Fetch(ctx context.Context, stream stream.IOStream, clonePath string) error
 
 	// Pull fetches the repository at clonePath and merges in changes where appropriate.
 	// May attempt to read credentials from stream.Stdin.
@@ -80,7 +81,7 @@ type Git interface {
 	// When pulling succeeded, returns nil.
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	Pull(stream stream.IOStream, clonePath string) error
+	Pull(ctx context.Context, stream stream.IOStream, clonePath string) error
 
 	// GetRemote gets the url of the remote at clonePath.
 	// Name is the name of the remote.
@@ -90,7 +91,7 @@ type Git interface {
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	GetRemote(clonePath string, name string) (url string, err error)
+	GetRemote(ctx context.Context, clonePath string, name string) (url string, err error)
 
 	// UpdateRemotes updates the urls of all remotes of the repository at clonePath.
 	// updateFunc is a function that is called for each remote url to be updated.
@@ -99,31 +100,31 @@ type Git interface {
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	UpdateRemotes(clonePath string, updateFunc func(url, name string) (newURL string, err error)) error
+	UpdateRemotes(ctx context.Context, clonePath string, updateFunc func(url, name string) (newURL string, err error)) error
 
 	// GetBranches gets the names of all branches contained in the repository at clonePath.
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	GetBranches(clonePath string) (branches []string, err error)
+	GetBranches(ctx context.Context, clonePath string) (branches []string, err error)
 
 	// ContainsBranch checks if the repository at clonePath contains a branch with the provided name.
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	ContainsBranch(clonePath, branch string) (exists bool, err error)
+	ContainsBranch(ctx context.Context, clonePath, branch string) (exists bool, err error)
 
 	// IsDirty checks if the repository at clonePath contains uncommitted changes.
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	IsDirty(clonePath string) (dirty bool, err error)
+	IsDirty(ctx context.Context, clonePath string) (dirty bool, err error)
 
 	// IsSync checks if the repository at clonePath contains branches that are not yet synced with their upstream.
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
 	// May return other error types for other errors.
-	IsSync(clonePath string) (synced bool, err error)
+	IsSync(ctx context.Context, clonePath string) (synced bool, err error)
 
 	// GitPath returns the path to the git executable being used, if any.
 	GitPath() string
@@ -166,28 +167,28 @@ func (impl *defaultGitWrapper) ensureInit() {
 	})
 }
 
-func (impl *defaultGitWrapper) IsRepository(localPath string) bool {
+func (impl *defaultGitWrapper) IsRepository(ctx context.Context, localPath string) bool {
 	impl.ensureInit()
 
-	_, isRepo := impl.git.IsRepository(localPath)
+	_, isRepo := impl.git.IsRepository(ctx, localPath)
 	return isRepo
 }
 
-func (impl *defaultGitWrapper) IsRepositoryQuick(localPath string) bool {
+func (impl *defaultGitWrapper) IsRepositoryQuick(ctx context.Context, localPath string) bool {
 	impl.ensureInit()
 
-	if !impl.git.IsRepositoryUnsafe(localPath) { // IsRepositoryUnsafe may not return false negatives
+	if !impl.git.IsRepositoryUnsafe(ctx, localPath) { // IsRepositoryUnsafe may not return false negatives
 		return false
 	}
 
-	return impl.IsRepository(localPath)
+	return impl.IsRepository(ctx, localPath)
 }
 
-func (impl *defaultGitWrapper) Clone(stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
+func (impl *defaultGitWrapper) Clone(ctx context.Context, stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
 	impl.ensureInit()
 
 	// check if the repository already exists
-	if _, isRepo := impl.git.IsRepository(clonePath); isRepo {
+	if _, isRepo := impl.git.IsRepository(ctx, clonePath); isRepo {
 		return ErrCloneAlreadyExists
 	}
 
@@ -197,56 +198,56 @@ func (impl *defaultGitWrapper) Clone(stream stream.IOStream, remoteURI, clonePat
 	}
 
 	// run the clone code and return
-	err := impl.git.Clone(stream, remoteURI, clonePath, extraArgs...)
+	err := impl.git.Clone(ctx, stream, remoteURI, clonePath, extraArgs...)
 	if err != nil {
 		return fmt.Errorf("failed to clone: %w", err)
 	}
 	return nil
 }
 
-func (impl *defaultGitWrapper) GetHeadRef(clonePath string) (ref string, err error) {
+func (impl *defaultGitWrapper) GetHeadRef(ctx context.Context, clonePath string) (ref string, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
 	if !isRepo {
 		return "", ErrNotARepository
 	}
 
 	// and return the reference to the head
-	ref, err = impl.git.GetHeadRef(clonePath, repoObject)
+	ref, err = impl.git.GetHeadRef(ctx, clonePath, repoObject)
 	if err != nil {
 		return "", fmt.Errorf("failed to get head ref: %w", err)
 	}
 	return ref, nil
 }
 
-func (impl *defaultGitWrapper) Fetch(stream stream.IOStream, clonePath string) error {
+func (impl *defaultGitWrapper) Fetch(ctx context.Context, stream stream.IOStream, clonePath string) error {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
 	if !isRepo {
 		return ErrNotARepository
 	}
 
-	err := impl.git.Fetch(stream, clonePath, repoObject)
+	err := impl.git.Fetch(ctx, stream, clonePath, repoObject)
 	if err != nil {
 		return fmt.Errorf("failed to fetch: %w", err)
 	}
 	return nil
 }
 
-func (impl *defaultGitWrapper) Pull(stream stream.IOStream, clonePath string) error {
+func (impl *defaultGitWrapper) Pull(ctx context.Context, stream stream.IOStream, clonePath string) error {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
 	if !isRepo {
 		return ErrNotARepository
 	}
 
-	err := impl.git.Pull(stream, clonePath, repoObject)
+	err := impl.git.Pull(ctx, stream, clonePath, repoObject)
 	if err != nil {
 		return fmt.Errorf("failed to pull: %w", err)
 	}
@@ -258,11 +259,11 @@ var (
 	errNoRemoteURL    = errors.New("no remote URL found")
 )
 
-func (impl *defaultGitWrapper) GetRemote(clonePath string, name string) (uri string, err error) {
+func (impl *defaultGitWrapper) GetRemote(ctx context.Context, clonePath string, name string) (uri string, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
 	if !isRepo {
 		err = ErrNotARepository
 		return
@@ -270,7 +271,7 @@ func (impl *defaultGitWrapper) GetRemote(clonePath string, name string) (uri str
 
 	// if no name is provided, use the canonical remote!
 	if name == "" {
-		_, uris, err := impl.git.GetCanonicalRemote(clonePath, repoObject)
+		_, uris, err := impl.git.GetCanonicalRemote(ctx, clonePath, repoObject)
 		if err != nil {
 			return "", fmt.Errorf("failed to get canonical remote: %w", err)
 		}
@@ -283,7 +284,7 @@ func (impl *defaultGitWrapper) GetRemote(clonePath string, name string) (uri str
 	}
 
 	// get all the remotes
-	remotes, err := impl.git.GetRemotes(clonePath, repoObject)
+	remotes, err := impl.git.GetRemotes(ctx, clonePath, repoObject)
 	if err != nil {
 		return "", fmt.Errorf("failed to get remotes: %w", err)
 	}
@@ -300,17 +301,17 @@ func (impl *defaultGitWrapper) GetRemote(clonePath string, name string) (uri str
 	return urls[0], nil
 }
 
-func (impl *defaultGitWrapper) UpdateRemotes(clonePath string, updateFunc func(url, name string) (string, error)) (err error) {
+func (impl *defaultGitWrapper) UpdateRemotes(ctx context.Context, clonePath string, updateFunc func(url, name string) (string, error)) (err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
 	if !isRepo {
 		return ErrNotARepository
 	}
 
 	// get all the remotes listed in the repository
-	remotes, err := impl.git.GetRemotes(clonePath, repoObject)
+	remotes, err := impl.git.GetRemotes(ctx, clonePath, repoObject)
 	if err != nil {
 		return fmt.Errorf("failed to get remotes: %w", err)
 	}
@@ -327,7 +328,7 @@ func (impl *defaultGitWrapper) UpdateRemotes(clonePath string, updateFunc func(u
 			}
 		}
 
-		err := impl.git.SetRemoteURLs(clonePath, repoObject, remoteName, canonURLs)
+		err := impl.git.SetRemoteURLs(ctx, clonePath, repoObject, remoteName, canonURLs)
 		if err != nil {
 			return fmt.Errorf("failed to set remote URLs: %w", err)
 		}
@@ -336,64 +337,64 @@ func (impl *defaultGitWrapper) UpdateRemotes(clonePath string, updateFunc func(u
 	return
 }
 
-func (impl *defaultGitWrapper) GetBranches(clonePath string) (branches []string, err error) {
+func (impl *defaultGitWrapper) GetBranches(ctx context.Context, clonePath string) (branches []string, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
 	if !isRepo {
 		return nil, ErrNotARepository
 	}
 
-	branches, err = impl.git.GetBranches(clonePath, repoObject)
+	branches, err = impl.git.GetBranches(ctx, clonePath, repoObject)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get branches: %w", err)
 	}
 	return branches, nil
 }
 
-func (impl *defaultGitWrapper) ContainsBranch(clonePath, branch string) (exists bool, err error) {
+func (impl *defaultGitWrapper) ContainsBranch(ctx context.Context, clonePath, branch string) (exists bool, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
 	if !isRepo {
 		return false, ErrNotARepository
 	}
 
-	exists, err = impl.git.ContainsBranch(clonePath, repoObject, branch)
+	exists, err = impl.git.ContainsBranch(ctx, clonePath, repoObject, branch)
 	if err != nil {
 		return false, fmt.Errorf("failed to check for contained branch: %w", err)
 	}
 	return exists, nil
 }
 
-func (impl *defaultGitWrapper) IsDirty(clonePath string) (dirty bool, err error) {
+func (impl *defaultGitWrapper) IsDirty(ctx context.Context, clonePath string) (dirty bool, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
 	if !isRepo {
 		return false, ErrNotARepository
 	}
 
-	dirty, err = impl.git.IsDirty(clonePath, repoObject)
+	dirty, err = impl.git.IsDirty(ctx, clonePath, repoObject)
 	if err != nil {
 		return false, fmt.Errorf("%q: failed to check for dirty: %w", clonePath, err)
 	}
 	return dirty, nil
 }
 
-func (impl *defaultGitWrapper) IsSync(clonePath string) (sync bool, err error) {
+func (impl *defaultGitWrapper) IsSync(ctx context.Context, clonePath string) (sync bool, err error) {
 	impl.ensureInit()
 
 	// check that the given folder is actually a repository
-	repoObject, isRepo := impl.git.IsRepository(clonePath)
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
 	if !isRepo {
 		return false, ErrNotARepository
 	}
 
-	sync, err = impl.git.IsSync(clonePath, repoObject)
+	sync, err = impl.git.IsSync(ctx, clonePath, repoObject)
 	if err != nil {
 		return false, fmt.Errorf("%q: failed to check for sync: %w", clonePath, err)
 	}

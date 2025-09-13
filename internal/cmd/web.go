@@ -1,7 +1,8 @@
 package cmd
 
-//spellchecker:words path filepath slices github browser cobra ggman internal pkglib exit
+//spellchecker:words context path filepath slices github browser cobra ggman internal pkglib exit
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 	"slices"
@@ -144,7 +145,7 @@ func (uw *urlweb) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	// get the remote url of the current repository
-	root, remote, relative, err := uw.getRemoteURL(environment)
+	root, remote, relative, err := uw.getRemoteURL(cmd.Context(), environment)
 	if err != nil {
 		return err
 	}
@@ -190,7 +191,7 @@ func (uw *urlweb) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	if root != "" && (uw.Tree || uw.Branch) {
-		ref, err := environment.Git.GetHeadRef(root)
+		ref, err := environment.Git.GetHeadRef(cmd.Context(), root)
 		if err != nil {
 			return errURLWebOutsideRepository
 		}
@@ -238,17 +239,17 @@ func (uw *urlweb) listBases(cmd *cobra.Command) error {
 }
 
 // getRemoteURL gets the remote url of current repository in the context.
-func (uw *urlweb) getRemoteURL(environment *env.Env) (root string, remote string, relative string, err error) {
+func (uw *urlweb) getRemoteURL(ctx context.Context, environment *env.Env) (root string, remote string, relative string, err error) {
 	if uw.ForceRepoHere { // don't use a repository, instead fake one!
 		return uw.getRemoteURLFake(environment)
 	}
 
-	return uw.getRemoteURLReal(environment)
+	return uw.getRemoteURLReal(ctx, environment)
 }
 
-func (uw *urlweb) getRemoteURLReal(environment *env.Env) (root string, remote string, relative string, err error) {
+func (uw *urlweb) getRemoteURLReal(ctx context.Context, environment *env.Env) (root string, remote string, relative string, err error) {
 	// find the repository at the current location
-	root, relative, err = environment.At(".")
+	root, relative, err = environment.At(ctx, ".")
 	if err != nil {
 		return "", "", "", fmt.Errorf("failed to get local path to repository: %w", err)
 	}
@@ -258,7 +259,7 @@ func (uw *urlweb) getRemoteURLReal(environment *env.Env) (root string, remote st
 	}
 
 	// get the remote
-	remote, err = environment.Git.GetRemote(root, uw.Remote)
+	remote, err = environment.Git.GetRemote(ctx, root, uw.Remote)
 	if err != nil {
 		return "", "", "", errURLWebOutsideRepository
 	}

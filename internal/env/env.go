@@ -1,7 +1,8 @@
 package env
 
-//spellchecker:words errors path filepath strings ggman internal walker pkglib exit
+//spellchecker:words context errors path filepath strings ggman internal walker pkglib exit
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -277,6 +278,7 @@ func (env *Env) Abs(path string) (string, error) {
 const atMaxIterCount = 1000
 
 // At returns the local path to a repository at the provided path, as well as the relative path within the repository.
+// If the context expires before a repository is found, may return an error.
 //
 // The algorithm proceeds as follows:
 //
@@ -287,7 +289,7 @@ const atMaxIterCount = 1000
 // Assumes that the root directory is set.
 // If that is not the case, calls panic().
 // If no repository is found, returns an error possible wrapping type Error.
-func (env *Env) At(p string) (repo, worktree string, err error) {
+func (env *Env) At(ctx context.Context, p string) (repo, worktree string, err error) {
 	// Changes here should be reflected in AtRoot().
 	root, err := env.absRoot()
 	if err != nil {
@@ -306,7 +308,7 @@ func (env *Env) At(p string) (repo, worktree string, err error) {
 	// we additionally need to check that the path is inside of the root.
 	repo = path
 	count := atMaxIterCount
-	for !env.Git.IsRepository(repo) {
+	for !env.Git.IsRepository(ctx, repo) {
 		count--
 		repo = filepath.Join(repo, "..")
 		if !strings.HasPrefix(repo, root) || root == "" || root == "/" || count == 0 {
@@ -325,11 +327,12 @@ func (env *Env) At(p string) (repo, worktree string, err error) {
 
 // AtRoot checks if the path p represents the root of a repository.
 // If p is a relative path, it will be resolved relative to the current directory.
+// If the context expires before a repository is found, may return an error.
 //
 // When true it returns the absolute path to p, and no error.
 // When false, returns the empty string and no error.
 // When something goes wrong, returns an error.
-func (env *Env) AtRoot(p string) (repo string, err error) {
+func (env *Env) AtRoot(ctx context.Context, p string) (repo string, err error) {
 	// This function could check if At(p) returns worktree = "."
 	// but that would create additional disk I/O!
 
@@ -338,7 +341,7 @@ func (env *Env) AtRoot(p string) (repo string, err error) {
 		return "", fmt.Errorf("%w %q", errNotResolved, p)
 	}
 
-	if !env.Git.IsRepository(path) {
+	if !env.Git.IsRepository(ctx, path) {
 		return "", nil
 	}
 
@@ -370,12 +373,12 @@ const reposMaxParallelScan = 0
 // It also returns their scores along with the repositories.
 // resolved indicates if their final path should be resolved
 //
-// This method silently ignores all errors.
+// This method silently ignores all errors, including when the context expires.
 //
 // See the ScanReposScores() method for more control.
-func (env *Env) RepoScores(resolved bool) ([]string, []float64) {
+func (env *Env) RepoScores(ctx context.Context, resolved bool) ([]string, []float64) {
 	// NOTE: This function is untested, because only the score-less variant is tested.
-	repos, scores, _ := env.ScanReposScores("", resolved)
+	repos, scores, _ := env.ScanReposScores(ctx, "", resolved)
 	return repos, scores
 }
 
@@ -384,9 +387,9 @@ func (env *Env) RepoScores(resolved bool) ([]string, []float64) {
 // This method silently ignores all errors.
 //
 // See the ScanRepos() method for more control.
-func (env *Env) Repos(resolved bool) []string {
+func (env *Env) Repos(ctx context.Context, resolved bool) []string {
 	// NOTE: This function is untested, because ScanRepos() is tested.
-	repos, _ := env.RepoScores(resolved)
+	repos, _ := env.RepoScores(ctx, resolved)
 	return repos
 }
 
@@ -395,7 +398,7 @@ func (env *Env) Repos(resolved bool) []string {
 // Repositories are returned in order of their scores, which are returned in the second argument.
 //
 // When an error occurs, this function may still return a list of (incomplete) repositories along with an error.
-func (env *Env) ScanReposScores(folder string, resolved bool) ([]string, []float64, error) {
+func (env *Env) ScanReposScores(ctx context.Context, folder string, resolved bool) ([]string, []float64, error) {
 	// NOTE: This function is untested, only ScanRepos() itself is tested
 	if folder == "" {
 		var err error
@@ -423,8 +426,8 @@ func (env *Env) ScanReposScores(folder string, resolved bool) ([]string, []float
 
 	scanner := &walker.Walker[struct{}]{
 		Process: walker.ScanProcess(func(path string, _ walker.FS, _ int) (score float64, cont bool, err error) {
-			if env.Git.IsRepositoryQuick(path) {
-				return env.Filter.Score(env, path), false, nil // never continue even if a repository does not match
+			if env.Git.IsRepositoryQuick(ctx, path) {
+				return env.Filter.Score(ctx, env, path), false, nil // never continue even if a repository does not match
 			}
 			return walker.ScanMatch(false), true, nil
 		}),
@@ -443,8 +446,8 @@ func (env *Env) ScanReposScores(folder string, resolved bool) ([]string, []float
 }
 
 // ScanRepos is like ScanReposScores, but returns only the first and last return value.
-func (env *Env) ScanRepos(folder string, resolved bool) ([]string, error) {
-	results, _, err := env.ScanReposScores(folder, resolved)
+func (env *Env) ScanRepos(ctx context.Context, folder string, resolved bool) ([]string, error) {
+	results, _, err := env.ScanReposScores(ctx, folder, resolved)
 	return results, err
 }
 

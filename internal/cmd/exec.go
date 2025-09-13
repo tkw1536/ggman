@@ -94,7 +94,7 @@ func (e *exe) Exec(cmd *cobra.Command, args []string) error {
 
 // execReal implements ggman exec for simulate = False.
 func (e *exe) execReal(cmd *cobra.Command, environment *env.Env) (err error) {
-	repos := environment.Repos(true)
+	repos := environment.Repos(cmd.Context(), true)
 
 	statusIO := e.Parallel != 1 && !e.Quiet
 
@@ -192,7 +192,7 @@ func (e *exe) execSimulate(cmd *cobra.Command, environment *env.Env) (err error)
 
 	// iterate over each repository
 	// then print each of the commands to be run!
-	for _, repo := range environment.Repos(true) {
+	for _, repo := range environment.Repos(cmd.Context(), true) {
 		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "cd %s\n", shellescape.Quote(repo)); err != nil {
 			return fmt.Errorf("%w: %w", errGenericOutput, err)
 		}

@@ -25,7 +25,7 @@ func GetEnv(cmd *cobra.Command, requirements Requirement) (*Env, error) {
 	}
 
 	// setup a filter for it!
-	f, err := NewFilter(get[Flags](cmd, flagsKey), ne)
+	f, err := NewFilter(cmd.Context(), get[Flags](cmd, flagsKey), ne)
 	if err != nil {
 		return nil, fmt.Errorf("error creating filter: %w", err)
 	}

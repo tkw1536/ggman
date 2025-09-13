@@ -17,7 +17,7 @@ func TestCommandHere(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	clonePath := mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
+	clonePath := mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
 
 	subClonePath := filepath.Join(clonePath, "sub")
 	if err := os.MkdirAll(subClonePath, 0750); err != nil {

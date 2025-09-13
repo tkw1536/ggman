@@ -17,9 +17,9 @@ func setupExecTest(t *testing.T) (mock *mockenv.MockEnv) {
 
 	mock = mockenv.NewMockEnv(t)
 
-	mock.Clone("https://github.com/hello/world.git", "github.com", "hello", "world")
-	mock.Clone("user@server.com/repo", "server.com", "user", "repo")
-	mock.Clone("https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	mock.Clone(t.Context(), "user@server.com/repo", "server.com", "user", "repo")
+	mock.Clone(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
 
 	return
 }

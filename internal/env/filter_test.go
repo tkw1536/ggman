@@ -1,7 +1,8 @@
 package env_test
 
-//spellchecker:words path filepath reflect testing ggman internal testutil pkglib testlib
+//spellchecker:words context path filepath reflect testing ggman internal testutil pkglib testlib
 import (
+	"context"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -34,7 +35,9 @@ func setupFilterTest(t *testing.T) (root, exampleClonePath, otherClonePath strin
 
 type testFilter struct{}
 
-func (testFilter) Score(env *env.Env, clonePath string) float64 { panic("never reached") }
+func (testFilter) Score(ctx context.Context, env *env.Env, clonePath string) float64 {
+	panic("never reached")
+}
 
 type testFilterWithCandidates struct {
 	testFilter
@@ -143,7 +146,7 @@ func TestPathFilter_Score(t *testing.T) {
 			pf := env.PathFilter{
 				Paths: tt.fields.Paths,
 			}
-			if got := pf.Score(tt.args.env, tt.args.clonePath); got != tt.want {
+			if got := pf.Score(t.Context(), tt.args.env, tt.args.clonePath); got != tt.want {
 				t.Errorf("PathFilter.Score() = %v, want %v", got, tt.want)
 			}
 		})
@@ -248,6 +251,7 @@ func TestPatternFilter_Score(t *testing.T) {
 
 			pat.Set(tt.patternValue)
 			if got := pat.Score(
+				t.Context(),
 				&env.Env{
 					Root: root,
 					Git:  git.NewGitFromPlumbing(nil, ""),
@@ -383,6 +387,7 @@ func TestDisjunctionFilter_Score(t *testing.T) {
 				Clauses: tt.fields.Clauses,
 			}
 			if got := or.Score(
+				t.Context(),
 				&env.Env{Root: testutil.ToOSPath(tt.args.root)},
 				testutil.ToOSPath(tt.args.clonePath),
 			); got != tt.want {

@@ -25,15 +25,15 @@ func TestCommandRelocate(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Clone("https://github.com/right/directory.git", "github.com", "right", "directory")
-	mock.Clone("https://github.com/correct/directory.git", "github.com", "incorrect", "directory")
+	mock.Clone(t.Context(), "https://github.com/right/directory.git", "github.com", "right", "directory")
+	mock.Clone(t.Context(), "https://github.com/correct/directory.git", "github.com", "incorrect", "directory")
 
 	// link in an external repository in the right place
-	external1 := mock.Clone("https://github.com/right/external1.git", "..", "external-path-1")
+	external1 := mock.Clone(t.Context(), "https://github.com/right/external1.git", "..", "external-path-1")
 	symlink(external1, mock.Resolve(filepath.Join("github.com", "right", "external1")))
 
 	// link in an external repository in the right place
-	external2 := mock.Clone("https://github.com/right/external2.git", "..", "external-path-2")
+	external2 := mock.Clone(t.Context(), "https://github.com/right/external2.git", "..", "external-path-2")
 	symlink(external2, mock.Resolve(filepath.Join("github.com", "right", "wrong-external")))
 
 	tests := []struct {
@@ -98,8 +98,8 @@ func TestCommandRelocate_existsRepo(t *testing.T) {
 
 	// clone the same repository twice
 	mock.Register("https://github.com/right/directory.git")
-	mock.Install("https://github.com/right/directory.git", "github.com", "right", "directory")
-	mock.Install("https://github.com/right/directory.git", "github.com", "right", "other")
+	mock.Install(t.Context(), "https://github.com/right/directory.git", "github.com", "right", "directory")
+	mock.Install(t.Context(), "https://github.com/right/directory.git", "github.com", "right", "other")
 
 	tests := []struct {
 		name    string
@@ -153,7 +153,7 @@ func TestCommandRelocate_existsPath(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	// clone the same repository twice
-	mock.Clone("https://github.com/right/directory.git", "github.com", "wrong", "directory")
+	mock.Clone(t.Context(), "https://github.com/right/directory.git", "github.com", "wrong", "directory")
 
 	if err := os.MkdirAll(mock.Resolve("github.com", "right", "directory"), os.ModePerm|os.ModeDir); err != nil {
 		panic(err)

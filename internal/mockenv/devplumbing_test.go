@@ -144,7 +144,7 @@ func Test_DevPlumbing_GetRemotes(t *testing.T) {
 	t.Run("GetRemotes() on a repository with a single remote", func(t *testing.T) {
 		t.Parallel()
 
-		ggRepoObject, isRepo := mp.IsRepository(cloneA)
+		ggRepoObject, isRepo := mp.IsRepository(t.Context(), cloneA)
 		if !isRepo {
 			panic("IsRepository() failed")
 		}
@@ -152,7 +152,7 @@ func Test_DevPlumbing_GetRemotes(t *testing.T) {
 		wantRemotes := map[string][]string{
 			"origin": {mappedRemote},
 		}
-		remotes, err := mp.GetRemotes(cloneA, ggRepoObject)
+		remotes, err := mp.GetRemotes(t.Context(), cloneA, ggRepoObject)
 		if err != nil {
 			t.Error("GetRemotes() got err != nil, want err == nil")
 		}
@@ -165,7 +165,7 @@ func Test_DevPlumbing_GetRemotes(t *testing.T) {
 	t.Run("GetRemotes() on a repository with more than one remote", func(t *testing.T) {
 		t.Parallel()
 
-		ggRepoObject, isRepo := mp.IsRepository(cloneB)
+		ggRepoObject, isRepo := mp.IsRepository(t.Context(), cloneB)
 		if !isRepo {
 			panic("IsRepository() failed")
 		}
@@ -174,7 +174,7 @@ func Test_DevPlumbing_GetRemotes(t *testing.T) {
 			"upstream": {mappedRemote},
 			"origin":   {mappedCloneA},
 		}
-		remotes, err := mp.GetRemotes(cloneB, ggRepoObject)
+		remotes, err := mp.GetRemotes(t.Context(), cloneB, ggRepoObject)
 		if err != nil {
 			t.Error("GetRemotes() got err != nil, want err == nil")
 		}
@@ -218,7 +218,7 @@ func Test_DevPlumbing_SetRemoteURLs(t *testing.T) {
 	}
 
 	// get a repo object
-	ggRepoObject, isRepo := mp.IsRepository(clone)
+	ggRepoObject, isRepo := mp.IsRepository(t.Context(), clone)
 	if !isRepo {
 		panic("IsRepository() failed")
 	}
@@ -227,7 +227,7 @@ func Test_DevPlumbing_SetRemoteURLs(t *testing.T) {
 		urls := []string{"https://example.com"}
 		wantURLs := []string{"https://real.example.com"}
 
-		err := mp.SetRemoteURLs(clone, ggRepoObject, "origin", urls)
+		err := mp.SetRemoteURLs(t.Context(), clone, ggRepoObject, "origin", urls)
 		if err != nil {
 			t.Error("SetRemoteURLs() got err != nil, want err = nil")
 		}
@@ -247,7 +247,7 @@ func Test_DevPlumbing_SetRemoteURLs(t *testing.T) {
 		urls := []string{"https://example.com", "https://example2.com"}
 		wantURLs := []string{"https://real.example.com", "https://real.example2.com"}
 
-		err := mp.SetRemoteURLs(clone, ggRepoObject, "origin", urls)
+		err := mp.SetRemoteURLs(t.Context(), clone, ggRepoObject, "origin", urls)
 		if err == nil {
 			t.Error("SetRemoteURLs() got err = nil, want err != nil")
 		}
@@ -266,7 +266,7 @@ func Test_DevPlumbing_SetRemoteURLs(t *testing.T) {
 	t.Run("setting non-existent remote", func(t *testing.T) {
 		urls := []string{"https://example.com", "https://example2.com"}
 
-		err := mp.SetRemoteURLs(clone, ggRepoObject, "upstream", urls)
+		err := mp.SetRemoteURLs(t.Context(), clone, ggRepoObject, "upstream", urls)
 		if err == nil {
 			t.Error("SetRemoteURLs() got err = nil, want err != nil")
 		}
@@ -327,7 +327,7 @@ func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
 	t.Run("GetCanonicalRemote() on a repository with a single remote", func(t *testing.T) {
 		t.Parallel()
 
-		ggRepoObject, isRepo := mp.IsRepository(cloneA)
+		ggRepoObject, isRepo := mp.IsRepository(t.Context(), cloneA)
 		if !isRepo {
 			panic("IsRepository() failed")
 		}
@@ -335,7 +335,7 @@ func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
 		wantName := "origin"
 		wantURLs := []string{mappedRemote}
 
-		name, urls, err := mp.GetCanonicalRemote(cloneA, ggRepoObject)
+		name, urls, err := mp.GetCanonicalRemote(t.Context(), cloneA, ggRepoObject)
 		if err != nil {
 			t.Error("GetCanonicalRemote() got err != nil, want err == nil")
 		}
@@ -351,7 +351,7 @@ func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
 	t.Run("GetCanonicalRemote() on a repository with more than a single remote", func(t *testing.T) {
 		t.Parallel()
 
-		ggRepoObject, isRepo := mp.IsRepository(cloneB)
+		ggRepoObject, isRepo := mp.IsRepository(t.Context(), cloneB)
 		if !isRepo {
 			panic("IsRepository() failed")
 		}
@@ -359,7 +359,7 @@ func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
 		wantName := "origin"
 		wantURLs := []string{mappedCloneA}
 
-		name, urls, err := mp.GetCanonicalRemote(cloneB, ggRepoObject)
+		name, urls, err := mp.GetCanonicalRemote(t.Context(), cloneB, ggRepoObject)
 		if err != nil {
 			t.Error("GetCanonicalRemote() got err != nil, want err == nil")
 		}
@@ -394,7 +394,7 @@ func Test_DevPlumbing_Clone(t *testing.T) {
 
 		clone := testlib.TempDirAbs(t)
 
-		err := mp.Clone(stream.FromNil(), mappedRemote, clone)
+		err := mp.Clone(t.Context(), stream.FromNil(), mappedRemote, clone)
 		if err != nil {
 			t.Error("Clone() got err != nil, want err = nil")
 		}

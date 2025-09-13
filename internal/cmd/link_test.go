@@ -17,7 +17,7 @@ func TestCommandLink(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	externalRepo := mock.Clone("https://github.com/hello/world.git", "..", "external")
+	externalRepo := mock.Clone(t.Context(), "https://github.com/hello/world.git", "..", "external")
 
 	escapedExternalRepo := strconv.Quote(externalRepo)
 

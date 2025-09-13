@@ -68,7 +68,7 @@ func (l *ls) Exec(cmd *cobra.Command, args []string) error {
 	if l.One {
 		l.Limit = 1
 	}
-	repos, scores := environment.RepoScores(true)
+	repos, scores := environment.RepoScores(cmd.Context(), true)
 	if l.Limit > 0 && len(repos) > l.Limit {
 		repos = repos[:l.Limit]
 	}

@@ -53,10 +53,10 @@ func (f *fix) Exec(cmd *cobra.Command, args []string) error {
 	hasError := false
 
 	var innerError error
-	for _, repo := range environment.Repos(true) {
+	for _, repo := range environment.Repos(cmd.Context(), true) {
 		var initialMessage sync.Once // send an initial log message to the user, once
 
-		if e := environment.Git.UpdateRemotes(repo, func(url, remoteName string) (string, error) {
+		if e := environment.Git.UpdateRemotes(cmd.Context(), repo, func(url, remoteName string) (string, error) {
 			canon := environment.Canonical(env.ParseURL(url))
 
 			if url == canon {

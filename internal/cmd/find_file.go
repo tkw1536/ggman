@@ -61,7 +61,7 @@ func (f *findFile) Exec(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 	foundRepo := false
-	for _, repo := range environment.Repos(true) {
+	for _, repo := range environment.Repos(cmd.Context(), true) {
 		candidate := filepath.Join(repo, f.Positionals.Path)
 		ok, err := fsx.Exists(candidate)
 		if err != nil {
