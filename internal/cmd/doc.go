@@ -64,7 +64,8 @@ func (d *_doc) Exec(cmd *cobra.Command, args []string) (e error) {
 	}
 
 	// start listening for connections
-	l, err := net.Listen("tcp", net.JoinHostPort(d.Host, strconv.Itoa(d.Port)))
+	var lc net.ListenConfig
+	l, err := lc.Listen(cmd.Context(), "tcp", net.JoinHostPort(d.Host, strconv.Itoa(d.Port)))
 	if err != nil {
 		return fmt.Errorf("%w: %w", errServerListen, err)
 	}
