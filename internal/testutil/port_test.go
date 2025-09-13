@@ -1,3 +1,4 @@
+//spellchecker:word//spellchecker:words testutil
 //spellchecker:words testutil
 package testutil_test
 
@@ -37,7 +38,8 @@ func ExampleWaitForPort() {
 		fmt.Printf("WaitForPort returned: %v\n", err)
 	}()
 
-	listener, err := net.Listen("tcp", addr)
+	var lc net.ListenConfig
+	listener, err := lc.Listen(context.Background(), "tcp", addr)
 	if err != nil {
 		panic(err)
 	}

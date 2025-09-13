@@ -31,13 +31,12 @@ const waitPortInterval = 10 * time.Millisecond
 
 // WaitForPort waits until the given address is reachable via TCP.
 func WaitForPort(ctx context.Context, addr string) error {
-	for {
-		if err := ctx.Err(); err != nil {
-			return fmt.Errorf("context cancelled: %w", err)
-		}
+	var dialer net.Dialer
 
+	timer := time.NewTimer(waitPortInterval)
+	for {
 		// try to dial and close if successful
-		conn, err := net.Dial("tcp", addr)
+		conn, err := dialer.DialContext(ctx, "tcp", addr)
 		if err == nil {
 			if err := conn.Close(); err != nil {
 				return fmt.Errorf("failed to close connection: %w", err)
@@ -45,7 +44,12 @@ func WaitForPort(ctx context.Context, addr string) error {
 			return nil
 		}
 
-		// wait a bit and try again
-		time.Sleep(waitPortInterval)
+		// wait to try again, or close if the context is done.
+		timer.Reset(waitPortInterval)
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("context cancelled: %w", ctx.Err())
+		case <-timer.C:
+		}
 	}
 }
