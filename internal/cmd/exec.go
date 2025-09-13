@@ -2,6 +2,7 @@ package cmd
 
 //spellchecker:words errors exec essio shellescape github cobra ggman internal pkglib exit sema status stream
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os/exec"
@@ -130,7 +131,7 @@ func (e *exe) execReal(cmd *cobra.Command, environment *env.Env) (err error) {
 			}
 		}
 
-		return e.execRepo(io, repo)
+		return e.execRepo(cmd.Context(), io, repo)
 	}, uint64(len(repos)), sema.Concurrency{
 		Limit: e.Parallel,
 		Force: e.Force,
@@ -141,8 +142,8 @@ func (e *exe) execReal(cmd *cobra.Command, environment *env.Env) (err error) {
 	return nil
 }
 
-func (e *exe) execRepo(io stream.IOStream, repo string) error {
-	exe := exec.Command(e.Positionals.Exe, e.Positionals.Args...) /* #nosec G204 -- by design */
+func (e *exe) execRepo(ctx context.Context, io stream.IOStream, repo string) error {
+	exe := exec.CommandContext(ctx, e.Positionals.Exe, e.Positionals.Args...) /* #nosec G204 -- by design */
 	exe.Dir = repo
 
 	// setup standard output / input, using either the environment

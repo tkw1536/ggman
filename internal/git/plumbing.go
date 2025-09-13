@@ -230,7 +230,7 @@ func (gg *gitgit) findGitByExtension(exts []string) (git string, err error) {
 func (gg *gitgit) Clone(ctx context.Context, stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
 	gitArgs := append([]string{"clone", remoteURI, clonePath}, extraArgs...)
 
-	cmd := exec.Command(gg.gitPath, gitArgs...) /* #nosec G204  -- user-controlled by design */
+	cmd := exec.CommandContext(ctx, gg.gitPath, gitArgs...) /* #nosec G204  -- user-controlled by design */
 	cmd.Stdin = stream.Stdin
 	cmd.Stdout = stream.Stdout
 	cmd.Stderr = stream.Stderr
@@ -247,7 +247,7 @@ func (gg *gitgit) Clone(ctx context.Context, stream stream.IOStream, remoteURI, 
 }
 
 func (gg *gitgit) Fetch(ctx context.Context, stream stream.IOStream, clonePath string, cache any) error {
-	cmd := exec.Command(gg.gitPath, "fetch", "--all") /* #nosec G204  -- gitPath user-controlled by design */
+	cmd := exec.CommandContext(ctx, gg.gitPath, "fetch", "--all") /* #nosec G204  -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 	cmd.Stdin = stream.Stdin
 	cmd.Stdout = stream.Stdout
@@ -264,7 +264,7 @@ func (gg *gitgit) Fetch(ctx context.Context, stream stream.IOStream, clonePath s
 }
 
 func (gg *gitgit) Pull(ctx context.Context, stream stream.IOStream, clonePath string, cache any) error {
-	cmd := exec.Command(gg.gitPath, "pull") /* #nosec G204  -- gitPath user-controlled by design */
+	cmd := exec.CommandContext(ctx, gg.gitPath, "pull") /* #nosec G204  -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 	cmd.Stdin = stream.Stdin
 	cmd.Stdout = stream.Stdout
@@ -281,7 +281,7 @@ func (gg *gitgit) Pull(ctx context.Context, stream stream.IOStream, clonePath st
 }
 
 func (gg *gitgit) IsDirty(ctx context.Context, clonePath string, cache any) (dirty bool, err error) {
-	cmd := exec.Command(gg.gitPath, "diff", "--quiet") /* #nosec G204 -- gitPath user-controlled by design */
+	cmd := exec.CommandContext(ctx, gg.gitPath, "diff", "--quiet") /* #nosec G204 -- gitPath user-controlled by design */
 	cmd.Dir = clonePath
 
 	// run the underlying command
