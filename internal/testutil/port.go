@@ -11,9 +11,10 @@ import (
 
 // FindFreePort picks a random non-zero unassigned port on localhost.
 // It is only guaranteed to be free at the time the function is invoked, and other programs may claim it.
-// If no free port is found, the function panics.
-func FindFreePort() int {
-	l, err := net.Listen("tcp", "127.0.0.1:0")
+// If no free port is found, or ctx expires, the function panics.
+func FindFreePort(ctx context.Context) int {
+	var lc net.ListenConfig
+	l, err := lc.Listen(ctx, "tcp", "127.0.0.1:0")
 	if err != nil {
 		panic(fmt.Errorf("failed to find free port: %w", err))
 	}

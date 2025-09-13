@@ -18,7 +18,7 @@ func TestCommandDoc(t *testing.T) {
 	t.Parallel()
 
 	var (
-		port = strconv.Itoa(testutil.FindFreePort())
+		port = strconv.Itoa(testutil.FindFreePort(t.Context()))
 		host = "127.0.0.1"
 		addr = net.JoinHostPort(host, port)
 	)
