@@ -83,13 +83,24 @@ type Plumbing interface {
 	// The second parameter must be the returned value from IsRepository().
 	GetCanonicalRemote(ctx context.Context, clonePath string, repoObject any) (name string, urls []string, err error)
 
+	// GetUsedRemotes returns the names of all remotes that are used by the repository cloned at clonePath.
+	// A remote is considered used if it is the canonical remote used by some local branch.
+	GetUsedRemotes(ctx context.Context, clonePath string, repoObject any) (remotes []string, err error)
+
 	// SetRemoteURLs set the remote 'remote' of the repository at clonePath to urls.
 	// The remote 'name' must exist.
-	// Furthermore newURLs must be of the same length as the old URLs.
+	// Furthermore the length of newURLs must be of the same length as the old URLs.
 	//
 	// This function should only be called if IsRepository(clonePath) returns true.
 	// The second parameter must be the returned value from IsRepository().
 	SetRemoteURLs(ctx context.Context, clonePath string, repoObject any, name string, urls []string) (err error)
+
+	// DeleteRemote deletes the remote with the given name from the repository at clonePath.
+	// The remote 'remote' must exist.
+	//
+	// This function should only be called if IsRepository(clonePath) returns true.
+	// The second parameter must be the returned value from IsRepository().
+	DeleteRemote(ctx context.Context, clonePath string, repoObject any, remote string) (err error)
 
 	// Clone tries to clone the repository at 'from' to the folder 'to'.
 	// May attempt to read credentials from stream.Stdin.
@@ -410,6 +421,55 @@ func (gg gogit) GetCanonicalRemote(ctx context.Context, clonePath string, repoOb
 	}
 
 	panic("never reached")
+}
+
+func (gogit) GetUsedRemotes(ctx context.Context, clonePath string, repoObject any) (remotes []string, err error) {
+	r := repoObject.(*git.Repository)
+
+	config, err := r.Config()
+	if err != nil {
+		return nil, fmt.Errorf("%q: unable to get config: %w", clonePath, err)
+	}
+
+	branches, err := r.Branches()
+	if err != nil {
+		return nil, fmt.Errorf("%q: unable to get branches: %w", clonePath, err)
+	}
+
+	usedRemotes := make(map[string]struct{}, len(config.Remotes))
+
+	if err := branches.ForEach(func(ref *plumbing.Reference) error {
+		branchName := ref.Name().Short()
+
+		// no config set.
+		branchCfg, ok := config.Branches[branchName]
+		if !ok || branchCfg.Remote == "" {
+			return nil
+		}
+
+		usedRemotes[branchCfg.Remote] = struct{}{}
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%q: failed to iterate over branches: %w", clonePath, err)
+	}
+
+	// get the names of the used remotes
+	remotes = make([]string, 0, len(usedRemotes))
+	for remote := range usedRemotes {
+		remotes = append(remotes, remote)
+	}
+
+	// sort for consistency
+	slices.Sort(remotes)
+	return remotes, nil
+}
+
+func (gogit) DeleteRemote(ctx context.Context, clonePath string, repoObject any, remote string) (err error) {
+	r := repoObject.(*git.Repository)
+	if err = r.DeleteRemote(remote); err != nil {
+		return fmt.Errorf("%q: unable to delete remote %s: %w", clonePath, remote, err)
+	}
+	return nil
 }
 
 var errNotOnABranch = errors.New("not on a branch")

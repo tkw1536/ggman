@@ -21,7 +21,7 @@ func TestCommandPull(t *testing.T) {
 	// install git repo and make an extra commit
 	repo := mock.Register("https://github.com/hello/world.git")
 	clonePath := mock.Install(t.Context(), "https://github.com/hello/world.git", "hello", "world")
-	testutil.CommitTestFiles(repo, nil)
+	testutil.CommitTestFiles(repo)
 
 	escapedClonePath := strconv.Quote(clonePath)
 

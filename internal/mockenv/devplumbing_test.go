@@ -110,7 +110,7 @@ func Test_DevPlumbing_GetRemotes(t *testing.T) {
 
 	// create an initial remote repository, and add a new bogus commit to it.
 	remote, repo := testutil.NewTestRepo(t)
-	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
+	testutil.CommitTestFiles(repo)
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
@@ -208,7 +208,7 @@ func Test_DevPlumbing_SetRemoteURLs(t *testing.T) {
 
 	// create an initial remote repository, and add a new bogus commit to it.
 	remote, repo := testutil.NewTestRepo(t)
-	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
+	testutil.CommitTestFiles(repo)
 
 	// clone the remote repository into 'clone'
 	clone := testlib.TempDirAbs(t)
@@ -293,7 +293,7 @@ func Test_DevPlumbing_GetCanonicalRemote(t *testing.T) {
 
 	// create an initial remote repository, and add a new bogus commit to it.
 	remote, repo := testutil.NewTestRepo(t)
-	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
+	testutil.CommitTestFiles(repo)
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
@@ -384,7 +384,7 @@ func Test_DevPlumbing_Clone(t *testing.T) {
 
 	// create an initial remote repository, and add a new bogus commit to it.
 	remote, repo := testutil.NewTestRepo(t)
-	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
+	testutil.CommitTestFiles(repo)
 
 	mappedRemote := "https://example.com/example.git"
 	mp.URLMap[mappedRemote] = remote

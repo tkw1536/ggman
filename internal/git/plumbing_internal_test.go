@@ -124,7 +124,7 @@ func Test_gogit_GetHeadRef(t *testing.T) {
 
 	// make a new repository and checkout a new branch 'test'
 	branchTestCheckout, repo := testutil.NewTestRepo(t)
-	worktree, commit := testutil.CommitTestFiles(repo, nil)
+	worktree, commit := testutil.CommitTestFiles(repo)
 	if err := worktree.Checkout(&git.CheckoutOptions{
 		Hash:   commit,
 		Branch: plumbing.NewBranchReferenceName("test"),
@@ -135,7 +135,7 @@ func Test_gogit_GetHeadRef(t *testing.T) {
 
 	// make a new repository and checkout a hash
 	hashCheckout, repo := testutil.NewTestRepo(t)
-	worktree, commit = testutil.CommitTestFiles(repo, nil)
+	worktree, commit = testutil.CommitTestFiles(repo)
 	if err := worktree.Checkout(&git.CheckoutOptions{
 		Hash: commit,
 	}); err != nil {
@@ -191,7 +191,7 @@ func Test_gogit_GetRemotes(t *testing.T) {
 
 	// create an initial remote repository, and add a new bogus commit to it.
 	remote, repo := testutil.NewTestRepo(t)
-	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
+	testutil.CommitTestFiles(repo)
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
@@ -273,7 +273,7 @@ func Test_gogit_GetCanonicalRemote(t *testing.T) {
 
 	// create an initial remote repository, and add a new bogus commit to it.
 	remote, repo := testutil.NewTestRepo(t)
-	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
+	testutil.CommitTestFiles(repo)
 
 	// clone the remote repository into 'cloneA'.
 	// This will create an origin remote pointing to the remote.
@@ -347,6 +347,143 @@ func Test_gogit_GetCanonicalRemote(t *testing.T) {
 	})
 }
 
+func Test_gogit_DeleteRemote(t *testing.T) {
+	t.Parallel()
+
+	var gg gogit
+
+	// create an initial remote repository, and add a new bogus commit to it.
+	remote, repo := testutil.NewTestRepo(t)
+	testutil.CommitTestFiles(repo)
+
+	// clone the remote repository into 'clone'.
+	// This will create an origin remote pointing to the remote.
+	clone := testlib.TempDirAbs(t)
+	repo, err := git.PlainClone(clone, false, &git.CloneOptions{URL: remote})
+	if err != nil {
+		panic(err)
+	}
+
+	// create an 'upstream' remote to point to 'remote'.
+	if _, err := repo.CreateRemote(&config.RemoteConfig{
+		Name: "upstream",
+		URLs: []string{remote},
+	}); err != nil {
+		panic(err)
+	}
+
+	// get a repo object
+	ggRepoObject, isRepo := gg.IsRepository(t.Context(), clone)
+	if !isRepo {
+		panic("IsRepository() failed")
+	}
+
+	// delete the remote
+	if err := gg.DeleteRemote(t.Context(), clone, ggRepoObject, "upstream"); err != nil {
+		t.Error("DeleteRemote() got err != nil, want err = nil")
+	}
+
+	// check that it's gone
+	remoteAfter, err := gg.GetRemotes(t.Context(), clone, ggRepoObject)
+	if err != nil {
+		t.Error("GetRemotes() got err != nil, want err = nil")
+	}
+	if _, ok := remoteAfter["origin"]; !ok {
+		t.Error("DeleteRemote() deleted origin remote")
+	}
+	if _, ok := remoteAfter["upstream"]; ok {
+		t.Error("DeleteRemote() did not delete remote")
+	}
+}
+
+func Test_gogit_GetUsedRemotes(t *testing.T) {
+	t.Parallel()
+
+	t.Run("Repository with unused remote", func(t *testing.T) {
+		t.Parallel()
+
+		var gg gogit
+
+		// create an initial remote repository, and add a new bogus commit to it.
+		remote, repo := testutil.NewTestRepo(t)
+		testutil.CommitTestFiles(repo)
+
+		// clone the remote repository into 'clone'.
+		// This will create an origin remote pointing to the remote.
+		clone := testlib.TempDirAbs(t)
+		repo, err := git.PlainClone(clone, false, &git.CloneOptions{URL: remote})
+		if err != nil {
+			panic(err)
+		}
+
+		// create an 'upstream' remote to point to 'remote'.
+		if _, err := repo.CreateRemote(&config.RemoteConfig{
+			Name: "upstream",
+			URLs: []string{remote},
+		}); err != nil {
+			panic(err)
+		}
+
+		// get a repo object
+		ggRepoObject, isRepo := gg.IsRepository(t.Context(), clone)
+		if !isRepo {
+			panic("IsRepository() failed")
+		}
+
+		// get the used remotes
+		usedRemotes, err := gg.GetUsedRemotes(t.Context(), clone, ggRepoObject)
+		if err != nil {
+			t.Error("GetUsedRemotes() got err != nil, want err = nil")
+		}
+		if !reflect.DeepEqual(usedRemotes, []string{"origin"}) {
+			t.Errorf("GetUsedRemotes() got used remotes = %v, want used remotes = %v", usedRemotes, []string{"origin"})
+		}
+	})
+
+	t.Run("Repository without unused remotes", func(t *testing.T) {
+		t.Parallel()
+
+		var gg gogit
+
+		// create an initial remote repository, and add a new bogus commit to it.
+		remote, repo := testutil.NewTestRepo(t)
+		testutil.CommitTestFiles(repo)
+
+		// clone the remote repository into 'clone'.
+		// This will create an origin remote pointing to the remote.
+		clone := testlib.TempDirAbs(t)
+		repo, err := git.PlainClone(clone, false, &git.CloneOptions{URL: remote})
+		if err != nil {
+			panic(err)
+		}
+
+		// create an 'upstream' remote to point to 'remote'.
+		if _, err := repo.CreateRemote(&config.RemoteConfig{
+			Name: "upstream",
+			URLs: []string{remote},
+		}); err != nil {
+			panic(err)
+		}
+
+		testutil.CreateTrackingBranch(repo, "upstream", "feature", "feature")
+
+		// get a repo object
+		ggRepoObject, isRepo := gg.IsRepository(t.Context(), clone)
+		if !isRepo {
+			panic("IsRepository() failed")
+		}
+
+		// get the used remotes
+		usedRemotes, err := gg.GetUsedRemotes(t.Context(), clone, ggRepoObject)
+		if err != nil {
+			t.Error("GetUsedRemotes() got err != nil, want err = nil")
+		}
+		if !reflect.DeepEqual(usedRemotes, []string{"origin", "upstream"}) {
+			t.Errorf("GetUsedRemotes() got used remotes = %v, want used remotes = %v", usedRemotes, []string{"origin", "upstream"})
+		}
+	})
+}
+
 //nolint:tparallel,paralleltest
 func Test_gogit_SetRemoteURLs(t *testing.T) {
 	t.Parallel()
@@ -361,7 +498,7 @@ func Test_gogit_SetRemoteURLs(t *testing.T) {
 
 	// create an initial remote repository, and add a new bogus commit to it.
 	remote, repo := testutil.NewTestRepo(t)
-	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
+	testutil.CommitTestFiles(repo)
 
 	// clone the remote repository into 'clone'
 	clone := testlib.TempDirAbs(t)
@@ -431,7 +568,7 @@ func Test_gogit_Clone(t *testing.T) {
 
 	// create an initial remote repository, and add a new bogus commit to it.
 	remote, repo := testutil.NewTestRepo(t)
-	testutil.CommitTestFiles(repo, map[string]string{"commit1.txt": "I was added in commit 1. "})
+	testutil.CommitTestFiles(repo)
 
 	t.Run("cloning a repository", func(t *testing.T) {
 		t.Parallel()
@@ -476,7 +613,7 @@ func Test_gogit_Fetch(t *testing.T) {
 
 	// create an initial upstream repository, and add a new bogus commit to it.
 	upstream, upstreamRepo := testutil.NewTestRepo(t)
-	_, commitA := testutil.CommitTestFiles(upstreamRepo, map[string]string{"commita.txt": "Commit A"})
+	_, commitA := testutil.CommitTestFiles(upstreamRepo)
 
 	// clone upstream@commitA to the remote
 	remote := testlib.TempDirAbs(t)
@@ -501,8 +638,8 @@ func Test_gogit_Fetch(t *testing.T) {
 	}
 
 	// make distinct commits to the upstream and remote repo
-	_, commitB1 := testutil.CommitTestFiles(upstreamRepo, map[string]string{"commitb1.txt": "Commit B1"})
-	_, commitB2 := testutil.CommitTestFiles(remoteRepo, map[string]string{"commitb2.txt": "Commit B2"})
+	_, commitB1 := testutil.CommitTestFiles(upstreamRepo)
+	_, commitB2 := testutil.CommitTestFiles(remoteRepo)
 
 	// get a repo object
 	ggRepoObject, isRepo := gg.IsRepository(t.Context(), clone)
@@ -563,7 +700,7 @@ func Test_gogit_Pull(t *testing.T) {
 
 	// create the upstream repository
 	origin, originRepo := testutil.NewTestRepo(t)
-	testutil.CommitTestFiles(originRepo, map[string]string{"commita.txt": "Commit A"})
+	testutil.CommitTestFiles(originRepo)
 
 	// clone remote to the local clone
 	clone := testlib.TempDirAbs(t)
@@ -573,7 +710,7 @@ func Test_gogit_Pull(t *testing.T) {
 	}
 
 	// create a second commit in the remote repo
-	_, commitB := testutil.CommitTestFiles(originRepo, map[string]string{"commitb.txt": "Commit B"})
+	_, commitB := testutil.CommitTestFiles(originRepo)
 
 	// get a repo object
 	ggRepoObject, isRepo := gg.IsRepository(t.Context(), clone)
@@ -614,7 +751,7 @@ func Test_gogit_GetBranches(t *testing.T) {
 	// We create two branches 'branchA' and 'branchB'
 	clone, repo := testutil.NewTestRepo(t)
 
-	wt, _ := testutil.CommitTestFiles(repo, nil)
+	wt, _ := testutil.CommitTestFiles(repo)
 
 	if err := wt.Checkout(&git.CheckoutOptions{
 		Branch: plumbing.NewBranchReferenceName("branchA"),
@@ -769,8 +906,8 @@ func Test_gogit_IsSync(t *testing.T) {
 
 	// an upstream repository (has upstream itself)
 	upstream, upstreamRepo := testutil.NewTestRepo(t)
-	_, h1 := testutil.CommitTestFiles(upstreamRepo, nil)
-	testutil.CommitTestFiles(upstreamRepo, map[string]string{"dummy.txt": "I am an updated dummy file. "})
+	_, h1 := testutil.CommitTestFiles(upstreamRepo)
+	testutil.CommitTestFiles(upstreamRepo)
 
 	// a downstream clone that is one commit behind!
 	downstreamBehind := testlib.TempDirAbs(t)
@@ -803,7 +940,7 @@ func Test_gogit_IsSync(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	testutil.CommitTestFiles(aheadRepo, map[string]string{"dummy.txt": "I am a third dummy file. "})
+	testutil.CommitTestFiles(aheadRepo)
 
 	type args struct {
 		clonePath string

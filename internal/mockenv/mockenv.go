@@ -134,7 +134,7 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 
 	// create a repository
 	repo = testutil.NewTestRepoAt(fakeRemotePath, "")
-	testutil.CommitTestFiles(repo, map[string]string{"fake.txt": remotes[0]})
+	testutil.CommitTestFiles(repo)
 
 	// Register all the repositories.
 	// Here we rely on the fact that adding "/." to the end of a path does not change the actually cloned path.

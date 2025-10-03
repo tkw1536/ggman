@@ -33,7 +33,7 @@ func TestCommitTestFiles(t *testing.T) {
 
 	_, repo := testutil.NewTestRepo(t)
 
-	_, hash := testutil.CommitTestFiles(repo, nil)
+	_, hash := testutil.CommitTestFiles(repo)
 
 	// check that the repository has 'hash' checked out.
 	head, err := repo.Head()
@@ -43,5 +43,30 @@ func TestCommitTestFiles(t *testing.T) {
 
 	if head.Hash() != hash {
 		t.Errorf("CommitTestFiles: returned hash not checked out")
+	}
+}
+
+func TestCreateTrackingBranch(t *testing.T) {
+	t.Parallel()
+
+	_, repo := testutil.NewTestRepo(t)
+	testutil.CommitTestFiles(repo)
+
+	testutil.CreateTrackingBranch(repo, "origin", "feature", "main")
+
+	// check that the branch was created
+	branch, err := repo.Branch("feature")
+	if err != nil {
+		t.Errorf("CreateTrackingBranch: branch not created: %v", err)
+	}
+
+	// check that the branch tracks the correct remote
+	if branch.Remote != "origin" {
+		t.Errorf("CreateTrackingBranch: expected remote 'origin', got %q", branch.Remote)
+	}
+
+	// check that the branch merges with the correct remote branch
+	if branch.Merge.Short() != "main" {
+		t.Errorf("CreateTrackingBranch: expected merge 'main', got %q", branch.Merge.Short())
 	}
 }
