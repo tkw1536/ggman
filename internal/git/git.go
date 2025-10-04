@@ -102,6 +102,18 @@ type Git interface {
 	// May return other error types for other errors.
 	UpdateRemotes(ctx context.Context, clonePath string, updateFunc func(url, name string) (newURL string, err error)) error
 
+	// FindUnusedRemotes finds all unused remotes of the repository at clonePath.
+	//
+	// If there is no repository at clonePath returns ErrNotARepository.
+	// May return other error types for other errors.
+	FindUnusedRemotes(ctx context.Context, clonePath string) (unused map[string][]string, err error)
+
+	// DeleteRemotes deletes the given remotes from the repository at clonePath.
+	//
+	// If there is no repository at clonePath returns ErrNotARepository.
+	// May return other error types for other errors.
+	DeleteRemotes(ctx context.Context, clonePath string, remotes ...string) (err error)
+
 	// GetBranches gets the names of all branches contained in the repository at clonePath.
 	//
 	// If there is no repository at clonePath returns ErrNotARepository.
@@ -335,6 +347,53 @@ func (impl *defaultGitWrapper) UpdateRemotes(ctx context.Context, clonePath stri
 	}
 
 	return
+}
+
+func (impl *defaultGitWrapper) FindUnusedRemotes(ctx context.Context, clonePath string) (unused map[string][]string, err error) {
+	impl.ensureInit()
+
+	// check that the given folder is actually a repository
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
+	if !isRepo {
+		return nil, ErrNotARepository
+	}
+
+	// get active remotes
+	active, err := impl.git.GetRemotes(ctx, clonePath, repoObject)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get all remotes: %w", err)
+	}
+
+	// get the used remotes
+	used, err := impl.git.GetUsedRemotes(ctx, clonePath, repoObject)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get used remotes: %w", err)
+	}
+
+	// and return them
+	for _, remote := range used {
+		delete(active, remote)
+	}
+
+	return active, nil
+}
+
+func (impl *defaultGitWrapper) DeleteRemotes(ctx context.Context, clonePath string, remotes ...string) (err error) {
+	impl.ensureInit()
+
+	// check that the given folder is actually a repository
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
+	if !isRepo {
+		return ErrNotARepository
+	}
+
+	for _, remote := range remotes {
+		if err := impl.git.DeleteRemote(ctx, clonePath, repoObject, remote); err != nil {
+			return fmt.Errorf("failed to delete remote: %w", err)
+		}
+	}
+
+	return nil
 }
 
 func (impl *defaultGitWrapper) GetBranches(ctx context.Context, clonePath string) (branches []string, err error) {

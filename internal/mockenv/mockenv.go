@@ -110,13 +110,13 @@ func (mock *MockEnv) Clone(ctx context.Context, remote string, path ...string) (
 
 // Register registers a new remote repository with the provided urls.
 // All remote urls point to the same path.
-// Returns a reference to the remote repository.
+// Returns a reference to the remote repository, and a slice of local urls to be used in repositories instead of the remotes.
 //
 // Remotes must not have been registered before, or panic() will be called.
 //
 // The purpose of registering a remote is that it does not place a requirement for external services to be alive during testing.
 // Calls to clone or fetch the provided repository will instead of talking to the remote talk to this dummy repository instead.
-func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
+func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository, urls []string) {
 	if len(remotes) == 0 {
 		panic("Register: Must provide at least one remote. ")
 	}
@@ -140,12 +140,17 @@ func (mock *MockEnv) Register(remotes ...string) (repo *git.Repository) {
 	// Here we rely on the fact that adding "/." to the end of a path does not change the actually cloned path.
 	// We can thus add it to the mapped remote, and still refer to the same repository.
 	suffix := ""
+	urls = make([]string, 0, len(remotes))
 	for _, remote := range remotes {
-		mock.plumbing.URLMap[remote] = fakeRemotePath + suffix
+		fakePath := fakeRemotePath + suffix
+
+		mock.plumbing.URLMap[remote] = fakePath
+		urls = append(urls, fakePath)
+
 		suffix += string(os.PathSeparator) + "."
 	}
 
-	return repo
+	return repo, urls
 }
 
 // Run runs the command with the provided arguments.

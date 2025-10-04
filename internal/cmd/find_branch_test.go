@@ -38,7 +38,7 @@ func TestCommandFindBranch(t *testing.T) {
 	}
 
 	// with only master branch
-	repo = mock.Register("https://gitlab.com/hello/world.git")
+	repo, _ = mock.Register("https://gitlab.com/hello/world.git")
 	if err := repo.CreateBranch(&config.Branch{Name: "branchC"}); err != nil {
 		panic(err)
 	}

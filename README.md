@@ -500,6 +500,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.26.0 (Upcoming)
 
+- add `--prune-remotes` to `ggman fix`
 - pass `context.Context` into additional internal functions
 - update dependencies
 

@@ -19,7 +19,7 @@ func TestCommandFetch(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	// install git repo and make an extra commit
-	repo := mock.Register("https://github.com/hello/world.git")
+	repo, _ := mock.Register("https://github.com/hello/world.git")
 	clonePath := mock.Install(t.Context(), "https://github.com/hello/world.git", "hello", "world")
 	testutil.CommitTestFiles(repo)
 
