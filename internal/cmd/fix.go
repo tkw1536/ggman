@@ -58,7 +58,7 @@ func (f *fix) Exec(cmd *cobra.Command, args []string) error {
 	for _, repo := range environment.Repos(cmd.Context(), true) {
 		var initialMessage sync.Once // send an initial log message to the user, once
 
-		// first prune unsued remotes if requested (so we don't need to update them)
+		// first prune unused remotes if requested (so we don't need to update them)
 		if f.PruneRemotes {
 			remotes, e := environment.Git.FindUnusedRemotes(cmd.Context(), repo)
 			if e != nil {
@@ -124,7 +124,6 @@ func (f *fix) Exec(cmd *cobra.Command, args []string) error {
 			_, _ = fmt.Fprintln(cmd.ErrOrStderr(), e.Error()) // no way to report error
 			hasError = true
 		}
-
 	}
 
 	// if we had an error, indicate that to the user
