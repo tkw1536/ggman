@@ -1,16 +1,16 @@
 module go.tkw01536.de/ggman
 
-go 1.25.1
+go 1.25.2
 
 require (
 	al.essio.dev/pkg/shellescape v1.6.0
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964
-	github.com/go-git/go-git/v5 v5.16.2
+	github.com/go-git/go-git/v5 v5.16.3
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/spf13/cobra v1.10.1
 	github.com/yuin/goldmark v1.7.13
-	go.tkw01536.de/pkglib v0.0.0-20250913095709-89ab76e69d95
+	go.tkw01536.de/pkglib v0.0.0-20251011163824-149a5587a20d
 )
 
 require (
@@ -64,7 +64,7 @@ require (
 	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
 	github.com/curioswitch/go-reassign v0.3.0 // indirect
-	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
+	github.com/cyphar/filepath-securejoin v0.5.0 // indirect
 	github.com/daixiang0/gci v0.13.7 // indirect
 	github.com/dave/dst v0.27.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -186,7 +186,7 @@ require (
 	github.com/sergi/go-diff v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/sivchari/containedctx v1.0.3 // indirect
-	github.com/skeema/knownhosts v1.3.1 // indirect
+	github.com/skeema/knownhosts v1.3.2 // indirect
 	github.com/sonatard/noctx v0.4.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/sourcegraph/go-diff v0.7.0 // indirect
@@ -225,16 +225,16 @@ require (
 	go.uber.org/automaxprocs v1.6.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
-	golang.org/x/crypto v0.42.0 // indirect
+	golang.org/x/crypto v0.43.0 // indirect
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f // indirect
 	golang.org/x/exp/typeparams v0.0.0-20250620022241-b7579e27df2b // indirect
 	golang.org/x/mod v0.28.0 // indirect
-	golang.org/x/net v0.44.0 // indirect
+	golang.org/x/net v0.46.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/telemetry v0.0.0-20250908211612-aef8a434d053 // indirect
-	golang.org/x/term v0.35.0 // indirect
-	golang.org/x/text v0.29.0 // indirect
+	golang.org/x/term v0.36.0 // indirect
+	golang.org/x/text v0.30.0 // indirect
 	golang.org/x/tools v0.37.0 // indirect
 	golang.org/x/vuln v1.1.4 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
