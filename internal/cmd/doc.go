@@ -72,7 +72,8 @@ func (d *_doc) Exec(cmd *cobra.Command, args []string) (e error) {
 	defer l.Close() //nolint:errcheck // we don't care about a failed close
 
 	// determine the address of the server
-	addr := "http://" + l.Addr().String()
+	listenAddr := l.Addr()
+	addr := "http://" + net.JoinHostPort(d.Host, strconv.Itoa(listenAddr.(*net.TCPAddr).Port))
 	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "server listening at %s\n", addr); err != nil {
 		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}

@@ -18,8 +18,8 @@ func TestCommandDoc(t *testing.T) {
 	t.Parallel()
 
 	var (
-		port = strconv.Itoa(testutil.FindFreePort(t.Context()))
-		host = "127.0.0.1"
+		host = "localhost"
+		port = strconv.Itoa(testutil.FindFreePort(t.Context(), host))
 		addr = net.JoinHostPort(host, port)
 	)
 
@@ -73,6 +73,7 @@ func TestCommandDoc(t *testing.T) {
 	}
 
 	// check that the output is as expected
+
 	mock.AssertOutput(t, "Stdout", stdout, "server listening at http://"+addr+"\nshutting down server\n")
 	mock.AssertOutput(t, "Stderr", stderr, "")
 

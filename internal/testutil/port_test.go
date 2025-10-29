@@ -14,7 +14,7 @@ import (
 
 // ExampleFindFreePort demonstrates how to use FindFreePort.
 func ExampleFindFreePort() {
-	port := testutil.FindFreePort(context.Background())
+	port := testutil.FindFreePort(context.Background(), "localhost")
 	if port == 0 {
 		panic("free port is 0")
 	}
@@ -26,7 +26,7 @@ func ExampleFindFreePort() {
 
 func ExampleWaitForPort() {
 	// pick a random port
-	port := testutil.FindFreePort(context.Background())
+	port := testutil.FindFreePort(context.Background(), "localhost")
 	addr := net.JoinHostPort("127.0.0.1", strconv.Itoa(port))
 
 	waitPortReturned := make(chan struct{})
