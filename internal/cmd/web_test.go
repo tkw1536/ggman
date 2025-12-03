@@ -1,16 +1,20 @@
 package cmd_test
 
-//spellchecker:words path filepath testing ggman internal mockenv
+//spellchecker:words path filepath testing github config plumbing ggman internal mockenv testutil
 import (
 	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing"
 	"go.tkw01536.de/ggman/internal/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
+	"go.tkw01536.de/ggman/internal/testutil"
 )
 
-//spellchecker:words workdir reclone godoc
+//spellchecker:words workdir reclone godoc tparallel paralleltest worktree
 
 func TestCommandURL(t *testing.T) {
 	t.Parallel()
@@ -276,4 +280,142 @@ func TestCommandURL(t *testing.T) {
 			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
 	}
+}
+
+//nolint:tparallel,paralleltest
+func TestCommandURL_MultipleRemotes(t *testing.T) {
+	t.Parallel()
+	// The sub-tests need to be run sequentially, because they modify the repository
+	// using checkout.
+	// This cannot happen concurrently.
+
+	mock := mockenv.NewMockEnv(t)
+
+	const (
+		mainRemote = "git@example.com:main.git"
+		mainURL    = "https://example.com/main"
+
+		forkRemote = "git@example.com:fork.git"
+		forkURL    = "https://example.com/fork"
+	)
+
+	mock.Register(mainRemote)
+	_, featureRemotes := mock.Register(forkRemote)
+	clonePath := mock.Install(t.Context(), mainRemote, "github.com", "user", "repo")
+
+	// Open the cloned repository to manipulate it
+	repo, err := git.PlainOpen(clonePath)
+	if err != nil {
+		panic(err)
+	}
+
+	// Add a second remote "upstream" pointing to the feature
+	if _, err := repo.CreateRemote(&config.RemoteConfig{
+		Name: "fork",
+		URLs: []string{featureRemotes[0]},
+	}); err != nil {
+		panic(err)
+	}
+
+	// Get the worktree to create and checkout branches
+	wt, err := repo.Worktree()
+	if err != nil {
+		panic(err)
+	}
+
+	// Create three branches:
+	// - main => pointing to the main remote
+	// - fork => pointing to the fork remote
+	// - no_remote => no remote at all
+
+	testutil.CommitTestFiles(repo)
+	testutil.CreateTrackingBranch(repo, "origin", "main", "main")
+	testutil.CreateTrackingBranch(repo, "fork", "fork", "fork")
+	if err := wt.Checkout(&git.CheckoutOptions{
+		Branch: plumbing.NewBranchReferenceName("no_remote"),
+		Create: true,
+	}); err != nil {
+		panic(err)
+	}
+
+	// helper function so we can checkout specific branches
+	checkout := func(branch string) {
+		if err := wt.Checkout(&git.CheckoutOptions{
+			Branch: plumbing.NewBranchReferenceName(branch),
+		}); err != nil {
+			panic(err)
+		}
+	}
+
+	t.Run("main branch", func(t *testing.T) {
+		checkout("main")
+
+		if err := wt.Checkout(&git.CheckoutOptions{
+			Branch: plumbing.NewBranchReferenceName("main"),
+		}); err != nil {
+			panic(err)
+		}
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, clonePath, "", "url")
+		if code != 0 {
+			t.Errorf("main branch: Code = %d, wantCode = 0", code)
+		}
+		mock.AssertOutput(t, "main branch: Stdout", stdout, mainURL+"\n")
+		mock.AssertOutput(t, "main branch: Stderr", stderr, "")
+	})
+
+	t.Run("main branch with --remote", func(t *testing.T) {
+		checkout("main")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, clonePath, "", "url", "--remote", "fork")
+		if code != 0 {
+			t.Errorf("main branch with --remote: Code = %d, wantCode = 0", code)
+		}
+		mock.AssertOutput(t, "main branch with --remote: Stdout", stdout, forkURL+"\n")
+		mock.AssertOutput(t, "main branch with --remote: Stderr", stderr, "")
+	})
+
+	t.Run("fork branch", func(t *testing.T) {
+		checkout("fork")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, clonePath, "", "url")
+		if code != 0 {
+			t.Errorf("feature branch: Code = %d, wantCode = 0", code)
+		}
+		mock.AssertOutput(t, "feature branch: Stdout", stdout, forkURL+"\n")
+		mock.AssertOutput(t, "feature branch: Stderr", stderr, "")
+	})
+
+	t.Run("fork branch with --remote", func(t *testing.T) {
+		checkout("fork")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, clonePath, "", "url", "--remote", "origin")
+		if code != 0 {
+			t.Errorf("feature branch with --remote: Code = %d, wantCode = 0", code)
+		}
+		mock.AssertOutput(t, "feature branch with --remote: Stdout", stdout, mainURL+"\n")
+		mock.AssertOutput(t, "feature branch with --remote: Stderr", stderr, "")
+	})
+
+	t.Run("branch without remote", func(t *testing.T) {
+		checkout("no_remote")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, clonePath, "", "url")
+		if code != 0 {
+			t.Errorf("feature branch with --remote: Code = %d, wantCode = 0", code)
+		}
+		mock.AssertOutput(t, "feature branch with --remote: Stdout", stdout, mainURL+"\n")
+		mock.AssertOutput(t, "feature branch with --remote: Stderr", stderr, "")
+	})
+
+	t.Run("branch without remote with --remote", func(t *testing.T) {
+		checkout("no_remote")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, clonePath, "", "url", "--remote", "fork")
+		if code != 0 {
+			t.Errorf("feature branch with --remote: Code = %d, wantCode = 0", code)
+		}
+		mock.AssertOutput(t, "feature branch with --remote: Stdout", stdout, forkURL+"\n")
+		mock.AssertOutput(t, "feature branch with --remote: Stderr", stderr, "")
+	})
 }

@@ -490,7 +490,7 @@ func (gogit) getCurrentBranch(r *git.Repository) (name string, err error) {
 	}
 
 	// return the name
-	name = headName.String()
+	name = headName.Short()
 	return
 }
 

@@ -61,7 +61,7 @@ func addURLWebFlags(cmd *cobra.Command, impl *urlweb) {
 	flags.BoolVarP(&impl.BaseAsPrefix, "prefix", "p", false, "treat the base argument as a prefix, instead of the hostname")
 	flags.BoolVarP(&impl.Clone, "clone", "c", false, "if provided to the url command, print a \"git clone\" command that can be used to clone the current repository")
 	flags.BoolVarP(&impl.ReClone, "reclone", "r", false, "like clone, but uses the current remote url as opposed to the https one")
-	flags.StringVarP(&impl.Remote, "remote", "g", "", "optional name of git remote to show url for")
+	flags.StringVarP(&impl.Remote, "remote", "g", "", "optional name of git remote to show url for. defaults to the remote of the current branch, or the 'origin' remote if the current branch does not have an associated remote")
 }
 
 type urlweb struct {

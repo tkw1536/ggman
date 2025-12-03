@@ -501,6 +501,7 @@ ggman comes with the following builtin aliases:
 ### 1.26.0 (Upcoming)
 
 - add `--prune-remotes` to `ggman fix`
+- select `current remote` for `ggman url` and `ggman web`
 - pass `context.Context` into additional internal functions
 - update dependencies
 
