@@ -503,6 +503,7 @@ ggman comes with the following builtin aliases:
 - add `--prune-remotes` to `ggman fix`
 - select `current remote` for `ggman url` and `ggman web`
 - pass `context.Context` into additional internal functions
+- improve handling of repositories with multiple git remotes
 - update dependencies
 
 ### 1.25.0 (Released [Aug 16 2025](https://github.com/tkw1536/ggman/releases/tag/v1.25.0))
