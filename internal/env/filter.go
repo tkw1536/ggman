@@ -119,14 +119,9 @@ func (pat *PatternFilter) Score(ctx context.Context, env *Env, clonePath string)
 		return FilterDoesNotMatch
 	}
 
-	urlsToMatch := make([]string, 0, len(remoteMap))
-	for _, url := range remoteMap {
-		urlsToMatch = append(urlsToMatch, url)
-	}
-
-	// if there is no remote url (because the repo has been cleanly "init"ed)
-	// we use the relative path to the root directory to match.
-	if len(urlsToMatch) == 0 {
+	// If there are no remote urls (e.g. the repo has been locally "init"ed only)
+	// directly use the relative path to the root directory to match.
+	if len(remoteMap) == 0 {
 		root, err := env.absRoot()
 		if err != nil { // root not resolved
 			return FilterDoesNotMatch
@@ -139,19 +134,21 @@ func (pat *PatternFilter) Score(ctx context.Context, env *Env, clonePath string)
 		if err != nil { // relative path not resolved
 			return FilterDoesNotMatch
 		}
-		urlsToMatch = append(urlsToMatch, remote)
+		return pat.pattern.Score(remote)
 	}
 
-	// iterate over all candidate urls and find the highest score
-	highestScore := FilterDoesNotMatch
-	for _, url := range urlsToMatch {
-		score := pat.pattern.Score(url)
-		if score <= highestScore {
+	// check each of the remote urls against the pattern
+	// and determine the highest score.
+	score := FilterDoesNotMatch
+	for _, url := range remoteMap {
+		urlScore := pat.pattern.Score(url)
+		if urlScore <= score {
 			continue
 		}
-		highestScore = score
+		score = urlScore
 	}
-	return highestScore
+
+	return score
 }
 
 // MatchesURL checks if this filter matches a url.
