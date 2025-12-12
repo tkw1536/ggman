@@ -1,16 +1,20 @@
 package cmd_test
 
-//spellchecker:words path filepath testing ggman internal mockenv
+//spellchecker:words path filepath testing github config plumbing ggman internal mockenv testutil
 import (
 	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing"
 	"go.tkw01536.de/ggman/internal/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
+	"go.tkw01536.de/ggman/internal/testutil"
 )
 
-//spellchecker:words workdir GGROOT wrld
+//spellchecker:words workdir GGROOT wrld tparallel paralleltest worktree
 
 var testInputFile = `
 ; this and the following lines are ignored
@@ -361,4 +365,87 @@ func TestCommandLs(t *testing.T) {
 			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
 	}
+}
+
+//nolint:paralleltest
+func TestCommandLsPriorities(t *testing.T) {
+	mock := mockenv.NewMockEnv(t)
+
+	// Create a repository called "needle_in_haystack" with a single remote
+	// This repo should NOT be matched first when searching for "needle"
+	mock.Clone(t.Context(), "https://github.com/example/needle_in_haystack.git", "github.com", "example", "needle_in_haystack")
+
+	// Create a repository called "needle" with two branches pointing to two remotes:
+	// - "needle_match" branch => remote that contains "needle" exactly
+	// - "needle_no_match" branch => remote that does NOT contain "needle"
+	needleMatchRemote := "https://github.com/example/needle.git"
+	needleNoMatchRemote := "https://github.com/fork/repo.git"
+
+	mock.Register(needleMatchRemote)
+	_, needleNoMatchRemoteURLs := mock.Register(needleNoMatchRemote)
+	needlePath := mock.Install(t.Context(), needleMatchRemote, "github.com", "example", "needle")
+
+	// Open the cloned repository to manipulate it
+	repo, err := git.PlainOpen(needlePath)
+	if err != nil {
+		panic(err)
+	}
+
+	// Add a second remote "fork" pointing to a remote without "needle" in the name
+	if _, err := repo.CreateRemote(&config.RemoteConfig{
+		Name: "fork",
+		URLs: []string{needleNoMatchRemoteURLs[0]},
+	}); err != nil {
+		panic(err)
+	}
+
+	// Get the worktree to create and checkout branches
+	wt, err := repo.Worktree()
+	if err != nil {
+		panic(err)
+	}
+
+	// Create two branches:
+	// - needle_match => pointing to origin (which has "needle" in the URL)
+	// - needle_no_match => pointing to fork (which does NOT have "needle" in the URL)
+	testutil.CommitTestFiles(repo)
+	testutil.CreateTrackingBranch(repo, "origin", "needle_match", "main")
+	testutil.CreateTrackingBranch(repo, "fork", "needle_no_match", "main")
+
+	// helper function so we can checkout specific branches
+	checkout := func(branch string) {
+		if err := wt.Checkout(&git.CheckoutOptions{
+			Branch: plumbing.NewBranchReferenceName(branch),
+		}); err != nil {
+			panic(err)
+		}
+	}
+
+	// Test: When searching for "needle", the "needle" repo should always come first,
+	// regardless of which branch is checked out, because it has a remote that matches "needle" exactly
+
+	t.Run("needle_match branch checked out", func(t *testing.T) {
+		checkout("needle_match")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "--for", "needle", "ls")
+		if code != 0 {
+			t.Errorf("Code = %d, wantCode = 0", code)
+		}
+		// needle should come first because it has an exact match
+		mock.AssertOutput(t, "Stdout", stdout, "${GGROOT github.com example needle}\n${GGROOT github.com example needle_in_haystack}\n")
+		mock.AssertOutput(t, "Stderr", stderr, "")
+	})
+
+	t.Run("needle_no_match branch checked out", func(t *testing.T) {
+		checkout("needle_no_match")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "--for", "needle", "ls")
+		if code != 0 {
+			t.Errorf("Code = %d, wantCode = 0", code)
+		}
+		// needle should still come first because it has a remote (origin) that matches "needle" exactly
+		// even though the currently checked out branch points to a remote without "needle"
+		mock.AssertOutput(t, "Stdout", stdout, "${GGROOT github.com example needle}\n${GGROOT github.com example needle_in_haystack}\n")
+		mock.AssertOutput(t, "Stderr", stderr, "")
+	})
 }

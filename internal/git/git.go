@@ -93,6 +93,9 @@ type Git interface {
 	// May return other error types for other errors.
 	GetRemote(ctx context.Context, clonePath string, name string) (url string, err error)
 
+	// Like GetRemote but returns all remotes of the repository at clonePath.
+	GetAllRemotes(ctx context.Context, clonePath string) (remotes map[string]string, err error)
+
 	// UpdateRemotes updates the urls of all remotes of the repository at clonePath.
 	// updateFunc is a function that is called for each remote url to be updated.
 	// It should return the new url corresponding to each old url.
@@ -311,6 +314,32 @@ func (impl *defaultGitWrapper) GetRemote(ctx context.Context, clonePath string, 
 	}
 
 	return urls[0], nil
+}
+
+func (impl *defaultGitWrapper) GetAllRemotes(ctx context.Context, clonePath string) (remotes map[string]string, err error) {
+	impl.ensureInit()
+
+	// check that the given folder is actually a repository
+	repoObject, isRepo := impl.git.IsRepository(ctx, clonePath)
+	if !isRepo {
+		return nil, ErrNotARepository
+	}
+
+	// get all the remotes from the underlying backend
+	implRemotes, err := impl.git.GetRemotes(ctx, clonePath, repoObject)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get remotes: %w", err)
+	}
+
+	// and use the first url for each remote
+	remotes = make(map[string]string, len(implRemotes))
+	for name, urls := range implRemotes {
+		if len(urls) == 0 {
+			continue
+		}
+		remotes[name] = urls[0]
+	}
+	return remotes, nil
 }
 
 func (impl *defaultGitWrapper) UpdateRemotes(ctx context.Context, clonePath string, updateFunc func(url, name string) (string, error)) (err error) {
