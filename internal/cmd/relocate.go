@@ -31,13 +31,15 @@ func NewRelocateCommand() *cobra.Command {
 	}
 
 	flags := cmd.Flags()
+	flags.BoolVarP(&impl.OnlyCurrentRemote, "only-current-remote", "o", false, "consider only the current remote (as opposed to all remotes) when checking if a repository is in the correct location")
 	flags.BoolVarP(&impl.Simulate, "simulate", "s", false, "only print unix-like commands to move repositories around")
 
 	return cmd
 }
 
 type relocate struct {
-	Simulate bool
+	Simulate          bool
+	OnlyCurrentRemote bool
 }
 
 var (
@@ -59,19 +61,16 @@ func (r *relocate) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, gotPath := range environment.Repos(cmd.Context(), false) {
-		// determine the remote path and where it should go
-		remote, err := environment.Git.GetRemote(cmd.Context(), gotPath, "")
-		if err != nil || remote == "" { // ignore remotes that don't exist
+		// check if we are in a valid location
+		valid, err := isValidLocation(gotPath, r.OnlyCurrentRemote, cmd, environment)
+		if err != nil || valid {
 			continue
-		}
-		shouldPath, err := environment.Local(env.ParseURL(remote))
-		if err != nil {
-			return fmt.Errorf("%w: %w", env.ErrUnableLocalPath, err)
 		}
 
-		// if it is the same, don't move it
-		if fsx.Same(gotPath, shouldPath) {
-			continue
+		// find the path it should go to!
+		shouldPath, err := getCanonicalLocation(gotPath, cmd, environment)
+		if err != nil {
+			return fmt.Errorf("failed to determine canonical location: %w", err)
 		}
 
 		parentPath := filepath.Dir(shouldPath)
@@ -122,4 +121,53 @@ func (r *relocate) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	return nil
+}
+
+// isValidLocation checks if the repository at path is in the correct location.
+func isValidLocation(path string, onlyCurrentRemote bool, cmd *cobra.Command, environment *env.Env) (bool, error) {
+	if onlyCurrentRemote {
+		remote, err := getCanonicalLocation(path, cmd, environment)
+		if err != nil {
+			return false, fmt.Errorf("failed to get canonical location: %w", err)
+		}
+		return fsx.Same(path, remote), nil
+	}
+	remotes, err := environment.Git.GetAllRemotes(cmd.Context(), path)
+	if err != nil {
+		return false, fmt.Errorf("failed to get remotes: %w", err)
+	}
+
+	// if we don't have any remotes any path is fine.
+	if len(remotes) == 0 {
+		return true, nil
+	}
+
+	// check for each remote if it is fine.
+	for _, remote := range remotes {
+		shouldPath, err := environment.Local(env.ParseURL(remote))
+		if err != nil {
+			return false, fmt.Errorf("%w: %w", env.ErrUnableLocalPath, err)
+		}
+
+		// if it is the same, don't move it
+		if fsx.Same(path, shouldPath) {
+			return true, nil
+		}
+	}
+
+	// none of the remotes were fine!
+	return false, nil
+}
+
+// getCanonicalLocation gets the canonical location for a given repository.
+func getCanonicalLocation(path string, cmd *cobra.Command, environment *env.Env) (string, error) {
+	remote, err := environment.Git.GetRemote(cmd.Context(), path, "")
+	if err != nil || remote == "" { // ignore remotes that don't exist
+		return "", fmt.Errorf("failed to get remotes: %w", err)
+	}
+	shouldPath, err := environment.Local(env.ParseURL(remote))
+	if err != nil {
+		return "", fmt.Errorf("%w: %w", env.ErrUnableLocalPath, err)
+	}
+	return shouldPath, nil
 }

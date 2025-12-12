@@ -505,6 +505,10 @@ ggman comes with the following builtin aliases:
 - improve handling of repositories with multiple git remotes
 	- have `ggman url` and `ggman web` select remote based on current branch
 	- have `--for` match against all remotes, regardless of branch
+	- handle multiple remotes in `ggman relocate` (see below)
+- add `--only-current-repo` to `ggman relocate`
+	- by default, consider a repository correctly located for any remote URL
+	- use the new flag to recreate old behavior
 - update dependencies
 
 ### 1.25.0 (Released [Aug 16 2025](https://github.com/tkw1536/ggman/releases/tag/v1.25.0))

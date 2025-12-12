@@ -1,16 +1,20 @@
 package cmd_test
 
-//spellchecker:words path filepath testing ggman internal mockenv
+//spellchecker:words path filepath testing ggman internal mockenv testutil config plumbing
 import (
 	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing"
 	"go.tkw01536.de/ggman/internal/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
+	"go.tkw01536.de/ggman/internal/testutil"
 )
 
-//spellchecker:words workdir GGROOT tparallel paralleltest
+//spellchecker:words workdir GGROOT tparallel paralleltest nolint worktree
 
 //nolint:tparallel,paralleltest
 func TestCommandRelocate(t *testing.T) {
@@ -203,4 +207,150 @@ func TestCommandRelocate_existsPath(t *testing.T) {
 			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
 	}
+}
+
+//nolint:paralleltest
+func TestCommandRelocate_multipleRemotes(t *testing.T) {
+	const (
+		originRemote = "https://github.com/origin/repo.git"
+		forkRemote   = "https://github.com/fork/repo.git"
+	)
+
+	// setup sets up a new mock environment.
+	// It then creates a new repository with two branches:
+	// - 'origin_branch' => tracking the origin remote
+	// - 'fork_branch' => tracking the fork remote
+	// The given repository is installed to the given install path.
+	// Finally, the given branch is checked out.
+	setup := func(t *testing.T, installPath []string, branch string) *mockenv.MockEnv {
+		t.Helper()
+
+		//
+		mock := mockenv.NewMockEnv(t)
+		mock.Register(originRemote)
+		_, forkURLs := mock.Register(forkRemote)
+
+		repoPath := mock.Install(t.Context(), originRemote, installPath...)
+
+		// Open the cloned repository to manipulate it
+		repo, err := git.PlainOpen(repoPath)
+		if err != nil {
+			panic(err)
+		}
+
+		// Add a second remote "fork" pointing to the fork remote
+		if _, err := repo.CreateRemote(&config.RemoteConfig{
+			Name: "fork",
+			URLs: []string{forkURLs[0]},
+		}); err != nil {
+			panic(err)
+		}
+
+		// Get the worktree to create and checkout branches
+		wt, err := repo.Worktree()
+		if err != nil {
+			panic(err)
+		}
+
+		// Create two branches:
+		// - origin_branch => tracking origin
+		// - fork_branch => tracking fork
+		testutil.CommitTestFiles(repo)
+		testutil.CreateTrackingBranch(repo, "origin", "origin_branch", "main")
+		testutil.CreateTrackingBranch(repo, "fork", "fork_branch", "main")
+
+		// Checkout the specified branch
+		if err := wt.Checkout(&git.CheckoutOptions{
+			Branch: plumbing.NewBranchReferenceName(branch),
+		}); err != nil {
+			panic(err)
+		}
+
+		return mock
+	}
+
+	t.Run("at canonical path for checked out branch (origin)", func(t *testing.T) {
+		// Repository is at github.com/origin/repo (canonical for origin remote)
+		// and origin_branch is checked out (tracking origin remote)
+		mock := setup(t, []string{"github.com", "origin", "repo"}, "origin_branch")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate")
+		if code != 0 {
+			t.Errorf("Code = %d, wantCode = 0", code)
+		}
+		// No relocation needed - already at canonical path for origin remote
+		mock.AssertOutput(t, "Stdout", stdout, "")
+		mock.AssertOutput(t, "Stderr", stderr, "")
+	})
+
+	t.Run("at canonical path for checked out branch (origin) with only current remote", func(t *testing.T) {
+		// Repository is at github.com/origin/repo (canonical for origin remote)
+		// and origin_branch is checked out (tracking origin remote)
+		mock := setup(t, []string{"github.com", "origin", "repo"}, "origin_branch")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate", "--only-current-remote")
+		if code != 0 {
+			t.Errorf("Code = %d, wantCode = 0", code)
+		}
+		// No relocation needed - already at canonical path for origin remote
+		mock.AssertOutput(t, "Stdout", stdout, "")
+		mock.AssertOutput(t, "Stderr", stderr, "")
+	})
+
+	t.Run("at canonical path for non-checked out branch (fork)", func(t *testing.T) {
+		// Repository is at github.com/fork/repo (canonical for fork remote)
+		// but origin_branch is checked out (tracking origin remote)
+		mock := setup(t, []string{"github.com", "fork", "repo"}, "origin_branch")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate")
+		if code != 0 {
+			t.Errorf("Code = %d, wantCode = 0", code)
+		}
+		// No relocation needed - at canonical path for fork remote (even though origin_branch is checked out)
+		mock.AssertOutput(t, "Stdout", stdout, "")
+		mock.AssertOutput(t, "Stderr", stderr, "")
+	})
+
+	t.Run("at canonical path for non-checked out branch (fork) with only current remote", func(t *testing.T) {
+		// Repository is at github.com/fork/repo (canonical for fork remote)
+		// but origin_branch is checked out (tracking origin remote)
+		mock := setup(t, []string{"github.com", "fork", "repo"}, "origin_branch")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate", "--only-current-remote")
+		if code != 0 {
+			t.Errorf("Code = %d, wantCode = 0", code)
+		}
+
+		// Should relocate to origin remote path (canonical remote of current branch)
+		mock.AssertOutput(t, "Stdout", stdout, "mkdir -p `${GGROOT github.com origin}`\nmv `${GGROOT github.com fork repo}` `${GGROOT github.com origin repo}`\n")
+		mock.AssertOutput(t, "Stderr", stderr, "")
+	})
+
+	t.Run("not at canonical path for any remote", func(t *testing.T) {
+		// Repository is at github.com/wrong/repo (not canonical for either remote)
+		// fork_branch is checked out (tracking fork remote)
+		mock := setup(t, []string{"github.com", "wrong", "repo"}, "fork_branch")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate")
+		if code != 0 {
+			t.Errorf("Code = %d, wantCode = 0", code)
+		}
+		// Should relocate to fork remote path (canonical remote of current branch)
+		mock.AssertOutput(t, "Stdout", stdout, "mkdir -p `${GGROOT github.com fork}`\nmv `${GGROOT github.com wrong repo}` `${GGROOT github.com fork repo}`\n")
+		mock.AssertOutput(t, "Stderr", stderr, "")
+	})
+
+	t.Run("not at canonical path for any remote and only-current-remote set", func(t *testing.T) {
+		// Repository is at github.com/wrong/repo (not canonical for either remote)
+		// fork_branch is checked out (tracking fork remote)
+		mock := setup(t, []string{"github.com", "wrong", "repo"}, "fork_branch")
+
+		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate", "--only-current-remote")
+		if code != 0 {
+			t.Errorf("Code = %d, wantCode = 0", code)
+		}
+		// Should relocate to fork remote path (canonical remote of current branch)
+		mock.AssertOutput(t, "Stdout", stdout, "mkdir -p `${GGROOT github.com fork}`\nmv `${GGROOT github.com wrong repo}` `${GGROOT github.com fork repo}`\n")
+		mock.AssertOutput(t, "Stderr", stderr, "")
+	})
 }
