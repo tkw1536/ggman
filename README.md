@@ -500,6 +500,8 @@ ggman comes with the following builtin aliases:
 
 ### 1.26.0 (Upcoming)
 
+### 1.26.0 (Released [Dec 31 2025](https://github.com/tkw1536/ggman/releases/tag/v1.26.0))
+
 - add `--prune-remotes` to `ggman fix`
 - pass `context.Context` into additional internal functions
 - improve handling of repositories with multiple git remotes
