@@ -1,7 +1,7 @@
 //spellchecker:words testutil
 package testutil
 
-//spellchecker:words path testing time github config plumbing object pkglib testlib
+//spellchecker:words path sync atomic testing time github config plumbing object pkglib testlib
 import (
 	"fmt"
 	"os"

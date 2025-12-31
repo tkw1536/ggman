@@ -1,6 +1,6 @@
 package cmd_test
 
-//spellchecker:words path filepath testing ggman internal mockenv testutil config plumbing
+//spellchecker:words path filepath testing github config plumbing ggman internal mockenv testutil
 import (
 	"os"
 	"path/filepath"
