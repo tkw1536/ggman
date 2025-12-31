@@ -498,7 +498,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.26.0 (Upcoming)
+### 1.27.0 (Upcoming)
+
+- make build process more reproducable
 
 ### 1.26.0 (Released [Dec 31 2025](https://github.com/tkw1536/ggman/releases/tag/v1.26.0))
 
@@ -508,7 +510,7 @@ ggman comes with the following builtin aliases:
 	- have `ggman url` and `ggman web` select remote based on current branch
 	- have `--for` match against all remotes, regardless of branch
 	- handle multiple remotes in `ggman relocate` (see below)
-- add `--only-current-remote` to `ggman relocate`
+- add `--only-current-` to `ggman relocate`
 	- by default, consider a repository correctly located for any remote URL
 	- use the new flag to recreate old behavior
 - update dependencies

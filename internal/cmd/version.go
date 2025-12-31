@@ -29,7 +29,7 @@ func NewVersionCommand() *cobra.Command {
 type version struct{}
 
 func (version) Exec(cmd *cobra.Command, args []string) error {
-	_, err := fmt.Fprintf(cmd.OutOrStdout(), "%s, built %s, using %s\n", ggman.BuildVersion, ggman.BuildTime, runtime.Version())
+	_, err := fmt.Fprintf(cmd.OutOrStdout(), "%s, built using %s\n", ggman.BuildVersion, runtime.Version())
 	if err != nil {
 		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
