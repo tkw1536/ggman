@@ -1,10 +1,6 @@
 //spellchecker:words ggman
 package ggman
 
-//spellchecker:words strconv time
-
-//spellchecker:words ggman
-
 // DefaultBuildVersion is the build version used when no information is available.
 const DefaultBuildVersion = "v0.0.0-unknown"
 
