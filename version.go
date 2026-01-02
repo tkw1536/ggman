@@ -2,9 +2,6 @@
 package ggman
 
 //spellchecker:words strconv time
-import (
-	"time"
-)
 
 //spellchecker:words ggman
 
@@ -13,11 +10,6 @@ const DefaultBuildVersion = "v0.0.0-unknown"
 
 // these private constants are set by the Makefile at build time.
 var buildVersion string = DefaultBuildVersion
-
-// Historic variable that used to containt the time the program was built.
-//
-// Deprecated: This is no longer set by the Makefile and will always hold 1970-01-01.
-var BuildTime time.Time
 
 // BuildVersion is the current version of this program.
 // This is only set by the ggman build process, and can not be found in this documentation.
