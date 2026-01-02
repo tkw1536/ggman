@@ -500,7 +500,7 @@ ggman comes with the following builtin aliases:
 
 ### 1.27.0 (Upcoming)
 
-- make build process more reproducable
+- make build process more reproducible
 
 ### 1.26.0 (Released [Dec 31 2025](https://github.com/tkw1536/ggman/releases/tag/v1.26.0))
 
