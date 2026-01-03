@@ -29,9 +29,19 @@ func NewVersionCommand() *cobra.Command {
 type version struct{}
 
 func (version) Exec(cmd *cobra.Command, args []string) error {
-	_, err := fmt.Fprintf(cmd.OutOrStdout(), "%s, built using %s\n", ggman.BuildVersion, runtime.Version())
-	if err != nil {
+	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "ggman %s\n", ggman.BuildVersion); err != nil {
 		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
+
+	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "runtime %s\n", runtime.Version()); err != nil {
+		return fmt.Errorf("%w: %w", errGenericOutput, err)
+	}
+
+	if hash, err := ggman.BuildHash(); err == nil {
+		if _, err := fmt.Fprintf(cmd.OutOrStdout(), "sha256 %s\n", hash); err != nil {
+			return fmt.Errorf("%w: %w", errGenericOutput, err)
+		}
+	}
+
 	return nil
 }

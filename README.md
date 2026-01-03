@@ -501,6 +501,7 @@ ggman comes with the following builtin aliases:
 ### 1.27.0 (Upcoming)
 
 - make build process more reproducible
+  - output `sha256` hash in `ggman version`
 
 ### 1.26.0 (Released [Dec 31 2025](https://github.com/tkw1536/ggman/releases/tag/v1.26.0))
 
