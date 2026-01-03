@@ -12,6 +12,7 @@
   "ignorePaths": [
     "LICENSE",
     "go.mod",
-    "go.sum"
+    "go.sum",
+    "dist/"
   ]
 }
