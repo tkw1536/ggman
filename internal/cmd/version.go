@@ -33,7 +33,7 @@ func (version) Exec(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 
-	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "runtime %s\n", runtime.Version()); err != nil {
+	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "GOOS=%s GOARCH=%s %s\n", runtime.GOOS, runtime.GOARCH, runtime.Version()); err != nil {
 		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 
