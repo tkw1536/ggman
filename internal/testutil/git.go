@@ -19,6 +19,11 @@ import (
 
 //spellchecker:words worktree nosec Storer
 
+// NewTestRepo creates a new empty repository for testing at an unspecified path.
+//
+// It returns a pair of path the repository has been created at and a git repository.
+// It is the callers responsibility to delete the test repository once it is no longer needed.
+//
 // If something goes wrong, the function calls panic().
 func NewTestRepo(t *testing.T) (clonePath string, repo *git.Repository) {
 	t.Helper()
@@ -35,6 +40,13 @@ func NewTestRepo(t *testing.T) (clonePath string, repo *git.Repository) {
 	return
 }
 
+// NewTestRepo creates a new empty repository for testing at the specified path.
+// If remote is a non-empty string, also creates a new remote called "origin" pointing to the given remote.
+//
+// It returns a reference to the underlying git repository.
+// It is the callers responsibility to delete the test repository once it is no longer needed.
+// If something goes wrong, the function returns nil.
+//
 // The 'remote' part of this function is untested.
 func NewTestRepoAt(clonePath, remote string) (repo *git.Repository) {
 	repo, err := git.PlainInit(clonePath, false)
