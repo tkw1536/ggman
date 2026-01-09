@@ -28,16 +28,33 @@ func FindFreePort(ctx context.Context, host string) int {
 	return port
 }
 
-const waitPortInterval = 10 * time.Millisecond
+const (
+	waitPortInterval = 10 * time.Millisecond
+	waitPortTimeout  = time.Second
+)
 
-// WaitForPort waits until the given address is reachable via TCP.
+// WaitForPort repeatedly attempts to connect to the given tcp address until a connection succeeds.
+// Once the connection succeeds, it is immediately closed.
+//
+// Each connection attempt is limited to an internal timeout.
+//
+// If the context closes before a connection is successful, returns an error wrapping the context.
 func WaitForPort(ctx context.Context, addr string) error {
 	var dialer net.Dialer
 
 	timer := time.NewTimer(waitPortInterval)
 	for {
-		// try to dial and close if successful
-		conn, err := dialer.DialContext(ctx, "tcp", addr)
+		var conn net.Conn
+		var err error
+
+		// try to connect with the given timeout
+		(func() {
+			sub_ctx, cancel := context.WithTimeout(ctx, waitPortTimeout)
+			defer cancel()
+			conn, err = dialer.DialContext(sub_ctx, "tcp", addr)
+		})()
+
+		// if we connected close the connection again
 		if err == nil {
 			if err := conn.Close(); err != nil {
 				return fmt.Errorf("failed to close connection: %w", err)
