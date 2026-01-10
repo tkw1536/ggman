@@ -6,10 +6,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// AddAlias adds command to act as an alias for another command of root.
+// addAlias adds the alias command to act as an alias for another command of root.
 // root is the root command the alias is to be added to.
 // expansion is the expansion, including flags, it will act as an alias for.
-func AddAlias(root *cobra.Command, alias *cobra.Command, expansion ...string) {
+func addAlias(root *cobra.Command, alias *cobra.Command, expansion ...string) {
 	alias.DisableFlagParsing = true
 	if alias.Long == "" {
 		alias.Long = "alias for '" + shellescape.QuoteCommand(append([]string{root.Name()}, expansion...)) + "'"

@@ -126,7 +126,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 			Expansion: []string{"--for"},
 		},
 	} {
-		AddAlias(root, alias.Command, alias.Expansion...)
+		addAlias(root, alias.Command, alias.Expansion...)
 	}
 
 	// wrap all the argument errors
@@ -139,14 +139,12 @@ func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 	}
 	wrapAllArgs(root)
 
-	// setup more flags
-
 	return root
 }
 
 var errInvalidArguments = exit.NewErrorWithCode("invalid arguments passed", env.ExitCommandArguments)
 
-// wrapArgs wraps a [cobra.PositionalArgs] error with the given error.
+// wrapArgs wraps a [cobra.PositionalArgs] error with an invalid arguments error.
 // The wrapping occurs by calling [fmt.Errorf] with a string of "%w: %w" and [errInvalidArguments].
 // If pos is nil, it is passed through as-is.
 func wrapArgs(pos cobra.PositionalArgs) cobra.PositionalArgs {
