@@ -87,8 +87,14 @@ func TestAllCommands(t *testing.T) {
 			t.Parallel()
 
 			cmd := tt.setupCmd()
-			var got []string
 
+			count := doc.CountCommands(cmd)
+			if count != len(tt.want) {
+				t.Errorf("CountCommands() = %d, want %d", count, len(tt.want))
+				return
+			}
+
+			got := make([]string, 0, count)
 			for c := range doc.AllCommands(cmd) {
 				got = append(got, c.Use)
 			}
