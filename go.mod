@@ -1,6 +1,6 @@
 module go.tkw01536.de/ggman
 
-go 1.25.5
+go 1.25.6
 
 require (
 	al.essio.dev/pkg/shellescape v1.6.0
@@ -10,7 +10,7 @@ require (
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/spf13/cobra v1.10.2
 	github.com/yuin/goldmark v1.7.16
-	go.tkw01536.de/pkglib v0.0.0-20260113224346-6868d48097f2
+	go.tkw01536.de/pkglib v0.0.0-20260116094045-a9784ae60b41
 )
 
 require (
@@ -171,7 +171,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/pjbgf/sha1cd v0.5.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/polyfloyd/go-errorlint v1.8.0 // indirect
 	github.com/prometheus/client_golang v1.12.1 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.32.1 // indirect
