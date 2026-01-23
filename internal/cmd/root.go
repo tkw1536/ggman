@@ -31,6 +31,54 @@ func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 		Version: ggman.BuildVersion,
 		Aliases: []string{os.Args[0]},
 		Short:   "A golang tool that can manage all your git repositories. ",
+		Long: `
+ggman is a golang tool that can manage all your git repositories. 
+
+#### What is ggman?
+
+When you only have a couple of git repositories that you work on it is perfectly feasible to manage them by using git clone, git pull and friends.
+However once the number of repositories grows beyond a small number this can become tedious:
+
+- It is hard to find which folder a repository has been cloned to
+- Getting an overview of what is cloned and what is not is hard
+- It's not easily possible to perform actions on more than one repo at once, e.g. git pull
+
+This is the problem ggman is designed to solve.
+It allows one to:
+
+- Maintain and expand a local directory structure of multiple repositories
+- Run actions (such as git clone, git pull) on groups of repositories
+
+#### Why ggman?
+
+While similar tools exist these commonly have a lot of downsides:
+
+- they enforce a flat directory structure;
+- they are limited to one repository provider (such as GitHub or GitLab); or
+- they are only available from within an IDE or GUI.
+
+ggman considers these as major downsides.
+The goals and principles of ggman are:
+
+- to be command-line first;
+- to be simple to install, configure and use;
+- to encourage an obvious hierarchical directory structure, but remain fully functional with any directory structure;
+- to remain free of forge- or provider-specific code; and
+- to not store any repository-specific data outside of the repositories themselves (enabling the user to switch back to only git at any point).
+
+#### How does ggman work?
+
+ggman is split into several sub-commands, which are described in the relevant documentation pages. 
+ggman has the following general exit behavior:
+
+  + Exit Code 0: Everything went ok
+  + Exit Code 1: Command Parsing went ok, but a subcommand-specific error occurred
+  + Exit Code 2: The user asked for an unknown subcommand
+  + Exit Code 3: Command-independent argument parsing failed, e.g. an invalid '--for'
+  + Exit Code 4: Command-dependent argument parsing failed
+  + Exit Code 5: Invalid configuration
+  + Exit Code 6: Unable to parse a repository name
+`,
 	}
 
 	// setup flags

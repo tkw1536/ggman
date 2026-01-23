@@ -35,7 +35,7 @@ The goals and principles of ggman are:
 - to be command-line first;
 - to be simple to install, configure and use;
 - to encourage an obvious hierarchical directory structure, but remain fully functional with any directory structure;
-- to remain free of provider-specific code; and
+- to remain free of forge- or provider-specific code; and
 - to not store any repository-specific data outside of the repositories themselves (enabling the user to switch back to only git at any point).
 
 ## Setting up and using 'ggman'
@@ -216,7 +216,7 @@ It has three values:
 
 ### 'ggman ls'
 
-While creating this folder structure when cloning new repositories, `ggman` can run operation on any other folder structure contained within the `GGROOT` directory. 
+While creating this folder structure when cloning new repositories, `ggman` can run operations on any other folder structure contained within the `GGROOT` directory. 
 For this purpose the `ggman ls` command lists all repositories that have been found in this structure. 
 
 For easier integration into scripts, `ggman ls` supports an `--exit-code` argument. 
@@ -425,7 +425,7 @@ Similarly,
 ggman web
 ```
 attempts to open the url of the current repository in a web-browser. 
-For this purpose it uses the CANSPEC `https://^/$`, which may not work with all git hosts. 
+For this purpose it uses the CANSPEC `https://^/$`, which may not work with all git forges. 
 It also takes an optional `--tree`, which behaves similar and above and optionally opens a url pointing to the current folder. 
 
 ```bash
@@ -505,6 +505,7 @@ ggman comes with the following builtin aliases:
 
 - make build process more reproducible
   - output `sha256` hash in `ggman version`
+- add long description to more commands
 
 ### 1.26.0 (Released [Dec 31 2025](https://github.com/tkw1536/ggman/releases/tag/v1.26.0))
 

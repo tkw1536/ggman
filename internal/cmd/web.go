@@ -22,8 +22,21 @@ func NewWebCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "web [BASE]",
 		Short: "Open the URL of this repository in a web browser",
-		Long:  "Web opens the URL of this repository in a web browser.",
-		Args:  cobra.MaximumNArgs(1),
+		Long: `'ggman web' attempts to open the url of the current repository in a web-browser. 
+For this purpose it uses the CANSPEC 'https://^/$', which may not work with all git forges. 
+It also takes an optional '--tree', which behaves similar and above and optionally opens a url pointing to the current folder. 
+
+'ggman web' also takes an optional base url. 
+If it is provided, the first component of the url is replace with the given base. 
+ggman also supports a number of "default" base urls. 
+
+For example:
+
+    ggman web godoc
+
+will open the current repo on [pkg.go.dev](https://pkg.go.dev). 
+To see a list of supported default urls, use 'ggman web --list-bases'`,
+		Args: cobra.MaximumNArgs(1),
 
 		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,

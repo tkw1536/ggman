@@ -30,8 +30,8 @@ Each program is run with a working directory set to the root of the provided rep
 Each program is inherits standard input, output and error streams from the ggman process.
 
 Exec prints the path to the repository the command is being run in to standard error.
-By default, 'ggman exec' exits with the exit code as soon as the first program that does not return code 0.
-If all programs return code 0, 'ggman exec' also exits with code 0.`,
+By default, ` + "`" + `ggman exec` + "`" + ` exits with the exit code as soon as the first program that does not return code 0.
+If all programs return code 0, ` + "`" + `ggman exec` + "`" + ` also exits with code 0.`,
 		Args: cobra.MinimumNArgs(1),
 
 		PreRunE: impl.ParseArgs,

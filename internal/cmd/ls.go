@@ -9,7 +9,7 @@ import (
 	"go.tkw01536.de/pkglib/exit"
 )
 
-//spellchecker:words wrapcheck
+//spellchecker:words wrapcheck wrld fnmatch GGROOT
 
 func NewLsCommand() *cobra.Command {
 	impl := new(ls)
@@ -17,8 +17,65 @@ func NewLsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "ls",
 		Short: "List local paths of cloned repositories",
-		Long:  `Ls prints a list of paths to all locally cloned repositories to standard output.`,
-		Args:  cobra.NoArgs,
+		Long: `
+While creating a folder structure for cloning new repositories, ggman can run operations on any other folder structure contained within the GGROOT directory. 
+For this purpose the 'ggman ls' command lists all repositories that have been found in this structure to standard output. 
+
+For easier integration into scripts, 'ggman ls' supports an '--exit-code' argument. 
+If this is given, the command will return exit code 0 iff at least one repository is found, and exit code 1 otherwise.
+
+Furthermore, the flag '--one' or the flags '--count' / '-n' can be given to limit the number of results.
+This is useful in specific scripting circumstances.
+
+#### Filtering repositories
+
+When running multi-repository operations, it is possible to limit the operations to a specific subset of repositories. 
+This is achieved by using the 'for' keyword along with a pattern. 
+For example, 'ggman --for "github.com/*/example" ls' will list all repositories from 'github.com' that are named 'example'. 
+
+Examples for simple supported patterns:
+
+  - "world" matches: git@github.com:hello/world.git, https://github.com/hello/world
+  - "hello/*" matches: git@github.com:hello/earth.git, git@github.com:hello/mars.git
+  - "hello/m*" matches: git@github.com:hello/mars.git, git@github.com:hello/mercury.git
+  - "github.com/*/*" matches: git@github.com:hello/world.git, git@github.com:bye/world.git
+  - "github.com/hello" matches: git@github.com:hello/world.git, git@github.com:hello/mars.git
+
+Patterns are generally applied against URL components (see below for details on how the splitting works).
+For example, to match the pattern 'hello/*', it is first split into the patterns 'hello' and '*'.
+These are then matched individually against the components of the URL.
+The matched components have to be sequential, but don't have to be at either end of the URL.
+
+Each component pattern can be one of the following:
+
+  - A case-insensitive fnmatch.3 pattern with '*', '?' and '[]' holding their usual meanings;
+  - A fuzzy string match, meaning the characters in the pattern have to occur in order of the characters in the string.
+
+When no special fnmatch characters are found, the implementation assumes a fuzzy match. 
+Fuzzy matching can also be explicitly disabled by passing the global '--no-fuzzy-filter' argument.
+
+A special case is when a pattern begins with '^' or ends with '$' (or both).
+Then any fuzzy matching is disabled, and any matches must start at the beginning (in the case '^') or end at the end (in the case '$') of the URL (or both).
+For example 'hello/world' matches both 'git@github.com:hello/world.git' and 'hello.com/world/example.git', but 'hello/world$' only matches the former.
+
+Note that the '--for' argument also works for exact repository urls, e.g. 'ggman --for "https://github.com/tkw1536/ggman" ls'. 
+'--for' also works with absolute or relative filepaths to locally installed repositories. 
+
+In addition, the '--for' argument by default uses a fuzzy matching algorithm.
+For example, the pattern 'wrld' will also match a repository called 'world'.
+Fuzzy matching only works for patterns that do not contain a special glob characters ('*' and friends).
+It is also possible to turn off fuzzy matching entirely by passing the '--no-fuzzy-filter' / '-n' argument.
+
+In addition to the '--for' argument, you can also use the '--path' argument.
+Instead of taking a pattern, it takes a (relative or absolute) filesystem path and matches all repositories under it.
+This also works when not inside 'GGROOT'.
+The '--path' argument can be provided multiple times.
+
+The '--here' argument is an alias for '--path .', meaning it matches only the repository located in the current working directory, or repositories under it. 
+
+These flags can also be used against other multi-repository operations, such as 'ggman pull' or 'ggman fix'.
+`,
+		Args: cobra.NoArgs,
 
 		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,

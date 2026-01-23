@@ -18,8 +18,12 @@ func NewFixCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "fix",
 		Short: "Canonicalize remote URLs for cloned repositories",
-		Long:  `The 'ggman fix' command canonicalizes the urls of all remotes of a repository.`,
-		Args:  cobra.NoArgs,
+		Long: `The 'ggman fix' command canonicalizes the urls of all remotes of a repository.
+
+This updates remotes of all matching repositories to their canonical form using the CANFILE.
+Optionally, you can pass a '--simulate' argument to 'ggman fix'.
+Instead of storing any urls, it will only print what is being done to STDOUT.`,
+		Args: cobra.NoArgs,
 
 		RunE: impl.Exec,
 	}

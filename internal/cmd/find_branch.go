@@ -16,7 +16,13 @@ func NewFindBranchCommand() *cobra.Command {
 		Use:   "find-branch BRANCH",
 		Short: "List repositories containing a specific branch",
 		Long: `Find-branch lists all repositories that contain a branch with the provided name.
-The remotes will be listed in dictionary order of their local installation paths.`,
+The remotes will be listed in dictionary order of their local installation paths.
+
+git 2.28 introduced the ` + "`" + `init.defaultBranch` + "`" + ` option to set the name of the default branch of new repositories.
+However this does not affect existing repositories.
+
+To find repositories with an old branch, the ` + "`" + `ggman find-branch` + "`" + ` command can be used.
+It takes a single argument (a branch name), and finds all repositories that contain a branch with the given name.`,
 		Args: cobra.ExactArgs(1),
 
 		PreRunE: impl.ParseArgs,

@@ -11,18 +11,25 @@ import (
 	"go.tkw01536.de/pkglib/exit"
 )
 
+//spellchecker:words GGROOT
+
 func NewEnvCommand() *cobra.Command {
 	impl := new(_env)
 
 	cmd := &cobra.Command{
 		Use:   "env [VAR...]",
 		Short: "Print information about the ggman environment",
-		Long: `Env prints "name=value" pairs about the environment the ggman command is running in to standard output.
-value is escaped for use in a shell.
+		Long: `
+To debug and inspect the current environment of the ggman command the ` + "`" + `ggman env` + "`" + ` command can be used.
+The environment exposed consists of a set of variables representing the state.
+Use ` + "`" + `ggman env --list` + "`" + ` to see a list of variables.
+Use ` + "`" + `ggman env --describe` + "`" + ` to see their corresponding human-readable descriptions.
+Use ` + "`" + `ggman env --raw` + "`" + ` to print the raw values of these variables in the same order.
+Use ` + "`" + `ggman env` + "`" + ` without any arguments to print escaped (variable, value) pairs.
 
-By default, env prints information about all known variables.
-To print information about a subset of variables, they can be provided as positional arguments.
-Variables names are matched case-insensitively.`,
+You can also provide a list of variables as arguments to list only those variables.
+For instance: ` + "`" + `ggman env --raw GGROOT` + "`" + ` will print the unescaped, raw value of the GGROOT environment variable.
+Variables are matched case-insensitive.`,
 		Args: cobra.ArbitraryArgs,
 
 		PreRunE: impl.ParseArgs,

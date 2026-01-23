@@ -18,9 +18,10 @@ func NewSweepCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "sweep",
 		Short: "find empty folders in the root folder",
-		Long: `The sweep command can be used to identify non-git directories within the GGROOT directory which are empty, or contain only subdirectories which are empty recursively. 
-Such directories are left behind after running the 'ggman relocate' command, or after manually deleting repositories. 
-The command takes no arguments, and produces them in an order such that they can be passed to 'rmdir' and be deleted.`,
+		Long: `The sweep command can be used to identify non-git directories within the GGROOT directory which are empty, or contain only subdirectories which are empty recursively.
+Such directories are left behind after running the ` + "`" + `ggman relocate` + "`" + ` command, or after manually deleting repositories.
+The command takes no arguments, and produces them in an order such that they can be passed to ` + "`" + `rmdir` + "`" + ` and be deleted.
+`,
 		Args: cobra.NoArgs,
 
 		RunE: impl.Exec,

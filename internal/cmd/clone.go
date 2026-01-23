@@ -12,7 +12,7 @@ import (
 	"go.tkw01536.de/pkglib/exit"
 )
 
-//spellchecker:words canonicalize
+//spellchecker:words canonicalize GGROOT
 
 func NewCloneCommand() *cobra.Command {
 	impl := new(clone)
@@ -20,11 +20,31 @@ func NewCloneCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "clone URL [ARGS...]",
 		Short: "Clone a repository into the local directory structure",
-		Long: `Clone clones the remote repository in the first argument into the path described to by 'ggman where'.
-It canonizes the url before cloning it.
-It optionally takes any argument that would be passed to the normal invocation of a git command.
+		Long: `Clone a new repository into the respective location using 'ggman clone' with the repository URL as the argument, for example:
 
-When 'git' is not available on the system ggman is running on, additional arguments may not be supported.`,
+  ggman clone git@github.com:hello/world.git
+
+which will clone the the hello world repository into '$GGROOT/github.com/hello/world'.
+This cloning not only works for the canonical repository url, but for any other url as well.
+For example:
+
+  ggman clone https://github.com/hello/world.git
+
+will do the same as the above command.
+
+When it is not desired that the canonical URL should be used, pass the '--exact-url' flag:
+
+  ggman clone --exact-url https://github.com/hello/world.git
+
+This will clone using the exact url into the same folder as above.
+
+If ggman has access to a real 'git' executable, it is also possible to pass additional arguments to it.
+For example:
+
+  ggman clone --exact-url https://github.com/hello/world.git -- --branch dev --depth 2
+
+will execute the command ` + "`" + `git clone git@github.com:hello/world.git --branch dev --depth 2` + "`" + ` under the hood.
+The extra '--' is needed to allow ggman to separate the internal flags from the external flags.`,
 		Args: cobra.ArbitraryArgs,
 
 		PreRunE: impl.ParseArgs,
