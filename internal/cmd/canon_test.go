@@ -2,6 +2,8 @@ package cmd_test
 
 //spellchecker:words testing ggman internal mockenv
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"go.tkw01536.de/ggman/internal/cmd"
@@ -109,6 +111,87 @@ func TestCommandCanon(t *testing.T) {
 
 			0,
 			"ssh://user@server.com:1234/repo.git\n",
+			"",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, tt.workDir, "", tt.args...)
+			if code != tt.wantCode {
+				t.Errorf("Code = %d, wantCode = %d", code, tt.wantCode)
+			}
+			mock.AssertOutput(t, "Stdout", stdout, tt.wantStdout)
+			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
+		})
+	}
+}
+
+func TestCommandCanon_ReplaceDomain(t *testing.T) {
+	t.Parallel()
+
+	mock := mockenv.NewMockEnv(t)
+
+	// Create and write out a CANFILE for purposes of this test.
+	CANFILE := filepath.Join(t.TempDir(), "canfile")
+	mock.SetCanfile(CANFILE)
+
+	if err := os.WriteFile(CANFILE, []byte(`
+# anything under example.com/namespace should be rewritten to a custom domain
+^example.com/namespace git@!custom.com:$.git
+
+# default to a normal pattern
+git@^:$.git
+	`), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []struct {
+		name    string
+		workDir string
+		args    []string
+
+		wantCode   uint8
+		wantStdout string
+		wantStderr string
+	}{
+		{
+			"normal repository",
+			"",
+			[]string{"canon", "git@server.com/user/repo"},
+
+			0,
+			"git@server.com:user/repo.git\n",
+			"",
+		},
+
+		{
+			"replaces domain for repo in namespace",
+			"",
+			[]string{"canon", "git@example.com/namespace/repo"},
+
+			0,
+			"git@custom.com:namespace/repo.git\n",
+			"",
+		},
+		{
+			"does not replace repo for other repo on same domain",
+			"",
+			[]string{"canon", "git@example.com/other/repo"},
+
+			0,
+			"git@example.com:other/repo.git\n",
+			"",
+		},
+		{
+			"does not replace repo for repo with similar prefix",
+			"",
+			[]string{"canon", "git@example.com/namespace_2/repo"},
+
+			0,
+			"git@example.com:namespace_2/repo.git\n",
 			"",
 		},
 	}
