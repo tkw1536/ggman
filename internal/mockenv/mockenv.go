@@ -78,6 +78,11 @@ func NewMockEnv(t *testing.T) *MockEnv {
 	}
 }
 
+// SetCanfile sets the CANFILE for the mock environment.
+func (mock *MockEnv) SetCanfile(canfile string) {
+	mock.vars.CANFILE = canfile
+}
+
 // Resolve resolves a local path within this environment.
 func (mock *MockEnv) Resolve(path ...string) string {
 	return filepath.Join(append([]string{mock.localRoot}, path...)...)
