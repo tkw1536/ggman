@@ -165,8 +165,10 @@ func (url URL) Components() []string {
 
 // Canonical returns the canonical version of this URI given a canonical specification
 // the canonical specification can contain any character, except for three special ones
+
 // ^ -- replaced by the first un-used component of the URI
 // % -- replaced by the second un-used component of the URI (commonly username)
+// ! -- consumes a component without using it
 // $ -- replaced by all remaining components in the URI joined with a '/'. Also stops all processing afterwards.
 // If $ does not exist in the cSpec, it is assumed to be at the end of the cSpec.
 func (url URL) Canonical(cSpec string) (canonical string) {
@@ -201,6 +203,9 @@ func (url URL) Canonical(cSpec string) (canonical string) {
 		case '^':
 			// write the first component
 			builder.WriteString(components[0])
+			components = components[1:]
+		case '!':
+			// drop the component of the URL
 			components = components[1:]
 		default:
 			builder.WriteRune(r)

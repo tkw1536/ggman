@@ -386,6 +386,7 @@ func TestRepoURL_Canonical(t *testing.T) {
 		{"Treat two components special", fields{"", "user", "", "server.com", 1234, "repository"}, args{"ssh://%@^/$.git"}, "ssh://user@server.com/repository.git"},
 		{"Empty specification string", fields{Scheme: "", User: "user", Password: "", HostName: "server.com", Port: 1234, Path: "repository"}, args{""}, "server.com/user/repository"},
 		{"Return original url", fields{"", "user", "", "server.com", 1234, "repository"}, args{"$$"}, "user@server.com:1234:repository"},
+		{"Drop a component", fields{"", "user", "", "server.com", 1234, "repository"}, args{"git@!other_server.com:$.git"}, "git@other_server.com:user/repository.git"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

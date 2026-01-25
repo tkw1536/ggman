@@ -43,6 +43,7 @@ CANSPEC characters are copied literally except:
 
 - '^' is replaced by the first component (hostname)
 - '%' is replaced by the second unused component (commonly username)
+- '!' consumes a component without using it in the output
 - '$' is replaced by remaining components joined with '/'; stops special processing
 
 If '$' is absent, it is assumed at the end.
@@ -52,6 +53,7 @@ Examples for components 'server.com', 'user', 'repository':
 
 - 'git@^:$.git' => 'git@server.com:user/repository.git'
 - 'ssh://%@^/$.git' => 'ssh://user@server.com/repository.git'
+- 'git@!ssh.server.com:$.git' => 'git@ssh.server.com:user/repository.git'
 - empty CANSPEC => 'server.com/user/repository'
 
 A CANFILE provides pattern-based CANSPEC rules.
@@ -65,7 +67,10 @@ Example CANFILE:
     # for anything on git.example.com, clone with https
     ^git.example.com https://$.git
 
-    # for anything on git2.example.com leave the urls unchanged
+    # for anything under a specific namespace use a custom domain name
+    ^git2.example.com/my_namespace/* git@!ssh.example.com:$.git
+
+    # for anything else on git2.example.com leave the urls unchanged
     ^git2.example.com $$
 
     # by default, clone via ssh

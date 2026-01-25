@@ -65,7 +65,10 @@ func TestCanFile_ReadFrom(t *testing.T) {
 # for anything on git.example.com, clone with https
 ^git.example.com https://$.git
 
-# for anything on git2.example.com leave the urls unchanged
+# for anything under a specific namespace use a custom domain name
+^git2.example.com/my_namespace/* git@!ssh.example.com:$.git
+
+# for anything else on git2.example.com leave the urls unchanged
 ^git2.example.com $$
 
 # by default, clone via ssh
@@ -73,6 +76,7 @@ git@^:$.git
 `,
 			wantCF: env.CanFile{
 				env.CanLine{Pattern: "^git.example.com", Canonical: "https://$.git"},
+				env.CanLine{Pattern: "^git2.example.com/my_namespace/*", Canonical: "git@!ssh.example.com:$.git"},
 				env.CanLine{Pattern: "^git2.example.com", Canonical: "$$"},
 				env.CanLine{Pattern: "", Canonical: "git@^:$.git"},
 			},
