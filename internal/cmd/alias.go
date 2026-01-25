@@ -12,7 +12,7 @@ import (
 func addAlias(root *cobra.Command, alias *cobra.Command, expansion ...string) {
 	alias.DisableFlagParsing = true
 	if alias.Long == "" {
-		alias.Long = "alias for '" + shellescape.QuoteCommand(append([]string{root.Name()}, expansion...)) + "'"
+		alias.Long = "Equivalent to '" + shellescape.QuoteCommand(append([]string{root.Name()}, expansion...)) + "'"
 	}
 	addModifier(root, alias, func(args []string) ([]string, error) {
 		argv := make([]string, 0, len(expansion)+len(args))

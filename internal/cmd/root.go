@@ -142,28 +142,28 @@ The goals and principles of ggman are:
 		{
 			Command: &cobra.Command{
 				Use:   "git",
-				Short: "Execute a git command using a native 'git' executable. ",
+				Short: "Execute a git command using a native 'git' executable",
 			},
 			Expansion: []string{"exec", "--", "git"},
 		},
 		{
 			Command: &cobra.Command{
 				Use:   "root",
-				Short: "Print the ggman root folder. ",
+				Short: "Print the ggman root folder",
 			},
 			Expansion: []string{"env", "--raw", "GGROOT"},
 		},
 		{
 			Command: &cobra.Command{
 				Use:   "require",
-				Short: "Require a remote git repository to be installed locally. ",
+				Short: "Require a remote git repository to be installed locally",
 			},
 			Expansion: []string{"clone", "--", "--force"},
 		},
 		{
 			Command: &cobra.Command{
 				Use:   "for",
-				Short: "Filter repositories by a given filter. ",
+				Short: "Filter repositories by a given filter",
 			},
 			Expansion: []string{"--for"},
 		},

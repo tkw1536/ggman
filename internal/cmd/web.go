@@ -25,7 +25,18 @@ func NewWebCommand() *cobra.Command {
 		Long: `Web opens the current repository URL in a web browser.
 The CANSPEC 'https://^/$' is used, which may not work with all git forges.
 
-The '--tree' flag opens a URL pointing to the current folder.
+The '--branch' flag includes the HEAD reference in the URL.
+The '--tree' flag includes the HEAD reference and path relative to the worktree root.
+
+For example invoking
+
+    ggman web --tree
+
+in the 'internal' directory of the cloned ggman repository opens
+
+    https://github.com/tkw1536/ggman/tree/main/internal
+
+in the browser.
 
 An optional base URL replaces the first URL component.
 Several built-in base URLs are supported.
