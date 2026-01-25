@@ -23,9 +23,9 @@ The provided path may be relative to the root of the repository.
 Sometimes it is useful to find specific files inside repository directories.
 This can be used to e.g. detect repositories of a specific language.
 
-For this purpose the ` + "`" + `ggman find-file` + "`" + ` command can be used.
+For this purpose the 'ggman find-file' command can be used.
 It takes a single argument (a file name), and finds all repository directories that contain a file with the given path.
-For example, use ` + "`" + `ggman find-file package.json` + "`" + ` to find all repositories with a ` + "`" + `package.json` + "`" + `.`,
+For example, use 'ggman find-file package.json' to find all repositories with a 'package.json'.`,
 		Args: cobra.ExactArgs(1),
 
 		PreRunE: impl.ParseArgs,

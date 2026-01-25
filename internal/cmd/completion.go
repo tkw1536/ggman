@@ -21,15 +21,17 @@ func NewCompletionCmd() *cobra.Command {
 		Long: fmt.Sprintf(`Completion generates a tab completion script for %[1]s.
 You must pass a shell name as the first argument.
 
-Available shells:    
-    bash
-    zsh
-    fish
-    powershell
+Supported shells:
+
+- bash
+- zsh
+- fish
+- powershell
 
 Installing the completion script is dependent on the shell you are using.
 
 Bash:
+
     $ source <(%[1]s completion bash)
 
     # To load completions for each session, execute once:
@@ -39,6 +41,7 @@ Bash:
     $ %[1]s completion bash > $(brew --prefix)/etc/bash_completion.d/%[1]s
 
 Zsh:
+
     # If shell completion is not already enabled in your environment,
     # you will need to enable it.  You can execute the following once:
 
@@ -49,13 +52,15 @@ Zsh:
 
     # You will need to start a new shell for this setup to take effect.
 
-fish:    
+fish:
+
     $ %[1]s completion fish | source
 
     # To load completions for each session, execute once:
     $ %[1]s completion fish > ~/.config/fish/completions/%[1]s.fish
-    
+
 PowerShell:
+
     PS> %[1]s completion powershell | Out-String | Invoke-Expression
 
     # To load completions for every new session, run:

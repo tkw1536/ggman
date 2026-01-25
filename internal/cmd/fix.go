@@ -22,7 +22,7 @@ func NewFixCommand() *cobra.Command {
 
 This updates remotes of all matching repositories to their canonical form using the CANFILE.
 Optionally, you can pass a '--simulate' argument to 'ggman fix'.
-Instead of storing any urls, it will only print what is being done to STDOUT.`,
+Instead of storing any urls, it will only print what is being done to standard output.`,
 		Args: cobra.NoArgs,
 
 		RunE: impl.Exec,

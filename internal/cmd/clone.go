@@ -43,7 +43,7 @@ For example:
 
   ggman clone --exact-url https://github.com/hello/world.git -- --branch dev --depth 2
 
-will execute the command ` + "`" + `git clone git@github.com:hello/world.git --branch dev --depth 2` + "`" + ` under the hood.
+will execute the command 'git clone git@github.com:hello/world.git --branch dev --depth 2' under the hood.
 The extra '--' is needed to allow ggman to separate the internal flags from the external flags.`,
 		Args: cobra.ArbitraryArgs,
 

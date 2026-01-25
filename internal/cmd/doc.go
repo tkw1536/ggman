@@ -32,7 +32,7 @@ func NewDocCommand() *cobra.Command {
 		Use:   "doc",
 		Short: "Start a server with ggman documentation",
 		Long: `Doc starts a server with the documentation of the ggman command.
-	The server is automatically opened in the browser.`,
+The server is automatically opened in the browser.`,
 		Args: cobra.NoArgs,
 
 		RunE: impl.Exec,

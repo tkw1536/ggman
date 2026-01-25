@@ -23,17 +23,16 @@ func NewLinkCommand() *cobra.Command {
 		Short: "Symlink a repository into the local repository structure",
 		Long: `Link symlinks the repository in the path passed as the first argument where it would have been cloned to inside 'ggman root'.
 
-Sometimes for various reasons a repository needs to live in a non-standard location outside of ` + "`" + `GGROOT` + "`" + `. 
-For example, in the case of ` + "`" + `go` + "`" + ` packages these need to live within ` + "`" + `$GOPATH` + "`" + `. 
-In this case, it is sometimes useful to symlink these repositories into the existing directory structure. 
-For this purpose, the ` + "`" + `ggman link` + "`" + ` command exists. 
-This takes the path to the local clone of an existing repository, which will then be linked into the existing structure. 
+Sometimes for various reasons a repository needs to live in a non-standard location outside of 'GGROOT'.
+For example, in the case of 'go' packages these need to live within '$GOPATH'.
+In this case, it is sometimes useful to symlink these repositories into the existing directory structure.
+For this purpose, the 'ggman link' command exists.
+This takes the path to the local clone of an existing repository, which will then be linked into the existing structure.
 For example
 
     ggman link $HOME/go/src/github.com/hello/world
 
-would link the repository in ` + "`" + `$HOME/go/src/github.com/hello/world` + "`" + ` into the right location. 
-Here, this corresponds to ` + "`" + `$GGROOT/github.com/hello/world` + "`" + `.`,
+would link the repository in '$HOME/go/src/github.com/hello/world' into '$GGROOT/github.com/hello/world'.`,
 		Args: cobra.ExactArgs(1),
 
 		PreRunE: impl.ParseArgs,

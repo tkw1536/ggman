@@ -27,8 +27,7 @@ func NewRelocateCommand() *cobra.Command {
 		Long: `Relocate moves all repositories to the location where they should be moved to if they had been cloned with 'ggman clone'.
 
 This can be useful to move one or multiple repositories into ggman's default structure.
-It can also be useful when a repository changes it's remote url and should be moved to the correct location. 
-`,
+It can also be useful when a repository changes its' remote url and should be moved to a new location.`,
 		Args: cobra.NoArgs,
 
 		RunE: impl.Exec,

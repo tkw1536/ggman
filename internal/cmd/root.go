@@ -31,8 +31,7 @@ func NewCommand(ctx context.Context, parameters env.Parameters) *cobra.Command {
 		Version: ggman.BuildVersion,
 		Aliases: []string{os.Args[0]},
 		Short:   "A golang tool that can manage all your git repositories. ",
-		Long: `
-ggman is a golang tool that can manage all your git repositories. 
+		Long: `ggman is a golang tool that can manage all your git repositories.
 
 #### What is ggman?
 
@@ -68,17 +67,16 @@ The goals and principles of ggman are:
 
 #### How does ggman work?
 
-ggman is split into several sub-commands, which are described in the relevant documentation pages. 
+ggman is split into several sub-commands, which are described in the relevant documentation pages.
 ggman has the following general exit behavior:
 
-  + Exit Code 0: Everything went ok
-  + Exit Code 1: Command Parsing went ok, but a subcommand-specific error occurred
-  + Exit Code 2: The user asked for an unknown subcommand
-  + Exit Code 3: Command-independent argument parsing failed, e.g. an invalid '--for'
-  + Exit Code 4: Command-dependent argument parsing failed
-  + Exit Code 5: Invalid configuration
-  + Exit Code 6: Unable to parse a repository name
-`,
+- Exit Code 0: Everything went ok
+- Exit Code 1: Command Parsing went ok, but a subcommand-specific error occurred
+- Exit Code 2: The user asked for an unknown subcommand
+- Exit Code 3: Command-independent argument parsing failed, e.g. an invalid '--for'
+- Exit Code 4: Command-dependent argument parsing failed
+- Exit Code 5: Invalid configuration
+- Exit Code 6: Unable to parse a repository name`,
 	}
 
 	// setup flags

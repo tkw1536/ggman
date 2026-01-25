@@ -18,7 +18,7 @@ func NewLsrCommand() *cobra.Command {
 		Use:   "lsr",
 		Short: "List remote URLs to all repositories",
 		Long: `Lsr is like 'ggman ls', but prints the remote URLs of all repositories.
-This takes an optional argument '--canonical' which, if provided, cause ggman to print canonical urls instead of the provided ones. `,
+This takes an optional argument '--canonical' which, if provided, causes ggman to print canonical urls instead of the provided ones.`,
 		Args: cobra.NoArgs,
 
 		RunE: impl.Exec,
