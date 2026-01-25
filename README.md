@@ -1,6 +1,6 @@
 # ggman
 
-<!-- spellchecker:words cspec fnmatch ggcd ggclone ggcode ggcursor ggdo ggman ggnorm ggroot ggshow godoc gopath goprogram janezicmatej jessevdk localgodoc pflag pkglib POSIX reclone shellrc struct subpackage testutil unsynced worktree wrld -->
+<!-- spellchecker:words cspec fnmatch ggcd ggclone ggcode ggcursor ggdo ggman ggnorm ggroot ggshow godoc gopath goprogram janezicmatej jessevdk localgodoc pflag pkglib POSIX reclone shellrc struct subpackage testutil unsynced worktree wrld hostnames -->
 
 ![CI Status](https://github.com/tkw1536/ggman/workflows/CI/badge.svg)
 
