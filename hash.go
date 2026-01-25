@@ -13,7 +13,7 @@ import (
 	"go.tkw01536.de/pkglib/errorsx"
 )
 
-// spellchecker:words nosec
+//spellchecker:words nosec
 
 var (
 	errNoExecutable         = errors.New("no executable found")
