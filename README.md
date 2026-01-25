@@ -334,7 +334,7 @@ An example CANFILE might be:
 ^git.example.com https://$.git
 
 # for anything under a specific namespace use a custom domain name
-^git2.example.com/my_namespace/ git@!ssh.example.com:$.git
+^git2.example.com/my_namespace git@!ssh.example.com:$.git
 
 # for anything else on git2.example.com leave the urls unchanged
 ^git2.example.com $$
