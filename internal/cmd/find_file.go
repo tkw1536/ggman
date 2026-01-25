@@ -17,15 +17,11 @@ func NewFindFileCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "find-file PATH",
 		Short: "List repositories containing a specific file",
-		Long: `Find-file lists all repositories that currently contain a file or directory with the provided name.
-The provided path may be relative to the root of the repository.
+		Long: `Find-file lists repositories containing a file or directory with the specified name.
+The path is relative to each repository root.
 
-Sometimes it is useful to find specific files inside repository directories.
-This can be used to e.g. detect repositories of a specific language.
-
-For this purpose the 'ggman find-file' command can be used.
-It takes a single argument (a file name), and finds all repository directories that contain a file with the given path.
-For example, use 'ggman find-file package.json' to find all repositories with a 'package.json'.`,
+This is useful for finding repositories of a specific type.
+For example, 'ggman find-file package.json' finds all repositories with a 'package.json'.`,
 		Args: cobra.ExactArgs(1),
 
 		PreRunE: impl.ParseArgs,

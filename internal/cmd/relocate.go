@@ -24,10 +24,10 @@ func NewRelocateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "relocate",
 		Short: "Move locally cloned repositories into locations as per \"ggman where\"",
-		Long: `Relocate moves all repositories to the location where they should be moved to if they had been cloned with 'ggman clone'.
+		Long: `Relocate moves repositories to their canonical locations as determined by 'ggman where'.
 
-This can be useful to move one or multiple repositories into ggman's default structure.
-It can also be useful when a repository changes its' remote url and should be moved to a new location.`,
+This is useful for migrating repositories into ggman's directory structure.
+It also handles repositories whose remote URL has changed.`,
 		Args: cobra.NoArgs,
 
 		RunE: impl.Exec,

@@ -20,31 +20,31 @@ func NewCloneCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "clone URL [ARGS...]",
 		Short: "Clone a repository into the local directory structure",
-		Long: `Clone a new repository into the respective location using 'ggman clone' with the repository URL as the argument, for example:
+		Long: `Clone clones a repository into its location within '$GGROOT'.
 
-  ggman clone git@github.com:hello/world.git
+For example
 
-which will clone the the hello world repository into '$GGROOT/github.com/hello/world'.
-This cloning not only works for the canonical repository url, but for any other url as well.
-For example:
+    ggman clone git@github.com:hello/world.git
 
-  ggman clone https://github.com/hello/world.git
+clones into '$GGROOT/github.com/hello/world'.
+Any URL format works; the canonical URL is used for cloning.
 
-will do the same as the above command.
+For example
 
-When it is not desired that the canonical URL should be used, pass the '--exact-url' flag:
+    ggman clone https://github.com/hello/world.git
 
-  ggman clone --exact-url https://github.com/hello/world.git
+produces the same result.
 
-This will clone using the exact url into the same folder as above.
+The '--exact-url' flag uses the provided URL without canonicalization:
 
-If ggman has access to a real 'git' executable, it is also possible to pass additional arguments to it.
-For example:
+    ggman clone --exact-url https://github.com/hello/world.git
 
-  ggman clone --exact-url https://github.com/hello/world.git -- --branch dev --depth 2
+Additional arguments can be passed to git after '--':
 
-will execute the command 'git clone git@github.com:hello/world.git --branch dev --depth 2' under the hood.
-The extra '--' is needed to allow ggman to separate the internal flags from the external flags.`,
+    ggman clone --exact-url https://github.com/hello/world.git -- --branch dev --depth 2
+
+This executes 'git clone git@github.com:hello/world.git --branch dev --depth 2'.
+The '--' separator distinguishes ggman flags from git flags.`,
 		Args: cobra.ArbitraryArgs,
 
 		PreRunE: impl.ParseArgs,

@@ -17,7 +17,7 @@ func NewPullCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "pull",
 		Short: "Run \"git pull\" on locally cloned repositories",
-		Long:  "Pull is the equivalent of running 'git pull' on all locally installed repositories.",
+		Long:  "Pull runs 'git pull' on all repositories.",
 		Args:  cobra.NoArgs,
 
 		RunE: impl.Exec,

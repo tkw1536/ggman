@@ -24,14 +24,14 @@ func NewExecCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "exec EXE [ARGS...]",
 		Short: "Execute a command for all repositories",
-		Long: `Exec executes an external command for every repository known to ggman.
+		Long: `Exec executes an external command in every repository.
 
-Each program is run with a working directory set to the root of the provided repository.
-Each program is inherits standard input, output and error streams from the ggman process.
+Each invocation runs with working directory set to the repository root.
+Standard input, output, and error streams are inherited from ggman.
 
-Exec prints the path to the repository the command is being run in to standard error.
-By default, 'ggman exec' exits with the exit code as soon as any program invocation returns a non-zero exit code.
-If all programs return code 0, 'ggman exec' also exits with code 0.`,
+The repository path is printed to standard error before each invocation.
+Exec exits with the first non-zero exit code encountered.
+Exit code 0 indicates all invocations succeeded.`,
 		Args: cobra.MinimumNArgs(1),
 
 		PreRunE: impl.ParseArgs,

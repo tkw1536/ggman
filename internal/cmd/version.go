@@ -17,7 +17,7 @@ func NewVersionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print version information and exit",
-		Long:  "Version prints version information about this program.",
+		Long:  "Version prints version information.",
 		Args:  cobra.NoArgs,
 
 		RunE: impl.Exec,

@@ -15,7 +15,7 @@ func NewFetchCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "fetch",
 		Short: "Run \"git fetch --all\" on all repositories",
-		Long:  `Fetch is the equivalent of running 'git fetch --all' on all repositories.`,
+		Long:  `Fetch runs 'git fetch --all' on all repositories.`,
 		Args:  cobra.NoArgs,
 
 		RunE: impl.Exec,

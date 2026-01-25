@@ -16,34 +16,31 @@ func NewWhereCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "where URL",
 		Short: "Print the location where a repository would be cloned to",
-		Long: `ggman manages all git repositories inside a given root directory, and automatically sets up new repositories relative to the URLs they are cloned from.
-Where prints to standard output the location where the remote repository described by the first argument would be cloned to.
+		Long: `Where prints the path where a repository from URL would be cloned to.
 
-Each segment of the path corresponds to a component of the repository url.
-The root folder defaults to '~/Projects' but can be customized using the 'GGROOT' environment variable.
-The root directory can be echoed using the command alias 'ggman root'.
+Each path segment corresponds to a URL component.
+The root defaults to '~/Projects' and can be customized via '$GGROOT'.
+The 'ggman root' alias prints the root directory.
 
-For example, when ggman clones a repository 'https://github.com/hello/world.git', this would automatically end up in '$GGROOT/github.com/hello/world'.
-This works not only for 'github.com' urls, but for any kind of url.
-To see where a repository would be cloned to (but not actually cloning it), use 'ggman where <REPO>'.
+For example, 'https://github.com/hello/world.git' clones to '$GGROOT/github.com/hello/world'.
+This works for any URL, not just 'github.com'.
 
-As of ggman 1.12, this translation of URLs into paths takes existing paths into account.
-In particular, it re-uses existing sub-paths if they differ from the requested path only by casing.
+Since ggman 1.12, path resolution considers existing directories.
+Existing sub-paths differing only by case are reused.
 
-For example, say the directory '$GGROOT/github.com/hello' exists and the user requests to clone 'https://github.com/HELLO/world.git'.
-Before 1.12, this clone would end up in '$GGROOT/github.com/HELLO/world', resulting in two directories '$GGROOT/github.com/HELLO' and '$GGROOT/github.com/hello'.
-After 1.12, this clone will end up in '$GGROOT/github.com/hello/world'.
-While this means placing of repositories needs to touch the disk (and check for existing directories), it results in less directory clutter.
+For example, if '$GGROOT/github.com/hello' exists and 'https://github.com/HELLO/world.git' is cloned:
 
-By default, the first matching directory (in alphanumerical order) is used as opposed to creating a new one.
-If a directory with the exact name exists, this is preferred over a case-insensitive match.
+- Before 1.12: cloned to '$GGROOT/github.com/HELLO/world', creating duplicate directories
+- After 1.12: cloned to '$GGROOT/github.com/hello/world', reusing the existing directory
 
-This normalization behavior can be controlled using the 'GGNORM' environment variable.
-It has three values:
+The first matching directory (alphanumerically) is used.
+Exact name matches are preferred over case-insensitive matches.
 
-- 'smart' (use first matching path, prefer exact matches, default behavior);
-- 'fold' (fold paths, but do not prefer exact matches); and
-- 'none' (always use exact paths, legacy behavior)`,
+The '$GGNORM' environment variable controls normalization:
+
+- 'smart' => use first matching path, prefer exact matches (default)
+- 'fold' => fold paths, do not prefer exact matches
+- 'none' => always use exact paths (legacy behavior)`,
 		Args: cobra.ExactArgs(1),
 
 		PreRunE: impl.ParseArgs,

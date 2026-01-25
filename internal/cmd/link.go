@@ -21,18 +21,17 @@ func NewLinkCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "link PATH",
 		Short: "Symlink a repository into the local repository structure",
-		Long: `Link symlinks the repository in the path passed as the first argument where it would have been cloned to inside 'ggman root'.
+		Long: `Link creates a symlink from the ggman-managed location to a repository at an external path.
 
-Sometimes for various reasons a repository needs to live in a non-standard location outside of 'GGROOT'.
-For example, in the case of 'go' packages these need to live within '$GOPATH'.
-In this case, it is sometimes useful to symlink these repositories into the existing directory structure.
-For this purpose, the 'ggman link' command exists.
-This takes the path to the local clone of an existing repository, which will then be linked into the existing structure.
+Repositories sometimes need to live outside of '$GGROOT'.
+For example, 'go' packages need to live within '$GOPATH'.
+Link allows these repositories to still appear in the ggman directory structure.
+
 For example
 
-    ggman link $HOME/go/src/github.com/hello/world
+    ggman link ~/go/src/github.com/hello/world
 
-would link the repository in '$HOME/go/src/github.com/hello/world' into '$GGROOT/github.com/hello/world'.`,
+creates a symlink at '$GGROOT/github.com/hello/world' pointing to '~/go/src/github.com/hello/world'.`,
 		Args: cobra.ExactArgs(1),
 
 		PreRunE: impl.ParseArgs,

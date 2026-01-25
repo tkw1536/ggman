@@ -19,16 +19,17 @@ func NewEnvCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "env [VAR...]",
 		Short: "Print information about the ggman environment",
-		Long: `To debug and inspect the current environment of the ggman command the 'ggman env' command can be used.
-The environment exposed consists of a set of variables representing the state.
-Use 'ggman env --list' to see a list of variables.
-Use 'ggman env --describe' to see their corresponding human-readable descriptions.
-Use 'ggman env --raw' to print the raw values of these variables in the same order.
-Use 'ggman env' without any arguments to print escaped (variable, value) pairs.
+		Long: `Env prints information about the ggman environment.
+The environment consists of a set of variables representing the current state.
 
-You can also provide a list of variables as arguments to list only those variables.
-For instance: 'ggman env --raw GGROOT' will print the unescaped, raw value of the GGROOT environment variable.
-Variables are matched case-insensitive.`,
+The '--list' flag prints only variable names.
+The '--describe' flag prints variable names with their descriptions.
+The '--raw' flag prints only the raw values.
+Without flags, escaped (variable, value) pairs are printed.
+
+Providing variable names as arguments restricts output to those variables.
+For example, 'ggman env --raw GGROOT' prints the raw value of '$GGROOT'.
+Variable names are matched case-insensitively.`,
 		Args: cobra.ArbitraryArgs,
 
 		PreRunE: impl.ParseArgs,

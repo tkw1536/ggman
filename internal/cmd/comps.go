@@ -16,10 +16,10 @@ func NewCompsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "comps URL",
 		Short: "Print the components of a URL",
-		Long: `Comps prints the components of the first argument passed to it.
-Each component is printed on a separate line of standard output.
+		Long: `Comps prints the URL components of the first argument.
+Each component is printed on a separate line.
 
-See 'ggman canon' for more information on canonical URLs and components.`,
+See 'ggman canon' for details on URL components.`,
 		Args: cobra.ExactArgs(1),
 
 		PreRunE: impl.ParseArgs,
