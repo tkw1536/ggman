@@ -270,8 +270,8 @@ func (impl *defaultGitWrapper) Pull(ctx context.Context, stream stream.IOStream,
 }
 
 var (
-	errRemoteNotFound = errors.New("remote not found")
-	errNoRemoteURL    = errors.New("no remote URL found")
+	errRemoteNotFound = errors.New("failed to find remote")
+	errNoRemoteURL    = errors.New("failed to find remote URL")
 )
 
 func (impl *defaultGitWrapper) GetRemote(ctx context.Context, clonePath string, name string) (uri string, err error) {

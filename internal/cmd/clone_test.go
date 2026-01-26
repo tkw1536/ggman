@@ -79,7 +79,7 @@ func TestCommandClone(t *testing.T) {
 
 			1,
 			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\n",
-			"unable to clone repository: another git repository already exists in target location\n",
+			"failed to clone repository: another git repository already exists in target location\n",
 		},
 
 		{
@@ -131,7 +131,7 @@ func TestCommandClone(t *testing.T) {
 
 			1,
 			"Cloning \"git@github.com:hello/world4.git\" into \"${GGROOT github.com hello world4}\" ...\n",
-			"external `git` not found, can not pass any additional arguments to `git clone`: --depth 1\n",
+			`failed to pass arguments: external "git" not found: --depth 1` + "\n",
 		},
 
 		{
@@ -161,7 +161,7 @@ func TestCommandClone(t *testing.T) {
 
 			1,
 			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\n",
-			"unable to clone repository: another git repository already exists in target location\n",
+			"failed to clone repository: another git repository already exists in target location\n",
 		},
 
 		{

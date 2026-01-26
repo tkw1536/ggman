@@ -146,13 +146,13 @@ func (uw *urlweb) ParseArgs(cmd *cobra.Command, args []string) error {
 }
 
 var (
-	errURLWebNoRelative        = exit.NewErrorWithCode("unable to use `--relative`: not inside GGROOT", env.ExitInvalidRepo)
-	errURLWebNoRemote          = exit.NewErrorWithCode("repository does not have a remote", env.ExitInvalidRepo)
-	errURLWebOutsideRepository = exit.NewErrorWithCode("not inside a ggman-controlled repository", env.ExitInvalidRepo)
+	errURLWebNoRelative        = exit.NewErrorWithCode(`failed to use "--relative": not inside GGROOT`, env.ExitInvalidRepo)
+	errURLWebNoRemote          = exit.NewErrorWithCode("failed to find remote: repository does not have a remote", env.ExitInvalidRepo)
+	errURLWebOutsideRepository = exit.NewErrorWithCode("failed to resolve repository: not inside a ggman-controlled repository", env.ExitInvalidRepo)
 
-	errWebFlagUnsupported = exit.NewErrorWithCode("flag unsupported by `ggman web`", env.ExitCommandArguments)
+	errWebFlagUnsupported = exit.NewErrorWithCode(`flag unsupported by "ggman web"`, env.ExitCommandArguments)
 
-	errURLFlagsUnsupported = exit.NewErrorWithCode("flag combination unsupported by `ggman url`", env.ExitCommandArguments)
+	errURLFlagsUnsupported = exit.NewErrorWithCode(`flag combination unsupported by "ggman url"`, env.ExitCommandArguments)
 	errURLFailedBrowser    = exit.NewErrorWithCode("failed to open browser", env.ExitGeneric)
 )
 

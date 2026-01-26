@@ -84,7 +84,7 @@ type completion struct {
 	}
 }
 
-var errNoShell = exit.NewErrorWithCode("no shell name provided", env.ExitCommandArguments)
+var errNoShell = exit.NewErrorWithCode("failed to determine shell: no shell name provided", env.ExitCommandArguments)
 
 func (c *completion) ParseArgs(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {

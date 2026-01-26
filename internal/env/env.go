@@ -106,7 +106,7 @@ func NewEnv(r Requirement, params Parameters) (*Env, error) {
 	return env, nil
 }
 
-var errMissingRoot = exit.NewErrorWithCode("unable to find GGROOT directory", ExitInvalidEnvironment)
+var errMissingRoot = exit.NewErrorWithCode("failed to find GGROOT directory", ExitInvalidEnvironment)
 
 // absRoot returns the absolute path to the root directory.
 // If the root directory is not set, returns an error of type Error.
@@ -201,7 +201,7 @@ func (env *Env) LoadDefaultCANFILE() (cf CanFile, err error) {
 }
 
 var (
-	errUnableToReadDirectory = errors.New("unable to read directory")
+	errUnableToReadDirectory = errors.New("failed to read directory")
 
 	// ErrUnableLocalPath should be used by callers to indicate that it was unable to get a local path.
 	ErrUnableLocalPath = exit.NewErrorWithCode("failed to get local path", ExitInvalidRepo)
@@ -256,8 +256,8 @@ const (
 )
 
 var (
-	errInvalidRoot = exit.NewErrorWithCode("unable to resolve root directory", ExitInvalidEnvironment)
-	errNotResolved = exit.NewErrorWithCode("unable to resolve repository", ExitInvalidRepo)
+	errInvalidRoot = exit.NewErrorWithCode("failed to resolve root directory", ExitInvalidEnvironment)
+	errNotResolved = exit.NewErrorWithCode("failed to resolve repository", ExitInvalidRepo)
 )
 
 // Abs returns the absolute path to path, unless it is already absolute.

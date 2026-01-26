@@ -47,7 +47,7 @@ func TestCommandLink(t *testing.T) {
 
 			1,
 			"",
-			"another directory already exists in target location\n",
+			"failed to create link: another directory already exists in target location\n",
 		},
 	}
 

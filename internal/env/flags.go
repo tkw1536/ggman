@@ -33,7 +33,7 @@ type Flags struct {
 	Pristine  bool
 }
 
-var errNotADirectory = exit.NewErrorWithCode("not a directory", ExitInvalidRepo)
+var errNotADirectory = exit.NewErrorWithCode("failed to resolve path: not a directory", ExitInvalidRepo)
 
 // NewFilter creates a new filter corresponding to the given Flags and Environment.
 func NewFilter(ctx context.Context, flags Flags, env *Env) (filter Filter, err error) {

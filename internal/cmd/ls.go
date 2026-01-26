@@ -85,8 +85,8 @@ type ls struct {
 
 var (
 	errLSExitFlag             = exit.NewErrorWithCode("", env.ExitGeneric)
-	errLsOnlyOneOfOneAndLimit = exit.NewErrorWithCode("only one of `--one` and `--count` may be provided", env.ExitCommandArguments)
-	errLsLimitNegative        = exit.NewErrorWithCode("`--count` may not be negative", env.ExitCommandArguments)
+	errLsOnlyOneOfOneAndLimit = exit.NewErrorWithCode(`only one of "--one" and "--count" may be provided`, env.ExitCommandArguments)
+	errLsLimitNegative        = exit.NewErrorWithCode(`"--count" may not be negative`, env.ExitCommandArguments)
 )
 
 func (l *ls) ParseArgs(cmd *cobra.Command, args []string) error {

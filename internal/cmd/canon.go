@@ -94,7 +94,7 @@ type canon struct {
 }
 
 var (
-	errCanonUnableCanFile = exit.NewErrorWithCode("unable to load default CANFILE", env.ExitContext)
+	errCanonUnableCanFile = exit.NewErrorWithCode("failed to load default CANFILE", env.ExitContext)
 )
 
 func (c *canon) ParseArgs(cmd *cobra.Command, args []string) error {
@@ -111,7 +111,7 @@ func (c *canon) Exec(cmd *cobra.Command, args []string) error {
 	if c.Positional.CANSPEC == "" {
 		env, err := env.GetEnv(cmd, env.Requirement{})
 		if err != nil {
-			return fmt.Errorf("failed to get environment: %w", err)
+			return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 		}
 
 		if file, err = env.LoadDefaultCANFILE(); err != nil {

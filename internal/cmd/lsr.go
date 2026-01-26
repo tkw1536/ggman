@@ -35,7 +35,7 @@ type lsr struct {
 	Canonical bool
 }
 
-var errLSRInvalidCanfile = exit.NewErrorWithCode("invalid CANFILE found", env.ExitInvalidEnvironment)
+var errLSRInvalidCanfile = exit.NewErrorWithCode("failed to parse CANFILE", env.ExitInvalidEnvironment)
 
 func (l *lsr) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := env.GetEnv(cmd, env.Requirement{

@@ -16,7 +16,7 @@ import (
 //spellchecker:words nosec
 
 var (
-	errNoExecutable         = errors.New("no executable found")
+	errNoExecutable         = errors.New("failed to find executable")
 	errOpenExecutableFailed = errors.New("failed to open executable")
 	errFailedToComputeHash  = errors.New("failed to compute hash")
 )

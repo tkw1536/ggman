@@ -59,7 +59,7 @@ func TestCommandEnv(t *testing.T) {
 
 			4,
 			"",
-			"\"NOT_EXISTS\": unknown environment variable\n",
+			"\"NOT_EXISTS\": failed to find environment variable\n",
 		},
 		{
 			"list single variable",
@@ -104,7 +104,7 @@ func TestCommandEnv(t *testing.T) {
 
 			4,
 			"",
-			"at most one of `--raw`, `--list` and `--describe` may be given\n",
+			`at most one of "--raw", "--list" and "--describe" may be given` + "\n",
 		},
 		{
 			"more than one mode (2)",
@@ -113,7 +113,7 @@ func TestCommandEnv(t *testing.T) {
 
 			4,
 			"",
-			"at most one of `--raw`, `--list` and `--describe` may be given\n",
+			`at most one of "--raw", "--list" and "--describe" may be given` + "\n",
 		},
 		{
 			"more than one mode (3)",
@@ -122,7 +122,7 @@ func TestCommandEnv(t *testing.T) {
 
 			4,
 			"",
-			"at most one of `--raw`, `--list` and `--describe` may be given\n",
+			`at most one of "--raw", "--list" and "--describe" may be given` + "\n",
 		},
 	}
 

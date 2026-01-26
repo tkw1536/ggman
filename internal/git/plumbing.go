@@ -467,12 +467,12 @@ func (gogit) GetUsedRemotes(ctx context.Context, clonePath string, repoObject an
 func (gogit) DeleteRemote(ctx context.Context, clonePath string, repoObject any, remote string) (err error) {
 	r := repoObject.(*git.Repository)
 	if err = r.DeleteRemote(remote); err != nil {
-		return fmt.Errorf("%q: unable to delete remote %s: %w", clonePath, remote, err)
+		return fmt.Errorf("failed to delete remote %q from %q: %w", remote, clonePath, err)
 	}
 	return nil
 }
 
-var errNotOnABranch = errors.New("not on a branch")
+var errNotOnABranch = errors.New("failed to resolve branch: not on a branch")
 
 func (gogit) getCurrentBranch(r *git.Repository) (name string, err error) {
 	// determine the current head and name of it
@@ -494,7 +494,7 @@ func (gogit) getCurrentBranch(r *git.Repository) (name string, err error) {
 	return
 }
 
-var errBranchNoRemote = errors.New("branch does not have an associated remote")
+var errBranchNoRemote = errors.New("failed to find remote: branch does not have an associated remote")
 
 func (gg gogit) getCurrentBranchRemote(r *git.Repository) (name string, err error) {
 	// get the current branch
@@ -521,7 +521,7 @@ func (gg gogit) getCurrentBranchRemote(r *git.Repository) (name string, err erro
 	return
 }
 
-var errLengthMustBeEqual = errors.New("cannot set remoteURL: Length of old and new urls must be identical")
+var errLengthMustBeEqual = errors.New("failed to set remote URL: length of old and new URLs must be identical")
 
 func (gogit) SetRemoteURLs(ctx context.Context, clonePath string, repoObject any, name string, urls []string) (err error) {
 	// get the repository
@@ -530,7 +530,7 @@ func (gogit) SetRemoteURLs(ctx context.Context, clonePath string, repoObject any
 	// get the desired remote
 	remote, err := r.Remote(name)
 	if err != nil {
-		err = fmt.Errorf("%q: unable to find remote %s: %w", clonePath, name, err)
+		err = fmt.Errorf("failed to find remote %q in %q: %w", name, clonePath, err)
 		return
 	}
 
@@ -572,7 +572,7 @@ func (gogit) Clone(ctx context.Context, stream stream.IOStream, remoteURI, clone
 	// run a plain git clone but intercept all errors
 	_, err := git.PlainClone(clonePath, false, &git.CloneOptions{URL: remoteURI, Progress: stream.Stderr})
 	if err != nil {
-		err = fmt.Errorf("%w: %w", exit.NewErrorWithCode(fmt.Sprintf("%q: unable clone repository", remoteURI), 1), err)
+		err = fmt.Errorf("%w: %w", exit.NewErrorWithCode(fmt.Sprintf("failed to clone repository %q", remoteURI), 1), err)
 	}
 
 	return err
@@ -596,7 +596,7 @@ func (gogit) Fetch(ctx context.Context, stream stream.IOStream, clonePath string
 
 		// fail on other errors
 		if err != nil {
-			err = fmt.Errorf("%q: unable to fetch remote %q: %w", clonePath, remote.Config().Name, err)
+			err = fmt.Errorf("failed to fetch remote %q from %q: %w", remote.Config().Name, clonePath, err)
 			return
 		}
 	}
@@ -726,7 +726,7 @@ func (gg gogit) IsSync(ctx context.Context, clonePath string, cache any) (sync b
 	return true, nil
 }
 
-var errNoUpstream = errors.New("no corresponding upstream to track")
+var errNoUpstream = errors.New("failed to find upstream: no corresponding upstream to track")
 
 // getTrackingRefs returns the src and dst upstream tracking refs for the provided branch.
 // When the branch, or the upstream tracking refs do not exist, returns ErrNoUpstream.

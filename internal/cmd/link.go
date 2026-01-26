@@ -48,11 +48,11 @@ type link struct {
 }
 
 var (
-	errLinkDoesNotExist  = exit.NewErrorWithCode("can not open source repository", env.ExitGeneric)
-	errLinkSamePath      = exit.NewErrorWithCode("link source and target are identical", env.ExitGeneric)
-	errLinkAlreadyExists = exit.NewErrorWithCode("another directory already exists in target location", env.ExitGeneric)
-	errLinkCheck         = exit.NewErrorWithCode("unable to check directory", env.ExitGeneric)
-	errLinkUnknown       = exit.NewErrorWithCode("unknown linking error", env.ExitGeneric)
+	errLinkDoesNotExist  = exit.NewErrorWithCode("failed to open source repository", env.ExitGeneric)
+	errLinkSamePath      = exit.NewErrorWithCode("failed to create link: source and target are identical", env.ExitGeneric)
+	errLinkAlreadyExists = exit.NewErrorWithCode("failed to create link: another directory already exists in target location", env.ExitGeneric)
+	errLinkCheck         = exit.NewErrorWithCode("failed to check directory", env.ExitGeneric)
+	errLinkUnknown       = exit.NewErrorWithCode("failed to create link: unknown error", env.ExitGeneric)
 )
 
 func (l *link) ParseArgs(cmd *cobra.Command, args []string) error {

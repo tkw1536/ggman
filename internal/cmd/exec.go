@@ -63,8 +63,8 @@ type exe struct {
 
 var (
 	errExecFatal              = exit.NewErrorWithCode("", env.ExitGeneric)
-	errExecParallelNegative   = exit.NewErrorWithCode("argument for `--parallel` must be non-negative", env.ExitCommandArguments)
-	errExecNoParallelSimulate = exit.NewErrorWithCode("`--simulate` expects `--parallel` to be 1", env.ExitCommandArguments)
+	errExecParallelNegative   = exit.NewErrorWithCode(`argument for "--parallel" must be non-negative`, env.ExitCommandArguments)
+	errExecNoParallelSimulate = exit.NewErrorWithCode(`"--simulate" expects "--parallel" to be 1`, env.ExitCommandArguments)
 )
 
 func (e *exe) ParseArgs(cmd *cobra.Command, args []string) error {

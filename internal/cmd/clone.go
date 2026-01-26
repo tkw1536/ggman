@@ -98,15 +98,15 @@ func (c *clone) ParseArgs(cmd *cobra.Command, args []string) error {
 var (
 	errCloneInvalidDestFlags  = exit.NewErrorWithCode(`invalid destination: "--to" and "--plain" may not be used together`, env.ExitCommandArguments)
 	errCloneInvalidForceFlags = exit.NewErrorWithCode(`"--overwrite" and "--force" are incompatible`, env.ExitCommandArguments)
-	errCloneInvalidDest       = exit.NewErrorWithCode("unable to determine local destination", env.ExitGeneralArguments)
-	errCloneCheckDest         = exit.NewErrorWithCode("unable to check if destination is a directory", env.ExitGeneric)
-	errCloneDeleteDest        = exit.NewErrorWithCode("unable to delete existing directory", env.ExitGeneric)
+	errCloneInvalidDest       = exit.NewErrorWithCode("failed to determine local destination", env.ExitGeneralArguments)
+	errCloneCheckDest         = exit.NewErrorWithCode("failed to check if destination is a directory", env.ExitGeneric)
+	errCloneDeleteDest        = exit.NewErrorWithCode("failed to delete existing directory", env.ExitGeneric)
 	errCloneLocalURI          = exit.NewErrorWithCode("invalid remote URI: invalid scheme, not a remote path", env.ExitCommandArguments)
-	errCloneAlreadyExists     = exit.NewErrorWithCode("unable to clone repository: another git repository already exists in target location", env.ExitGeneric)
-	errCloneNoArguments       = exit.NewErrorWithCode("external `git` not found, can not pass any additional arguments to `git clone`", env.ExitGeneric)
+	errCloneAlreadyExists     = exit.NewErrorWithCode("failed to clone repository: another git repository already exists in target location", env.ExitGeneric)
+	errCloneNoArguments       = exit.NewErrorWithCode(`failed to pass arguments: external "git" not found`, env.ExitGeneric)
 	errCloneOther             = exit.NewErrorWithCode("", env.ExitGeneric)
 
-	errCloneNoComps = errors.New("unable to find components of URI")
+	errCloneNoComps = errors.New("failed to find components of URI")
 )
 
 func (c *clone) Exec(cmd *cobra.Command, args []string) error {

@@ -38,7 +38,7 @@ can remove all directories.
 
 type sweep struct{}
 
-var errSweepScan = exit.NewErrorWithCode("error scanning for empty directories", env.ExitGeneric)
+var errSweepScan = exit.NewErrorWithCode("failed to scan for empty directories", env.ExitGeneric)
 
 func (sweep) Exec(cmd *cobra.Command, args []string) error {
 	environment, err := env.GetEnv(cmd, env.Requirement{
