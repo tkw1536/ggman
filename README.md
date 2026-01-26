@@ -510,15 +510,15 @@ ggman comes with the following builtin aliases:
 
 ### 1.27.0 (Upcoming)
 
-- make build process more reproducible
+- rework command documentation
+  - also rephrase a couple error messages for consistency 
+- make build process reproducible
   - output `sha256` hash in `ggman version`
   - print them in CI after building
-- rework command documentation
-- add `--overwrite` flag to `ggman clone`
-	- deletes any existing repository if it exists
 - allow discarding components with `!` in a CANSPEC
   - this allows replacing hostnames in URLs if needed
-- rephrase a couple error messages for consistency 
+- add `--overwrite` flag to `ggman clone`
+	- deletes any existing repository if it exists
 - update dependencies
 - minor cleanup of CI
 
