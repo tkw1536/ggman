@@ -508,7 +508,9 @@ ggman comes with the following builtin aliases:
 
 ## Changelog
 
-### 1.27.0 (Upcoming)
+### 1.28.0 (Upcoming)
+
+### 1.27.0 (Released [Jan 26 2026](https://github.com/tkw1536/ggman/releases/tag/v1.27.0))
 
 - rework command documentation
   - also rephrase a couple error messages for consistency 
