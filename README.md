@@ -510,6 +510,10 @@ ggman comes with the following builtin aliases:
 
 ### 1.28.0 (Upcoming)
 
+### 1.27.1 (Released [Jan 27 2026](https://github.com/tkw1536/ggman/releases/tag/v1.27.1))
+
+- minor rephrasing of legal notices
+
 ### 1.27.0 (Released [Jan 26 2026](https://github.com/tkw1536/ggman/releases/tag/v1.27.0))
 
 - rework command documentation

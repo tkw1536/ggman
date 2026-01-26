@@ -45,6 +45,6 @@ ggman is licensed under the terms of the MIT License:
 %s
 ================================================================================
 
-Furthermore, this executable may include code from the following projects:
+Furthermore, this executable contains code based on unmodified third-party libraries. 
 %s
 `
