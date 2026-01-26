@@ -513,6 +513,8 @@ ggman comes with the following builtin aliases:
 - make build process more reproducible
   - output `sha256` hash in `ggman version`
 - rework command documentation
+- add `--overwrite` flag to `ggman clone`
+	- deletes any existing repository if it exists
 - allow discarding components with `!` in a CANSPEC
   - this allows replacing hostnames in URLs if needed
 

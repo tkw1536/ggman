@@ -4,12 +4,14 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"al.essio.dev/pkg/shellescape"
 	"github.com/spf13/cobra"
 	"go.tkw01536.de/ggman/internal/env"
 	"go.tkw01536.de/ggman/internal/git"
 	"go.tkw01536.de/pkglib/exit"
+	"go.tkw01536.de/pkglib/fsx"
 )
 
 //spellchecker:words canonicalize GGROOT
@@ -52,7 +54,8 @@ The '--' separator distinguishes ggman flags from git flags.`,
 	}
 
 	flags := cmd.Flags()
-	flags.BoolVarP(&impl.Force, "force", "f", false, "do not complain when a repository already exists in the target directory")
+	flags.BoolVarP(&impl.Force, "force", "f", false, "do not complain when a repository already exists in the target directory. Incompatible with '--overwrite'.")
+	flags.BoolVarP(&impl.Overwrite, "overwrite", "o", false, "if the folder already exists delete it before attempting to clone again. Incompatible with '--force'.")
 	flags.BoolVarP(&impl.Local, "local", "l", false, "alias of \"--plain\"")
 	flags.BoolVarP(&impl.Exact, "exact-url", "e", false, "don't canonicalize URL before cloning and use exactly the passed URL")
 	flags.BoolVar(&impl.Plain, "plain", false, "clone like a standard git would: into an appropriately named subdirectory of the current directory")
@@ -66,11 +69,12 @@ type clone struct {
 		URL  string
 		Args []string
 	}
-	Force bool
-	Local bool
-	Exact bool
-	Plain bool
-	To    string
+	Force     bool
+	Overwrite bool
+	Local     bool
+	Exact     bool
+	Plain     bool
+	To        string
 }
 
 func (c *clone) ParseArgs(cmd *cobra.Command, args []string) error {
@@ -81,6 +85,10 @@ func (c *clone) ParseArgs(cmd *cobra.Command, args []string) error {
 		return errCloneInvalidDestFlags
 	}
 
+	if c.Overwrite && c.Force {
+		return errCloneInvalidForceFlags
+	}
+
 	c.Positional.URL = args[0]
 	c.Positional.Args = args[1:]
 
@@ -88,12 +96,15 @@ func (c *clone) ParseArgs(cmd *cobra.Command, args []string) error {
 }
 
 var (
-	errCloneInvalidDestFlags = exit.NewErrorWithCode(`invalid destination: "--to" and "--plain" may not be used together`, env.ExitCommandArguments)
-	errCloneInvalidDest      = exit.NewErrorWithCode("unable to determine local destination", env.ExitGeneralArguments)
-	errCloneLocalURI         = exit.NewErrorWithCode("invalid remote URI: invalid scheme, not a remote path", env.ExitCommandArguments)
-	errCloneAlreadyExists    = exit.NewErrorWithCode("unable to clone repository: another git repository already exists in target location", env.ExitGeneric)
-	errCloneNoArguments      = exit.NewErrorWithCode("external `git` not found, can not pass any additional arguments to `git clone`", env.ExitGeneric)
-	errCloneOther            = exit.NewErrorWithCode("", env.ExitGeneric)
+	errCloneInvalidDestFlags  = exit.NewErrorWithCode(`invalid destination: "--to" and "--plain" may not be used together`, env.ExitCommandArguments)
+	errCloneInvalidForceFlags = exit.NewErrorWithCode(`"--overwrite" and "--force" are incompatible`, env.ExitCommandArguments)
+	errCloneInvalidDest       = exit.NewErrorWithCode("unable to determine local destination", env.ExitGeneralArguments)
+	errCloneCheckDest         = exit.NewErrorWithCode("unable to check if destination is a directory", env.ExitGeneric)
+	errCloneDeleteDest        = exit.NewErrorWithCode("unable to delete existing directory", env.ExitGeneric)
+	errCloneLocalURI          = exit.NewErrorWithCode("invalid remote URI: invalid scheme, not a remote path", env.ExitCommandArguments)
+	errCloneAlreadyExists     = exit.NewErrorWithCode("unable to clone repository: another git repository already exists in target location", env.ExitGeneric)
+	errCloneNoArguments       = exit.NewErrorWithCode("external `git` not found, can not pass any additional arguments to `git clone`", env.ExitGeneric)
+	errCloneOther             = exit.NewErrorWithCode("", env.ExitGeneric)
 
 	errCloneNoComps = errors.New("unable to find components of URI")
 )
@@ -122,6 +133,22 @@ func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 	local, err := c.dest(environment, url)
 	if err != nil {
 		return fmt.Errorf("%q: %w: %w", c.Positional.URL, errCloneInvalidDest, err)
+	}
+
+	if c.Overwrite {
+		isDir, err := fsx.IsDirectory(local, false)
+		if err != nil {
+			return fmt.Errorf("%w: %w", errCloneCheckDest, err)
+		}
+		if isDir {
+			_, err := fmt.Fprintf(cmd.OutOrStdout(), "Deleting existing directory %q\n", local)
+			if err != nil {
+				return fmt.Errorf("%w: %w", errGenericOutput, err)
+			}
+			if err := os.RemoveAll(local); err != nil {
+				return fmt.Errorf("%w: %w", errCloneDeleteDest, err)
+			}
+		}
 	}
 
 	// do the actual cloning!

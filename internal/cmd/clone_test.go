@@ -20,7 +20,11 @@ func TestCommandClone(t *testing.T) {
 	mock.Register("https://github.com/hello/world2.git", "git@github.com:hello/world2.git")
 	mock.Register("https://github.com/hello/world3.git")
 	mock.Register("https://github.com/hello/world4.git", "git@github.com:hello/world4.git")
+	mock.Register("https://github.com/hello/world5.git", "git@github.com:hello/world5.git")
 
+	// These tests should not be run in parallel, but treated as a single linear test.
+	// Each test case depends on the previous one and implicitly relies on the fact that
+	// the previous test left the environment in a specific state.
 	tests := []struct {
 		name    string
 		workDir string
@@ -128,6 +132,46 @@ func TestCommandClone(t *testing.T) {
 			1,
 			"Cloning \"git@github.com:hello/world4.git\" into \"${GGROOT github.com hello world4}\" ...\n",
 			"external `git` not found, can not pass any additional arguments to `git clone`: --depth 1\n",
+		},
+
+		{
+			"clone existing repository (with overwrite)",
+			"",
+			[]string{"clone", "--overwrite", "https://github.com/hello/world.git"},
+
+			0,
+			"Deleting existing directory \"${GGROOT github.com hello world}\"\nCloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\n",
+			"",
+		},
+
+		{
+			"clone non-existing repository (with overwrite)",
+			"",
+			[]string{"clone", "--overwrite", "https://github.com/hello/world5.git"},
+
+			0,
+			"Cloning \"git@github.com:hello/world5.git\" into \"${GGROOT github.com hello world5}\" ...\n",
+			"",
+		},
+
+		{
+			"fail to clone existing repository (it's still there)",
+			"",
+			[]string{"clone", "https://github.com/hello/world.git"},
+
+			1,
+			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\n",
+			"unable to clone repository: another git repository already exists in target location\n",
+		},
+
+		{
+			"clone repository with overwrite and force",
+			mock.Resolve(),
+			[]string{"clone", "--force", "--overwrite", "https://github.com/hello/world.git"},
+
+			4,
+			"",
+			"\"--overwrite\" and \"--force\" are incompatible\n",
 		},
 	}
 
