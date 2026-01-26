@@ -51,6 +51,8 @@ jobs:
           make generate
       - name: Run 'make all'
         run: make all
+      - name: Print checksums
+        run: shasum -a 256 dist/*
       - name: Upload Releases
         uses: softprops/action-gh-release@v2
         if: github.ref_type == 'tag'

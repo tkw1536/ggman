@@ -512,6 +512,7 @@ ggman comes with the following builtin aliases:
 
 - make build process more reproducible
   - output `sha256` hash in `ggman version`
+  - print them in CI after building
 - rework command documentation
 - add `--overwrite` flag to `ggman clone`
 	- deletes any existing repository if it exists
