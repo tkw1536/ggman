@@ -54,8 +54,8 @@ The '--' separator distinguishes ggman flags from git flags.`,
 	}
 
 	flags := cmd.Flags()
-	flags.BoolVarP(&impl.Force, "force", "f", false, "do not complain when a repository already exists in the target directory. Incompatible with '--overwrite'.")
-	flags.BoolVarP(&impl.Overwrite, "overwrite", "o", false, "if the folder already exists delete it before attempting to clone again. Incompatible with '--force'.")
+	flags.BoolVarP(&impl.Force, "force", "f", false, "do not complain when a repository already exists in the target directory. Incompatible with '--overwrite'")
+	flags.BoolVarP(&impl.Overwrite, "overwrite", "o", false, "if the local directory already exists delete it before attempting to clone again. Incompatible with '--force'")
 	flags.BoolVarP(&impl.Local, "local", "l", false, "alias of \"--plain\"")
 	flags.BoolVarP(&impl.Exact, "exact-url", "e", false, "don't canonicalize URL before cloning and use exactly the passed URL")
 	flags.BoolVar(&impl.Plain, "plain", false, "clone like a standard git would: into an appropriately named subdirectory of the current directory")
