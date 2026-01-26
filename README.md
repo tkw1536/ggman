@@ -517,8 +517,9 @@ ggman comes with the following builtin aliases:
 	- deletes any existing repository if it exists
 - allow discarding components with `!` in a CANSPEC
   - this allows replacing hostnames in URLs if needed
-- rephrase a couple error messages for consistency
+- rephrase a couple error messages for consistency 
 - update dependencies
+- minor cleanup of CI
 
 ### 1.26.0 (Released [Dec 31 2025](https://github.com/tkw1536/ggman/releases/tag/v1.26.0))
 
