@@ -506,6 +506,18 @@ ggman comes with the following builtin aliases:
 - `ggman require` behaves exactly like `ggman clone --force`
 - `ggman root` behaves exactly like `ggman env --raw GGROOT` (for backwards compatibility)
 
+## Documentation Convention
+
+Command `Long` descriptions follow these conventions:
+
+- Inline code uses single quotes (`'cmd'`), not backticks
+- Code blocks are indented, not fenced
+- Lists use `-`; associations use `=>`
+- Environment variables include `$` (e.g., `$GGROOT`)
+- Home directory is `~`, not `$HOME`
+- Man-page style: "Cmd does X" not "To do X, use cmd"
+- Error messages start with "failed to"
+
 ## Changelog
 
 ### 1.28.0 (Upcoming)
