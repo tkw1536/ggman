@@ -14,7 +14,7 @@ import (
 	"go.tkw01536.de/pkglib/fsx"
 )
 
-//spellchecker:words canonicalize GGROOT
+//spellchecker:words canonicalize canonicalization GGROOT
 
 func NewCloneCommand() *cobra.Command {
 	impl := new(clone)
