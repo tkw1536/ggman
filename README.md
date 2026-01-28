@@ -353,11 +353,6 @@ This updates remotes of all matching repositories to their canonical form using 
 Optionally, you can pass a `--simulate` argument to `ggman fix`. 
 Instead of storing any urls, it will only print what is being done to STDOUT. 
 
-### 'ggman lsr'
-
-To list the remotes of all installed repositories, use `ggman lsr`. 
-It takes an optional argument `--canonical` which, if provided, cause ggman to print canonical urls instead of the provided ones. 
-
 ### 'ggman fetch' and 'ggman pull'
 
 To fetch data for all repositories, or to run git pull, use `ggman fetch` and `ggman pull` respectively. 
@@ -505,6 +500,7 @@ ggman comes with the following builtin aliases:
 - `ggman git` behaves exactly like `ggman exec -- git`
 - `ggman require` behaves exactly like `ggman clone --force`
 - `ggman root` behaves exactly like `ggman env --raw GGROOT` (for backwards compatibility)
+- `ggman lsr` behaves exactly like `ggman ls --remote` (for backwards compatibility)
 
 ## Documentation Convention
 
@@ -521,6 +517,12 @@ Command `Long` descriptions follow these conventions:
 ## Changelog
 
 ### 1.28.0 (Upcoming)
+
+- combine `ggman ls` and `ggman lsr` into a single command
+	- add `--remote` and `--canonical` flags
+	- add `--json` flag to produce json output
+	- add `--export` to generate a bash script to re-clone all repositories
+	- make `lsr` and alias of `ls --remote` for backward compatibility
 
 ### 1.27.1 (Released [Jan 27 2026](https://github.com/tkw1536/ggman/releases/tag/v1.27.1))
 

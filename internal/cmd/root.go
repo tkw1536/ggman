@@ -122,7 +122,6 @@ The goals and principles of ggman are:
 		NewLicenseCommand(),
 		NewLinkCommand(),
 		NewLsCommand(),
-		NewLsrCommand(),
 		NewPullCommand(),
 		NewRelocateCommand(),
 		NewShellrcCommand(),
@@ -166,6 +165,13 @@ The goals and principles of ggman are:
 				Short: "Filter repositories by a given filter",
 			},
 			Expansion: []string{"--for"},
+		},
+		{
+			Command: &cobra.Command{
+				Use:   "lsr",
+				Short: "List remote URLs to all repositories",
+			},
+			Expansion: []string{"ls", "--remote"},
 		},
 	} {
 		addAlias(root, alias.Command, alias.Expansion...)
