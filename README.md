@@ -412,7 +412,7 @@ Furthermore, sometimes a repository changes it's remote url and should be moved 
 For this purpose the `ggman relocate` command can be used. 
 It is called without arguments. 
 
-### `ggman here`, `ggman web` and `ggman url`
+### `ggman here` and `ggman web`
 
 ```bash
 ggman here
@@ -428,14 +428,12 @@ ggman web
 ```
 attempts to open the url of the current repository in a web-browser. 
 For this purpose it uses the CANSPEC `https://^/$`, which may not work with all git forges. 
-It also takes an optional `--tree`, which behaves similar and above and optionally opens a url pointing to the current folder. 
+It also takes an optional `--tree`, which behaves similar and above and optionally opens a url pointing to the current folder.
 
-```bash
-ggman url
-```
-is the same as `ggman web`, except that it only prints the URL to stdout. 
+Instead of opening a URL in the browser, both `ggman web --url` (or the convenient alias `ggman url`) can be use.
+They cause it to be printed to STDOUT instead.
 
-`ggman web` and `ggman url` also take an optional base url. 
+`ggman web` also take an optional base url. 
 If it is provided, the first component of the url is replace with the given base. 
 ggman also supports a number of "default" base urls. 
 
@@ -501,6 +499,7 @@ ggman comes with the following builtin aliases:
 - `ggman require` behaves exactly like `ggman clone --force`
 - `ggman root` behaves exactly like `ggman env --raw GGROOT` (for backwards compatibility)
 - `ggman lsr` behaves exactly like `ggman ls --remote` (for backwards compatibility)
+- `ggman url` behaves exactly like `ggman web --url` (for backwards compatibility)
 
 ## Documentation Convention
 
@@ -518,6 +517,9 @@ Command `Long` descriptions follow these conventions:
 
 ### 1.28.0 (Upcoming)
 
+- combine `ggman web` and `ggman url` into a single command
+	- add `--url` to differentiate behavior
+	- make `url` and alias of the `web --url` for backward compatibility
 - combine `ggman ls` and `ggman lsr` into a single command
 	- add `--remote` and `--canonical` flags
 	- add `--json` flag to produce json output

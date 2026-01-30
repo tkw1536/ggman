@@ -128,7 +128,6 @@ The goals and principles of ggman are:
 		NewSweepCommand(),
 		NewWhereCommand(),
 		NewWebCommand(),
-		NewURLCommand(),
 		NewVersionCommand(),
 		NewDocCommand(),
 		NewCompletionCmd(),
@@ -172,6 +171,13 @@ The goals and principles of ggman are:
 				Short: "List remote URLs to all repositories",
 			},
 			Expansion: []string{"ls", "--remote"},
+		},
+		{
+			Command: &cobra.Command{
+				Use:   "url",
+				Short: "Print the URL to this repository",
+			},
+			Expansion: []string{"web", "--url"},
 		},
 	} {
 		addAlias(root, alias.Command, alias.Expansion...)
