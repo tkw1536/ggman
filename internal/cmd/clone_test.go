@@ -173,6 +173,14 @@ func TestCommandClone(t *testing.T) {
 			"",
 			"\"--overwrite\" and \"--force\" are incompatible\n",
 		},
+		{
+			name: "clone without args",
+			args: []string{"clone"},
+
+			wantCode:   4,
+			wantStdout: "",
+			wantStderr: "invalid arguments passed: requires at least 1 arg(s), only received 0\n",
+		},
 	}
 
 	for _, tt := range tests {

@@ -47,7 +47,7 @@ Additional arguments can be passed to git after '--':
 
 This executes 'git clone git@github.com:hello/world.git --branch dev --depth 2'.
 The '--' separator distinguishes ggman flags from git flags.`,
-		Args: cobra.ArbitraryArgs,
+		Args: cobra.MinimumNArgs(1),
 
 		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
