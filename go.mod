@@ -1,6 +1,6 @@
 module go.tkw01536.de/ggman
 
-go 1.25.6
+go 1.25.7
 
 require (
 	al.essio.dev/pkg/shellescape v1.6.0
