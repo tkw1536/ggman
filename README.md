@@ -525,6 +525,7 @@ Command `Long` descriptions follow these conventions:
 	- add `--json` flag to produce json output
 	- add `--export` to generate a bash script to re-clone all repositories
 	- make `lsr` an alias of `ls --remote` for backward compatibility
+- Makefile: Add `go-check-spellchecker` and `make fmt`
 - update to `go1.26`
 
 ### 1.27.1 (Released [Jan 27 2026](https://github.com/tkw1536/ggman/releases/tag/v1.27.1))

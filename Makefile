@@ -30,7 +30,7 @@ GGMAN_CMD_SRC=./cmd/ggman
 # almost all the targets are phony
 
 all: dist
-.PHONY: all install test lint testdeps clean deps dist generate shellcheck spellcheck golint
+.PHONY: all install test lint testdeps clean deps dist generate shellcheck spellcheck golint fmt
 
 $(BINARY_NAME): deps
 	CGO_ENABLED=0 $(GOBUILD) $(BUILDFLAGS) -o $(BINARY_NAME) $(GGMAN_CMD_SRC)
@@ -64,6 +64,12 @@ golint:
 	$(GOTOOL) golangci-lint run ./...
 	$(GOTOOL) govulncheck
 
+fmt:
+	$(GOMOD) tidy
+	$(GOTOOL) gofmt -w -s .
+	$(GOTOOL) go-check-spellchecker -fix ./...
+	$(GOTOOL) golangci-lint run --fix ./...
+
 shellcheck:
 	$(SHELLCHECK) --shell=sh internal/cmd/shellrc.sh
 	$(SHELLCHECK) --shell=bash internal/cmd/shellrc.sh
@@ -71,12 +77,13 @@ shellcheck:
 	$(SHELLCHECK) --shell=ksh internal/cmd/shellrc.sh
 
 spellcheck:
+	$(GOTOOL) go-check-spellchecker ./...
 	$(CSPELL) lint .
 
 generate:
 	$(GOGENERATE) -v ./...
 
-clean: 
+clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
 	rm -rf $(DIST_DIR)

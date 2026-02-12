@@ -228,6 +228,7 @@ require (
 	go.augendre.info/arangolint v0.4.0 // indirect
 	go.augendre.info/fatcontext v0.9.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
+	go.tkw01536.de/go-check-spellchecker v0.0.0-20260212094800-1fe0abe480bf // indirect
 	go.tkw01536.de/gogenlicense v1.8.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
@@ -257,6 +258,7 @@ require (
 tool (
 	cmd/gofmt
 	github.com/golangci/golangci-lint/v2/cmd/golangci-lint
+	go.tkw01536.de/go-check-spellchecker/cmd/go-check-spellchecker
 	go.tkw01536.de/gogenlicense/cmd/gogenlicense
 	golang.org/x/vuln/cmd/govulncheck
 )
