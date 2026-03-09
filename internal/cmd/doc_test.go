@@ -1,6 +1,6 @@
 package cmd_test
 
-//spellchecker:words context http strconv testing ggman internal mockenv testutil
+//spellchecker:words context http strconv testing ggman internal mockenv pkglib port
 import (
 	"context"
 	"fmt"
@@ -11,29 +11,32 @@ import (
 
 	"go.tkw01536.de/ggman/internal/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
-	"go.tkw01536.de/ggman/internal/testutil"
+	"go.tkw01536.de/pkglib/port"
 )
 
 func TestCommandDoc(t *testing.T) {
 	t.Parallel()
 
-	var (
-		host = "localhost"
-		port = strconv.Itoa(testutil.FindFreePort(t.Context(), host))
-		addr = net.JoinHostPort(host, port)
-	)
+	host := "localhost"
+	localPort, err := port.FindFreePort(t.Context(), host)
+	if err != nil {
+		t.Error(err)
+	}
+	localPortStr := strconv.Itoa(localPort)
+	addr := net.JoinHostPort(host, localPortStr)
 
 	// Prepare to run the doc command with the chosen port and no browser open.
-	args := []string{"doc", "--host", host, "--port", port, "--no-open"}
+	args := []string{"doc", "--host", host, "--port", localPortStr, "--no-open"}
 
 	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
 
 	// start a goroutine to wait for and check if the server is listening
 	errs := make(chan string, 1)
 	go func() {
 		defer cancel()
 
-		if err := testutil.WaitForPort(t.Context(), addr); err != nil {
+		if err := port.WaitForPort(t.Context(), addr, 0); err != nil {
 			errs <- fmt.Sprintf("failed to wait for port: %v", err)
 			return
 		}

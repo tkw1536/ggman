@@ -156,7 +156,7 @@ func TestDocs_ServeHTTP(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			req := httptest.NewRequest(http.MethodGet, tt.path, nil)
+			req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, tt.path, nil)
 			rec := httptest.NewRecorder()
 
 			docs.ServeHTTP(rec, req)
