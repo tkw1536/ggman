@@ -169,11 +169,29 @@ func TestCommandURL(t *testing.T) {
 		},
 
 		{
+			"Open url with --ref at root",
+			clonePath,
+			[]string{"url", "--ref", "custom_ref"},
+			0,
+			"https://github.com/hello/world/tree/custom_ref\n",
+			"",
+		},
+
+		{
 			"Print clone url with branch at root",
 			clonePath,
 			[]string{"url", "--clone", "--branch"},
 			0,
 			"git clone https://github.com/hello/world.git --branch master\n",
+			"",
+		},
+
+		{
+			"Print clone url with --ref at root",
+			clonePath,
+			[]string{"url", "--clone", "--ref", "main"},
+			0,
+			"git clone https://github.com/hello/world.git --branch main\n",
 			"",
 		},
 
@@ -232,11 +250,29 @@ func TestCommandURL(t *testing.T) {
 		},
 
 		{
+			"Open url with tree and --ref at subpath",
+			subClonePath,
+			[]string{"url", "--tree", "--ref", "main"},
+			0,
+			"https://github.com/hello/world/tree/main/sub\n",
+			"",
+		},
+
+		{
 			"Open url with branch at subpath",
 			subClonePath,
 			[]string{"url", "--branch"},
 			0,
 			"https://github.com/hello/world/tree/master\n",
+			"",
+		},
+
+		{
+			"Open url with --ref at subpath",
+			subClonePath,
+			[]string{"url", "--ref", "main"},
+			0,
+			"https://github.com/hello/world/tree/main\n",
 			"",
 		},
 

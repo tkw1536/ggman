@@ -30,6 +30,7 @@ The '--url' flag prints the URL instead of opening it.
 
 The '--branch' flag includes the HEAD reference in the URL.
 The '--tree' flag includes the HEAD reference and path relative to the worktree root.
+The '--ref' flag overrides the resolved HEAD reference (and implies '--branch').
 
 For example invoking
 
@@ -66,6 +67,7 @@ The '--list-bases' flag shows supported base URLs.`,
 	flags.BoolVarP(&impl.Clone, "clone", "c", false, "print a \"git clone\" command that can be used to clone the current repository. Implies \"--url\"")
 	flags.BoolVarP(&impl.ReClone, "reclone", "r", false, "like clone, but uses the current remote url as opposed to the https one")
 	flags.StringVarP(&impl.Remote, "remote", "g", "", "optional name of git remote to show url for. defaults to the remote of the current branch, or the 'origin' remote if the current branch does not have an associated remote")
+	flags.StringVarP(&impl.Ref, "ref", "e", "", "override the resolved HEAD ref (branch, tag, or commit). Implies \"--branch\"")
 
 	return cmd
 }
@@ -80,6 +82,7 @@ type web struct {
 	ForceRepoHere bool
 	Branch        bool
 	Tree          bool
+	Ref           string
 	BaseAsPrefix  bool
 	Clone         bool
 	ReClone       bool
@@ -100,6 +103,10 @@ var WebBuiltInBases = map[string]struct {
 func (w *web) ParseArgs(cmd *cobra.Command, args []string) error {
 	if len(args) > 0 {
 		w.Positionals.Base = args[0]
+	}
+
+	if w.Ref != "" {
+		w.Branch = true
 	}
 
 	var cloneFlag string
@@ -190,9 +197,14 @@ func (w *web) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	if root != "" && (w.Tree || w.Branch) {
-		ref, err := environment.Git.GetHeadRef(cmd.Context(), root)
-		if err != nil {
-			return errWebOutsideRepository
+		var ref string
+		if w.Ref == "" {
+			ref, err = environment.Git.GetHeadRef(cmd.Context(), root)
+			if err != nil {
+				return errWebOutsideRepository
+			}
+		} else {
+			ref = w.Ref
 		}
 
 		if !w.Clone && !w.ReClone {

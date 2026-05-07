@@ -520,6 +520,7 @@ Command `Long` descriptions follow these conventions:
 - combine `ggman web` and `ggman url` into a single command
 	- add `--url` to differentiate behavior
 	- make `url` and alias of the `web --url` for backward compatibility
+	- add `--ref` flag to override ref being passed
 - combine `ggman ls` and `ggman lsr` into a single command
 	- add `--remote` and `--canonical` flags
 	- add `--json` flag to produce json output
