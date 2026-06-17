@@ -517,6 +517,8 @@ Command `Long` descriptions follow these conventions:
 
 ### 1.28.0 (Upcoming)
 
+### 1.27.0 (Released [Jun 17 2026](https://github.com/tkw1536/ggman/releases/tag/v1.28.0))
+
 - combine `ggman web` and `ggman url` into a single command
 	- add `--url` to differentiate behavior
 	- make `url` and alias of the `web --url` for backward compatibility
