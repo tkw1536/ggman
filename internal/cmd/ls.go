@@ -1,8 +1,9 @@
 package cmd
 
-//spellchecker:words encoding json path filepath sync essio shellescape github cobra ggman internal pkglib collection exit
+//spellchecker:words encoding json jsontext path filepath sync essio shellescape github cobra ggman internal pkglib collection exit
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"path/filepath"
 	"sync"
@@ -217,9 +218,7 @@ func (l *ls) outputExport(cmd *cobra.Command, repos []Repo) error {
 }
 
 func (l *ls) outputJSON(cmd *cobra.Command, repos []Repo) error {
-	encoder := json.NewEncoder(cmd.OutOrStdout())
-	encoder.SetIndent("", "  ")
-	if err := encoder.Encode(repos); err != nil {
+	if err := json.MarshalWrite(cmd.OutOrStderr(), repos, jsontext.WithIndent("  ")); err != nil {
 		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
 	return nil
