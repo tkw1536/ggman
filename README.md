@@ -518,7 +518,7 @@ Command `Long` descriptions follow these conventions:
 ### 1.29.0 (Upcoming)
 
 - update to `go1.27`
-- bugfix: have `ggshow` `cd`ing into directory as a side-effect
+- bugfix: avoid `ggshow` `cd`ing into directory
 
 ### 1.28.0 (Released [Jun 17 2026](https://github.com/tkw1536/ggman/releases/tag/v1.28.0))
 
