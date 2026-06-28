@@ -719,6 +719,8 @@ go.tkw01536.de/gogenlicense v1.8.0 h1:bqnd4O3vAFrhOPi5UvPPB9xpS1pvE9HNI6zi6TMMJE
 go.tkw01536.de/gogenlicense v1.8.0/go.mod h1:sLY11OPYl5p4uQBB+hc2LUIlojRSwEgWF2SzdUvkexI=
 go.tkw01536.de/pkglib v0.0.0-20260309094147-33bf9f3f1206 h1:9ADANfuCP94vK2+pk4zJJt65FkNc03XYMeYa712f2Iw=
 go.tkw01536.de/pkglib v0.0.0-20260309094147-33bf9f3f1206/go.mod h1:4qgwNGZbEeHrA48kzst2mGRJOAoltbKLm50cOt60Ihc=
+go.tkw01536.de/pkglib v0.0.0-20260628121121-22d524f14a13 h1:RD6gbtS34oVhgAJtDj19J66a2twf8w0sv7QvJo8/s3A=
+go.tkw01536.de/pkglib v0.0.0-20260628121121-22d524f14a13/go.mod h1:aH5UJpJAuvtfyV29xH0PXV2PQANWcnYvD8Xf3mOPiSQ=
 go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
 go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
 go.uber.org/multierr v1.10.0 h1:S0h4aNzvfcFsC3dRF1jLoaov7oRaKqRGC/pUEJ2yvPQ=
