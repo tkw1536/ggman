@@ -517,7 +517,10 @@ Command `Long` descriptions follow these conventions:
 
 ### 1.29.0 (Upcoming)
 
-### 1.287.0 (Released [Jun 17 2026](https://github.com/tkw1536/ggman/releases/tag/v1.28.0))
+- update to `go1.27`
+- bugfix: have `ggshow` `cd`ing into directory as a side-effect
+
+### 1.28.0 (Released [Jun 17 2026](https://github.com/tkw1536/ggman/releases/tag/v1.28.0))
 
 - combine `ggman web` and `ggman url` into a single command
 	- add `--url` to differentiate behavior
