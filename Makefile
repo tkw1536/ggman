@@ -62,7 +62,7 @@ lint: golint shellcheck spellcheck
 golint:
 	test -z $(shell $(GOTOOL) gofmt -l .)
 	$(GOTOOL) golangci-lint run ./...
-	$(GOTOOL) govulncheck
+	$(GOTOOL) govulncheck ./...
 
 fmt:
 	$(GOMOD) tidy
