@@ -2,7 +2,7 @@ package cmd_test
 
 //spellchecker:words encoding json path filepath slices testing essio shellescape github config plumbing ggman internal mockenv testutil
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"os"
 	"path/filepath"
