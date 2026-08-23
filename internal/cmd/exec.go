@@ -162,8 +162,7 @@ func (e *exe) execRepo(ctx context.Context, io stream.IOStream, repo string) err
 
 	// when something went wrong intercept ExitErrors
 	// but actually return other error properly!
-	var exitError *exec.ExitError
-	if errors.As(err, &exitError) {
+	if exitError, ok := errors.AsType[*exec.ExitError](err); ok {
 		return exit.NewErrorWithCode(err.Error(), exit.Code(exitError.ExitCode()))
 	}
 

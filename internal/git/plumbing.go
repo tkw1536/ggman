@@ -249,8 +249,7 @@ func (gg *gitgit) Clone(ctx context.Context, stream stream.IOStream, remoteURI, 
 	// run the underlying command, but treat ExitError specially by turning it into a ExitError
 	err := cmd.Run()
 
-	var exitError *exec.ExitError
-	if errors.As(err, &exitError) {
+	if exitError, ok := errors.AsType[*exec.ExitError](err); ok {
 		err = exit.FromExitError(exitError)
 	}
 
@@ -267,8 +266,7 @@ func (gg *gitgit) Fetch(ctx context.Context, stream stream.IOStream, clonePath s
 	// run the underlying command, but treat ExitError specially by turning it into a ExitError
 	err := cmd.Run()
 
-	var exitError *exec.ExitError
-	if errors.As(err, &exitError) {
+	if exitError, ok := errors.AsType[*exec.ExitError](err); ok {
 		err = exit.FromExitError(exitError)
 	}
 	return err
@@ -284,8 +282,7 @@ func (gg *gitgit) Pull(ctx context.Context, stream stream.IOStream, clonePath st
 	// run the underlying command, but treat ExitError specially by turning it into a ExitError
 	err := cmd.Run()
 
-	var exitError *exec.ExitError
-	if errors.As(err, &exitError) {
+	if exitError, ok := errors.AsType[*exec.ExitError](err); ok {
 		err = exit.FromExitError(exitError)
 	}
 	return err
@@ -298,8 +295,7 @@ func (gg *gitgit) IsDirty(ctx context.Context, clonePath string, cache any) (dir
 	// run the underlying command
 	err = cmd.Run()
 
-	var exitError *exec.ExitError
-	if errors.As(err, &exitError) {
+	if exitError, ok := errors.AsType[*exec.ExitError](err); ok {
 		// code 1: it is dirty
 		if exitError.ExitCode() == 1 {
 			return true, nil
