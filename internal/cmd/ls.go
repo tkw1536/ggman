@@ -1,6 +1,6 @@
 package cmd
 
-//spellchecker:words encoding json path filepath sync essio shellescape github cobra ggman internal pkglib collection exit
+//spellchecker:words encoding json jsontext path filepath sync essio shellescape github cobra ggman internal pkglib collection exit
 import (
 	"encoding/json/jsontext"
 	"encoding/json/v2"
