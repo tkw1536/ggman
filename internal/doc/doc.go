@@ -96,7 +96,9 @@ func (g *generator) genDocs(cmd *cobra.Command) error {
 	// write a dead simple html header
 	g.builder.WriteString("<!DOCTYPE html>")
 	g.builder.WriteString("<html lang='en'>")
-	g.builder.WriteString("<title>" + html.EscapeString(cmd.CommandPath()) + "</title>")
+	g.builder.WriteString("<title>")
+	g.builder.WriteString(html.EscapeString(cmd.CommandPath()))
+	g.builder.WriteString("</title>")
 	g.builder.WriteString("<style>body{font-family:-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;}a{color:blue;}</style>")
 
 	if err := g.m.Convert(g.buffer.Bytes(), &g.builder); err != nil {
