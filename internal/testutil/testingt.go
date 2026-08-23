@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-// TestingT may be used instead of *testing.T to allow testing test code.
+// TestingT may be used instead of [testing.T] to allow testing test code.
 // During tests, [RecordingT] should be used.
 type TestingT interface {
 	Errorf(format string, args ...any)
