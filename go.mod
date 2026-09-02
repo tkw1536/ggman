@@ -1,16 +1,16 @@
 module go.tkw01536.de/ggman
 
-go 1.27.0
+go 1.27.1
 
 require (
-	al.essio.dev/pkg/shellescape v1.6.0
+	al.essio.dev/pkg/shellescape v1.6.1
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964
 	github.com/go-git/go-git/v5 v5.19.2
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/spf13/cobra v1.10.2
 	github.com/yuin/goldmark v1.8.5
-	go.tkw01536.de/pkglib v0.0.0-20260823130239-e21cf0f79937
+	go.tkw01536.de/pkglib v0.0.0-20260902070906-3b64e527c1f6
 )
 
 require (
@@ -195,7 +195,7 @@ require (
 	github.com/sergi/go-diff v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.10.1 // indirect
 	github.com/sivchari/containedctx v1.0.3 // indirect
-	github.com/skeema/knownhosts v1.3.2 // indirect
+	github.com/skeema/knownhosts v1.3.3 // indirect
 	github.com/sonatard/noctx v0.5.1 // indirect
 	github.com/sourcegraph/go-diff v0.8.0 // indirect
 	github.com/spf13/afero v1.15.0 // indirect

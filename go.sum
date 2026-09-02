@@ -2,8 +2,8 @@
 4d63.com/gocheckcompilerdirectives v1.4.0/go.mod h1:9ZOAiMOjqC/nRwci2fcUXVHUNLG/cH6r6rhUh+jTFtQ=
 4d63.com/gochecknoglobals v0.2.2 h1:H1vdnwnMaZdQW/N+NrkT1SZMTBmcwHe9Vq8lJcYYTtU=
 4d63.com/gochecknoglobals v0.2.2/go.mod h1:lLxwTQjL5eIesRbvnzIP3jZtG140FnTdz+AlMa+ogt0=
-al.essio.dev/pkg/shellescape v1.6.0 h1:NxFcEqzFSEVCGN2yq7Huv/9hyCEGVa/TncnOOBBeXHA=
-al.essio.dev/pkg/shellescape v1.6.0/go.mod h1:6sIqp7X2P6mThCQ7twERpZTuigpr6KbZWtls1U8I890=
+al.essio.dev/pkg/shellescape v1.6.1 h1:ki/kUs/D3dDbZpyKbNRhwY/ajgAEIJFagVKDWKnofQ8=
+al.essio.dev/pkg/shellescape v1.6.1/go.mod h1:6sIqp7X2P6mThCQ7twERpZTuigpr6KbZWtls1U8I890=
 charm.land/lipgloss/v2 v2.0.6 h1:EaGKeuA8FvF+v2BT5VmZd2LoYLaMZJXA5n34th8nCIQ=
 charm.land/lipgloss/v2 v2.0.6/go.mod h1:ipDDJNSGa1hlwDtSfW1s2/xR8Vdhbut4PXh2zEKZd0Q=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
@@ -479,8 +479,8 @@ github.com/sirupsen/logrus v1.10.1 h1:xi4336Zh11WpU14fXR6I67V3yaTPQYwRx2WEtHbRg4
 github.com/sirupsen/logrus v1.10.1/go.mod h1:vsQHnG7xzNsxk3NrwboUiWPnIC3dmbjcGPykD7+tiHk=
 github.com/sivchari/containedctx v1.0.3 h1:x+etemjbsh2fB5ewm5FeLNi5bUjK0V8n0RB+Wwfd0XE=
 github.com/sivchari/containedctx v1.0.3/go.mod h1:c1RDvCbnJLtH4lLcYD/GqwiBSSf4F5Qk0xld2rBqzJ4=
-github.com/skeema/knownhosts v1.3.2 h1:EDL9mgf4NzwMXCTfaxSD/o/a5fxDw/xL9nkU28JjdBg=
-github.com/skeema/knownhosts v1.3.2/go.mod h1:bEg3iQAuw+jyiw+484wwFJoKSLwcfd7fqRy+N0QTiow=
+github.com/skeema/knownhosts v1.3.3 h1:tiFvsjIW+xqP5cqVsod7atn/xm57OY6v9KwxB1xWUyA=
+github.com/skeema/knownhosts v1.3.3/go.mod h1:2y0ntYxeqSNxOw5pfqSVDcRyBt2FqfxhzNDPoKz/ifQ=
 github.com/sonatard/noctx v0.5.1 h1:wklWg9c9ZYugOAk7qG4yP4PBrlQsmSLPTvW1K4PRQMs=
 github.com/sonatard/noctx v0.5.1/go.mod h1:64XdbzFb18XL4LporKXp8poqZtPKbCrqQ402CV+kJas=
 github.com/sourcegraph/go-diff v0.8.0 h1:ipIyu4cTsLbIrln4l0qtHA3r0a7gyK4ntKjtQytHhvY=
@@ -575,8 +575,8 @@ go.tkw01536.de/go-check-spellchecker v0.0.0-20260823164802-e702fb91d68d h1:fxZOn
 go.tkw01536.de/go-check-spellchecker v0.0.0-20260823164802-e702fb91d68d/go.mod h1:jktsP3x+w5xzmdgAP0hieyN/+dEGxThHYzgXkkE1A5s=
 go.tkw01536.de/gogenlicense v1.9.0 h1:rjS+IjylW4YCPkiIXwmFCBW0ooG/cD/26bIxFQ+dTB8=
 go.tkw01536.de/gogenlicense v1.9.0/go.mod h1:eW1XzvleuIgyrtl4uZ4HjTr9iPVVTA4ByOUUy5COgUE=
-go.tkw01536.de/pkglib v0.0.0-20260823130239-e21cf0f79937 h1:j7go5uRk1UF1zWLfJcpu/lAw8x+T17QyArdANUPSmEg=
-go.tkw01536.de/pkglib v0.0.0-20260823130239-e21cf0f79937/go.mod h1:7FihRhKL+MECkLpW/b050LYvl/pfpeROgtG/Ox0QF94=
+go.tkw01536.de/pkglib v0.0.0-20260902070906-3b64e527c1f6 h1:mSIw7wHhMbiC/Nllbax0gn/ZJEQ76iWrrLhVYpeL9yA=
+go.tkw01536.de/pkglib v0.0.0-20260902070906-3b64e527c1f6/go.mod h1:XczumSAkk/03A/3r9Rv9w/A9Xdo0H3m3/0zEk/sKG2A=
 go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
 go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
 go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
