@@ -111,7 +111,7 @@ The goals and principles of ggman are:
 	root.AddCommand(
 		NewCanonCommand(),
 		NewCloneCommand(),
-		NewCompsCommand(),
+		NewParseCommand(),
 		NewEnvCommand(),
 		NewExecCommand(),
 		NewFetchCommand(),
@@ -178,6 +178,13 @@ The goals and principles of ggman are:
 				Short: "Print the URL to this repository",
 			},
 			Expansion: []string{"web", "--url"},
+		},
+		{
+			Command: &cobra.Command{
+				Use:   "comps",
+				Short: "Print the components of a URL",
+			},
+			Expansion: []string{"parse", "--comps"},
 		},
 	} {
 		addAlias(root, alias.Command, alias.Expansion...)
