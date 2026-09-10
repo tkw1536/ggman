@@ -117,6 +117,7 @@ func (w *web) ParseArgs(cmd *cobra.Command, args []string) error {
 		if !filepath.IsLocal(w.RelativePath) {
 			return errWebNotLocalPath
 		}
+		w.RelativePath = filepath.ToSlash(w.RelativePath)
 	}
 
 	var cloneFlag string
