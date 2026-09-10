@@ -101,6 +101,326 @@ func TestParseURL(t *testing.T) {
 	}
 }
 
+func TestURL_SplitForgeReference(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name         string
+		url          env.URL
+		wantPath     string
+		wantSuffixes string
+		wantRef      string
+		wantRelative string
+	}{
+		{
+			name:         "tree with ref and relative",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo/tree/ref/path"},
+			wantPath:     "user/repo",
+			wantRef:      "ref",
+			wantRelative: "path",
+		},
+		{
+			name:         "tree with ref only",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo/tree/main"},
+			wantPath:     "user/repo",
+			wantRef:      "main",
+			wantRelative: "",
+		},
+		{
+			name:         "tree with nested relative path",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo/tree/main/internal/env"},
+			wantPath:     "user/repo",
+			wantRef:      "main",
+			wantRelative: "internal/env",
+		},
+		{
+			name:         "optional /_/ before tree",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo/_/tree/main/src"},
+			wantPath:     "user/repo",
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "query suffix",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo/tree/main/src?tab=readme"},
+			wantPath:     "user/repo",
+			wantSuffixes: "?tab=readme",
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "fragment suffix",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo/tree/main/src#L10"},
+			wantPath:     "user/repo",
+			wantSuffixes: "#L10",
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "query then fragment",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo/tree/main/src?hello=world#fragment"},
+			wantPath:     "user/repo",
+			wantSuffixes: "?hello=world#fragment",
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "fragment containing question mark",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo/tree/main/src#fragment?also=fragment"},
+			wantPath:     "user/repo",
+			wantSuffixes: "#fragment?also=fragment",
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "no tree reference",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"},
+			wantPath:     "user/repo",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "no tree reference with query",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo?foo=bar"},
+			wantPath:     "user/repo",
+			wantSuffixes: "?foo=bar",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "no tree reference with query then fragment",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "some/path/?hello=world#fragment"},
+			wantPath:     "some/path/",
+			wantSuffixes: "?hello=world#fragment",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "no tree reference with fragment containing question mark",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "some/path#fragment?also=fragment"},
+			wantPath:     "some/path",
+			wantSuffixes: "#fragment?also=fragment",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "trailing _ in path without tree reference",
+			url:          env.URL{Scheme: "https", HostName: "example.com", Path: "some/path/_"},
+			wantPath:     "some/path/_",
+			wantSuffixes: "",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "scheme-less host is web url",
+			url:          env.URL{HostName: "example.com", Path: "user/repo/tree/main/src"},
+			wantPath:     "user/repo",
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "ssh with tree is not a web url",
+			url:          env.URL{Scheme: "ssh", User: "git", HostName: "github.com", Path: "user/repo/tree/main/src"},
+			wantPath:     "user/repo/tree/main/src",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "ssh with query and fragment is not a web url",
+			url:          env.URL{Scheme: "ssh", HostName: "github.com", Path: "user/repo/tree/main/src?tab=readme#L10"},
+			wantPath:     "user/repo/tree/main/src?tab=readme#L10",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "git with tree is not a web url",
+			url:          env.URL{Scheme: "git", HostName: "host.xz", Path: "path/to/repo/tree/main"},
+			wantPath:     "path/to/repo/tree/main",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "file with tree is not a web url",
+			url:          env.URL{Scheme: "file", Path: "path/to/repo/tree/main/src"},
+			wantPath:     "path/to/repo/tree/main/src",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "local path with tree is not a web url",
+			url:          env.URL{Path: "user/repo/tree/main/src?foo=bar"},
+			wantPath:     "user/repo/tree/main/src?foo=bar",
+			wantRef:      "",
+			wantRelative: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			gotPath, gotSuffixes, gotRef, gotRelative := tt.url.SplitForgeReference()
+			if gotPath != tt.wantPath || gotSuffixes != tt.wantSuffixes || gotRef != tt.wantRef || gotRelative != tt.wantRelative {
+				t.Errorf("URL.SplitForgeReference() = (%q, %q, %q, %q), want (%q, %q, %q, %q)",
+					gotPath, gotSuffixes, gotRef, gotRelative,
+					tt.wantPath, tt.wantSuffixes, tt.wantRef, tt.wantRelative)
+			}
+		})
+	}
+}
+
+func TestParseURLAndForgeReference(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name         string
+		input        string
+		wantURL      env.URL
+		wantSuffix   string
+		wantRef      string
+		wantRelative string
+	}{
+		{
+			name:         "tree with ref and relative",
+			input:        "https://example.com/user/repo/tree/ref/path",
+			wantURL:      env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"},
+			wantRef:      "ref",
+			wantRelative: "path",
+		},
+		{
+			name:         "tree with ref only",
+			input:        "https://example.com/user/repo/tree/main",
+			wantURL:      env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"},
+			wantRef:      "main",
+			wantRelative: "",
+		},
+		{
+			name:         "tree with nested relative path",
+			input:        "https://example.com/user/repo/tree/main/internal/env",
+			wantURL:      env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"},
+			wantRef:      "main",
+			wantRelative: "internal/env",
+		},
+		{
+			name:         "optional /_/ before tree",
+			input:        "https://example.com/user/repo/_/tree/main/src",
+			wantURL:      env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"},
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "query suffix",
+			input:        "https://example.com/user/repo/tree/main/src?tab=readme",
+			wantURL:      env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"},
+			wantSuffix:   "?tab=readme",
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "fragment suffix",
+			input:        "https://example.com/user/repo/tree/main/src#L10",
+			wantURL:      env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"},
+			wantSuffix:   "#L10",
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "query then fragment",
+			input:        "https://example.com/user/repo/tree/main/src?hello=world#fragment",
+			wantURL:      env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"},
+			wantSuffix:   "?hello=world#fragment",
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "fragment containing question mark",
+			input:        "https://example.com/user/repo/tree/main/src#fragment?also=fragment",
+			wantURL:      env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"},
+			wantSuffix:   "#fragment?also=fragment",
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "no tree reference",
+			input:        "https://example.com/user/repo",
+			wantURL:      env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"},
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "no tree reference with query then fragment",
+			input:        "https://example.com/some/path/?hello=world#fragment",
+			wantURL:      env.URL{Scheme: "https", HostName: "example.com", Path: "some/path/"},
+			wantSuffix:   "?hello=world#fragment",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "no tree reference with fragment containing question mark",
+			input:        "https://example.com/some/path#fragment?also=fragment",
+			wantURL:      env.URL{Scheme: "https", HostName: "example.com", Path: "some/path"},
+			wantSuffix:   "#fragment?also=fragment",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "scheme-less host with tree",
+			input:        "example.com:user/repo/tree/main/src",
+			wantURL:      env.URL{HostName: "example.com", Path: "user/repo"},
+			wantRef:      "main",
+			wantRelative: "src",
+		},
+		{
+			name:         "ssh url with tree is not a web url",
+			input:        "ssh://git@github.com/user/repo/tree/main/src",
+			wantURL:      env.URL{Scheme: "ssh", User: "git", HostName: "github.com", Path: "user/repo/tree/main/src"},
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "ssh url with query and fragment is not a web url",
+			input:        "ssh://git@github.com/user/repo/tree/main/src?tab=readme#L10",
+			wantURL:      env.URL{Scheme: "ssh", User: "git", HostName: "github.com", Path: "user/repo/tree/main/src?tab=readme#L10"},
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "git url with tree is not a web url",
+			input:        "git://host.xz/path/to/repo/tree/main",
+			wantURL:      env.URL{Scheme: "git", HostName: "host.xz", Path: "path/to/repo/tree/main"},
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "file url with tree is not a web url",
+			input:        "file:///path/to/repo/tree/main/src",
+			wantURL:      env.URL{Scheme: "file", Path: "path/to/repo/tree/main/src"},
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "local path with tree is not a web url",
+			input:        "/user/repo/tree/main/src?foo=bar",
+			wantURL:      env.URL{Path: "user/repo/tree/main/src?foo=bar"},
+			wantRef:      "",
+			wantRelative: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			gotURL, gotSuffix, gotRef, gotRelative := env.ParseURLAndForgeReference(tt.input)
+			if !reflect.DeepEqual(gotURL, tt.wantURL) || gotSuffix != tt.wantSuffix || gotRef != tt.wantRef || gotRelative != tt.wantRelative {
+				t.Errorf("ParseURLAndForgeReference(%q) = (%v, %q, %q, %q), want (%v, %q, %q, %q)",
+					tt.input, gotURL, gotSuffix, gotRef, gotRelative,
+					tt.wantURL, tt.wantSuffix, tt.wantRef, tt.wantRelative)
+			}
+		})
+	}
+}
+
 func TestURL_String(t *testing.T) {
 	t.Parallel()
 
@@ -129,91 +449,147 @@ func Benchmark_ParseURL(b *testing.B) {
 	}
 }
 
+var urlLocalityTests = []struct {
+	name     string
+	url      env.URL
+	isLocal  bool
+	isWebURL bool
+}{
+	{
+		"ssh",
+		env.URL{"ssh", "", "", "host.xz", 0, "path/to/repo.git/"},
+		false,
+		false,
+	},
+	{
+		"sshUser",
+		env.URL{"ssh", "user", "", "host.xz", 0, "path/to/repo.git/"},
+		false,
+		false,
+	},
+	{
+		"sshPort",
+		env.URL{"ssh", "", "", "host.xz", 1234, "path/to/repo.git/"},
+		false,
+		false,
+	},
+	{
+		"sshUserPort",
+		env.URL{"ssh", "user", "", "host.xz", 1234, "path/to/repo.git/"},
+		false,
+		false,
+	},
+
+	// git://host.xz[:port]/path/to/repo.git/
+	{
+		"git",
+		env.URL{"git", "", "", "host.xz", 0, "path/to/repo.git/"},
+		false,
+		false,
+	},
+	{
+		"gitPort",
+		env.URL{"git", "", "", "host.xz", 1234, "path/to/repo.git/"},
+		false,
+		false,
+	},
+
+	//  [user@]host.xz:path/to/repo.git/
+	{
+		"noProto",
+		env.URL{"", "", "", "host.xz", 0, "path/to/repo.git/"},
+		false,
+		true,
+	},
+	{
+		"noProtoUser",
+		env.URL{"", "user", "", "host.xz", 0, "path/to/repo.git/"},
+		false,
+		true,
+	},
+
+	// http(s) web urls
+	{
+		"https",
+		env.URL{"https", "", "", "example.com", 0, "user/repo"},
+		false,
+		true,
+	},
+	{
+		"http",
+		env.URL{"http", "", "", "example.com", 0, "user/repo"},
+		false,
+		true,
+	},
+	{
+		"httpsUpper",
+		env.URL{"HTTPS", "", "", "example.com", 0, "user/repo"},
+		false,
+		true,
+	},
+	{
+		"httpUpper",
+		env.URL{"HTTP", "", "", "example.com", 0, "user/repo"},
+		false,
+		true,
+	},
+	{
+		"httpsUserPort",
+		env.URL{"https", "user", "", "example.com", 8443, "user/repo"},
+		false,
+		true,
+	},
+
+	// local paths
+	{
+		"localFile",
+		env.URL{"file", "", "", "", 0, "path/to/somewhere"},
+		true,
+		false,
+	},
+	{
+		"localPath",
+		env.URL{"", "", "", "", 0, "path/to/somewhere"},
+		true,
+		false,
+	},
+	{
+		"localRelPath",
+		env.URL{"", "", "", "..", 0, "some/relative/path"},
+		true,
+		false,
+	},
+	{
+		"localRelPath2",
+		env.URL{"", "", "", ".", 0, "some/relative/path"},
+		true,
+		false,
+	},
+}
+
 func TestURL_IsLocal(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name string
-		url  env.URL
-		want bool
-	}{
-		{
-			"ssh",
-			env.URL{"ssh", "", "", "host.xz", 0, "path/to/repo.git/"},
-			false,
-		},
-		{
-			"sshUser",
-			env.URL{"ssh", "user", "", "host.xz", 0, "path/to/repo.git/"},
-			false,
-		},
-		{
-			"sshPort",
-			env.URL{"ssh", "", "", "host.xz", 1234, "path/to/repo.git/"},
-			false,
-		},
-		{
-			"sshUserPort",
-			env.URL{"ssh", "user", "", "host.xz", 1234, "path/to/repo.git/"},
-			false,
-		},
-
-		// git://host.xz[:port]/path/to/repo.git/
-		{
-			"git",
-			env.URL{"git", "", "", "host.xz", 0, "path/to/repo.git/"},
-			false,
-		},
-
-		{
-			"gitPort",
-			env.URL{"git", "", "", "host.xz", 1234, "path/to/repo.git/"},
-			false,
-		},
-
-		//  [user@]host.xz:path/to/repo.git/
-		{
-			"noProto",
-			env.URL{"", "", "", "host.xz", 0, "path/to/repo.git/"},
-			false,
-		},
-		{
-			"noProtoUser",
-			env.URL{"", "user", "", "host.xz", 0, "path/to/repo.git/"},
-			false,
-		},
-
-		// local paths
-		{
-			"localFile",
-			env.URL{"file", "", "", "", 0, "path/to/somewhere"},
-			true,
-		},
-
-		{
-			"localPath",
-			env.URL{"", "", "", "", 0, "path/to/somewhere"},
-			true,
-		},
-
-		{
-			"localRelPath",
-			env.URL{"", "", "", "..", 0, "some/relative/path"},
-			true,
-		},
-
-		{
-			"localRelPath2",
-			env.URL{"", "", "", ".", 0, "some/relative/path"},
-			true,
-		},
-	}
-	for _, tt := range tests {
+	for _, tt := range urlLocalityTests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			if got := tt.url.IsLocal(); got != tt.want {
-				t.Errorf("URL.IsLocal() = %v, want %v", got, tt.want)
+			if got := tt.url.IsLocal(); got != tt.isLocal {
+				t.Errorf("URL.IsLocal() = %v, want %v", got, tt.isLocal)
+			}
+		})
+	}
+}
+
+func TestURL_IsWebURL(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range urlLocalityTests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if got := tt.url.IsWebURL(); got != tt.isWebURL {
+				t.Errorf("URL.IsWebURL() = %v, want %v", got, tt.isWebURL)
 			}
 		})
 	}

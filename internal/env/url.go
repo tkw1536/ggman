@@ -124,10 +124,96 @@ func ParseURL(s string) (url URL) {
 	return
 }
 
+// ParseURLAndForgeReference is like [ParseURL] followed by [URL.SplitForgeReference].
+//
+// The returned URL contains the remaining path after splitting off the tree reference.
+func ParseURLAndForgeReference(s string) (url URL, suffix, ref, relative string) {
+	url = ParseURL(s)
+	url.Path, suffix, ref, relative = url.SplitForgeReference()
+	return
+}
+
 // IsLocal checks if this URL looks like a local URL.
 // A URL is considered local if it uses the "file" scheme, or the scheme is empty and the hostname is one of ".", ".." or "".
 func (url URL) IsLocal() bool {
 	return url.Scheme == "file" || (url.Scheme == "" && (url.HostName == "." || url.HostName == ".." || url.HostName == ""))
+}
+
+// IsForgeURL checks if this URL looks like a URL copied from a web browser.
+// A URL is considered a web URL if it has a scheme of "https" or "http", or the scheme is empty and the hostname is not one of ".", ".." or "".
+func (url URL) IsWebURL() bool {
+	switch strings.ToLower(url.Scheme) {
+	case "https", "http":
+		return true
+	case "":
+		return url.HostName != "" && url.HostName != "." && url.HostName != ".."
+	default:
+		return false
+	}
+}
+
+// SplitForgeReference splits a forge-like tree reference into a clean path, a suffix, a source control reference and a relative path.
+//
+// For example the URL "https://example.com/user/repo/tree/ref/path?tab=README" would be split into:
+//
+//	("user/repo", "?tab=README", "ref", "path")
+//
+// The reference consists of:
+// - a cleaned up path ("path") without the tree reference
+// - a suffix ("suffix") containing any stray query or fragment identifiers
+// - a source control reference ("ref")
+// - a relative path from the root of the repository ("relative")
+//
+// ref and relative together are referred to as the "tree reference".
+// A tree reference is split separated from the rest of the URL by a "tree" within the path
+// component of the URL.
+// Within the tree reference, the component before the first '/' is the source control reference,
+// and the component after the first '/' is the relative path.
+//
+// This function is intended to handle any kind of forge URL from the browser.
+// It therefore also applies several other heuristics:
+//
+// - Non-web URLs, as reported by [URL.IsWebURL], are not considered forge URLs, and return their original path unmodified, along with empty suffixes, ref and relative.
+// - A tree ref can optionally contain a /_/ preceding the tree reference, which is removed.
+// - A trailing query or fragment identifier of the URL is split off and returned in the suffix instead.
+//
+// If no tree reference is found, path is the original path (without query or fragment), and ref and
+// relative are empty.
+func (url URL) SplitForgeReference() (path, suffixes, ref, relative string) {
+	if !url.IsWebURL() {
+		return url.Path, "", "", ""
+	}
+
+	// Split off a trailing query or fragment identifier.
+	if i := strings.IndexAny(url.Path, "?#"); i >= 0 {
+		url.Path, suffixes = url.Path[:i], url.Path[i:]
+	}
+
+	// Split the /tree/ part of the path or return the original path if no tree reference was found.
+	const (
+		treePart    = "/tree/"
+		leadingTree = "tree/"
+	)
+
+	if i := strings.Index(url.Path, treePart); i >= 0 {
+		url.Path, ref = url.Path[:i], url.Path[i+len(treePart):]
+	} else if strings.HasPrefix(url.Path, leadingTree) {
+		ref = url.Path[len(leadingTree):]
+		url.Path = ""
+	} else {
+		return url.Path, suffixes, "", ""
+	}
+
+	// Remove optional /_/ part before /tree/.
+	if url.Path != "_" {
+		url.Path = strings.TrimSuffix(url.Path, "/_")
+	} else {
+		url.Path = ""
+	}
+
+	// Split tree reference and relative path.
+	ref, relative = split.AfterRune(ref, '/')
+	return url.Path, suffixes, ref, relative
 }
 
 // Components gets the components of a URL
