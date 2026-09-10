@@ -133,6 +133,15 @@ func TestCommandURL(t *testing.T) {
 		},
 
 		{
+			"Open url with tree suffix -/tree at root",
+			clonePath,
+			[]string{"url", "--tree=-/tree"},
+			0,
+			"https://gitforge.example/hello/world/-/tree/master/\n",
+			"",
+		},
+
+		{
 			"Do not print clone url with tree at root",
 			clonePath,
 			[]string{"url", "--clone", "--tree"},
@@ -273,6 +282,24 @@ func TestCommandURL(t *testing.T) {
 			[]string{"url", "--tree"},
 			0,
 			"https://gitforge.example/hello/world/tree/master/sub\n",
+			"",
+		},
+
+		{
+			"Open url with tree suffix -/tree at subpath",
+			subClonePath,
+			[]string{"url", "--tree=-/tree"},
+			0,
+			"https://gitforge.example/hello/world/-/tree/master/sub\n",
+			"",
+		},
+
+		{
+			"Open url with tree suffix src/branch at subpath",
+			subClonePath,
+			[]string{"url", "--tree=src/branch"},
+			0,
+			"https://gitforge.example/hello/world/src/branch/master/sub\n",
 			"",
 		},
 

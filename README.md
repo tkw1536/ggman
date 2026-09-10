@@ -437,6 +437,7 @@ ggman web
 attempts to open the url of the current repository in a web-browser. 
 For this purpose it uses the CANSPEC `https://^/$`, which may not work with all git forges. 
 It also takes an optional `--tree`, which behaves similar and above and optionally opens a url pointing to the current folder.
+`--tree` may take an optional path suffix via `--tree=SUFFIX` (default `tree`), e.g. `--tree=src/branch` or `--tree=-/tree`.
 
 Instead of opening a URL in the browser, both `ggman web --url` (or the convenient alias `ggman url`) can be use.
 They cause it to be printed to STDOUT instead.
@@ -530,6 +531,7 @@ Command `Long` descriptions follow these conventions:
 	- clone passes `--branch` automatically; add `--no-forge-split` and `--no-auto-branch` to adjust behavior
 	- add `ggman parse` to inspect this new parsing; `comps` is now an alias for `parse --comps`
 - add `--relative` flag to `ggman web`
+- `ggman web --tree` accepts an optional path suffix (e.g. `--tree=src/branch`, `--tree=-/tree`)
 - use `gitforge.example` and `githost.example` instead of real providers as examples
 - update to `go1.27`
 - bugfix: avoid `ggshow` `cd`ing into directory

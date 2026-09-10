@@ -1,11 +1,12 @@
 package cmd
 
-//spellchecker:words context path filepath slices github browser cobra ggman internal pkglib exit
+//spellchecker:words context path filepath slices strings github browser cobra ggman internal pkglib exit
 import (
 	"context"
 	"fmt"
 	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
@@ -30,6 +31,7 @@ The '--url' flag prints the URL instead of opening it.
 
 The '--branch' flag includes the HEAD reference in the URL.
 The '--tree' flag includes the HEAD reference and path relative to the worktree root.
+It accepts an optional path suffix (default 'tree'); pass it as '--tree=SUFFIX', e.g. '--tree=src/branch' or '--tree=-/tree'.
 The '--ref' flag overrides the resolved HEAD reference (and implies '--branch').
 
 For example invoking
@@ -62,7 +64,8 @@ The '--list-bases' flag shows supported base URLs.`,
 	flags.BoolVarP(&impl.List, "list-bases", "l", false, "print a list of all predefined base URLs")
 	flags.BoolVarP(&impl.ForceRepoHere, "force-repo-here", "f", false, "pretend there is a repository in the current path and use the path relative to the GGROOT directory as the remote url")
 	flags.BoolVarP(&impl.Branch, "branch", "b", false, "if provided, include the HEAD reference in the resolved URL")
-	flags.BoolVarP(&impl.Tree, "tree", "t", false, "if provided, additionally use the HEAD reference and relative path to the root of the git worktree")
+	flags.StringVarP(&impl.TreeSuffix, "tree", "t", "", "include HEAD ref and relative worktree path; optional SUFFIX between repo and ref (default \"tree\")")
+	flags.Lookup("tree").NoOptDefVal = "tree"
 	flags.BoolVarP(&impl.BaseAsPrefix, "prefix", "p", false, "treat the base argument as a prefix, instead of the hostname")
 	flags.BoolVarP(&impl.Clone, "clone", "c", false, "print a \"git clone\" command that can be used to clone the current repository. Implies \"--url\"")
 	flags.BoolVarP(&impl.ReClone, "reclone", "r", false, "like clone, but uses the current remote url as opposed to the https one")
@@ -82,7 +85,7 @@ type web struct {
 	List          bool
 	ForceRepoHere bool
 	Branch        bool
-	Tree          bool
+	TreeSuffix    string
 	Ref           string
 	RelativePath  string
 	BaseAsPrefix  bool
@@ -112,7 +115,9 @@ func (w *web) ParseArgs(cmd *cobra.Command, args []string) error {
 	}
 
 	if w.RelativePath != "" {
-		w.Tree = true
+		if w.TreeSuffix == "" {
+			w.TreeSuffix = "tree"
+		}
 		w.RelativePath = filepath.Clean(w.RelativePath)
 		if !filepath.IsLocal(w.RelativePath) {
 			return errWebNotLocalPath
@@ -129,7 +134,7 @@ func (w *web) ParseArgs(cmd *cobra.Command, args []string) error {
 
 	if w.Clone || w.ReClone {
 		w.URL = true
-		if w.Tree {
+		if w.TreeSuffix != "" {
 			return fmt.Errorf("%w: %q and %q", errWebFlagsIncompatible, cloneFlag, "tree")
 		}
 		if w.BaseAsPrefix {
@@ -212,7 +217,7 @@ func (w *web) Exec(cmd *cobra.Command, args []string) error {
 		weburl = "git clone " + remote
 	}
 
-	if root != "" && (w.Tree || w.Branch) {
+	if root != "" && (w.TreeSuffix != "" || w.Branch) {
 		var ref string
 		if w.Ref == "" {
 			ref, err = environment.Git.GetHeadRef(cmd.Context(), root)
@@ -224,9 +229,11 @@ func (w *web) Exec(cmd *cobra.Command, args []string) error {
 		}
 
 		if !w.Clone && !w.ReClone {
-			weburl += "/tree/" + ref
-			if w.Tree {
+			if w.TreeSuffix != "" {
+				weburl += "/" + strings.Trim(w.TreeSuffix, "/") + "/" + ref
 				weburl += "/" + relative
+			} else {
+				weburl += "/tree/" + ref
 			}
 		} else {
 			weburl += " --branch " + ref
