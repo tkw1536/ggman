@@ -33,6 +33,26 @@ func TestCommandWhere(t *testing.T) {
 			"${GGROOT github.com hello world}\n",
 			"",
 		},
+
+		{
+			"tree url strips forge reference",
+			"",
+			[]string{"where", "https://github.com/hello/world/tree/main"},
+
+			0,
+			"${GGROOT github.com hello world}\n",
+			"",
+		},
+
+		{
+			"tree url with no-forge-split",
+			"",
+			[]string{"where", "--no-forge-split", "https://github.com/hello/world/tree/main"},
+
+			0,
+			"${GGROOT github.com hello world tree main}\n",
+			"",
+		},
 	}
 
 	for _, tt := range tests {

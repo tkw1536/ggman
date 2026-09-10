@@ -40,12 +40,17 @@ The '$GGNORM' environment variable controls normalization:
 
 - 'smart' => use first matching path, prefer exact matches (default)
 - 'fold' => fold paths, do not prefer exact matches
-- 'none' => always use exact paths (legacy behavior)`,
+- 'none' => always use exact paths (legacy behavior)
+
+The '--no-forge-split' flag skips forge tree splitting.`,
 		Args: cobra.ExactArgs(1),
 
 		PreRunE: impl.ParseArgs,
 		RunE:    impl.Exec,
 	}
+
+	flags := cmd.Flags()
+	flags.BoolVar(&impl.NoForgeSplit, "no-forge-split", false, "do not split forge tree references from the URL")
 
 	return cmd
 }
@@ -54,6 +59,7 @@ type where struct {
 	Positionals struct {
 		URL string
 	}
+	NoForgeSplit bool
 }
 
 func (w *where) ParseArgs(cmd *cobra.Command, args []string) error {
@@ -69,7 +75,14 @@ func (w *where) Exec(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("%w: %w", errGenericEnvironment, err)
 	}
 
-	localPath, err := environment.Local(env.ParseURL(w.Positionals.URL))
+	var url env.URL
+	if w.NoForgeSplit {
+		url = env.ParseURL(w.Positionals.URL)
+	} else {
+		url, _, _, _ = env.ParseURLAndForgeReference(w.Positionals.URL)
+	}
+
+	localPath, err := environment.Local(url)
 	if err != nil {
 		return fmt.Errorf("%w: %w", env.ErrUnableLocalPath, err)
 	}

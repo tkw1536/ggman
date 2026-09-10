@@ -113,6 +113,26 @@ func TestCommandCanon(t *testing.T) {
 			"ssh://user@server.com:1234/repo.git\n",
 			"",
 		},
+
+		{
+			"tree url strips forge reference",
+			"",
+			[]string{"canon", "https://github.com/hello/world/tree/main", "git@^:$.git"},
+
+			0,
+			"git@github.com:hello/world.git\n",
+			"",
+		},
+
+		{
+			"tree url with no-forge-split",
+			"",
+			[]string{"canon", "--no-forge-split", "https://github.com/hello/world/tree/main", "git@^:$.git"},
+
+			0,
+			"git@github.com:hello/world/tree/main.git\n",
+			"",
+		},
 	}
 
 	for _, tt := range tests {

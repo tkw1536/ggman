@@ -37,7 +37,8 @@ CANSPECs work by splitting URLs into path-like components with normalization:
 - 'github.com/hello/world.git' => 'github.com', 'hello', 'world'
 - 'user@server.com:repo.git' => 'server.com', 'user', 'repo'
 
-The 'ggman comps' command shows URL components.
+The 'ggman parse --comps' command (alias 'ggman comps') shows URL components.
+Forge tree references in browser URLs are stripped before canonicalization unless '--no-forge-split' is set.
 
 CANSPEC characters are copied literally except:
 
@@ -83,6 +84,9 @@ Omitting the CANSPEC argument uses the CANFILE for resolution.`,
 		RunE:    impl.Exec,
 	}
 
+	flags := cmd.Flags()
+	flags.BoolVar(&impl.NoForgeSplit, "no-forge-split", false, "do not split forge tree references from the URL")
+
 	return cmd
 }
 
@@ -91,6 +95,7 @@ type canon struct {
 		URL     env.URL
 		CANSPEC string
 	}
+	NoForgeSplit bool
 }
 
 var (
@@ -98,7 +103,11 @@ var (
 )
 
 func (c *canon) ParseArgs(cmd *cobra.Command, args []string) error {
-	c.Positional.URL = env.ParseURL(args[0])
+	if c.NoForgeSplit {
+		c.Positional.URL = env.ParseURL(args[0])
+	} else {
+		c.Positional.URL, _, _, _ = env.ParseURLAndForgeReference(args[0])
+	}
 	if len(args) == 2 {
 		c.Positional.CANSPEC = args[1]
 	}

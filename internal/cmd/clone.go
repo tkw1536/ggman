@@ -37,15 +37,24 @@ For example
 
 produces the same result.
 
-The '--exact-url' flag uses the provided URL without canonicalization:
+Browser tree URLs are supported. For example
+
+    ggman clone https://github.com/hello/world/tree/dev
+
+clones the 'dev' branch into '$GGROOT/github.com/hello/world'.
+
+The '--exact-url' flag uses the provided URL without canonicalization or forge tree splitting:
 
     ggman clone --exact-url https://github.com/hello/world.git
+
+The '--no-forge-split' flag skips forge tree splitting but still canonicalizes.
+The '--no-auto-branch' flag splits forge tree URLs but does not pass '--branch' to git.
 
 Additional arguments can be passed to git after '--':
 
     ggman clone --exact-url https://github.com/hello/world.git -- --branch dev --depth 2
 
-This executes 'git clone git@github.com:hello/world.git --branch dev --depth 2'.
+This executes 'git clone https://github.com/hello/world.git --branch dev --depth 2'.
 The '--' separator distinguishes ggman flags from git flags.`,
 		Args: cobra.MinimumNArgs(1),
 
@@ -57,7 +66,9 @@ The '--' separator distinguishes ggman flags from git flags.`,
 	flags.BoolVarP(&impl.Force, "force", "f", false, "do not complain when a repository already exists in the target directory. Incompatible with '--overwrite'")
 	flags.BoolVarP(&impl.Overwrite, "overwrite", "o", false, "if the local directory already exists delete it before attempting to clone again. Incompatible with '--force'")
 	flags.BoolVarP(&impl.Local, "local", "l", false, "alias of \"--plain\"")
-	flags.BoolVarP(&impl.Exact, "exact-url", "e", false, "don't canonicalize URL before cloning and use exactly the passed URL")
+	flags.BoolVarP(&impl.Exact, "exact-url", "e", false, "don't canonicalize URL before cloning and use exactly the passed URL. Implies '--no-forge-split'")
+	flags.BoolVar(&impl.NoForgeSplit, "no-forge-split", false, "do not split forge tree references from the URL")
+	flags.BoolVar(&impl.NoAutoBranch, "no-auto-branch", false, "do not pass '--branch' to git for forge tree references")
 	flags.BoolVar(&impl.Plain, "plain", false, "clone like a standard git would: into an appropriately named subdirectory of the current directory")
 	flags.StringVarP(&impl.To, "to", "t", "", "clone repository into specified directory")
 
@@ -69,12 +80,14 @@ type clone struct {
 		URL  string
 		Args []string
 	}
-	Force     bool
-	Overwrite bool
-	Local     bool
-	Exact     bool
-	Plain     bool
-	To        string
+	Force        bool
+	Overwrite    bool
+	Local        bool
+	Exact        bool
+	NoForgeSplit bool
+	NoAutoBranch bool
+	Plain        bool
+	To           string
 }
 
 func (c *clone) ParseArgs(cmd *cobra.Command, args []string) error {
@@ -87,6 +100,10 @@ func (c *clone) ParseArgs(cmd *cobra.Command, args []string) error {
 
 	if c.Overwrite && c.Force {
 		return errCloneInvalidForceFlags
+	}
+
+	if c.Exact {
+		c.NoForgeSplit = true
 	}
 
 	c.Positional.URL = args[0]
@@ -120,7 +137,13 @@ func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 	}
 
 	// grab the url to clone and make sure it is not local
-	url := env.ParseURL(c.Positional.URL)
+	var url env.URL
+	var ref string
+	if c.NoForgeSplit {
+		url = env.ParseURL(c.Positional.URL)
+	} else {
+		url, _, ref, _ = env.ParseURLAndForgeReference(c.Positional.URL)
+	}
 	if url.IsLocal() {
 		return fmt.Errorf("%q: %w", c.Positional.URL, errCloneLocalURI)
 	}
@@ -151,11 +174,18 @@ func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	cloneArgs := c.Positional.Args
+	branchMessage := ""
+	if ref != "" && !c.NoAutoBranch {
+		cloneArgs = append([]string{"--branch", ref}, cloneArgs...)
+		branchMessage = fmt.Sprintf("branch %q of ", ref)
+	}
+
 	// do the actual cloning!
-	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Cloning %q into %q ...\n", remote, local); err != nil {
+	if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Cloning %s%q into %q ...\n", branchMessage, remote, local); err != nil {
 		return fmt.Errorf("%w: %w", errGenericOutput, err)
 	}
-	switch err := environment.Git.Clone(cmd.Context(), streamFromCommand(cmd), remote, local, c.Positional.Args...); {
+	switch err := environment.Git.Clone(cmd.Context(), streamFromCommand(cmd), remote, local, cloneArgs...); {
 	case err == nil:
 		return nil
 	case errors.Is(err, git.ErrCloneAlreadyExists):
@@ -168,7 +198,7 @@ func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 		}
 		return errCloneAlreadyExists
 	case errors.Is(err, git.ErrArgumentsUnsupported):
-		return fmt.Errorf("%w: %v", errCloneNoArguments, shellescape.QuoteCommand(c.Positional.Args))
+		return fmt.Errorf("%w: %v", errCloneNoArguments, shellescape.QuoteCommand(cloneArgs))
 	default:
 		return fmt.Errorf("%w%w", errCloneOther, err)
 	}

@@ -1,9 +1,11 @@
 package cmd_test
 
-//spellchecker:words testing ggman internal mockenv
+//spellchecker:words testing github plumbing ggman internal mockenv
 import (
 	"testing"
 
+	git "github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"go.tkw01536.de/ggman/internal/cmd"
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
@@ -21,6 +23,9 @@ func TestCommandClone(t *testing.T) {
 	mock.Register("https://github.com/hello/world3.git")
 	mock.Register("https://github.com/hello/world4.git", "git@github.com:hello/world4.git")
 	mock.Register("https://github.com/hello/world5.git", "git@github.com:hello/world5.git")
+	mock.Register("https://github.com/hello/world7.git", "git@github.com:hello/world7.git")
+	mock.Register("git@github.com:hello/world8/tree/dev.git")
+	mock.Register("https://github.com/hello/world9/tree/dev")
 
 	// These tests should not be run in parallel, but treated as a single linear test.
 	// Each test case depends on the previous one and implicitly relies on the fact that
@@ -181,6 +186,36 @@ func TestCommandClone(t *testing.T) {
 			wantStdout: "",
 			wantStderr: "invalid arguments passed: requires at least 1 arg(s), only received 0\n",
 		},
+
+		{
+			"clone tree url with no-auto-branch",
+			"",
+			[]string{"clone", "--no-auto-branch", "https://github.com/hello/world7/tree/dev"},
+
+			0,
+			"Cloning \"git@github.com:hello/world7.git\" into \"${GGROOT github.com hello world7}\" ...\n",
+			"",
+		},
+
+		{
+			"clone tree url with no-forge-split",
+			"",
+			[]string{"clone", "--no-forge-split", "https://github.com/hello/world8/tree/dev"},
+
+			0,
+			"Cloning \"git@github.com:hello/world8/tree/dev.git\" into \"${GGROOT github.com hello world8 tree dev}\" ...\n",
+			"",
+		},
+
+		{
+			"clone tree url with exact-url",
+			"",
+			[]string{"clone", "--exact-url", "https://github.com/hello/world9/tree/dev"},
+
+			0,
+			"Cloning \"https://github.com/hello/world9/tree/dev\" into \"${GGROOT github.com hello world9 tree dev}\" ...\n",
+			"",
+		},
 	}
 
 	for _, tt := range tests {
@@ -192,5 +227,42 @@ func TestCommandClone(t *testing.T) {
 			mock.AssertOutput(t, "Stdout", stdout, tt.wantStdout)
 			mock.AssertOutput(t, "Stderr", stderr, tt.wantStderr)
 		})
+	}
+}
+
+func TestCommandClone_ForgeTreeAutoBranch(t *testing.T) {
+	t.Parallel()
+
+	mock := mockenv.NewMockEnv(t)
+
+	repo, _ := mock.Register("https://github.com/hello/world-tree.git", "git@github.com:hello/world-tree.git")
+	head, err := repo.Head()
+	if err != nil {
+		t.Fatalf("Head() error = %v", err)
+	}
+	if err := repo.Storer.SetReference(plumbing.NewHashReference(
+		plumbing.NewBranchReferenceName("dev"),
+		head.Hash(),
+	)); err != nil {
+		t.Fatalf("SetReference() error = %v", err)
+	}
+
+	code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "clone", "https://github.com/hello/world-tree/tree/dev")
+	if code != 0 {
+		t.Errorf("Code = %d, wantCode = 0", code)
+	}
+	mock.AssertOutput(t, "Stdout", stdout, "Cloning branch \"dev\" of \"git@github.com:hello/world-tree.git\" into \"${GGROOT github.com hello world-tree}\" ...\n")
+	mock.AssertOutput(t, "Stderr", stderr, "")
+
+	cloned, err := git.PlainOpen(mock.Resolve("github.com", "hello", "world-tree"))
+	if err != nil {
+		t.Fatalf("PlainOpen() error = %v", err)
+	}
+	clonedHead, err := cloned.Head()
+	if err != nil {
+		t.Fatalf("Head() error = %v", err)
+	}
+	if got := clonedHead.Name().Short(); got != "dev" {
+		t.Errorf("HEAD = %q, want %q", got, "dev")
 	}
 }
