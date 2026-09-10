@@ -18,14 +18,14 @@ func TestCommandFix(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Register("https://github.com/hello/world.git", "git@github.com:hello/world.git")
-	mock.Install(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	mock.Register("https://gitforge.example/hello/world.git", "git@gitforge.example:hello/world.git")
+	mock.Install(t.Context(), "https://gitforge.example/hello/world.git", "gitforge.example", "hello", "world")
 
 	mock.Register("user@server.com/repo", "git@server.com:user/repo.git")
 	mock.Install(t.Context(), "user@server.com/repo", "server.com", "user", "repo")
 
-	mock.Register("https://gitlab.com/hello/world.git", "git@gitlab.com:hello/world.git")
-	mock.Install(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	mock.Register("https://githost.example/hello/world.git", "git@githost.example:hello/world.git")
+	mock.Install(t.Context(), "https://githost.example/hello/world.git", "githost.example", "hello", "world")
 
 	tests := []struct {
 		name    string
@@ -42,7 +42,7 @@ func TestCommandFix(t *testing.T) {
 			[]string{"fix", "--simulate"},
 
 			0,
-			"Simulate fixing remote of \"${GGROOT github.com hello world}\"\nUpdating origin: https://github.com/hello/world.git -> git@github.com:hello/world.git\nSimulate fixing remote of \"${GGROOT gitlab.com hello world}\"\nUpdating origin: https://gitlab.com/hello/world.git -> git@gitlab.com:hello/world.git\nSimulate fixing remote of \"${GGROOT server.com user repo}\"\nUpdating origin: user@server.com/repo -> git@server.com:user/repo.git\n",
+			"Simulate fixing remote of \"${GGROOT gitforge.example hello world}\"\nUpdating origin: https://gitforge.example/hello/world.git -> git@gitforge.example:hello/world.git\nSimulate fixing remote of \"${GGROOT githost.example hello world}\"\nUpdating origin: https://githost.example/hello/world.git -> git@githost.example:hello/world.git\nSimulate fixing remote of \"${GGROOT server.com user repo}\"\nUpdating origin: user@server.com/repo -> git@server.com:user/repo.git\n",
 			"",
 		},
 
@@ -52,7 +52,7 @@ func TestCommandFix(t *testing.T) {
 			[]string{"fix"},
 
 			0,
-			"Fixing remote of \"${GGROOT github.com hello world}\"\nUpdating origin: https://github.com/hello/world.git -> git@github.com:hello/world.git\nFixing remote of \"${GGROOT gitlab.com hello world}\"\nUpdating origin: https://gitlab.com/hello/world.git -> git@gitlab.com:hello/world.git\nFixing remote of \"${GGROOT server.com user repo}\"\nUpdating origin: user@server.com/repo -> git@server.com:user/repo.git\n",
+			"Fixing remote of \"${GGROOT gitforge.example hello world}\"\nUpdating origin: https://gitforge.example/hello/world.git -> git@gitforge.example:hello/world.git\nFixing remote of \"${GGROOT githost.example hello world}\"\nUpdating origin: https://githost.example/hello/world.git -> git@githost.example:hello/world.git\nFixing remote of \"${GGROOT server.com user repo}\"\nUpdating origin: user@server.com/repo -> git@server.com:user/repo.git\n",
 			"",
 		},
 
@@ -85,10 +85,10 @@ func TestCommandFix_Prune(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Register("git@github.com:hello/world.git")
-	_, remotes := mock.Register("git@github.com:hello/world2.git")
+	mock.Register("git@gitforge.example:hello/world.git")
+	_, remotes := mock.Register("git@gitforge.example:hello/world2.git")
 
-	repoPath := mock.Install(t.Context(), "git@github.com:hello/world.git", "github.com", "hello", "world")
+	repoPath := mock.Install(t.Context(), "git@gitforge.example:hello/world.git", "gitforge.example", "hello", "world")
 
 	// Add upstream remote to the repository
 	repo, err := git.PlainOpen(repoPath)
@@ -124,7 +124,7 @@ func TestCommandFix_Prune(t *testing.T) {
 			workdir: "",
 			args:    []string{"fix", "--simulate", "--prune-remotes"},
 
-			wantStdout: "Found unused remote \"upstream\" in \"${GGROOT github.com hello world}\"\n",
+			wantStdout: "Found unused remote \"upstream\" in \"${GGROOT gitforge.example hello world}\"\n",
 			wantCode:   0,
 		},
 		{
@@ -132,7 +132,7 @@ func TestCommandFix_Prune(t *testing.T) {
 			workdir: "",
 			args:    []string{"fix", "--prune-remotes"},
 
-			wantStdout: "Removing unused remote \"upstream\" from \"${GGROOT github.com hello world}\"\n",
+			wantStdout: "Removing unused remote \"upstream\" from \"${GGROOT gitforge.example hello world}\"\n",
 			wantCode:   0,
 		},
 		{

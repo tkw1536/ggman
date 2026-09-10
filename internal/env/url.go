@@ -25,7 +25,7 @@ type URL struct {
 	User     string // e.g. "git"
 	Password string // e.g. "p@ssw0rd"
 
-	HostName string // e.g. "github.com"
+	HostName string // e.g. "gitforge.example"
 	Port     uint16 // e.g. 2222
 
 	Path string // e.g. "hello/world.git"

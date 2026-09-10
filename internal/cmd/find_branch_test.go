@@ -18,7 +18,7 @@ func TestCommandFindBranch(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	// with branch 'branch'
-	clonePath := mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	clonePath := mock.Clone(t.Context(), "https://gitforge.example/hello/world.git", "gitforge.example", "hello", "world")
 	repo, err := git.PlainOpen(clonePath)
 	if err != nil {
 		panic(err)
@@ -38,11 +38,11 @@ func TestCommandFindBranch(t *testing.T) {
 	}
 
 	// with only master branch
-	repo, _ = mock.Register("https://gitlab.com/hello/world.git")
+	repo, _ = mock.Register("https://githost.example/hello/world.git")
 	if err := repo.CreateBranch(&config.Branch{Name: "branchC"}); err != nil {
 		panic(err)
 	}
-	mock.Install(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	mock.Install(t.Context(), "https://githost.example/hello/world.git", "githost.example", "hello", "world")
 
 	tests := []struct {
 		name    string
@@ -59,7 +59,7 @@ func TestCommandFindBranch(t *testing.T) {
 			[]string{"find-branch", "master"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\n",
 			"",
 		},
 
@@ -69,7 +69,7 @@ func TestCommandFindBranch(t *testing.T) {
 			[]string{"find-branch", "branch"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT server.com user repo}\n",
 			"",
 		},
 
@@ -79,7 +79,7 @@ func TestCommandFindBranch(t *testing.T) {
 			[]string{"find-branch", "branch", "--exit-code"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT server.com user repo}\n",
 			"",
 		},
 

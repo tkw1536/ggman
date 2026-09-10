@@ -27,30 +27,30 @@ func TestCommandWhere(t *testing.T) {
 		{
 			"show directory of repository",
 			"",
-			[]string{"where", "https://github.com/hello/world.git"},
+			[]string{"where", "https://gitforge.example/hello/world.git"},
 
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 			"",
 		},
 
 		{
 			"tree url strips forge reference",
 			"",
-			[]string{"where", "https://github.com/hello/world/tree/main"},
+			[]string{"where", "https://gitforge.example/hello/world/tree/main"},
 
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 			"",
 		},
 
 		{
 			"tree url with no-forge-split",
 			"",
-			[]string{"where", "--no-forge-split", "https://github.com/hello/world/tree/main"},
+			[]string{"where", "--no-forge-split", "https://gitforge.example/hello/world/tree/main"},
 
 			0,
-			"${GGROOT github.com hello world tree main}\n",
+			"${GGROOT gitforge.example hello world tree main}\n",
 			"",
 		},
 	}

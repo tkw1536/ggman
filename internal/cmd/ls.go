@@ -42,15 +42,15 @@ The '--export' flag generates a bash script to re-clone all repositories.
 #### Filtering repositories
 
 The '--for' flag limits operations to repositories matching a pattern.
-For example, 'ggman --for "github.com/*/example" ls' lists all repositories from 'github.com' named 'example'.
+For example, 'ggman --for "gitforge.example/*/example" ls' lists all repositories from 'gitforge.example' named 'example'.
 
 Pattern examples:
 
-- "world" => git@github.com:hello/world.git, https://github.com/hello/world
-- "hello/*" => git@github.com:hello/earth.git, git@github.com:hello/mars.git
-- "hello/m*" => git@github.com:hello/mars.git, git@github.com:hello/mercury.git
-- "github.com/*/*" => git@github.com:hello/world.git, git@github.com:bye/world.git
-- "github.com/hello" => git@github.com:hello/world.git, git@github.com:hello/mars.git
+- "world" => git@gitforge.example:hello/world.git, https://gitforge.example/hello/world
+- "hello/*" => git@gitforge.example:hello/earth.git, git@gitforge.example:hello/mars.git
+- "hello/m*" => git@gitforge.example:hello/mars.git, git@gitforge.example:hello/mercury.git
+- "gitforge.example/*/*" => git@gitforge.example:hello/world.git, git@gitforge.example:bye/world.git
+- "gitforge.example/hello" => git@gitforge.example:hello/world.git, git@gitforge.example:hello/mars.git
 
 Patterns are applied against URL components.
 The pattern 'hello/*' is split into 'hello' and '*', then matched sequentially against URL components.
@@ -65,7 +65,7 @@ Without special fnmatch characters, fuzzy matching is assumed.
 The '--no-fuzzy-filter' flag disables fuzzy matching.
 
 Patterns beginning with '^' or ending with '$' disable fuzzy matching and require matches at URL boundaries.
-For example, 'hello/world' matches both 'git@github.com:hello/world.git' and 'hello.com/world/example.git', but 'hello/world$' matches only the former.
+For example, 'hello/world' matches both 'git@gitforge.example:hello/world.git' and 'hello.com/world/example.git', but 'hello/world$' matches only the former.
 
 The '--for' flag also accepts exact repository URLs or filesystem paths.
 Fuzzy matching applies by default: 'wrld' matches 'world'.

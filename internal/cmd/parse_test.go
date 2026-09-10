@@ -25,22 +25,22 @@ func TestCommandParse(t *testing.T) {
 		wantStderr string
 	}{
 		{
-			"comps: git@github.com/user/repo",
+			"comps: git@gitforge.example/user/repo",
 			"",
-			[]string{"parse", "--comps", "git@github.com/user/repo"},
+			[]string{"parse", "--comps", "git@gitforge.example/user/repo"},
 
 			0,
-			"github.com\nuser\nrepo\n",
+			"gitforge.example\nuser\nrepo\n",
 			"",
 		},
 
 		{
-			"comps: ssh://git@github.com/hello/world",
+			"comps: ssh://git@gitforge.example/hello/world",
 			"",
-			[]string{"parse", "--comps", "ssh://git@github.com/hello/world"},
+			[]string{"parse", "--comps", "ssh://git@gitforge.example/hello/world"},
 
 			0,
-			"github.com\nhello\nworld\n",
+			"gitforge.example\nhello\nworld\n",
 			"",
 		},
 
@@ -67,37 +67,37 @@ func TestCommandParse(t *testing.T) {
 		{
 			"comps: tree url strips forge reference",
 			"",
-			[]string{"parse", "--comps", "https://github.com/hello/world/tree/main/src"},
+			[]string{"parse", "--comps", "https://gitforge.example/hello/world/tree/main/src"},
 
 			0,
-			"github.com\nhello\nworld\n",
+			"gitforge.example\nhello\nworld\n",
 			"",
 		},
 
 		{
 			"json default with tree url",
 			"",
-			[]string{"parse", "https://github.com/hello/world/tree/main/src"},
+			[]string{"parse", "https://gitforge.example/hello/world/tree/main/src"},
 
 			0,
-			"{\n \"comps\": [\n  \"github.com\",\n  \"hello\",\n  \"world\"\n ],\n \"branch\": \"main\",\n \"path\": \"src\"\n}\n",
+			"{\n \"comps\": [\n  \"gitforge.example\",\n  \"hello\",\n  \"world\"\n ],\n \"branch\": \"main\",\n \"path\": \"src\"\n}\n",
 			"",
 		},
 
 		{
 			"json without tree",
 			"",
-			[]string{"parse", "https://github.com/hello/world.git"},
+			[]string{"parse", "https://gitforge.example/hello/world.git"},
 
 			0,
-			"{\n \"comps\": [\n  \"github.com\",\n  \"hello\",\n  \"world\"\n ],\n \"branch\": \"\",\n \"path\": \"\"\n}\n",
+			"{\n \"comps\": [\n  \"gitforge.example\",\n  \"hello\",\n  \"world\"\n ],\n \"branch\": \"\",\n \"path\": \"\"\n}\n",
 			"",
 		},
 
 		{
 			"branch only",
 			"",
-			[]string{"parse", "--branch", "https://github.com/hello/world/tree/main/src"},
+			[]string{"parse", "--branch", "https://gitforge.example/hello/world/tree/main/src"},
 
 			0,
 			"main\n",
@@ -107,7 +107,7 @@ func TestCommandParse(t *testing.T) {
 		{
 			"path only",
 			"",
-			[]string{"parse", "--path", "https://github.com/hello/world/tree/main/src"},
+			[]string{"parse", "--path", "https://gitforge.example/hello/world/tree/main/src"},
 
 			0,
 			"src\n",
@@ -117,17 +117,17 @@ func TestCommandParse(t *testing.T) {
 		{
 			"no-forge-split keeps tree in comps",
 			"",
-			[]string{"parse", "--comps", "--no-forge-split", "https://github.com/hello/world/tree/main/src"},
+			[]string{"parse", "--comps", "--no-forge-split", "https://gitforge.example/hello/world/tree/main/src"},
 
 			0,
-			"github.com\nhello\nworld\ntree\nmain\nsrc\n",
+			"gitforge.example\nhello\nworld\ntree\nmain\nsrc\n",
 			"",
 		},
 
 		{
 			"no-forge-split empties branch",
 			"",
-			[]string{"parse", "--branch", "--no-forge-split", "https://github.com/hello/world/tree/main/src"},
+			[]string{"parse", "--branch", "--no-forge-split", "https://gitforge.example/hello/world/tree/main/src"},
 
 			0,
 			"\n",
@@ -137,7 +137,7 @@ func TestCommandParse(t *testing.T) {
 		{
 			"exclusive comps and branch",
 			"",
-			[]string{"parse", "--comps", "--branch", "https://github.com/hello/world.git"},
+			[]string{"parse", "--comps", "--branch", "https://gitforge.example/hello/world.git"},
 
 			4,
 			"",
@@ -174,22 +174,22 @@ func TestCommandCompsAlias(t *testing.T) {
 		wantStderr string
 	}{
 		{
-			"git@github.com/user/repo",
+			"git@gitforge.example/user/repo",
 			"",
-			[]string{"comps", "git@github.com/user/repo"},
+			[]string{"comps", "git@gitforge.example/user/repo"},
 
 			0,
-			"github.com\nuser\nrepo\n",
+			"gitforge.example\nuser\nrepo\n",
 			"",
 		},
 
 		{
-			"ssh://git@github.com/hello/world",
+			"ssh://git@gitforge.example/hello/world",
 			"",
-			[]string{"comps", "ssh://git@github.com/hello/world"},
+			[]string{"comps", "ssh://git@gitforge.example/hello/world"},
 
 			0,
-			"github.com\nhello\nworld\n",
+			"gitforge.example\nhello\nworld\n",
 			"",
 		},
 

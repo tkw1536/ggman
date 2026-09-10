@@ -19,7 +19,7 @@ func TestCommandFindFile(t *testing.T) {
 
 	// with file 'example.txt'
 	{
-		clonePath := mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+		clonePath := mock.Clone(t.Context(), "https://gitforge.example/hello/world.git", "gitforge.example", "hello", "world")
 		if err := os.WriteFile(filepath.Join(clonePath, "example.txt"), nil, 0600); err != nil {
 			panic(err)
 		}
@@ -37,7 +37,7 @@ func TestCommandFindFile(t *testing.T) {
 	}
 
 	// with nothing
-	mock.Clone(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	mock.Clone(t.Context(), "https://githost.example/hello/world.git", "githost.example", "hello", "world")
 
 	tests := []struct {
 		name    string
@@ -54,7 +54,7 @@ func TestCommandFindFile(t *testing.T) {
 			[]string{"find-file", "example.txt"},
 
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 			"",
 		},
 		{
@@ -63,7 +63,7 @@ func TestCommandFindFile(t *testing.T) {
 			[]string{"find-file", "--print-file", "example.txt"},
 
 			0,
-			"${GGROOT github.com hello world example.txt}\n",
+			"${GGROOT gitforge.example hello world example.txt}\n",
 			"",
 		},
 		{
@@ -108,7 +108,7 @@ func TestCommandFindFile(t *testing.T) {
 			[]string{"find-file", "--exit-code", "example.txt"},
 
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 			"",
 		},
 	}

@@ -17,7 +17,7 @@ func TestCommandLink(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	externalRepo := mock.Clone(t.Context(), "https://github.com/hello/world.git", "..", "external")
+	externalRepo := mock.Clone(t.Context(), "https://gitforge.example/hello/world.git", "..", "external")
 
 	escapedExternalRepo := strconv.Quote(externalRepo)
 
@@ -36,7 +36,7 @@ func TestCommandLink(t *testing.T) {
 			[]string{"link", "."},
 
 			0,
-			"Linking \"${GGROOT github.com hello world}\" -> " + escapedExternalRepo + "\n",
+			"Linking \"${GGROOT gitforge.example hello world}\" -> " + escapedExternalRepo + "\n",
 			"",
 		},
 

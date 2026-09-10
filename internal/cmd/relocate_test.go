@@ -29,16 +29,16 @@ func TestCommandRelocate(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Clone(t.Context(), "https://github.com/right/directory.git", "github.com", "right", "directory")
-	mock.Clone(t.Context(), "https://github.com/correct/directory.git", "github.com", "incorrect", "directory")
+	mock.Clone(t.Context(), "https://gitforge.example/right/directory.git", "gitforge.example", "right", "directory")
+	mock.Clone(t.Context(), "https://gitforge.example/correct/directory.git", "gitforge.example", "incorrect", "directory")
 
 	// link in an external repository in the right place
-	external1 := mock.Clone(t.Context(), "https://github.com/right/external1.git", "..", "external-path-1")
-	symlink(external1, mock.Resolve(filepath.Join("github.com", "right", "external1")))
+	external1 := mock.Clone(t.Context(), "https://gitforge.example/right/external1.git", "..", "external-path-1")
+	symlink(external1, mock.Resolve(filepath.Join("gitforge.example", "right", "external1")))
 
 	// link in an external repository in the right place
-	external2 := mock.Clone(t.Context(), "https://github.com/right/external2.git", "..", "external-path-2")
-	symlink(external2, mock.Resolve(filepath.Join("github.com", "right", "wrong-external")))
+	external2 := mock.Clone(t.Context(), "https://gitforge.example/right/external2.git", "..", "external-path-2")
+	symlink(external2, mock.Resolve(filepath.Join("gitforge.example", "right", "wrong-external")))
 
 	tests := []struct {
 		name    string
@@ -55,7 +55,7 @@ func TestCommandRelocate(t *testing.T) {
 			[]string{"relocate", "--simulate"},
 
 			0,
-			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com right wrong-external}` `${GGROOT github.com right external2}`\nmkdir -p `${GGROOT github.com correct}`\nmv `${GGROOT github.com incorrect directory}` `${GGROOT github.com correct directory}`\n",
+			"mkdir -p `${GGROOT gitforge.example right}`\nmv `${GGROOT gitforge.example right wrong-external}` `${GGROOT gitforge.example right external2}`\nmkdir -p `${GGROOT gitforge.example correct}`\nmv `${GGROOT gitforge.example incorrect directory}` `${GGROOT gitforge.example correct directory}`\n",
 
 			"",
 		},
@@ -66,7 +66,7 @@ func TestCommandRelocate(t *testing.T) {
 			[]string{"relocate"},
 
 			0,
-			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com right wrong-external}` `${GGROOT github.com right external2}`\nmkdir -p `${GGROOT github.com correct}`\nmv `${GGROOT github.com incorrect directory}` `${GGROOT github.com correct directory}`\n",
+			"mkdir -p `${GGROOT gitforge.example right}`\nmv `${GGROOT gitforge.example right wrong-external}` `${GGROOT gitforge.example right external2}`\nmkdir -p `${GGROOT gitforge.example correct}`\nmv `${GGROOT gitforge.example incorrect directory}` `${GGROOT gitforge.example correct directory}`\n",
 
 			"",
 		},
@@ -101,9 +101,9 @@ func TestCommandRelocate_existsRepo(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	// clone the same repository twice
-	mock.Register("https://github.com/right/directory.git")
-	mock.Install(t.Context(), "https://github.com/right/directory.git", "github.com", "right", "directory")
-	mock.Install(t.Context(), "https://github.com/right/directory.git", "github.com", "right", "other")
+	mock.Register("https://gitforge.example/right/directory.git")
+	mock.Install(t.Context(), "https://gitforge.example/right/directory.git", "gitforge.example", "right", "directory")
+	mock.Install(t.Context(), "https://gitforge.example/right/directory.git", "gitforge.example", "right", "other")
 
 	tests := []struct {
 		name    string
@@ -120,7 +120,7 @@ func TestCommandRelocate_existsRepo(t *testing.T) {
 			[]string{"relocate", "--simulate"},
 
 			0,
-			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com right other}` `${GGROOT github.com right directory}`\n",
+			"mkdir -p `${GGROOT gitforge.example right}`\nmv `${GGROOT gitforge.example right other}` `${GGROOT gitforge.example right directory}`\n",
 
 			"",
 		},
@@ -131,9 +131,9 @@ func TestCommandRelocate_existsRepo(t *testing.T) {
 			[]string{"relocate"},
 
 			1,
-			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com right other}` `${GGROOT github.com right directory}`\n",
+			"mkdir -p `${GGROOT gitforge.example right}`\nmv `${GGROOT gitforge.example right other}` `${GGROOT gitforge.example right directory}`\n",
 
-			"failed to move repository: repository already exists at \"${GGROOT github.com right directory}\"\n",
+			"failed to move repository: repository already exists at \"${GGROOT gitforge.example right directory}\"\n",
 		},
 	}
 
@@ -157,9 +157,9 @@ func TestCommandRelocate_existsPath(t *testing.T) {
 	mock := mockenv.NewMockEnv(t)
 
 	// clone the same repository twice
-	mock.Clone(t.Context(), "https://github.com/right/directory.git", "github.com", "wrong", "directory")
+	mock.Clone(t.Context(), "https://gitforge.example/right/directory.git", "gitforge.example", "wrong", "directory")
 
-	if err := os.MkdirAll(mock.Resolve("github.com", "right", "directory"), os.ModePerm|os.ModeDir); err != nil {
+	if err := os.MkdirAll(mock.Resolve("gitforge.example", "right", "directory"), os.ModePerm|os.ModeDir); err != nil {
 		panic(err)
 	}
 
@@ -178,7 +178,7 @@ func TestCommandRelocate_existsPath(t *testing.T) {
 			[]string{"relocate", "--simulate"},
 
 			0,
-			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com wrong directory}` `${GGROOT github.com right directory}`\n",
+			"mkdir -p `${GGROOT gitforge.example right}`\nmv `${GGROOT gitforge.example wrong directory}` `${GGROOT gitforge.example right directory}`\n",
 
 			"",
 		},
@@ -189,9 +189,9 @@ func TestCommandRelocate_existsPath(t *testing.T) {
 			[]string{"relocate"},
 
 			1,
-			"mkdir -p `${GGROOT github.com right}`\nmv `${GGROOT github.com wrong directory}` `${GGROOT github.com right directory}`\n",
+			"mkdir -p `${GGROOT gitforge.example right}`\nmv `${GGROOT gitforge.example wrong directory}` `${GGROOT gitforge.example right directory}`\n",
 
-			"\"${GGROOT github.com right directory}\": failed to move repository: path already exists\n",
+			"\"${GGROOT gitforge.example right directory}\": failed to move repository: path already exists\n",
 		},
 	}
 
@@ -212,8 +212,8 @@ func TestCommandRelocate_existsPath(t *testing.T) {
 //nolint:paralleltest
 func TestCommandRelocate_multipleRemotes(t *testing.T) {
 	const (
-		originRemote = "https://github.com/origin/repo.git"
-		forkRemote   = "https://github.com/fork/repo.git"
+		originRemote = "https://gitforge.example/origin/repo.git"
+		forkRemote   = "https://gitforge.example/fork/repo.git"
 	)
 
 	// setup sets up a new mock environment.
@@ -270,9 +270,9 @@ func TestCommandRelocate_multipleRemotes(t *testing.T) {
 	}
 
 	t.Run("at canonical path for checked out branch (origin)", func(t *testing.T) {
-		// Repository is at github.com/origin/repo (canonical for origin remote)
+		// Repository is at gitforge.example/origin/repo (canonical for origin remote)
 		// and origin_branch is checked out (tracking origin remote)
-		mock := setup(t, []string{"github.com", "origin", "repo"}, "origin_branch")
+		mock := setup(t, []string{"gitforge.example", "origin", "repo"}, "origin_branch")
 
 		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate")
 		if code != 0 {
@@ -284,9 +284,9 @@ func TestCommandRelocate_multipleRemotes(t *testing.T) {
 	})
 
 	t.Run("at canonical path for checked out branch (origin) with only current remote", func(t *testing.T) {
-		// Repository is at github.com/origin/repo (canonical for origin remote)
+		// Repository is at gitforge.example/origin/repo (canonical for origin remote)
 		// and origin_branch is checked out (tracking origin remote)
-		mock := setup(t, []string{"github.com", "origin", "repo"}, "origin_branch")
+		mock := setup(t, []string{"gitforge.example", "origin", "repo"}, "origin_branch")
 
 		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate", "--only-current-remote")
 		if code != 0 {
@@ -298,9 +298,9 @@ func TestCommandRelocate_multipleRemotes(t *testing.T) {
 	})
 
 	t.Run("at canonical path for non-checked out branch (fork)", func(t *testing.T) {
-		// Repository is at github.com/fork/repo (canonical for fork remote)
+		// Repository is at gitforge.example/fork/repo (canonical for fork remote)
 		// but origin_branch is checked out (tracking origin remote)
-		mock := setup(t, []string{"github.com", "fork", "repo"}, "origin_branch")
+		mock := setup(t, []string{"gitforge.example", "fork", "repo"}, "origin_branch")
 
 		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate")
 		if code != 0 {
@@ -312,9 +312,9 @@ func TestCommandRelocate_multipleRemotes(t *testing.T) {
 	})
 
 	t.Run("at canonical path for non-checked out branch (fork) with only current remote", func(t *testing.T) {
-		// Repository is at github.com/fork/repo (canonical for fork remote)
+		// Repository is at gitforge.example/fork/repo (canonical for fork remote)
 		// but origin_branch is checked out (tracking origin remote)
-		mock := setup(t, []string{"github.com", "fork", "repo"}, "origin_branch")
+		mock := setup(t, []string{"gitforge.example", "fork", "repo"}, "origin_branch")
 
 		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate", "--only-current-remote")
 		if code != 0 {
@@ -322,35 +322,35 @@ func TestCommandRelocate_multipleRemotes(t *testing.T) {
 		}
 
 		// Should relocate to origin remote path (canonical remote of current branch)
-		mock.AssertOutput(t, "Stdout", stdout, "mkdir -p `${GGROOT github.com origin}`\nmv `${GGROOT github.com fork repo}` `${GGROOT github.com origin repo}`\n")
+		mock.AssertOutput(t, "Stdout", stdout, "mkdir -p `${GGROOT gitforge.example origin}`\nmv `${GGROOT gitforge.example fork repo}` `${GGROOT gitforge.example origin repo}`\n")
 		mock.AssertOutput(t, "Stderr", stderr, "")
 	})
 
 	t.Run("not at canonical path for any remote", func(t *testing.T) {
-		// Repository is at github.com/wrong/repo (not canonical for either remote)
+		// Repository is at gitforge.example/wrong/repo (not canonical for either remote)
 		// fork_branch is checked out (tracking fork remote)
-		mock := setup(t, []string{"github.com", "wrong", "repo"}, "fork_branch")
+		mock := setup(t, []string{"gitforge.example", "wrong", "repo"}, "fork_branch")
 
 		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate")
 		if code != 0 {
 			t.Errorf("Code = %d, wantCode = 0", code)
 		}
 		// Should relocate to fork remote path (canonical remote of current branch)
-		mock.AssertOutput(t, "Stdout", stdout, "mkdir -p `${GGROOT github.com fork}`\nmv `${GGROOT github.com wrong repo}` `${GGROOT github.com fork repo}`\n")
+		mock.AssertOutput(t, "Stdout", stdout, "mkdir -p `${GGROOT gitforge.example fork}`\nmv `${GGROOT gitforge.example wrong repo}` `${GGROOT gitforge.example fork repo}`\n")
 		mock.AssertOutput(t, "Stderr", stderr, "")
 	})
 
 	t.Run("not at canonical path for any remote and only-current-remote set", func(t *testing.T) {
-		// Repository is at github.com/wrong/repo (not canonical for either remote)
+		// Repository is at gitforge.example/wrong/repo (not canonical for either remote)
 		// fork_branch is checked out (tracking fork remote)
-		mock := setup(t, []string{"github.com", "wrong", "repo"}, "fork_branch")
+		mock := setup(t, []string{"gitforge.example", "wrong", "repo"}, "fork_branch")
 
 		code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "relocate", "--simulate", "--only-current-remote")
 		if code != 0 {
 			t.Errorf("Code = %d, wantCode = 0", code)
 		}
 		// Should relocate to fork remote path (canonical remote of current branch)
-		mock.AssertOutput(t, "Stdout", stdout, "mkdir -p `${GGROOT github.com fork}`\nmv `${GGROOT github.com wrong repo}` `${GGROOT github.com fork repo}`\n")
+		mock.AssertOutput(t, "Stdout", stdout, "mkdir -p `${GGROOT gitforge.example fork}`\nmv `${GGROOT gitforge.example wrong repo}` `${GGROOT gitforge.example fork repo}`\n")
 		mock.AssertOutput(t, "Stderr", stderr, "")
 	})
 }

@@ -29,8 +29,8 @@ if ! command -v gg >/dev/null 2>&1; then
 fi
 
 # ggcd allows 'cd'-ing into a directory given a repository name
-# e.g ggcd github.com/hello/world will cd into the directory where the
-# 'github.com/hello/world' repository is checked out. 
+# e.g ggcd gitforge.example/hello/world will cd into the directory where the
+# 'gitforge.example/hello/world' repository is checked out. 
 #
 # This also works with short names, e.g. "ggcd world" will cd into the first
 # repository matching "world".

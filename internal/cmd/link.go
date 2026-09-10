@@ -29,9 +29,9 @@ Link allows these repositories to still appear in the ggman directory structure.
 
 For example
 
-    ggman link ~/go/src/github.com/hello/world
+    ggman link ~/go/src/gitforge.example/hello/world
 
-creates a symlink at '$GGROOT/github.com/hello/world' pointing to '~/go/src/github.com/hello/world'.`,
+creates a symlink at '$GGROOT/gitforge.example/hello/world' pointing to '~/go/src/gitforge.example/hello/world'.`,
 		Args: cobra.ExactArgs(1),
 
 		PreRunE: impl.ParseArgs,

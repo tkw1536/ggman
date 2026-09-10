@@ -17,7 +17,7 @@ func TestCommandHere(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	clonePath := mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	clonePath := mock.Clone(t.Context(), "https://gitforge.example/hello/world.git", "gitforge.example", "hello", "world")
 
 	subClonePath := filepath.Join(clonePath, "sub")
 	if err := os.MkdirAll(subClonePath, 0750); err != nil {
@@ -38,7 +38,7 @@ func TestCommandHere(t *testing.T) {
 			clonePath,
 			[]string{"here"},
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 			"",
 		},
 
@@ -47,7 +47,7 @@ func TestCommandHere(t *testing.T) {
 			clonePath,
 			[]string{"here", "--tree"},
 			0,
-			"${GGROOT github.com hello world}\n.\n",
+			"${GGROOT gitforge.example hello world}\n.\n",
 			"",
 		},
 
@@ -56,7 +56,7 @@ func TestCommandHere(t *testing.T) {
 			subClonePath,
 			[]string{"here"},
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 			"",
 		},
 
@@ -65,7 +65,7 @@ func TestCommandHere(t *testing.T) {
 			subClonePath,
 			[]string{"here", "--tree"},
 			0,
-			"${GGROOT github.com hello world}\nsub\n",
+			"${GGROOT gitforge.example hello world}\nsub\n",
 			"",
 		},
 	}

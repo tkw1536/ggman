@@ -220,14 +220,14 @@ func TestURL_SplitForgeReference(t *testing.T) {
 		},
 		{
 			name:         "ssh with tree is not a web url",
-			url:          env.URL{Scheme: "ssh", User: "git", HostName: "github.com", Path: "user/repo/tree/main/src"},
+			url:          env.URL{Scheme: "ssh", User: "git", HostName: "gitforge.example", Path: "user/repo/tree/main/src"},
 			wantPath:     "user/repo/tree/main/src",
 			wantRef:      "",
 			wantRelative: "",
 		},
 		{
 			name:         "ssh with query and fragment is not a web url",
-			url:          env.URL{Scheme: "ssh", HostName: "github.com", Path: "user/repo/tree/main/src?tab=readme#L10"},
+			url:          env.URL{Scheme: "ssh", HostName: "gitforge.example", Path: "user/repo/tree/main/src?tab=readme#L10"},
 			wantPath:     "user/repo/tree/main/src?tab=readme#L10",
 			wantRef:      "",
 			wantRelative: "",
@@ -372,15 +372,15 @@ func TestParseURLAndForgeReference(t *testing.T) {
 		},
 		{
 			name:         "ssh url with tree is not a web url",
-			input:        "ssh://git@github.com/user/repo/tree/main/src",
-			wantURL:      env.URL{Scheme: "ssh", User: "git", HostName: "github.com", Path: "user/repo/tree/main/src"},
+			input:        "ssh://git@gitforge.example/user/repo/tree/main/src",
+			wantURL:      env.URL{Scheme: "ssh", User: "git", HostName: "gitforge.example", Path: "user/repo/tree/main/src"},
 			wantRef:      "",
 			wantRelative: "",
 		},
 		{
 			name:         "ssh url with query and fragment is not a web url",
-			input:        "ssh://git@github.com/user/repo/tree/main/src?tab=readme#L10",
-			wantURL:      env.URL{Scheme: "ssh", User: "git", HostName: "github.com", Path: "user/repo/tree/main/src?tab=readme#L10"},
+			input:        "ssh://git@gitforge.example/user/repo/tree/main/src?tab=readme#L10",
+			wantURL:      env.URL{Scheme: "ssh", User: "git", HostName: "gitforge.example", Path: "user/repo/tree/main/src?tab=readme#L10"},
 			wantRef:      "",
 			wantRelative: "",
 		},
@@ -611,17 +611,17 @@ func TestURL_Components(t *testing.T) {
 		fields    fields
 		wantParts []string
 	}{
-		// git@github.com/user/repo
-		{"noProto1", fields{"", "git", "", "github.com", 0, "hello/world.git"}, []string{"github.com", "hello", "world"}},
-		{"noProto2", fields{"", "git", "", "github.com", 0, "hello/world"}, []string{"github.com", "hello", "world"}},
-		{"noProto3", fields{"", "git", "", "github.com", 0, "hello/world/"}, []string{"github.com", "hello", "world"}},
-		{"noProto4", fields{"", "git", "", "github.com", 0, "hello/world//"}, []string{"github.com", "hello", "world"}},
+		// git@gitforge.example/user/repo
+		{"noProto1", fields{"", "git", "", "gitforge.example", 0, "hello/world.git"}, []string{"gitforge.example", "hello", "world"}},
+		{"noProto2", fields{"", "git", "", "gitforge.example", 0, "hello/world"}, []string{"gitforge.example", "hello", "world"}},
+		{"noProto3", fields{"", "git", "", "gitforge.example", 0, "hello/world/"}, []string{"gitforge.example", "hello", "world"}},
+		{"noProto4", fields{"", "git", "", "gitforge.example", 0, "hello/world//"}, []string{"gitforge.example", "hello", "world"}},
 
-		// ssh://git@github.com/hello/world
-		{"sshProto1", fields{"ssh", "git", "", "github.com", 0, "hello/world.git"}, []string{"github.com", "hello", "world"}},
-		{"sshProto2", fields{"ssh", "git", "", "github.com", 0, "hello/world"}, []string{"github.com", "hello", "world"}},
-		{"sshProto3", fields{"ssh", "git", "", "github.com", 0, "hello/world/"}, []string{"github.com", "hello", "world"}},
-		{"sshProto4", fields{"ssh", "git", "", "github.com", 0, "hello/world//"}, []string{"github.com", "hello", "world"}},
+		// ssh://git@gitforge.example/hello/world
+		{"sshProto1", fields{"ssh", "git", "", "gitforge.example", 0, "hello/world.git"}, []string{"gitforge.example", "hello", "world"}},
+		{"sshProto2", fields{"ssh", "git", "", "gitforge.example", 0, "hello/world"}, []string{"gitforge.example", "hello", "world"}},
+		{"sshProto3", fields{"ssh", "git", "", "gitforge.example", 0, "hello/world/"}, []string{"gitforge.example", "hello", "world"}},
+		{"sshProto4", fields{"ssh", "git", "", "gitforge.example", 0, "hello/world//"}, []string{"gitforge.example", "hello", "world"}},
 
 		// user@server.com
 		{"userServer1", fields{"", "user", "", "server.com", 0, "repository"}, []string{"server.com", "user", "repository"}},
@@ -655,14 +655,14 @@ func TestURL_Components(t *testing.T) {
 }
 
 var benchComponentURLS = []env.URL{
-	{"", "git", "", "github.com", 0, "hello/world.git"},
-	{"", "git", "", "github.com", 0, "hello/world"},
-	{"", "git", "", "github.com", 0, "hello/world/"},
-	{"", "git", "", "github.com", 0, "hello/world//"},
-	{"ssh", "git", "", "github.com", 0, "hello/world.git"},
-	{"ssh", "git", "", "github.com", 0, "hello/world"},
-	{"ssh", "git", "", "github.com", 0, "hello/world/"},
-	{"ssh", "git", "", "github.com", 0, "hello/world//"},
+	{"", "git", "", "gitforge.example", 0, "hello/world.git"},
+	{"", "git", "", "gitforge.example", 0, "hello/world"},
+	{"", "git", "", "gitforge.example", 0, "hello/world/"},
+	{"", "git", "", "gitforge.example", 0, "hello/world//"},
+	{"ssh", "git", "", "gitforge.example", 0, "hello/world.git"},
+	{"ssh", "git", "", "gitforge.example", 0, "hello/world"},
+	{"ssh", "git", "", "gitforge.example", 0, "hello/world/"},
+	{"ssh", "git", "", "gitforge.example", 0, "hello/world//"},
 
 	{"", "user", "", "server.com", 0, "repository"},
 	{"", "user", "", "server.com", 0, "repository/"},

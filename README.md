@@ -96,7 +96,7 @@ If you want to find a specific installed repository you can provide a `--for` ar
 For example:
 
 ```
-ggman --for https://github.com/tkw1536/ggman ls
+ggman --for https://gitforge.example/tkw1536/ggman ls
 ```
 
 will print the location of a particular repository.
@@ -105,10 +105,10 @@ To clone a new repository into the root directory, you can use the `ggman clone`
 For example:
 
 ```
-ggman clone https://github.com/tkw1536/ggman
+ggman clone https://gitforge.example/tkw1536/ggman
 ```
 
-This will clone the repository https://github.com/tkw1536/ggman to the folder `$GGROOT/github.com/tkw1536/ggman` using ssh keys. 
+This will clone the repository from the fictional gitforge.example host into https://gitforge.example/tkw1536/ggman to the folder `$GGROOT/gitforge.example/tkw1536/ggman` using ssh keys. 
 
 If you want to move all existing repositories into the standardized structure you can use:
 
@@ -136,7 +136,7 @@ eval "$(ggman shellrc)"
 #### ggcd
 
 `ggcd` allows 'cd'-ing into a directory given a repository name.
-For example, `ggcd github.com/hello/world` will cd into the directory where the `github.com/hello/world` repository is checked out. 
+For example, `ggcd gitforge.example/hello/world` will cd into the directory where the `gitforge.example/hello/world` repository is checked out. 
 This also works with any pattern matching a repository, e.g. `ggcd world` will cd into the first repository matching `world`.
 
 #### gg and ggdo
@@ -193,16 +193,16 @@ It manages all git repositories inside a given root directory, and automatically
 The root folder defaults to `~/Projects` but can be customized using the `$GGROOT` environment variable. 
 The root directory can be echoed using the command alias `ggman root`. 
 
-For example, when `ggman` clones a repository `https://github.com/hello/world.git`, this would automatically end up in `$GGROOT/github.com/hello/world`. 
-This works not only for `github.com` urls, but for any kind of url. 
+For example, when `ggman` clones a repository `https://gitforge.example/hello/world.git`, this would automatically end up in `$GGROOT/gitforge.example/hello/world`. 
+This works for URLs from any kind of git forge (e.g. `codeberg.org`, `gitlab.com`, `github.com`, etc...). 
 To see where a repository would be cloned to (but not actually cloning it), use `ggman where <REPO>`. 
 
 As of `ggman 1.12`, this translation of URLs into paths takes existing paths into account.
 In particular, it re-uses existing sub-paths if they differ from the requested path only by casing.
 
-For example, say the directory `$GGROOT/github.com/hello` exists and the user requests to clone `https://github.com/HELLO/world.git`.
-Before 1.12, this clone would end up in `$GGROOT/github.com/HELLO/world`, resulting in two directories `$GGROOT/github.com/HELLO` and `$GGROOT/github.com/hello`. 
-After 1.12, this clone will end up in `$GGROOT/github.com/hello/world`.
+For example, say the directory `$GGROOT/gitforge.example/hello` exists and the user requests to clone `https://gitforge.example/hello/world.git`.
+Before 1.12, this clone would end up in `$GGROOT/gitforge.example/hello/world`, resulting in two directories `$GGROOT/gitforge.example/HELLO` and `$GGROOT/gitforge.example/hello`. 
+After 1.12, this clone will end up in `$GGROOT/gitforge.example/hello/world`.
 While this means placing of repositories needs to touch the disk (and check for existing directories), it results in less directory clutter.
 
 By default, the first matching directory (in alphanumerical order) is used as opposed to creating a new one.
@@ -229,17 +229,17 @@ This is useful in specific scripting circumstances.
 
 When running multi-repository operations, it is possible to limit the operations to a specific subset of repositories. 
 This is achieved by using the 'for' keyword along with a pattern. 
-For example, `ggman --for 'github.com/*/example' ls` will list all repositories from `github.com` that are named `example`. 
+For example, `ggman --for 'gitforge.example/*/example' ls` will list all repositories from `gitforge.example` that are named `example`. 
 
 Examples for simple supported patterns can be found in this table:
 
 | Pattern            | Examples                                                            |
 | ------------------ | ------------------------------------------------------------------- |
-| `world`            | `git@github.com:hello/world.git`, `https://github.com/hello/world`  |
-| `hello/*`          | `git@github.com:hello/earth.git`, `git@github.com:hello/mars.git`   |
-| `hello/m*`         | `git@github.com:hello/mars.git`, `git@github.com:hello/mercury.git` |
-| `github.com/*/*`   | `git@github.com:hello/world.git`, `git@github.com:bye/world.git`    |
-| `github.com/hello` | `git@github.com:hello/world.git`, `git@github.com:hello/mars.git`   |
+| `world`            | `git@gitforge.example:hello/world.git`, `https://gitforge.example/hello/world`  |
+| `hello/*`          | `git@gitforge.example:hello/earth.git`, `git@gitforge.example:hello/mars.git`   |
+| `hello/m*`         | `git@gitforge.example:hello/mars.git`, `git@gitforge.example:hello/mercury.git` |
+| `gitforge.example/*/*`   | `git@gitforge.example:hello/world.git`, `git@gitforge.example:bye/world.git`    |
+| `gitforge.example/hello` | `git@gitforge.example:hello/world.git`, `git@gitforge.example:hello/mars.git`   |
 
 Patterns are generally applied against URL components (see below for details on how the splitting works).
 For example, to match the pattern `hello/*`, it is first split into the patterns `hello` and `*`.
@@ -254,9 +254,9 @@ Fuzzy matching can also be explicitly disabled by passing the global `--no-fuzzy
 
 A special case is when a pattern begins with `^` or ends with `$` (or both).
 Then any fuzzy matching is disabled, and any matches must start at the beginning  (in the case `^`) or end at the end  (in the case `$`) of the URL (or both).
-For example `hello/world` matches both `git@github.com:hello/world.git` and `hello.com/world/example.git`, but `hello/world$` only matches the former.
+For example `hello/world` matches both `git@gitforge.example:hello/world.git` and `hello.example/world/example.git`, but `hello/world$` only matches the former.
 
-Note that the `--for` argument also works for exact repository urls, e.g. `ggman --for 'https://github.com/tkw1536/ggman' ls`. 
+Note that the `--for` argument also works for exact repository urls, e.g. `ggman --for 'https://gitforge.example/tkw1536/ggman' ls`. 
 `--for` also works with absolute or relative filepaths to locally installed repositories. 
 
 In addition, the `--for` argument by default uses a fuzzy matching algorithm.
@@ -273,10 +273,10 @@ The `--here` argument is an alias for `--path .`, meaning it matches only the re
 
 ### 'ggman parse' and 'ggman canon'
 
-On `github.com` and multiple other providers, it is usually possible to clone repositories via multiple urls. 
-For example, the repository `https://github.com/hello/world` can actually be cloned via:
-- `https://github.com/hello/world.git` and
-- `git@github.com:hello/world.git`
+On `gitforge.example` and multiple other providers, it is usually possible to clone repositories via multiple urls. 
+For example, the repository `https://gitforge.example/hello/world` can actually be cloned via:
+- `https://gitforge.example/hello/world.git` and
+- `git@gitforge.example:hello/world.git`
 
 Usually the latter url is preferred over the former one in order to use SSH authentication instead of having to constantly having to type a password. 
 For this purpose, ggman implements the concept of `canonical urls`, that is it treats the latter url as the main one and uses it to clone the repository. 
@@ -291,8 +291,8 @@ A few examples examples can be found in this table.
 
 | URL                            | Components                       |
 | ------------------------------ | -------------------------------- |
-| `git@github.com/user/repo`     | `github.com`, `user`, `repo`     |
-| `github.com/hello/world.git`   | `github.com`, `hello`, `world`   |
+| `git@gitforge.example/user/repo`     | `gitforge.example`, `user`, `repo`     |
+| `gitforge.example/hello/world.git`   | `gitforge.example`, `hello`, `world`   |
 | `user@server.com:repo.git`     | `server.com`, `user`, `repo`     |
 
 To see exactly which components a URL has, use `ggman comps <URL>` (an alias for `ggman parse --comps`).
@@ -363,15 +363,15 @@ To fetch data for all repositories, or to run git pull, use `ggman fetch` and `g
 To clone a new repository into the respective location, use `ggman clone` with the name of the repository as the argument, for example:
 
 ```bash
-ggman clone git@github.com:hello/world.git
+ggman clone git@gitforge.example:hello/world.git
 ```
 
-which will clone the the hello world repository into  `$GGROOT/github.com/hello/world`. 
+which will clone the the hello world repository into  `$GGROOT/gitforge.example/hello/world`. 
 This cloning not only works for the canonical repository url, but for any other url as well. 
 For example:
 
 ```bash
-ggman clone https://github.com/hello/world.git
+ggman clone https://gitforge.example/hello/world.git
 ```
 
 will do the same as the above command.
@@ -379,15 +379,15 @@ will do the same as the above command.
 Browser forge-like tree URLs work as well:
 
 ```bash
-ggman clone https://github.com/hello/world/tree/dev
+ggman clone https://gitforge.example/hello/world/tree/dev
 ```
 
-clones the `dev` branch into `$GGROOT/github.com/hello/world`.
+clones the `dev` branch into `$GGROOT/gitforge.example/hello/world`.
 
 When it is not desired that the canonical URL should be used, pass the `--exact-url` flag:
 
 ```bash
-ggman clone --exact-url https://github.com/hello/world.git
+ggman clone --exact-url https://gitforge.example/hello/world.git
 ```
 
 This will clone using the exact url into the same folder as above. 
@@ -396,10 +396,10 @@ If ggman has access to a real `git` executable, it is also possible to pass addi
 For example:
 
 ```bash
-ggman clone --exact-url https://github.com/hello/world.git -- --branch dev --depth 2
+ggman clone --exact-url https://gitforge.example/hello/world.git -- --branch dev --depth 2
 ```
 
-will execute the command ```git clone git@github.com:hello/world.git --branch dev --depth 2``` under the hood. 
+will execute the command ```git clone git@gitforge.example:hello/world.git --branch dev --depth 2``` under the hood. 
 The extra "--" is needed to allow ggman to separate the internal flags from the external flags. 
 
 However sometimes for various reasons a repository needs to live in a non-standard location outside of `GGROOT`. 
@@ -410,11 +410,11 @@ This takes the path to the local clone of an existing repository, which will the
 For example
 
 ```bash
-ggman link $HOME/go/src/github.com/hello/world
+ggman link $HOME/go/src/gitforge.example/hello/world
 ```
 
-would link the repository in `$HOME/go/src/github.com/hello/world` into the right location. 
-Here, this corresponds to `$GGROOT/github.com/hello/world`. 
+would link the repository in `$HOME/go/src/gitforge.example/hello/world` into the right location. 
+Here, this corresponds to `$GGROOT/gitforge.example/hello/world`. 
 
 Furthermore, sometimes a repository changes it's remote url and should be moved to the correct location. 
 For this purpose the `ggman relocate` command can be used. 
@@ -529,8 +529,10 @@ Command `Long` descriptions follow these conventions:
 - support for forge-like tree URLs (e.g. `.../tree/branch`) when cloning and parsing
 	- clone passes `--branch` automatically; add `--no-forge-split` and `--no-auto-branch` to adjust behavior
 	- add `ggman parse` to inspect this new parsing; `comps` is now an alias for `parse --comps`
-- update to `go1.27`
+
 - add `--relative` flag to `ggman web`
+- use `gitforge.example` and `githost.example` instead of real providers as examples
+- update to `go1.27`
 - bugfix: avoid `ggshow` `cd`ing into directory
 
 ### 1.28.0 (Released [Jun 17 2026](https://github.com/tkw1536/ggman/releases/tag/v1.28.0))

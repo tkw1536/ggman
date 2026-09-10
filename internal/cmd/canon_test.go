@@ -25,42 +25,42 @@ func TestCommandCanon(t *testing.T) {
 		wantStderr string
 	}{
 		{
-			"git@github.com/user/repo",
+			"git@gitforge.example/user/repo",
 			"",
-			[]string{"canon", "git@github.com/user/repo"},
+			[]string{"canon", "git@gitforge.example/user/repo"},
 
 			0,
-			"git@github.com:user/repo.git\n",
+			"git@gitforge.example:user/repo.git\n",
 			"",
 		},
 
 		{
-			"git@github.com/user/repo ssh://%@^/$.git",
+			"git@gitforge.example/user/repo ssh://%@^/$.git",
 			"",
-			[]string{"canon", "git@github.com/user/repo", "ssh://%@^/$.git"},
+			[]string{"canon", "git@gitforge.example/user/repo", "ssh://%@^/$.git"},
 
 			0,
-			"ssh://user@github.com/repo.git\n",
+			"ssh://user@gitforge.example/repo.git\n",
 			"",
 		},
 
 		{
-			"ssh://git@github.com/hello/world",
+			"ssh://git@gitforge.example/hello/world",
 			"",
-			[]string{"canon", "ssh://git@github.com/hello/world"},
+			[]string{"canon", "ssh://git@gitforge.example/hello/world"},
 
 			0,
-			"git@github.com:hello/world.git\n",
+			"git@gitforge.example:hello/world.git\n",
 			"",
 		},
 
 		{
-			"ssh://git@github.com/hello/world ssh://%@^/$.git",
+			"ssh://git@gitforge.example/hello/world ssh://%@^/$.git",
 			"",
-			[]string{"canon", "ssh://git@github.com/hello/world", "ssh://%@^/$.git"},
+			[]string{"canon", "ssh://git@gitforge.example/hello/world", "ssh://%@^/$.git"},
 
 			0,
-			"ssh://hello@github.com/world.git\n",
+			"ssh://hello@gitforge.example/world.git\n",
 			"",
 		},
 
@@ -117,20 +117,20 @@ func TestCommandCanon(t *testing.T) {
 		{
 			"tree url strips forge reference",
 			"",
-			[]string{"canon", "https://github.com/hello/world/tree/main", "git@^:$.git"},
+			[]string{"canon", "https://gitforge.example/hello/world/tree/main", "git@^:$.git"},
 
 			0,
-			"git@github.com:hello/world.git\n",
+			"git@gitforge.example:hello/world.git\n",
 			"",
 		},
 
 		{
 			"tree url with no-forge-split",
 			"",
-			[]string{"canon", "--no-forge-split", "https://github.com/hello/world/tree/main", "git@^:$.git"},
+			[]string{"canon", "--no-forge-split", "https://gitforge.example/hello/world/tree/main", "git@^:$.git"},
 
 			0,
-			"git@github.com:hello/world/tree/main.git\n",
+			"git@gitforge.example:hello/world/tree/main.git\n",
 			"",
 		},
 	}

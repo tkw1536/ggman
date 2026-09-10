@@ -17,7 +17,7 @@ func TestCommandSweep(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	path := mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	path := mock.Clone(t.Context(), "https://gitforge.example/hello/world.git", "gitforge.example", "hello", "world")
 	base := filepath.Join(path, "..", "..", "..")
 
 	mkdir := func(s string, files ...string) {
@@ -32,10 +32,10 @@ func TestCommandSweep(t *testing.T) {
 			}
 		}
 	}
-	mkdir(filepath.Join("github.com", "hello", "world", "empty"))
-	mkdir(filepath.Join("github.com", "empty", "empty1"))
-	mkdir(filepath.Join("github.com", "empty", "empty2"))
-	mkdir(filepath.Join("github.com", "full"), "file")
+	mkdir(filepath.Join("gitforge.example", "hello", "world", "empty"))
+	mkdir(filepath.Join("gitforge.example", "empty", "empty1"))
+	mkdir(filepath.Join("gitforge.example", "empty", "empty2"))
+	mkdir(filepath.Join("gitforge.example", "full"), "file")
 
 	tests := []struct {
 		name    string
@@ -52,7 +52,7 @@ func TestCommandSweep(t *testing.T) {
 			[]string{"sweep"},
 
 			0,
-			"${GGROOT github.com empty empty1}\n${GGROOT github.com empty empty2}\n${GGROOT github.com empty}\n",
+			"${GGROOT gitforge.example empty empty1}\n${GGROOT gitforge.example empty empty2}\n${GGROOT gitforge.example empty}\n",
 			"",
 		},
 	}

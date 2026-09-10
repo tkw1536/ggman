@@ -9,7 +9,7 @@ import (
 	"go.tkw01536.de/pkglib/exit"
 )
 
-//spellchecker:words github cobra ggman goprogram exit cspec
+//spellchecker:words github cobra ggman goprogram exit cspec canonicalization
 
 func NewCanonCommand() *cobra.Command {
 	impl := new(canon)
@@ -20,10 +20,10 @@ func NewCanonCommand() *cobra.Command {
 		Long: `Canon prints the canonical version of a URL.
 An optional second argument specifies the CANSPEC.
 
-On github.com and other forges, repositories can be cloned via multiple URLs:
+On typical git forges (e.g codeberg.org, gitlab.com, github.com), repositories can be cloned via multiple URLs:
 
-- https://github.com/hello/world.git
-- git@github.com:hello/world.git
+- https://gitforge.example/hello/world.git
+- git@gitforge.example:hello/world.git
 
 The SSH URL is typically preferred to avoid password entry.
 ggman treats the canonical URL as primary and uses it for cloning.
@@ -33,8 +33,8 @@ An example CANSPEC is 'git@^:$.git'.
 
 CANSPECs work by splitting URLs into path-like components with normalization:
 
-- 'git@github.com/user/repo' => 'github.com', 'user', 'repo'
-- 'github.com/hello/world.git' => 'github.com', 'hello', 'world'
+- 'git@gitforge.example/user/repo' => 'gitforge.example', 'user', 'repo'
+- 'gitforge.example/hello/world.git' => 'gitforge.example', 'hello', 'world'
 - 'user@server.com:repo.git' => 'server.com', 'user', 'repo'
 
 The 'ggman parse --comps' command (alias 'ggman comps') shows URL components.

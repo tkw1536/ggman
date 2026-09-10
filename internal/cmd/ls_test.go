@@ -22,12 +22,12 @@ import (
 
 var testInputFile = `
 ; this and the following lines are ignored
-# gitlab.com/hello/world
+# githost.example/hello/world
 ` + filepath.Join("server.com", "user", "repo") + `
 
 // blank lines too
 
-https://github.com/hello/world.git
+https://gitforge.example/hello/world.git
 
 `
 
@@ -36,9 +36,9 @@ func TestCommandLs(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	ghHelloWorld := mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	ghHelloWorld := mock.Clone(t.Context(), "https://gitforge.example/hello/world.git", "gitforge.example", "hello", "world")
 	serverRepo := mock.Clone(t.Context(), "user@server.com/repo", "server.com", "user", "repo")
-	glHelloWorld := mock.Clone(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	glHelloWorld := mock.Clone(t.Context(), "https://githost.example/hello/world.git", "githost.example", "hello", "world")
 
 	inputFile := mock.Resolve("file.txt")
 	if err := os.WriteFile(inputFile, []byte(testInputFile), 0600); err != nil {
@@ -68,7 +68,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\n",
 
 			"",
 		},
@@ -79,7 +79,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--dirty", "--clean", "ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\n",
 
 			"",
 		},
@@ -90,7 +90,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--dirty", "ls"},
 
 			0,
-			"${GGROOT gitlab.com hello world}\n",
+			"${GGROOT githost.example hello world}\n",
 
 			"",
 		},
@@ -101,7 +101,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--clean", "ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT server.com user repo}\n",
 
 			"",
 		},
@@ -112,7 +112,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"ls", "--exit-code"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\n",
 
 			"",
 		},
@@ -123,7 +123,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"ls", "--one"},
 
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 
 			"",
 		},
@@ -134,7 +134,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"ls", "--count", "2"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n",
 
 			"",
 		},
@@ -145,7 +145,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"ls", "--count", "5"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\n",
 
 			"",
 		},
@@ -178,7 +178,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--for", "hello/world", "ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n",
 
 			"",
 		},
@@ -189,7 +189,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--for", "hello/world", "--clean", "ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 
 			"",
 		},
@@ -200,7 +200,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--for", "wrld", "ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n",
 
 			"",
 		},
@@ -208,10 +208,10 @@ func TestCommandLs(t *testing.T) {
 		{
 			"list repositories with start flags",
 			"",
-			[]string{"--for", "^github.com", "ls"},
+			[]string{"--for", "^gitforge.example", "ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 
 			"",
 		},
@@ -222,7 +222,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--for", "wrld", "ls", "--scores"},
 
 			0,
-			"0.900000 ${GGROOT github.com hello world}\n0.900000 ${GGROOT gitlab.com hello world}\n",
+			"0.900000 ${GGROOT gitforge.example hello world}\n0.900000 ${GGROOT githost.example hello world}\n",
 
 			"",
 		},
@@ -261,12 +261,12 @@ func TestCommandLs(t *testing.T) {
 		},
 
 		{
-			"list only current repository (github.com hello world)",
+			"list only current repository (gitforge.example hello world)",
 			ghHelloWorld,
 			[]string{"--here", "ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 
 			"",
 		},
@@ -282,12 +282,12 @@ func TestCommandLs(t *testing.T) {
 			"",
 		},
 		{
-			"list only current repository (gitlab.com hello world)",
+			"list only current repository (githost.example hello world)",
 			glHelloWorld,
 			[]string{"--here", "ls"},
 
 			0,
-			"${GGROOT gitlab.com hello world}\n",
+			"${GGROOT githost.example hello world}\n",
 
 			"",
 		},
@@ -297,7 +297,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--for", ghHelloWorld, "ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 
 			"",
 		},
@@ -308,7 +308,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--path", ghHelloWorld, "ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n",
 
 			"",
 		},
@@ -319,7 +319,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--for", filepath.Join(".", "world"), "ls"},
 
 			0,
-			"${GGROOT gitlab.com hello world}\n",
+			"${GGROOT githost.example hello world}\n",
 
 			"",
 		},
@@ -330,7 +330,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--path", filepath.Join(".", "world"), "ls"},
 
 			0,
-			"${GGROOT gitlab.com hello world}\n",
+			"${GGROOT githost.example hello world}\n",
 
 			"",
 		},
@@ -341,7 +341,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--path", filepath.Join(".", "world"), "--path", ghHelloWorld, "ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n",
 
 			"",
 		},
@@ -351,7 +351,7 @@ func TestCommandLs(t *testing.T) {
 			[]string{"--from-file", inputFile, "ls"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT server.com user repo}\n",
 
 			"",
 		},
@@ -377,17 +377,17 @@ func TestCommandLsPriorities(t *testing.T) {
 
 	// Create a repository called "needle_in_haystack" with a single remote
 	// This repo should NOT be matched first when searching for "needle"
-	mock.Clone(t.Context(), "https://github.com/example/needle_in_haystack.git", "github.com", "example", "needle_in_haystack")
+	mock.Clone(t.Context(), "https://gitforge.example/example/needle_in_haystack.git", "gitforge.example", "example", "needle_in_haystack")
 
 	// Create a repository called "needle" with two branches pointing to two remotes:
 	// - "needle_match" branch => remote that contains "needle" exactly
 	// - "needle_no_match" branch => remote that does NOT contain "needle"
-	needleMatchRemote := "https://github.com/example/needle.git"
-	needleNoMatchRemote := "https://github.com/fork/repo.git"
+	needleMatchRemote := "https://gitforge.example/example/needle.git"
+	needleNoMatchRemote := "https://gitforge.example/fork/repo.git"
 
 	mock.Register(needleMatchRemote)
 	_, needleNoMatchRemoteURLs := mock.Register(needleNoMatchRemote)
-	needlePath := mock.Install(t.Context(), needleMatchRemote, "github.com", "example", "needle")
+	needlePath := mock.Install(t.Context(), needleMatchRemote, "gitforge.example", "example", "needle")
 
 	// Open the cloned repository to manipulate it
 	repo, err := git.PlainOpen(needlePath)
@@ -436,7 +436,7 @@ func TestCommandLsPriorities(t *testing.T) {
 			t.Errorf("Code = %d, wantCode = 0", code)
 		}
 		// needle should come first because it has an exact match
-		mock.AssertOutput(t, "Stdout", stdout, "${GGROOT github.com example needle}\n${GGROOT github.com example needle_in_haystack}\n")
+		mock.AssertOutput(t, "Stdout", stdout, "${GGROOT gitforge.example example needle}\n${GGROOT gitforge.example example needle_in_haystack}\n")
 		mock.AssertOutput(t, "Stderr", stderr, "")
 	})
 
@@ -449,7 +449,7 @@ func TestCommandLsPriorities(t *testing.T) {
 		}
 		// needle should still come first because it has a remote (origin) that matches "needle" exactly
 		// even though the currently checked out branch points to a remote without "needle"
-		mock.AssertOutput(t, "Stdout", stdout, "${GGROOT github.com example needle}\n${GGROOT github.com example needle_in_haystack}\n")
+		mock.AssertOutput(t, "Stdout", stdout, "${GGROOT gitforge.example example needle}\n${GGROOT gitforge.example example needle_in_haystack}\n")
 		mock.AssertOutput(t, "Stderr", stderr, "")
 	})
 }
@@ -459,9 +459,9 @@ func TestCommandLsRemote(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	mock.Clone(t.Context(), "https://gitforge.example/hello/world.git", "gitforge.example", "hello", "world")
 	mock.Clone(t.Context(), "user@server.com/repo", "server.com", "user", "repo")
-	mock.Clone(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	mock.Clone(t.Context(), "https://githost.example/hello/world.git", "githost.example", "hello", "world")
 
 	tests := []struct {
 		name    string
@@ -478,7 +478,7 @@ func TestCommandLsRemote(t *testing.T) {
 			[]string{"ls", "--remote"},
 
 			0,
-			"https://github.com/hello/world.git\nhttps://gitlab.com/hello/world.git\nuser@server.com/repo\n",
+			"https://gitforge.example/hello/world.git\nhttps://githost.example/hello/world.git\nuser@server.com/repo\n",
 
 			"",
 		},
@@ -489,7 +489,7 @@ func TestCommandLsRemote(t *testing.T) {
 			[]string{"ls", "--remote", "--canonical"},
 
 			0,
-			"git@github.com:hello/world.git\ngit@gitlab.com:hello/world.git\ngit@server.com:user/repo.git\n",
+			"git@gitforge.example:hello/world.git\ngit@githost.example:hello/world.git\ngit@server.com:user/repo.git\n",
 
 			"",
 		},
@@ -500,7 +500,7 @@ func TestCommandLsRemote(t *testing.T) {
 			[]string{"--for", "hello/world", "ls", "--remote"},
 
 			0,
-			"https://github.com/hello/world.git\nhttps://gitlab.com/hello/world.git\n",
+			"https://gitforge.example/hello/world.git\nhttps://githost.example/hello/world.git\n",
 
 			"",
 		},
@@ -511,7 +511,7 @@ func TestCommandLsRemote(t *testing.T) {
 			[]string{"--for", "hello/world", "ls", "--remote", "--canonical"},
 
 			0,
-			"git@github.com:hello/world.git\ngit@gitlab.com:hello/world.git\n",
+			"git@gitforge.example:hello/world.git\ngit@githost.example:hello/world.git\n",
 
 			"",
 		},
@@ -536,9 +536,9 @@ func TestLsCommandRelative(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	ghHelloWorld := mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	ghHelloWorld := mock.Clone(t.Context(), "https://gitforge.example/hello/world.git", "gitforge.example", "hello", "world")
 	serverRepo := mock.Clone(t.Context(), "user@server.com/repo", "server.com", "user", "repo")
-	glHelloWorld := mock.Clone(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	glHelloWorld := mock.Clone(t.Context(), "https://githost.example/hello/world.git", "githost.example", "hello", "world")
 
 	inputFile := mock.Resolve("file.txt")
 	if err := os.WriteFile(inputFile, []byte(testInputFile), 0600); err != nil {
@@ -553,8 +553,8 @@ func TestLsCommandRelative(t *testing.T) {
 	glHelloDir := filepath.Join(glHelloWorld, "..")
 
 	// Relative paths for expected output
-	ghHelloWorldRel := filepath.Join("github.com", "hello", "world")
-	glHelloWorldRel := filepath.Join("gitlab.com", "hello", "world")
+	ghHelloWorldRel := filepath.Join("gitforge.example", "hello", "world")
+	glHelloWorldRel := filepath.Join("githost.example", "hello", "world")
 	serverRepoRel := filepath.Join("server.com", "user", "repo")
 
 	tests := []struct {
@@ -702,7 +702,7 @@ func TestLsCommandRelative(t *testing.T) {
 		{
 			"list repositories with start flags",
 			"",
-			[]string{"--for", "^github.com", "ls", "--relative"},
+			[]string{"--for", "^gitforge.example", "ls", "--relative"},
 
 			0,
 			ghHelloWorldRel + "\n",
@@ -755,7 +755,7 @@ func TestLsCommandRelative(t *testing.T) {
 		},
 
 		{
-			"list only current repository (github.com hello world)",
+			"list only current repository (gitforge.example hello world)",
 			ghHelloWorld,
 			[]string{"--here", "ls", "--relative"},
 
@@ -776,7 +776,7 @@ func TestLsCommandRelative(t *testing.T) {
 			"",
 		},
 		{
-			"list only current repository (gitlab.com hello world)",
+			"list only current repository (githost.example hello world)",
 			glHelloWorld,
 			[]string{"--here", "ls", "--relative"},
 
@@ -860,9 +860,9 @@ func TestLsCommandJSON(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	ghHelloWorld := mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	ghHelloWorld := mock.Clone(t.Context(), "https://gitforge.example/hello/world.git", "gitforge.example", "hello", "world")
 	serverRepo := mock.Clone(t.Context(), "user@server.com/repo", "server.com", "user", "repo")
-	glHelloWorld := mock.Clone(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	glHelloWorld := mock.Clone(t.Context(), "https://githost.example/hello/world.git", "githost.example", "hello", "world")
 
 	// make glHelloWorld dirty
 	if err := os.WriteFile(filepath.Join(glHelloWorld, "dirty"), []byte{}, 0600); err != nil {
@@ -890,8 +890,8 @@ func TestLsCommandJSON(t *testing.T) {
 			[]string{"ls", "--json", "--relative"},
 			0,
 			[]cmd.Repo{
-				{Path: ghHelloWorld, Relative: filepath.Join("github.com", "hello", "world"), Score: 1},
-				{Path: glHelloWorld, Relative: filepath.Join("gitlab.com", "hello", "world"), Score: 1},
+				{Path: ghHelloWorld, Relative: filepath.Join("gitforge.example", "hello", "world"), Score: 1},
+				{Path: glHelloWorld, Relative: filepath.Join("githost.example", "hello", "world"), Score: 1},
 				{Path: serverRepo, Relative: filepath.Join("server.com", "user", "repo"), Score: 1},
 			},
 		},
@@ -900,8 +900,8 @@ func TestLsCommandJSON(t *testing.T) {
 			[]string{"ls", "--json", "--remote"},
 			0,
 			[]cmd.Repo{
-				{Path: ghHelloWorld, Remote: "https://github.com/hello/world.git", Score: 1},
-				{Path: glHelloWorld, Remote: "https://gitlab.com/hello/world.git", Score: 1},
+				{Path: ghHelloWorld, Remote: "https://gitforge.example/hello/world.git", Score: 1},
+				{Path: glHelloWorld, Remote: "https://githost.example/hello/world.git", Score: 1},
 				{Path: serverRepo, Remote: "user@server.com/repo", Score: 1},
 			},
 		},
@@ -927,8 +927,8 @@ func TestLsCommandJSON(t *testing.T) {
 			[]string{"ls", "--json", "--remote", "--canonical"},
 			0,
 			[]cmd.Repo{
-				{Path: ghHelloWorld, Remote: "https://github.com/hello/world.git", Canonical: "git@github.com:hello/world.git", Score: 1},
-				{Path: glHelloWorld, Remote: "https://gitlab.com/hello/world.git", Canonical: "git@gitlab.com:hello/world.git", Score: 1},
+				{Path: ghHelloWorld, Remote: "https://gitforge.example/hello/world.git", Canonical: "git@gitforge.example:hello/world.git", Score: 1},
+				{Path: glHelloWorld, Remote: "https://githost.example/hello/world.git", Canonical: "git@githost.example:hello/world.git", Score: 1},
 				{Path: serverRepo, Remote: "user@server.com/repo", Canonical: "git@server.com:user/repo.git", Score: 1},
 			},
 		},
@@ -937,8 +937,8 @@ func TestLsCommandJSON(t *testing.T) {
 			[]string{"ls", "--json", "--remote", "--canonical", "--relative"},
 			0,
 			[]cmd.Repo{
-				{Path: ghHelloWorld, Relative: filepath.Join("github.com", "hello", "world"), Remote: "https://github.com/hello/world.git", Canonical: "git@github.com:hello/world.git", Score: 1},
-				{Path: glHelloWorld, Relative: filepath.Join("gitlab.com", "hello", "world"), Remote: "https://gitlab.com/hello/world.git", Canonical: "git@gitlab.com:hello/world.git", Score: 1},
+				{Path: ghHelloWorld, Relative: filepath.Join("gitforge.example", "hello", "world"), Remote: "https://gitforge.example/hello/world.git", Canonical: "git@gitforge.example:hello/world.git", Score: 1},
+				{Path: glHelloWorld, Relative: filepath.Join("githost.example", "hello", "world"), Remote: "https://githost.example/hello/world.git", Canonical: "git@githost.example:hello/world.git", Score: 1},
 				{Path: serverRepo, Relative: filepath.Join("server.com", "user", "repo"), Remote: "user@server.com/repo", Canonical: "git@server.com:user/repo.git", Score: 1},
 			},
 		},
@@ -973,19 +973,19 @@ func TestCommandLsExport(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	mock.Clone(t.Context(), "https://gitforge.example/hello/world.git", "gitforge.example", "hello", "world")
 	mock.Clone(t.Context(), "user@server.com:user/repo", "server.com", "user", "repo")
-	mock.Clone(t.Context(), "https://gitlab.com/org/project.git", "gitlab.com", "org", "project")
+	mock.Clone(t.Context(), "https://githost.example/org/project.git", "githost.example", "org", "project")
 
 	// Build expected bash script using shellescape.Quote and filepath.Join
-	ghPath := filepath.Join("github.com", "hello", "world")
-	ghURL := "https://github.com/hello/world.git"
+	ghPath := filepath.Join("gitforge.example", "hello", "world")
+	ghURL := "https://gitforge.example/hello/world.git"
 
 	serverPath := filepath.Join("server.com", "user", "repo")
 	serverURL := "user@server.com:user/repo"
 
-	glPath := filepath.Join("gitlab.com", "org", "project")
-	glURL := "https://gitlab.com/org/project.git"
+	glPath := filepath.Join("githost.example", "org", "project")
+	glURL := "https://githost.example/org/project.git"
 
 	wantStdout := "#!/bin/bash\nset -e\n\n# Generated by ggman export\n" +
 		fmt.Sprintf("mkdir -p %s\n", shellescape.Quote(ghPath)) +

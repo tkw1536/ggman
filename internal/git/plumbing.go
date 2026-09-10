@@ -30,11 +30,11 @@ import (
 // For instance, to pull a repository, the following code is required:
 //
 //	plumbing.Init() // called exactly once
-//	cache, isRepo := plumbing.IsRepository("/home/user/Projects/github.com/hello/world")
+//	cache, isRepo := plumbing.IsRepository("/home/user/Projects/gitforge.example/hello/world")
 //	if !isRepo {
 //	  // error, not a repository
 //	}
-//	err = plumbing.Pull(stream.NewEnvIOStream(), "/home/user/Projects/github.com/hello/world", cache)
+//	err = plumbing.Pull(stream.NewEnvIOStream(), "/home/user/Projects/gitforge.example/hello/world", cache)
 //
 // Such code is typically handled by a Git instance that wraps a Plumbing.
 type Plumbing interface {

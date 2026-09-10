@@ -134,27 +134,27 @@ func TestEnv_Local_Exact(t *testing.T) {
 		want   string
 	}{
 		// smart
-		{"git@github.com/user/repo", "smart", filepath.Join(root, "github.com", "user", "repo")},
-		{"https://github.com/user/repo", "smart", filepath.Join(root, "github.com", "user", "repo")},
-		{"ssh://git@github.com/hello/world", "smart", filepath.Join(root, "github.com", "hello", "world")},
+		{"git@gitforge.example/user/repo", "smart", filepath.Join(root, "gitforge.example", "user", "repo")},
+		{"https://gitforge.example/user/repo", "smart", filepath.Join(root, "gitforge.example", "user", "repo")},
+		{"ssh://git@gitforge.example/hello/world", "smart", filepath.Join(root, "gitforge.example", "hello", "world")},
 		{"user@server.com:repo", "smart", filepath.Join(root, "server.com", "user", "repo")},
 		{"ssh://user@server.com:1234/repo", "smart", filepath.Join(root, "server.com", "user", "repo")},
 
 		{"ssh://server.com/hello/world", "smart", filepath.Join(root, "server.com", "HELLO", "world")}, // using existing case
 
 		// exact
-		{"git@github.com/user/repo", "exact", filepath.Join(root, "github.com", "user", "repo")},
-		{"https://github.com/user/repo", "exact", filepath.Join(root, "github.com", "user", "repo")},
-		{"ssh://git@github.com/hello/world", "exact", filepath.Join(root, "github.com", "hello", "world")},
+		{"git@gitforge.example/user/repo", "exact", filepath.Join(root, "gitforge.example", "user", "repo")},
+		{"https://gitforge.example/user/repo", "exact", filepath.Join(root, "gitforge.example", "user", "repo")},
+		{"ssh://git@gitforge.example/hello/world", "exact", filepath.Join(root, "gitforge.example", "hello", "world")},
 		{"user@server.com:repo", "exact", filepath.Join(root, "server.com", "user", "repo")},
 		{"ssh://user@server.com:1234/repo", "exact", filepath.Join(root, "server.com", "user", "repo")},
 
 		{"ssh://server.com/hello/world", "exact", filepath.Join(root, "server.com", "hello", "world")}, // don't use existing case
 
 		// fold
-		{"git@github.com/user/repo", "fold", filepath.Join(root, "github.com", "user", "repo")},
-		{"https://github.com/user/repo", "fold", filepath.Join(root, "github.com", "user", "repo")},
-		{"ssh://git@github.com/hello/world", "fold", filepath.Join(root, "github.com", "hello", "world")},
+		{"git@gitforge.example/user/repo", "fold", filepath.Join(root, "gitforge.example", "user", "repo")},
+		{"https://gitforge.example/user/repo", "fold", filepath.Join(root, "gitforge.example", "user", "repo")},
+		{"ssh://git@gitforge.example/hello/world", "fold", filepath.Join(root, "gitforge.example", "hello", "world")},
 		{"user@server.com:repo", "fold", filepath.Join(root, "server.com", "user", "repo")},
 		{"ssh://user@server.com:1234/repo", "fold", filepath.Join(root, "server.com", "user", "repo")},
 

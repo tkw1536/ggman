@@ -14,7 +14,7 @@ import (
 	"go.tkw01536.de/pkglib/fsx"
 )
 
-//spellchecker:words canonicalize canonicalization GGROOT
+//spellchecker:words canonicalize canonicalization GGROOT canonicalizes
 
 func NewCloneCommand() *cobra.Command {
 	impl := new(clone)
@@ -26,35 +26,35 @@ func NewCloneCommand() *cobra.Command {
 
 For example
 
-    ggman clone git@github.com:hello/world.git
+    ggman clone git@gitforge.example:hello/world.git
 
-clones into '$GGROOT/github.com/hello/world'.
+clones into '$GGROOT/gitforge.example/hello/world'.
 Any URL format works; the canonical URL is used for cloning.
 
 For example
 
-    ggman clone https://github.com/hello/world.git
+    ggman clone https://gitforge.example/hello/world.git
 
 produces the same result.
 
 Browser tree URLs are supported. For example
 
-    ggman clone https://github.com/hello/world/tree/dev
+    ggman clone https://gitforge.example/hello/world/tree/dev
 
-clones the 'dev' branch into '$GGROOT/github.com/hello/world'.
+clones the 'dev' branch into '$GGROOT/gitforge.example/hello/world'.
 
 The '--exact-url' flag uses the provided URL without canonicalization or forge tree splitting:
 
-    ggman clone --exact-url https://github.com/hello/world.git
+    ggman clone --exact-url https://gitforge.example/hello/world.git
 
 The '--no-forge-split' flag skips forge tree splitting but still canonicalizes.
 The '--no-auto-branch' flag splits forge tree URLs but does not pass '--branch' to git.
 
 Additional arguments can be passed to git after '--':
 
-    ggman clone --exact-url https://github.com/hello/world.git -- --branch dev --depth 2
+    ggman clone --exact-url https://gitforge.example/hello/world.git -- --branch dev --depth 2
 
-This executes 'git clone https://github.com/hello/world.git --branch dev --depth 2'.
+This executes 'git clone https://gitforge.example/hello/world.git --branch dev --depth 2'.
 The '--' separator distinguishes ggman flags from git flags.`,
 		Args: cobra.MinimumNArgs(1),
 

@@ -1,13 +1,16 @@
 {
   "language": "en",
   "words": [
-    "Wiesing",
-    "ggman",
-    "Positionals",
-    "nolint",
-    "CANSPEC",
     "CANFILE",
-    "shellcheck"
+    "CANSPEC",
+    "ggman",
+    "gitforge.example",
+    "githost.example",
+    "nolint",
+    "Positionals",
+    "shellcheck",
+    "codeberg",
+    "Wiesing",
   ],
   "ignorePaths": [
     "LICENSE",

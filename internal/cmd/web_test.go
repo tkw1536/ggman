@@ -21,7 +21,7 @@ func TestCommandURL(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	clonePath := mock.Clone(t.Context(), "git@github.com/hello/world.git", "hello", "world")
+	clonePath := mock.Clone(t.Context(), "git@gitforge.example/hello/world.git", "hello", "world")
 
 	subClonePath := filepath.Join(clonePath, "sub")
 	if err := os.MkdirAll(subClonePath, 0750); err != nil {
@@ -47,7 +47,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url"},
 			0,
-			"https://github.com/hello/world\n",
+			"https://gitforge.example/hello/world\n",
 			"",
 		},
 
@@ -56,7 +56,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "--remote", "origin"},
 			0,
-			"https://github.com/hello/world\n",
+			"https://gitforge.example/hello/world\n",
 			"",
 		},
 
@@ -65,7 +65,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "--clone"},
 			0,
-			"git clone https://github.com/hello/world.git\n",
+			"git clone https://gitforge.example/hello/world.git\n",
 			"",
 		},
 
@@ -74,7 +74,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "--reclone"},
 			0,
-			"git clone git@github.com/hello/world.git\n",
+			"git clone git@gitforge.example/hello/world.git\n",
 			"",
 		},
 
@@ -101,7 +101,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "https://mybase/", "--prefix"},
 			0,
-			"https://mybase/github.com/hello/world\n",
+			"https://mybase/gitforge.example/hello/world\n",
 			"",
 		},
 
@@ -110,7 +110,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "godoc"},
 			0,
-			"https://pkg.go.dev/github.com/hello/world\n",
+			"https://pkg.go.dev/gitforge.example/hello/world\n",
 			"",
 		},
 
@@ -128,7 +128,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "--tree"},
 			0,
-			"https://github.com/hello/world/tree/master/\n",
+			"https://gitforge.example/hello/world/tree/master/\n",
 			"",
 		},
 
@@ -164,7 +164,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "--branch"},
 			0,
-			"https://github.com/hello/world/tree/master\n",
+			"https://gitforge.example/hello/world/tree/master\n",
 			"",
 		},
 
@@ -173,7 +173,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "--ref", "custom_ref"},
 			0,
-			"https://github.com/hello/world/tree/custom_ref\n",
+			"https://gitforge.example/hello/world/tree/custom_ref\n",
 			"",
 		},
 
@@ -182,7 +182,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "--relative", "some/path"},
 			0,
-			"https://github.com/hello/world/tree/master/some/path\n",
+			"https://gitforge.example/hello/world/tree/master/some/path\n",
 			"",
 		},
 
@@ -191,7 +191,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "--clone", "--branch"},
 			0,
-			"git clone https://github.com/hello/world.git --branch master\n",
+			"git clone https://gitforge.example/hello/world.git --branch master\n",
 			"",
 		},
 
@@ -200,7 +200,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "--clone", "--ref", "main"},
 			0,
-			"git clone https://github.com/hello/world.git --branch main\n",
+			"git clone https://gitforge.example/hello/world.git --branch main\n",
 			"",
 		},
 
@@ -209,7 +209,7 @@ func TestCommandURL(t *testing.T) {
 			clonePath,
 			[]string{"url", "--reclone", "--branch"},
 			0,
-			"git clone git@github.com/hello/world.git --branch master\n",
+			"git clone git@gitforge.example/hello/world.git --branch master\n",
 			"",
 		},
 
@@ -227,7 +227,7 @@ func TestCommandURL(t *testing.T) {
 			subClonePath,
 			[]string{"url"},
 			0,
-			"https://github.com/hello/world\n",
+			"https://gitforge.example/hello/world\n",
 			"",
 		},
 
@@ -236,7 +236,7 @@ func TestCommandURL(t *testing.T) {
 			subClonePath,
 			[]string{"url", "--clone"},
 			0,
-			"git clone https://github.com/hello/world.git\n",
+			"git clone https://gitforge.example/hello/world.git\n",
 			"",
 		},
 
@@ -245,7 +245,7 @@ func TestCommandURL(t *testing.T) {
 			subClonePath,
 			[]string{"url", "--reclone"},
 			0,
-			"git clone git@github.com/hello/world.git\n",
+			"git clone git@gitforge.example/hello/world.git\n",
 			"",
 		},
 
@@ -254,7 +254,7 @@ func TestCommandURL(t *testing.T) {
 			subClonePath,
 			[]string{"url", "--relative", "some/path"},
 			0,
-			"https://github.com/hello/world/tree/master/some/path\n",
+			"https://gitforge.example/hello/world/tree/master/some/path\n",
 			"",
 		},
 
@@ -272,7 +272,7 @@ func TestCommandURL(t *testing.T) {
 			subClonePath,
 			[]string{"url", "--tree"},
 			0,
-			"https://github.com/hello/world/tree/master/sub\n",
+			"https://gitforge.example/hello/world/tree/master/sub\n",
 			"",
 		},
 
@@ -281,7 +281,7 @@ func TestCommandURL(t *testing.T) {
 			subClonePath,
 			[]string{"url", "--tree", "--ref", "main"},
 			0,
-			"https://github.com/hello/world/tree/main/sub\n",
+			"https://gitforge.example/hello/world/tree/main/sub\n",
 			"",
 		},
 
@@ -290,7 +290,7 @@ func TestCommandURL(t *testing.T) {
 			subClonePath,
 			[]string{"url", "--branch"},
 			0,
-			"https://github.com/hello/world/tree/master\n",
+			"https://gitforge.example/hello/world/tree/master\n",
 			"",
 		},
 
@@ -299,7 +299,7 @@ func TestCommandURL(t *testing.T) {
 			subClonePath,
 			[]string{"url", "--ref", "main"},
 			0,
-			"https://github.com/hello/world/tree/main\n",
+			"https://gitforge.example/hello/world/tree/main\n",
 			"",
 		},
 
@@ -308,7 +308,7 @@ func TestCommandURL(t *testing.T) {
 			subClonePath,
 			[]string{"url", "--clone", "--branch"},
 			0,
-			"git clone https://github.com/hello/world.git --branch master\n",
+			"git clone https://gitforge.example/hello/world.git --branch master\n",
 			"",
 		},
 
@@ -317,7 +317,7 @@ func TestCommandURL(t *testing.T) {
 			subClonePath,
 			[]string{"url", "--reclone", "--branch"},
 			0,
-			"git clone git@github.com/hello/world.git --branch master\n",
+			"git clone git@gitforge.example/hello/world.git --branch master\n",
 			"",
 		},
 
@@ -364,7 +364,7 @@ func TestCommandURL_MultipleRemotes(t *testing.T) {
 
 	mock.Register(mainRemote)
 	_, featureRemotes := mock.Register(forkRemote)
-	clonePath := mock.Install(t.Context(), mainRemote, "github.com", "user", "repo")
+	clonePath := mock.Install(t.Context(), mainRemote, "gitforge.example", "user", "repo")
 
 	// Open the cloned repository to manipulate it
 	repo, err := git.PlainOpen(clonePath)

@@ -22,16 +22,16 @@ Each path segment corresponds to a URL component.
 The root defaults to '~/Projects' and can be customized via '$GGROOT'.
 The 'ggman root' alias prints the root directory.
 
-For example, 'https://github.com/hello/world.git' clones to '$GGROOT/github.com/hello/world'.
-This works for any URL, not just 'github.com'.
+For example, 'https://gitforge.example/hello/world.git' clones to '$GGROOT/gitforge.example/hello/world'.
+This works for any URL, not just 'gitforge.example'.
 
 Since ggman 1.12, path resolution considers existing directories.
 Existing sub-paths differing only by case are reused.
 
-For example, if '$GGROOT/github.com/hello' exists and 'https://github.com/HELLO/world.git' is cloned:
+For example, if '$GGROOT/gitforge.example/hello' exists and 'https://gitforge.example/HELLO/world.git' is cloned:
 
-- Before 1.12: cloned to '$GGROOT/github.com/HELLO/world', creating duplicate directories
-- After 1.12: cloned to '$GGROOT/github.com/hello/world', reusing the existing directory
+- Before 1.12: cloned to '$GGROOT/gitforge.example/HELLO/world', creating duplicate directories
+- After 1.12: cloned to '$GGROOT/gitforge.example/hello/world', reusing the existing directory
 
 The first matching directory (alphanumerically) is used.
 Exact name matches are preferred over case-insensitive matches.

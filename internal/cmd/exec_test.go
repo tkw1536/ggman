@@ -17,9 +17,9 @@ func setupExecTest(t *testing.T) (mock *mockenv.MockEnv) {
 
 	mock = mockenv.NewMockEnv(t)
 
-	mock.Clone(t.Context(), "https://github.com/hello/world.git", "github.com", "hello", "world")
+	mock.Clone(t.Context(), "https://gitforge.example/hello/world.git", "gitforge.example", "hello", "world")
 	mock.Clone(t.Context(), "user@server.com/repo", "server.com", "user", "repo")
-	mock.Clone(t.Context(), "https://gitlab.com/hello/world.git", "gitlab.com", "hello", "world")
+	mock.Clone(t.Context(), "https://githost.example/hello/world.git", "githost.example", "hello", "world")
 
 	return
 }
@@ -52,8 +52,8 @@ func TestCommandExec_real(t *testing.T) {
 			[]string{"exec", "pwd"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\n",
 		},
 		{
 			"don't print repository",
@@ -61,7 +61,7 @@ func TestCommandExec_real(t *testing.T) {
 			[]string{"exec", "--no-repo", "pwd"},
 
 			0,
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\n",
 			"",
 		},
 
@@ -72,7 +72,7 @@ func TestCommandExec_real(t *testing.T) {
 
 			0,
 			"",
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\n",
 		},
 	}
 
@@ -116,7 +116,7 @@ func TestCommandExec_false(t *testing.T) {
 
 			1,
 			"",
-			"${GGROOT github.com hello world}\nprocess reported error: exit status 1\n",
+			"${GGROOT gitforge.example hello world}\nprocess reported error: exit status 1\n",
 		},
 
 		{
@@ -126,7 +126,7 @@ func TestCommandExec_false(t *testing.T) {
 
 			1,
 			"",
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\nprocess reported error: exit status 1\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\nprocess reported error: exit status 1\n",
 		},
 	}
 
@@ -170,7 +170,7 @@ func TestCommandExec_flags(t *testing.T) {
 
 			0,
 			"hello\nhello\nhello\n",
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\n",
 		},
 
 		{
@@ -180,7 +180,7 @@ func TestCommandExec_flags(t *testing.T) {
 
 			0,
 			"--some-arg\n--some-arg\n--some-arg\n",
-			"${GGROOT github.com hello world}\n${GGROOT gitlab.com hello world}\n${GGROOT server.com user repo}\n",
+			"${GGROOT gitforge.example hello world}\n${GGROOT githost.example hello world}\n${GGROOT server.com user repo}\n",
 		},
 	}
 
@@ -223,7 +223,7 @@ func TestCommandExec_simulate(t *testing.T) {
 			[]string{"exec", "--simulate", "pwd"},
 
 			0,
-			"#!/bin/bash\nset -e\n\ncd `${GGROOT github.com hello world}`\necho `${GGROOT github.com hello world}`\npwd\n\ncd `${GGROOT gitlab.com hello world}`\necho `${GGROOT gitlab.com hello world}`\npwd\n\ncd `${GGROOT server.com user repo}`\necho `${GGROOT server.com user repo}`\npwd\n\n",
+			"#!/bin/bash\nset -e\n\ncd `${GGROOT gitforge.example hello world}`\necho `${GGROOT gitforge.example hello world}`\npwd\n\ncd `${GGROOT githost.example hello world}`\necho `${GGROOT githost.example hello world}`\npwd\n\ncd `${GGROOT server.com user repo}`\necho `${GGROOT server.com user repo}`\npwd\n\n",
 			"",
 		},
 
@@ -233,7 +233,7 @@ func TestCommandExec_simulate(t *testing.T) {
 			[]string{"exec", "--simulate", "--no-repo", "pwd"},
 
 			0,
-			"#!/bin/bash\nset -e\n\ncd `${GGROOT github.com hello world}`\npwd\n\ncd `${GGROOT gitlab.com hello world}`\npwd\n\ncd `${GGROOT server.com user repo}`\npwd\n\n",
+			"#!/bin/bash\nset -e\n\ncd `${GGROOT gitforge.example hello world}`\npwd\n\ncd `${GGROOT githost.example hello world}`\npwd\n\ncd `${GGROOT server.com user repo}`\npwd\n\n",
 			"",
 		},
 
@@ -243,7 +243,7 @@ func TestCommandExec_simulate(t *testing.T) {
 			[]string{"exec", "--simulate", "--no-repo", "--force", "pwd"},
 
 			0,
-			"#!/bin/bash\n\ncd `${GGROOT github.com hello world}`\npwd\n\ncd `${GGROOT gitlab.com hello world}`\npwd\n\ncd `${GGROOT server.com user repo}`\npwd\n\n",
+			"#!/bin/bash\n\ncd `${GGROOT gitforge.example hello world}`\npwd\n\ncd `${GGROOT githost.example hello world}`\npwd\n\ncd `${GGROOT server.com user repo}`\npwd\n\n",
 			"",
 		},
 	}

@@ -10,7 +10,7 @@ import (
 	"go.tkw01536.de/ggman/internal/mockenv"
 )
 
-//spellchecker:words GGROOT tparallel paralleltest
+//spellchecker:words GGROOT tparallel paralleltest Storer
 
 //nolint:tparallel,paralleltest
 func TestCommandClone(t *testing.T) {
@@ -18,14 +18,14 @@ func TestCommandClone(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	mock.Register("https://github.com/hello/world.git", "git@github.com:hello/world.git")
-	mock.Register("https://github.com/hello/world2.git", "git@github.com:hello/world2.git")
-	mock.Register("https://github.com/hello/world3.git")
-	mock.Register("https://github.com/hello/world4.git", "git@github.com:hello/world4.git")
-	mock.Register("https://github.com/hello/world5.git", "git@github.com:hello/world5.git")
-	mock.Register("https://github.com/hello/world7.git", "git@github.com:hello/world7.git")
-	mock.Register("git@github.com:hello/world8/tree/dev.git")
-	mock.Register("https://github.com/hello/world9/tree/dev")
+	mock.Register("https://gitforge.example/hello/world.git", "git@gitforge.example:hello/world.git")
+	mock.Register("https://gitforge.example/hello/world2.git", "git@gitforge.example:hello/world2.git")
+	mock.Register("https://gitforge.example/hello/world3.git")
+	mock.Register("https://gitforge.example/hello/world4.git", "git@gitforge.example:hello/world4.git")
+	mock.Register("https://gitforge.example/hello/world5.git", "git@gitforge.example:hello/world5.git")
+	mock.Register("https://gitforge.example/hello/world7.git", "git@gitforge.example:hello/world7.git")
+	mock.Register("git@gitforge.example:hello/world8/tree/dev.git")
+	mock.Register("https://gitforge.example/hello/world9/tree/dev")
 
 	// These tests should not be run in parallel, but treated as a single linear test.
 	// Each test case depends on the previous one and implicitly relies on the fact that
@@ -43,35 +43,35 @@ func TestCommandClone(t *testing.T) {
 		{
 			"clone repository that doesn't exist yet",
 			"",
-			[]string{"clone", "https://github.com/hello/world.git"},
+			[]string{"clone", "https://gitforge.example/hello/world.git"},
 
 			0,
-			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\n",
+			"Cloning \"git@gitforge.example:hello/world.git\" into \"${GGROOT gitforge.example hello world}\" ...\n",
 			"",
 		},
 
 		{
 			"clone repository into local path",
 			mock.Resolve(),
-			[]string{"clone", "--plain", "https://github.com/hello/world.git"},
+			[]string{"clone", "--plain", "https://gitforge.example/hello/world.git"},
 
 			0,
-			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT world}\" ...\n",
+			"Cloning \"git@gitforge.example:hello/world.git\" into \"${GGROOT world}\" ...\n",
 			"",
 		},
 		{
 			"clone repository into specific path",
 			mock.Resolve(),
-			[]string{"clone", "--to", "somewhere", "https://github.com/hello/world.git"},
+			[]string{"clone", "--to", "somewhere", "https://gitforge.example/hello/world.git"},
 
 			0,
-			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT somewhere}\" ...\n",
+			"Cloning \"git@gitforge.example:hello/world.git\" into \"${GGROOT somewhere}\" ...\n",
 			"",
 		},
 		{
 			"clone repository into invalid path path",
 			mock.Resolve(),
-			[]string{"clone", "--plain", "--to", "somewhere", "https://github.com/hello/world.git"},
+			[]string{"clone", "--plain", "--to", "somewhere", "https://gitforge.example/hello/world.git"},
 
 			4,
 			"",
@@ -80,20 +80,20 @@ func TestCommandClone(t *testing.T) {
 		{
 			"clone existing repository",
 			"",
-			[]string{"clone", "https://github.com/hello/world.git"},
+			[]string{"clone", "https://gitforge.example/hello/world.git"},
 
 			1,
-			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\n",
+			"Cloning \"git@gitforge.example:hello/world.git\" into \"${GGROOT gitforge.example hello world}\" ...\n",
 			"failed to clone repository: another git repository already exists in target location\n",
 		},
 
 		{
 			"clone existing repository (with force)",
 			"",
-			[]string{"clone", "--force", "https://github.com/hello/world.git"},
+			[]string{"clone", "--force", "https://gitforge.example/hello/world.git"},
 
 			0,
-			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\nClone already exists in target location, done.\n",
+			"Cloning \"git@gitforge.example:hello/world.git\" into \"${GGROOT gitforge.example hello world}\" ...\nClone already exists in target location, done.\n",
 			"",
 		},
 
@@ -120,10 +120,10 @@ func TestCommandClone(t *testing.T) {
 		{
 			"clone repository with exact url",
 			"",
-			[]string{"clone", "--exact-url", "https://github.com/hello/world3.git"},
+			[]string{"clone", "--exact-url", "https://gitforge.example/hello/world3.git"},
 
 			0,
-			"Cloning \"https://github.com/hello/world3.git\" into \"${GGROOT github.com hello world3}\" ...\n",
+			"Cloning \"https://gitforge.example/hello/world3.git\" into \"${GGROOT gitforge.example hello world3}\" ...\n",
 			"",
 		},
 
@@ -132,47 +132,47 @@ func TestCommandClone(t *testing.T) {
 			// this doesn't actually clone (because we don't have a real git)
 			// but at least parses the args
 			"",
-			[]string{"clone", "https://github.com/hello/world4.git", "--", "--depth", "1"},
+			[]string{"clone", "https://gitforge.example/hello/world4.git", "--", "--depth", "1"},
 
 			1,
-			"Cloning \"git@github.com:hello/world4.git\" into \"${GGROOT github.com hello world4}\" ...\n",
+			"Cloning \"git@gitforge.example:hello/world4.git\" into \"${GGROOT gitforge.example hello world4}\" ...\n",
 			`failed to pass arguments: external "git" not found: --depth 1` + "\n",
 		},
 
 		{
 			"clone existing repository (with overwrite)",
 			"",
-			[]string{"clone", "--overwrite", "https://github.com/hello/world.git"},
+			[]string{"clone", "--overwrite", "https://gitforge.example/hello/world.git"},
 
 			0,
-			"Deleting existing directory \"${GGROOT github.com hello world}\"\nCloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\n",
+			"Deleting existing directory \"${GGROOT gitforge.example hello world}\"\nCloning \"git@gitforge.example:hello/world.git\" into \"${GGROOT gitforge.example hello world}\" ...\n",
 			"",
 		},
 
 		{
 			"clone non-existing repository (with overwrite)",
 			"",
-			[]string{"clone", "--overwrite", "https://github.com/hello/world5.git"},
+			[]string{"clone", "--overwrite", "https://gitforge.example/hello/world5.git"},
 
 			0,
-			"Cloning \"git@github.com:hello/world5.git\" into \"${GGROOT github.com hello world5}\" ...\n",
+			"Cloning \"git@gitforge.example:hello/world5.git\" into \"${GGROOT gitforge.example hello world5}\" ...\n",
 			"",
 		},
 
 		{
 			"fail to clone existing repository (it's still there)",
 			"",
-			[]string{"clone", "https://github.com/hello/world.git"},
+			[]string{"clone", "https://gitforge.example/hello/world.git"},
 
 			1,
-			"Cloning \"git@github.com:hello/world.git\" into \"${GGROOT github.com hello world}\" ...\n",
+			"Cloning \"git@gitforge.example:hello/world.git\" into \"${GGROOT gitforge.example hello world}\" ...\n",
 			"failed to clone repository: another git repository already exists in target location\n",
 		},
 
 		{
 			"clone repository with overwrite and force",
 			mock.Resolve(),
-			[]string{"clone", "--force", "--overwrite", "https://github.com/hello/world.git"},
+			[]string{"clone", "--force", "--overwrite", "https://gitforge.example/hello/world.git"},
 
 			4,
 			"",
@@ -190,30 +190,30 @@ func TestCommandClone(t *testing.T) {
 		{
 			"clone tree url with no-auto-branch",
 			"",
-			[]string{"clone", "--no-auto-branch", "https://github.com/hello/world7/tree/dev"},
+			[]string{"clone", "--no-auto-branch", "https://gitforge.example/hello/world7/tree/dev"},
 
 			0,
-			"Cloning \"git@github.com:hello/world7.git\" into \"${GGROOT github.com hello world7}\" ...\n",
+			"Cloning \"git@gitforge.example:hello/world7.git\" into \"${GGROOT gitforge.example hello world7}\" ...\n",
 			"",
 		},
 
 		{
 			"clone tree url with no-forge-split",
 			"",
-			[]string{"clone", "--no-forge-split", "https://github.com/hello/world8/tree/dev"},
+			[]string{"clone", "--no-forge-split", "https://gitforge.example/hello/world8/tree/dev"},
 
 			0,
-			"Cloning \"git@github.com:hello/world8/tree/dev.git\" into \"${GGROOT github.com hello world8 tree dev}\" ...\n",
+			"Cloning \"git@gitforge.example:hello/world8/tree/dev.git\" into \"${GGROOT gitforge.example hello world8 tree dev}\" ...\n",
 			"",
 		},
 
 		{
 			"clone tree url with exact-url",
 			"",
-			[]string{"clone", "--exact-url", "https://github.com/hello/world9/tree/dev"},
+			[]string{"clone", "--exact-url", "https://gitforge.example/hello/world9/tree/dev"},
 
 			0,
-			"Cloning \"https://github.com/hello/world9/tree/dev\" into \"${GGROOT github.com hello world9 tree dev}\" ...\n",
+			"Cloning \"https://gitforge.example/hello/world9/tree/dev\" into \"${GGROOT gitforge.example hello world9 tree dev}\" ...\n",
 			"",
 		},
 	}
@@ -235,7 +235,7 @@ func TestCommandClone_ForgeTreeAutoBranch(t *testing.T) {
 
 	mock := mockenv.NewMockEnv(t)
 
-	repo, _ := mock.Register("https://github.com/hello/world-tree.git", "git@github.com:hello/world-tree.git")
+	repo, _ := mock.Register("https://gitforge.example/hello/world-tree.git", "git@gitforge.example:hello/world-tree.git")
 	head, err := repo.Head()
 	if err != nil {
 		t.Fatalf("Head() error = %v", err)
@@ -247,14 +247,14 @@ func TestCommandClone_ForgeTreeAutoBranch(t *testing.T) {
 		t.Fatalf("SetReference() error = %v", err)
 	}
 
-	code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "clone", "https://github.com/hello/world-tree/tree/dev")
+	code, stdout, stderr := mock.Run(t, nil, cmd.NewCommand, "", "", "clone", "https://gitforge.example/hello/world-tree/tree/dev")
 	if code != 0 {
 		t.Errorf("Code = %d, wantCode = 0", code)
 	}
-	mock.AssertOutput(t, "Stdout", stdout, "Cloning branch \"dev\" of \"git@github.com:hello/world-tree.git\" into \"${GGROOT github.com hello world-tree}\" ...\n")
+	mock.AssertOutput(t, "Stdout", stdout, "Cloning branch \"dev\" of \"git@gitforge.example:hello/world-tree.git\" into \"${GGROOT gitforge.example hello world-tree}\" ...\n")
 	mock.AssertOutput(t, "Stderr", stderr, "")
 
-	cloned, err := git.PlainOpen(mock.Resolve("github.com", "hello", "world-tree"))
+	cloned, err := git.PlainOpen(mock.Resolve("gitforge.example", "hello", "world-tree"))
 	if err != nil {
 		t.Fatalf("PlainOpen() error = %v", err)
 	}
