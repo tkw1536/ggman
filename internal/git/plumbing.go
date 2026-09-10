@@ -560,13 +560,17 @@ func (gogit) SetRemoteURLs(ctx context.Context, clonePath string, repoObject any
 }
 
 func (gogit) Clone(ctx context.Context, stream stream.IOStream, remoteURI, clonePath string, extraArgs ...string) error {
-	// doesn't support extra arguments
+	opts := &git.CloneOptions{URL: remoteURI, Progress: stream.Stderr}
 	if len(extraArgs) > 0 {
-		return ErrArgumentsUnsupported
+		// only support "--branch <name>"; reject everything else
+		if len(extraArgs) != 2 || extraArgs[0] != "--branch" || extraArgs[1] == "" {
+			return ErrArgumentsUnsupported
+		}
+		opts.ReferenceName = plumbing.NewBranchReferenceName(extraArgs[1])
 	}
 
 	// run a plain git clone but intercept all errors
-	_, err := git.PlainClone(clonePath, false, &git.CloneOptions{URL: remoteURI, Progress: stream.Stderr})
+	_, err := git.PlainClone(clonePath, false, opts)
 	if err != nil {
 		err = fmt.Errorf("%w: %w", exit.NewErrorWithCode(fmt.Sprintf("failed to clone repository %q", remoteURI), 1), err)
 	}

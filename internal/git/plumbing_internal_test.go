@@ -568,7 +568,15 @@ func Test_gogit_Clone(t *testing.T) {
 
 	// create an initial remote repository, and add a new bogus commit to it.
 	remote, repo := testutil.NewTestRepo(t)
-	testutil.CommitTestFiles(repo)
+	_, commit := testutil.CommitTestFiles(repo)
+
+	// also create a 'dev' branch on the remote
+	if err := repo.Storer.SetReference(plumbing.NewHashReference(
+		plumbing.NewBranchReferenceName("dev"),
+		commit,
+	)); err != nil {
+		panic(err)
+	}
 
 	t.Run("cloning a repository", func(t *testing.T) {
 		t.Parallel()
@@ -580,17 +588,53 @@ func Test_gogit_Clone(t *testing.T) {
 			t.Error("Clone() got err != nil, want err = nil")
 		}
 
-		if _, err := git.PlainOpen(clone); err != nil {
+		cloned, err := git.PlainOpen(clone)
+		if err != nil {
 			t.Error("Clone() did not clone repository")
+			return
+		}
+		head, err := cloned.Head()
+		if err != nil {
+			t.Errorf("Clone() Head() error = %v", err)
+			return
+		}
+		if got := head.Name().Short(); got != "master" {
+			t.Errorf("Clone() HEAD = %q, want %q", got, "master")
 		}
 	})
 
-	t.Run("cloning a repository with arguments is not supported", func(t *testing.T) {
+	t.Run("cloning a repository with --branch", func(t *testing.T) {
 		t.Parallel()
 
 		clone := testlib.TempDirAbs(t)
 
-		err := gg.Clone(t.Context(), stream.FromNil(), remote, clone, "--branch", "main")
+		err := gg.Clone(t.Context(), stream.FromNil(), remote, clone, "--branch", "dev")
+		if err != nil {
+			t.Errorf("Clone() got err = %v, want err = nil", err)
+			return
+		}
+
+		cloned, err := git.PlainOpen(clone)
+		if err != nil {
+			t.Error("Clone() did not clone repository")
+			return
+		}
+		head, err := cloned.Head()
+		if err != nil {
+			t.Errorf("Clone() Head() error = %v", err)
+			return
+		}
+		if got := head.Name().Short(); got != "dev" {
+			t.Errorf("Clone() HEAD = %q, want %q", got, "dev")
+		}
+	})
+
+	t.Run("cloning a repository with unsupported arguments", func(t *testing.T) {
+		t.Parallel()
+
+		clone := testlib.TempDirAbs(t)
+
+		err := gg.Clone(t.Context(), stream.FromNil(), remote, clone, "--depth", "1")
 		if !errors.Is(err, ErrArgumentsUnsupported) {
 			t.Error("Clone() got err != ErrArgumentsUnsupported, want err = ErrArgumentsUnsupported")
 		}
