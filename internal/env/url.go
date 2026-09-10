@@ -154,7 +154,7 @@ func (url URL) IsWebURL() bool {
 
 // SplitForgeReference splits a forge-like tree reference into a clean path, a suffix, a source control reference and a relative path.
 //
-// For example the URL "https://example.com/user/repo/tree/ref/path?tab=README" would be split into:
+// For example the URL "https://gitforge.example/user/repo/tree/ref/path?tab=README" would be split into:
 //
 //	("user/repo", "?tab=README", "ref", "path")
 //
@@ -164,17 +164,23 @@ func (url URL) IsWebURL() bool {
 // - a source control reference ("ref")
 // - a relative path from the root of the repository ("relative")
 //
-// ref and relative together are referred to as the "tree reference".
-// A tree reference is split separated from the rest of the URL by a "tree" within the path
-// component of the URL.
-// Within the tree reference, the component before the first '/' is the source control reference,
-// and the component after the first '/' is the relative path.
+// Parsing is domain-agnostic and based only on path segment shape (no hostname checks).
+// Path segments are matched exactly, so names like "restructure" or "treehouse" are not treated as markers.
 //
-// This function is intended to handle any kind of forge URL from the browser.
-// It therefore also applies several other heuristics:
+// Supported structural markers (first match wins, left to right):
+//
+//   - a "tree" or "blob" segment followed by a non-empty ref segment
+//     (GitHub / Gitea / Forgejo / Sourcehut-style, e.g. "~user/repo/tree/main/src")
+//   - a "src" segment followed by "branch" or "tag", then a non-empty ref segment
+//     (Gitea / Forgejo, e.g. "user/repo/src/branch/main/src" or "user/repo/src/tag/v1.0")
+//
+// The ref is always exactly one path segment after the marker; remaining segments form the relative path.
+// Multi-segment branch names must appear as a single segment (e.g. "feature%2Fx").
+//
+// Additional heuristics:
 //
 // - Non-web URLs, as reported by [URL.IsWebURL], are not considered forge URLs, and return their original path unmodified, along with empty suffixes, ref and relative.
-// - A tree ref can optionally contain a /_/ preceding the tree reference, which is removed.
+// - Trailing "_" or "-" segments immediately before the marker are removed (e.g. Gitea "/_/" and GitLab "/-/").
 // - A trailing query or fragment identifier of the URL is split off and returned in the suffix instead.
 //
 // If no tree reference is found, path is the original path (without query or fragment), and ref and
@@ -189,31 +195,35 @@ func (url URL) SplitForgeReference() (path, suffixes, ref, relative string) {
 		url.Path, suffixes = url.Path[:i], url.Path[i:]
 	}
 
-	// Split the /tree/ part of the path or return the original path if no tree reference was found.
-	const (
-		treePart    = "/tree/"
-		leadingTree = "tree/"
-	)
-
-	if i := strings.Index(url.Path, treePart); i >= 0 {
-		url.Path, ref = url.Path[:i], url.Path[i+len(treePart):]
-	} else if strings.HasPrefix(url.Path, leadingTree) {
-		ref = url.Path[len(leadingTree):]
-		url.Path = ""
-	} else {
+	components := parseurl.SplitNonEmpty(url.Path, '/', nil)
+	cut, refStart := -1, -1
+	for i := range components {
+		switch {
+		case (components[i] == "tree" || components[i] == "blob") && i+1 < len(components):
+			cut, refStart = i, i+1
+		case components[i] == "src" && i+2 < len(components) && (components[i+1] == "branch" || components[i+1] == "tag"):
+			cut, refStart = i, i+2
+		default:
+			continue
+		}
+		break
+	}
+	if cut < 0 {
 		return url.Path, suffixes, "", ""
 	}
 
-	// Remove optional /_/ part before /tree/.
-	if url.Path != "_" {
-		url.Path = strings.TrimSuffix(url.Path, "/_")
-	} else {
-		url.Path = ""
+	prefix := components[:cut]
+	for len(prefix) > 0 {
+		last := prefix[len(prefix)-1]
+		if last != "_" && last != "-" {
+			break
+		}
+		prefix = prefix[:len(prefix)-1]
 	}
 
-	// Split tree reference and relative path.
-	ref, relative = split.AfterRune(ref, '/')
-	return url.Path, suffixes, ref, relative
+	ref = components[refStart]
+	relative = strings.Join(components[refStart+1:], "/")
+	return strings.Join(prefix, "/"), suffixes, ref, relative
 }
 
 // Components gets the components of a URL

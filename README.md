@@ -529,7 +529,6 @@ Command `Long` descriptions follow these conventions:
 - support for forge-like tree URLs (e.g. `.../tree/branch`) when cloning and parsing
 	- clone passes `--branch` automatically; add `--no-forge-split` and `--no-auto-branch` to adjust behavior
 	- add `ggman parse` to inspect this new parsing; `comps` is now an alias for `parse --comps`
-
 - add `--relative` flag to `ggman web`
 - use `gitforge.example` and `githost.example` instead of real providers as examples
 - update to `go1.27`

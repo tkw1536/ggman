@@ -43,6 +43,12 @@ Browser tree URLs are supported. For example
 
 clones the 'dev' branch into '$GGROOT/gitforge.example/hello/world'.
 
+Recognized forge-like path shapes are:
+
+- '.../tree/<ref>/...' or '.../blob/<ref>/...'
+- '.../-/tree/<ref>/...' (optional '-' or '_' before the marker)
+- '.../src/branch/<ref>/...' or '.../src/tag/<ref>/...'
+
 The '--exact-url' flag uses the provided URL without canonicalization or forge tree splitting:
 
     ggman clone --exact-url https://gitforge.example/hello/world.git

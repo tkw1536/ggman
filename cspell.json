@@ -11,6 +11,10 @@
     "shellcheck",
     "codeberg",
     "Wiesing",
+    "gitea",
+    "sourcehut",
+    "treehouse",
+    "Forgejo",
   ],
   "ignorePaths": [
     "LICENSE",
