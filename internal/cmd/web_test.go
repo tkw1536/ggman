@@ -178,6 +178,15 @@ func TestCommandURL(t *testing.T) {
 		},
 
 		{
+			"Open url with --relative at root",
+			clonePath,
+			[]string{"url", "--relative", "some/path"},
+			0,
+			"https://github.com/hello/world/tree/master/some/path\n",
+			"",
+		},
+
+		{
 			"Print clone url with branch at root",
 			clonePath,
 			[]string{"url", "--clone", "--branch"},
@@ -238,6 +247,24 @@ func TestCommandURL(t *testing.T) {
 			0,
 			"git clone git@github.com/hello/world.git\n",
 			"",
+		},
+
+		{
+			"Open url with --relative at subpath",
+			subClonePath,
+			[]string{"url", "--relative", "some/path"},
+			0,
+			"https://github.com/hello/world/tree/master/some/path\n",
+			"",
+		},
+
+		{
+			"Open url with relative --relative",
+			subClonePath,
+			[]string{"url", "--relative", "../some/path"},
+			6,
+			"",
+			`failed to use "--relative": not a local path` + "\n",
 		},
 
 		{

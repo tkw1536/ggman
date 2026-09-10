@@ -68,6 +68,7 @@ The '--list-bases' flag shows supported base URLs.`,
 	flags.BoolVarP(&impl.ReClone, "reclone", "r", false, "like clone, but uses the current remote url as opposed to the https one")
 	flags.StringVarP(&impl.Remote, "remote", "g", "", "optional name of git remote to show url for. defaults to the remote of the current branch, or the 'origin' remote if the current branch does not have an associated remote")
 	flags.StringVarP(&impl.Ref, "ref", "e", "", "override the resolved HEAD ref (branch, tag, or commit). Implies \"--branch\"")
+	flags.StringVarP(&impl.RelativePath, "relative", "d", "", "override the relative path to the root of the git worktree. Implies \"--tree\"")
 
 	return cmd
 }
@@ -83,6 +84,7 @@ type web struct {
 	Branch        bool
 	Tree          bool
 	Ref           string
+	RelativePath  string
 	BaseAsPrefix  bool
 	Clone         bool
 	ReClone       bool
@@ -109,6 +111,14 @@ func (w *web) ParseArgs(cmd *cobra.Command, args []string) error {
 		w.Branch = true
 	}
 
+	if w.RelativePath != "" {
+		w.Tree = true
+		w.RelativePath = filepath.Clean(w.RelativePath)
+		if !filepath.IsLocal(w.RelativePath) {
+			return errWebNotLocalPath
+		}
+	}
+
 	var cloneFlag string
 	if w.Clone {
 		cloneFlag = "clone"
@@ -130,9 +140,10 @@ func (w *web) ParseArgs(cmd *cobra.Command, args []string) error {
 }
 
 var (
-	errWebNoRelative        = exit.NewErrorWithCode(`failed to use "--relative": not inside GGROOT`, env.ExitInvalidRepo)
+	errWebForceRepoHere     = exit.NewErrorWithCode(`failed to use "--force-repo-here": not inside GGROOT`, env.ExitInvalidRepo)
 	errWebNoRemote          = exit.NewErrorWithCode("failed to find remote: repository does not have a remote", env.ExitInvalidRepo)
 	errWebOutsideRepository = exit.NewErrorWithCode("failed to resolve repository: not inside a ggman-controlled repository", env.ExitInvalidRepo)
+	errWebNotLocalPath      = exit.NewErrorWithCode(`failed to use "--relative": not a local path`, env.ExitInvalidRepo)
 
 	errWebFlagsIncompatible = exit.NewErrorWithCode(`incompatible flags for "ggman web"`, env.ExitCommandArguments)
 	errWebFailedBrowser     = exit.NewErrorWithCode("failed to open browser", env.ExitGeneric)
@@ -157,6 +168,10 @@ func (w *web) Exec(cmd *cobra.Command, args []string) error {
 	}
 	if remote == "" {
 		return errWebNoRemote
+	}
+
+	if w.RelativePath != "" {
+		relative = w.RelativePath
 	}
 
 	var weburl string
@@ -287,13 +302,13 @@ func (w *web) getRemoteURLFake(environment *env.Env) (root string, remote string
 
 	// check that the
 	if !path.HasChild(environment.Root, workdir) {
-		return "", "", "", errWebNoRelative
+		return "", "", "", errWebForceRepoHere
 	}
 
 	// determine the relative path to the root directory
 	relPath, err := filepath.Rel(environment.Root, workdir)
 	if err != nil {
-		return "", "", "", errWebNoRelative
+		return "", "", "", errWebForceRepoHere
 	}
 
 	// turn it into a fake url by prepending a protocol
