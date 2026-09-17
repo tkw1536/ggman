@@ -267,18 +267,67 @@ func (url URL) SplitForgeReference() (path, suffixes, ref, relative string) {
 //   - '..' segments are resolved, by removing the previous segments, unless it is also a '..' segment.
 //     This means that '..' segments (if any) must always occur at the start of path.
 func (url URL) PathSegments() []string {
-	segments := make([]string, 0, strings.Count(url.Path, "/"))
+	return url.pathSegments(nil)
+}
+
+// pathSegments implements [PathSegments], but appends the result to buf.
+//
+// The appended buffer is returned.
+func (url URL) pathSegments(buf []string) []string {
+
+	// Do a single pass through the string and determine:
+	var (
+		nonEmptySegments = 0     // the number of non-empty segments.
+		needsResolving   = false // could there be a segment that needs resolving?
+
+		lastWasSlash = true // was the last rune a slash?
+	)
+
+	for _, c := range url.Path {
+		// We can only have segments that need resolving
+		// if there is a slash followed by a '.'.
+		//
+		// There might also be segments that don't need resolving
+		// even if they pass this condition.
+		// But those are uncommon, and this is easy to check.
+		if lastWasSlash && c == '.' {
+			needsResolving = true
+		}
+
+		// Count non-empty segments, see also [parseurl.CountNonEmptySplit].
+		// This uses the same algorithm but is inlined, so that we only need
+		// to iterate through the entire string once.
+		isSlash := c == '/'
+		if !isSlash && lastWasSlash {
+			nonEmptySegments++
+		}
+		lastWasSlash = isSlash
+	}
+
+	// Initialize the buffer if we didn't have one already.
+	// Note that we might over-allocate here if we have '.'s (but that's fine).
+	if buf == nil {
+		buf = make([]string, 0, nonEmptySegments)
+	}
+
+	// Fast Path: If we don't have a segment that starts with '.'
+	// Then we never have relative segments.
+	if !needsResolving {
+		return parseurl.SplitNonEmpty(url.Path, '/', buf)
+	}
+
+	initialBufferLength := len(buf) // don't remove existing sequences below this length.
 	for segment := range strings.SplitSeq(url.Path, "/") {
 		if segment == "." || segment == "" {
 			continue
 		}
-		if segment == ".." && len(segments) > 0 && segments[len(segments)-1] != ".." {
-			segments = segments[:len(segments)-1]
+		if segment == ".." && len(buf) > initialBufferLength && buf[len(buf)-1] != ".." {
+			buf = buf[:len(buf)-1]
 			continue
 		}
-		segments = append(segments, segment)
+		buf = append(buf, segment)
 	}
-	return segments
+	return buf
 }
 
 // Components gets the components of a URL
@@ -300,7 +349,7 @@ func (url URL) Components() []string {
 		components = append(components, url.User)
 	}
 
-	components = append(components, url.PathSegments()...)
+	components = url.pathSegments(components)
 
 	// remove trailing '.git'
 	if last := len(components) - 1; last >= 0 {
