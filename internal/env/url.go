@@ -260,11 +260,11 @@ func (url URL) SplitForgeReference() (path, suffixes, ref, relative string) {
 
 // PathSegments returns the path segments of this URL.
 //
-// PathSegments are effectively '/'-seperated parts of the path of this URL.
+// PathSegments are effectively '/'-separated parts of the path of this URL.
 // Several syntactic normalizations apply to segments:
 //
 //   - Empty and segments containing only '.' are removed.
-//   - '..' segements are resolved, by removing the previous segments, unless it is also a '..' segment.
+//   - '..' segments are resolved, by removing the previous segments, unless it is also a '..' segment.
 //     This means that '..' segments (if any) must always occur at the start of path.
 func (url URL) PathSegments() []string {
 	segments := make([]string, 0, strings.Count(url.Path, "/"))

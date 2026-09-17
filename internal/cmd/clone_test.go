@@ -26,6 +26,7 @@ func TestCommandClone(t *testing.T) {
 	mock.Register("https://gitforge.example/hello/world7.git", "git@gitforge.example:hello/world7.git")
 	mock.Register("git@gitforge.example:hello/world8/tree/dev.git")
 	mock.Register("https://gitforge.example/hello/world9/tree/dev")
+	mock.Register("git@gitforge.example:hello/world10.git")
 
 	// These tests should not be run in parallel, but treated as a single linear test.
 	// Each test case depends on the previous one and implicitly relies on the fact that
@@ -47,6 +48,16 @@ func TestCommandClone(t *testing.T) {
 
 			0,
 			"Cloning \"git@gitforge.example:hello/world.git\" into \"${GGROOT gitforge.example hello world}\" ...\n",
+			"",
+		},
+
+		{
+			"clone repository with relative path doesn't exist yet",
+			"",
+			[]string{"clone", "https://gitforge.example/hello/deep/../world10.git"},
+
+			0,
+			"Cloning \"git@gitforge.example:hello/world10.git\" into \"${GGROOT gitforge.example hello world10}\" ...\n",
 			"",
 		},
 
@@ -105,6 +116,16 @@ func TestCommandClone(t *testing.T) {
 			4,
 			"",
 			"\"./example\": invalid remote URI: invalid scheme, not a remote path\n",
+		},
+
+		{
+			"clone invalid path",
+			"",
+			[]string{"clone", "https://gitforge.example/stuff/../../relative.git"},
+
+			4,
+			"",
+			"\"https://gitforge.example/stuff/../../relative.git\": invalid remote URI: invalid relative path\n",
 		},
 
 		{

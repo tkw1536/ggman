@@ -13,51 +13,51 @@ var urlTests = []struct {
 	str  string
 	url  env.URL
 }{
-	// ssh://[user@]host.xz[:port]/path/to/repo.git/
+	// ssh://[user@]host.test[:port]/path/to/repo.git/
 	{
 		name: "ssh",
-		str:  "ssh://host.xz/path/to/repo.git/",
-		url:  env.URL{Scheme: "ssh", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+		str:  "ssh://host.test/path/to/repo.git/",
+		url:  env.URL{Scheme: "ssh", User: "", Password: "", HostName: "host.test", Port: 0, Path: "path/to/repo.git/"},
 	},
 	{
 		name: "sshUser",
-		str:  "ssh://user@host.xz/path/to/repo.git/",
-		url:  env.URL{Scheme: "ssh", User: "user", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+		str:  "ssh://user@host.test/path/to/repo.git/",
+		url:  env.URL{Scheme: "ssh", User: "user", Password: "", HostName: "host.test", Port: 0, Path: "path/to/repo.git/"},
 	},
 	{
 		name: "sshPort",
-		str:  "ssh://host.xz:1234/path/to/repo.git/",
-		url:  env.URL{Scheme: "ssh", User: "", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
+		str:  "ssh://host.test:1234/path/to/repo.git/",
+		url:  env.URL{Scheme: "ssh", User: "", Password: "", HostName: "host.test", Port: 1234, Path: "path/to/repo.git/"},
 	},
 	{
 		name: "sshUserPort",
-		str:  "ssh://user@host.xz:1234/path/to/repo.git/",
-		url:  env.URL{Scheme: "ssh", User: "user", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
+		str:  "ssh://user@host.test:1234/path/to/repo.git/",
+		url:  env.URL{Scheme: "ssh", User: "user", Password: "", HostName: "host.test", Port: 1234, Path: "path/to/repo.git/"},
 	},
 
-	// git://host.xz[:port]/path/to/repo.git/
+	// git://host.test[:port]/path/to/repo.git/
 	{
 		name: "git",
-		str:  "git://host.xz/path/to/repo.git/",
-		url:  env.URL{Scheme: "git", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+		str:  "git://host.test/path/to/repo.git/",
+		url:  env.URL{Scheme: "git", User: "", Password: "", HostName: "host.test", Port: 0, Path: "path/to/repo.git/"},
 	},
 
 	{
 		name: "gitPort",
-		str:  "git://host.xz:1234/path/to/repo.git/",
-		url:  env.URL{Scheme: "git", User: "", Password: "", HostName: "host.xz", Port: 1234, Path: "path/to/repo.git/"},
+		str:  "git://host.test:1234/path/to/repo.git/",
+		url:  env.URL{Scheme: "git", User: "", Password: "", HostName: "host.test", Port: 1234, Path: "path/to/repo.git/"},
 	},
 
-	//  [user@]host.xz:path/to/repo.git/
+	//  [user@]host.test:path/to/repo.git/
 	{
 		name: "noProto",
-		str:  "host.xz:path/to/repo.git/",
-		url:  env.URL{Scheme: "", User: "", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+		str:  "host.test:path/to/repo.git/",
+		url:  env.URL{Scheme: "", User: "", Password: "", HostName: "host.test", Port: 0, Path: "path/to/repo.git/"},
 	},
 	{
 		name: "noProtoUser",
-		str:  "user@host.xz:path/to/repo.git/",
-		url:  env.URL{Scheme: "", User: "user", Password: "", HostName: "host.xz", Port: 0, Path: "path/to/repo.git/"},
+		str:  "user@host.test:path/to/repo.git/",
+		url:  env.URL{Scheme: "", User: "user", Password: "", HostName: "host.test", Port: 0, Path: "path/to/repo.git/"},
 	},
 
 	// local paths
@@ -241,7 +241,7 @@ func TestURL_SplitForgeReference(t *testing.T) {
 		},
 		{
 			name:         "git with tree is not a web url",
-			url:          env.URL{Scheme: "git", HostName: "host.xz", Path: "path/to/repo/tree/main"},
+			url:          env.URL{Scheme: "git", HostName: "host.test", Path: "path/to/repo/tree/main"},
 			wantPath:     "path/to/repo/tree/main",
 			wantRef:      "",
 			wantRelative: "",
@@ -576,8 +576,8 @@ func TestParseURLAndForgeReference(t *testing.T) {
 		},
 		{
 			name:         "git url with tree is not a web url",
-			input:        "git://host.xz/path/to/repo/tree/main",
-			wantURL:      env.URL{Scheme: "git", HostName: "host.xz", Path: "path/to/repo/tree/main"},
+			input:        "git://host.test/path/to/repo/tree/main",
+			wantURL:      env.URL{Scheme: "git", HostName: "host.test", Path: "path/to/repo/tree/main"},
 			wantRef:      "",
 			wantRelative: "",
 		},
@@ -677,14 +677,14 @@ func TestURL_String(t *testing.T) {
 
 func Benchmark_ParseURL(b *testing.B) {
 	for b.Loop() {
-		env.ParseURL("ssh://host.xz/path/to/repo.git/")
-		env.ParseURL("ssh://user@host.xz/path/to/repo.git/")
-		env.ParseURL("ssh://host.xz:1234/path/to/repo.git/")
-		env.ParseURL("ssh://user@host.xz:1234/path/to/repo.git/")
-		env.ParseURL("git://host.xz/path/to/repo.git/")
-		env.ParseURL("git://host.xz:1234/path/to/repo.git/")
-		env.ParseURL("host.xz:path/to/repo.git/")
-		env.ParseURL("user@host.xz:path/to/repo.git/")
+		env.ParseURL("ssh://host.test/path/to/repo.git/")
+		env.ParseURL("ssh://user@host.test/path/to/repo.git/")
+		env.ParseURL("ssh://host.test:1234/path/to/repo.git/")
+		env.ParseURL("ssh://user@host.test:1234/path/to/repo.git/")
+		env.ParseURL("git://host.test/path/to/repo.git/")
+		env.ParseURL("git://host.test:1234/path/to/repo.git/")
+		env.ParseURL("host.test:path/to/repo.git/")
+		env.ParseURL("user@host.test:path/to/repo.git/")
 	}
 }
 
@@ -696,53 +696,53 @@ var urlLocalityTests = []struct {
 }{
 	{
 		"ssh",
-		env.URL{"ssh", "", "", "host.xz", 0, "path/to/repo.git/"},
+		env.URL{"ssh", "", "", "host.test", 0, "path/to/repo.git/"},
 		false,
 		false,
 	},
 	{
 		"sshUser",
-		env.URL{"ssh", "user", "", "host.xz", 0, "path/to/repo.git/"},
+		env.URL{"ssh", "user", "", "host.test", 0, "path/to/repo.git/"},
 		false,
 		false,
 	},
 	{
 		"sshPort",
-		env.URL{"ssh", "", "", "host.xz", 1234, "path/to/repo.git/"},
+		env.URL{"ssh", "", "", "host.test", 1234, "path/to/repo.git/"},
 		false,
 		false,
 	},
 	{
 		"sshUserPort",
-		env.URL{"ssh", "user", "", "host.xz", 1234, "path/to/repo.git/"},
+		env.URL{"ssh", "user", "", "host.test", 1234, "path/to/repo.git/"},
 		false,
 		false,
 	},
 
-	// git://host.xz[:port]/path/to/repo.git/
+	// git://host.test[:port]/path/to/repo.git/
 	{
 		"git",
-		env.URL{"git", "", "", "host.xz", 0, "path/to/repo.git/"},
+		env.URL{"git", "", "", "host.test", 0, "path/to/repo.git/"},
 		false,
 		false,
 	},
 	{
 		"gitPort",
-		env.URL{"git", "", "", "host.xz", 1234, "path/to/repo.git/"},
+		env.URL{"git", "", "", "host.test", 1234, "path/to/repo.git/"},
 		false,
 		false,
 	},
 
-	//  [user@]host.xz:path/to/repo.git/
+	//  [user@]host.test:path/to/repo.git/
 	{
 		"noProto",
-		env.URL{"", "", "", "host.xz", 0, "path/to/repo.git/"},
+		env.URL{"", "", "", "host.test", 0, "path/to/repo.git/"},
 		false,
 		true,
 	},
 	{
 		"noProtoUser",
-		env.URL{"", "user", "", "host.xz", 0, "path/to/repo.git/"},
+		env.URL{"", "user", "", "host.test", 0, "path/to/repo.git/"},
 		false,
 		true,
 	},
@@ -842,31 +842,31 @@ func TestURL_IsRelative(t *testing.T) {
 		url  env.URL
 		want bool
 	}{
-		{"ssh remote", env.URL{Scheme: "ssh", HostName: "host.xz", Path: "path/to/repo.git/"}, false},
+		{"ssh remote", env.URL{Scheme: "ssh", HostName: "host.test", Path: "path/to/repo.git/"}, false},
 		{"https remote", env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"}, false},
-		{"no scheme remote", env.URL{HostName: "host.xz", Path: "path/to/repo.git/"}, false},
+		{"no scheme remote", env.URL{HostName: "host.test", Path: "path/to/repo.git/"}, false},
 		{"empty url", env.URL{}, false},
 		{"absolute local path", env.URL{Path: "path/to/somewhere"}, false},
 		{"file url", env.URL{Scheme: "file", Path: "path/to/somewhere"}, false},
-		{"hidden git dir", env.URL{HostName: "host.xz", Path: "a/.git/b"}, false},
+		{"hidden git dir", env.URL{HostName: "host.test", Path: "a/.git/b"}, false},
 
 		{"hostname is dot", env.URL{HostName: ".", Path: "some/relative/path"}, true},
 		{"hostname is parent", env.URL{HostName: "..", Path: "some/relative/path"}, true},
-		{"user is dot", env.URL{User: ".", HostName: "host.xz", Path: "repo"}, true},
-		{"user is parent", env.URL{User: "..", HostName: "host.xz", Path: "repo"}, true},
-		{"git user is ignored", env.URL{User: "git", HostName: "host.xz", Path: "repo"}, false},
+		{"user is dot", env.URL{User: ".", HostName: "host.test", Path: "repo"}, true},
+		{"user is parent", env.URL{User: "..", HostName: "host.test", Path: "repo"}, true},
+		{"git user is ignored", env.URL{User: "git", HostName: "host.test", Path: "repo"}, false},
 
-		{"path is parent", env.URL{HostName: "host.xz", Path: ".."}, true},
-		{"path is dot", env.URL{HostName: "host.xz", Path: "."}, false},
-		{"leading parent in path", env.URL{HostName: "host.xz", Path: "../repo"}, true},
-		{"multiple leading parents in path", env.URL{HostName: "host.xz", Path: "../../repo"}, true},
-		{"parent beyond root of path", env.URL{HostName: "host.xz", Path: "a/../.."}, true},
-		{"parent then file beyond root", env.URL{HostName: "host.xz", Path: "a/../../b"}, true},
+		{"path is parent", env.URL{HostName: "host.test", Path: ".."}, true},
+		{"path is dot", env.URL{HostName: "host.test", Path: "."}, false},
+		{"leading parent in path", env.URL{HostName: "host.test", Path: "../repo"}, true},
+		{"multiple leading parents in path", env.URL{HostName: "host.test", Path: "../../repo"}, true},
+		{"parent beyond root of path", env.URL{HostName: "host.test", Path: "a/../.."}, true},
+		{"parent then file beyond root", env.URL{HostName: "host.test", Path: "a/../../b"}, true},
 
-		{"dot segments are stripped", env.URL{HostName: "host.xz", Path: "a/./b"}, false},
-		{"resolved parent in path", env.URL{HostName: "host.xz", Path: "a/../b"}, false},
-		{"resolved chained parents", env.URL{HostName: "host.xz", Path: "a/b/../.."}, false},
-		{"mixed dots and resolved parents", env.URL{HostName: "host.xz", Path: "a/./b/../c"}, false},
+		{"dot segments are stripped", env.URL{HostName: "host.test", Path: "a/./b"}, false},
+		{"resolved parent in path", env.URL{HostName: "host.test", Path: "a/../b"}, false},
+		{"resolved chained parents", env.URL{HostName: "host.test", Path: "a/b/../.."}, false},
+		{"mixed dots and resolved parents", env.URL{HostName: "host.test", Path: "a/./b/../c"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -931,7 +931,7 @@ func TestURL_PathSegments(t *testing.T) {
 
 		{
 			"ignores other URL fields",
-			env.URL{Scheme: "ssh", User: "git", Password: "secret", HostName: "host.xz", Port: 22, Path: "hello/world"},
+			env.URL{Scheme: "ssh", User: "git", Password: "secret", HostName: "host.test", Port: 22, Path: "hello/world"},
 			[]string{"hello", "world"},
 		},
 	}
@@ -1054,15 +1054,18 @@ func TestComponentsOf(t *testing.T) {
 		s    string
 		want []string
 	}{
-		{"ssh://host.xz/path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
-		{"ssh://user@host.xz/path/to/repo.git/", []string{"host.xz", "user", "path", "to", "repo"}},
-		{"ssh://host.xz:1234/path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
-		{"ssh://user@host.xz:1234/path/to/repo.git/", []string{"host.xz", "user", "path", "to", "repo"}},
-		{"git://host.xz/path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
-		{"git://host.xz:1234/path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
-		{"host.xz:path/to/repo.git/", []string{"host.xz", "path", "to", "repo"}},
-		{"user@host.xz:path/to/repo.git/", []string{"host.xz", "user", "path", "to", "repo"}},
-		{"user@host.xz:path/to/repo", []string{"host.xz", "user", "path", "to", "repo"}},
+		{"ssh://host.test/path/to/repo.git/", []string{"host.test", "path", "to", "repo"}},
+		{"ssh://user@host.test/path/to/repo.git/", []string{"host.test", "user", "path", "to", "repo"}},
+		{"ssh://host.test:1234/path/to/repo.git/", []string{"host.test", "path", "to", "repo"}},
+		{"ssh://user@host.test:1234/path/to/repo.git/", []string{"host.test", "user", "path", "to", "repo"}},
+		{"git://host.test/path/to/repo.git/", []string{"host.test", "path", "to", "repo"}},
+		{"git://host.test:1234/path/to/repo.git/", []string{"host.test", "path", "to", "repo"}},
+		{"host.test:path/to/repo.git/", []string{"host.test", "path", "to", "repo"}},
+		{"user@host.test:path/to/repo.git/", []string{"host.test", "user", "path", "to", "repo"}},
+		{"user@host.test:path/to/repo", []string{"host.test", "user", "path", "to", "repo"}},
+		{"host.test:path/to/repo/somewhere/relative/../../", []string{"host.test", "path", "to", "repo"}},
+		{"./hello/../world", []string{".", "world"}},
+		{"host.test/../", []string{"host.test", ".."}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.s, func(t *testing.T) {
@@ -1077,15 +1080,15 @@ func TestComponentsOf(t *testing.T) {
 
 func BenchmarkComponentsOf(b *testing.B) {
 	for b.Loop() {
-		env.ComponentsOf("ssh://host.xz/path/to/repo.git/")
-		env.ComponentsOf("ssh://user@host.xz/path/to/repo.git/")
-		env.ComponentsOf("ssh://host.xz:1234/path/to/repo.git/")
-		env.ComponentsOf("ssh://user@host.xz:1234/path/to/repo.git/")
-		env.ComponentsOf("git://host.xz/path/to/repo.git/")
-		env.ComponentsOf("git://host.xz:1234/path/to/repo.git/")
-		env.ComponentsOf("host.xz:path/to/repo.git/")
-		env.ComponentsOf("user@host.xz:path/to/repo.git/")
-		env.ComponentsOf("user@host.xz:path/to/repo")
+		env.ComponentsOf("ssh://host.test/path/to/repo.git/")
+		env.ComponentsOf("ssh://user@host.test/path/to/repo.git/")
+		env.ComponentsOf("ssh://host.test:1234/path/to/repo.git/")
+		env.ComponentsOf("ssh://user@host.test:1234/path/to/repo.git/")
+		env.ComponentsOf("git://host.test/path/to/repo.git/")
+		env.ComponentsOf("git://host.test:1234/path/to/repo.git/")
+		env.ComponentsOf("host.test:path/to/repo.git/")
+		env.ComponentsOf("user@host.test:path/to/repo.git/")
+		env.ComponentsOf("user@host.test:path/to/repo")
 	}
 }
 

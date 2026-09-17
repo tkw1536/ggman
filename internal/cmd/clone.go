@@ -125,6 +125,7 @@ var (
 	errCloneCheckDest         = exit.NewErrorWithCode("failed to check if destination is a directory", env.ExitGeneric)
 	errCloneDeleteDest        = exit.NewErrorWithCode("failed to delete existing directory", env.ExitGeneric)
 	errCloneLocalURI          = exit.NewErrorWithCode("invalid remote URI: invalid scheme, not a remote path", env.ExitCommandArguments)
+	errCloneRelativeURI       = exit.NewErrorWithCode("invalid remote URI: invalid relative path", env.ExitCommandArguments)
 	errCloneAlreadyExists     = exit.NewErrorWithCode("failed to clone repository: another git repository already exists in target location", env.ExitGeneric)
 	errCloneNoArguments       = exit.NewErrorWithCode(`failed to pass arguments: external "git" not found`, env.ExitGeneric)
 	errCloneOther             = exit.NewErrorWithCode("", env.ExitGeneric)
@@ -152,6 +153,9 @@ func (c *clone) Exec(cmd *cobra.Command, args []string) error {
 	}
 	if url.IsLocal() {
 		return fmt.Errorf("%q: %w", c.Positional.URL, errCloneLocalURI)
+	}
+	if url.IsRelative() {
+		return fmt.Errorf("%q: %w", c.Positional.URL, errCloneRelativeURI)
 	}
 
 	// find the remote and local paths to clone to / from
