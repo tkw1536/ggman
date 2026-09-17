@@ -201,7 +201,9 @@ func (env *Env) LoadDefaultCANFILE() (cf CanFile, err error) {
 }
 
 var (
-	errUnableToReadDirectory = errors.New("failed to read directory")
+	errUnableToReadDirectory  = errors.New("failed to read directory")
+	errLocalUrlUnsupported    = errors.New("local URL not supported")
+	errRelativeUrlUnsupported = errors.New("relative URL not supported")
 
 	// ErrUnableLocalPath should be used by callers to indicate that it was unable to get a local path.
 	ErrUnableLocalPath = exit.NewErrorWithCode("failed to get local path", ExitInvalidRepo)
@@ -213,6 +215,13 @@ func (env *Env) Local(url URL) (string, error) {
 	root, err := env.absRoot()
 	if err != nil {
 		panic("Env.Local: Root not resolved")
+	}
+
+	if url.IsLocal() {
+		return "", fmt.Errorf("%w: %s", errLocalUrlUnsupported, url)
+	}
+	if url.IsRelative() {
+		return "", fmt.Errorf("%w: %s", errRelativeUrlUnsupported, url)
 	}
 
 	path, err := path.JoinNormalized(env.Normalization(), root, url.Components()...)

@@ -400,6 +400,49 @@ func TestURL_SplitForgeReference(t *testing.T) {
 			wantRef:      "",
 			wantRelative: "",
 		},
+		{
+			name:         "top-level tree/* repository is not a forge reference",
+			url:          env.URL{Scheme: "https", HostName: "gitforge.example", Path: "tree/main"},
+			wantPath:     "tree/main",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "top-level tree/* repository with query",
+			url:          env.URL{Scheme: "https", HostName: "gitforge.example", Path: "tree/main?tab=readme"},
+			wantPath:     "tree/main",
+			wantSuffixes: "?tab=readme",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "top-level blob/* repository is not a forge reference",
+			url:          env.URL{Scheme: "https", HostName: "gitforge.example", Path: "blob/main"},
+			wantPath:     "blob/main",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "top-level src/* repository is not a forge reference",
+			url:          env.URL{Scheme: "https", HostName: "gitforge.example", Path: "src/branch"},
+			wantPath:     "src/branch",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "single-segment tree path is not a forge reference",
+			url:          env.URL{Scheme: "https", HostName: "gitforge.example", Path: "tree"},
+			wantPath:     "tree",
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "top-level src/* repository is not a forge reference",
+			url:          env.URL{Scheme: "https", HostName: "gitforge.example", Path: "src/branch/example"},
+			wantPath:     "src/branch/example",
+			wantRef:      "",
+			wantRelative: "",
+		},
 	}
 
 	for _, tt := range tests {
@@ -587,6 +630,20 @@ func TestParseURLAndForgeReference(t *testing.T) {
 			wantRef:      "main",
 			wantRelative: "README.md",
 		},
+		{
+			name:         "top-level tree/* repository is not a forge reference",
+			input:        "https://gitforge.example/tree/main",
+			wantURL:      env.URL{Scheme: "https", HostName: "gitforge.example", Path: "tree/main"},
+			wantRef:      "",
+			wantRelative: "",
+		},
+		{
+			name:         "top-level src/* repository is not a forge reference",
+			input:        "https://gitforge.example/src/branch",
+			wantURL:      env.URL{Scheme: "https", HostName: "gitforge.example", Path: "src/branch"},
+			wantRef:      "",
+			wantRelative: "",
+		},
 	}
 
 	for _, tt := range tests {
@@ -772,6 +829,118 @@ func TestURL_IsWebURL(t *testing.T) {
 
 			if got := tt.url.IsWebURL(); got != tt.isWebURL {
 				t.Errorf("URL.IsWebURL() = %v, want %v", got, tt.isWebURL)
+			}
+		})
+	}
+}
+
+func TestURL_IsRelative(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		url  env.URL
+		want bool
+	}{
+		{"ssh remote", env.URL{Scheme: "ssh", HostName: "host.xz", Path: "path/to/repo.git/"}, false},
+		{"https remote", env.URL{Scheme: "https", HostName: "example.com", Path: "user/repo"}, false},
+		{"no scheme remote", env.URL{HostName: "host.xz", Path: "path/to/repo.git/"}, false},
+		{"empty url", env.URL{}, false},
+		{"absolute local path", env.URL{Path: "path/to/somewhere"}, false},
+		{"file url", env.URL{Scheme: "file", Path: "path/to/somewhere"}, false},
+		{"hidden git dir", env.URL{HostName: "host.xz", Path: "a/.git/b"}, false},
+
+		{"hostname is dot", env.URL{HostName: ".", Path: "some/relative/path"}, true},
+		{"hostname is parent", env.URL{HostName: "..", Path: "some/relative/path"}, true},
+		{"user is dot", env.URL{User: ".", HostName: "host.xz", Path: "repo"}, true},
+		{"user is parent", env.URL{User: "..", HostName: "host.xz", Path: "repo"}, true},
+		{"git user is ignored", env.URL{User: "git", HostName: "host.xz", Path: "repo"}, false},
+
+		{"path is parent", env.URL{HostName: "host.xz", Path: ".."}, true},
+		{"path is dot", env.URL{HostName: "host.xz", Path: "."}, false},
+		{"leading parent in path", env.URL{HostName: "host.xz", Path: "../repo"}, true},
+		{"multiple leading parents in path", env.URL{HostName: "host.xz", Path: "../../repo"}, true},
+		{"parent beyond root of path", env.URL{HostName: "host.xz", Path: "a/../.."}, true},
+		{"parent then file beyond root", env.URL{HostName: "host.xz", Path: "a/../../b"}, true},
+
+		{"dot segments are stripped", env.URL{HostName: "host.xz", Path: "a/./b"}, false},
+		{"resolved parent in path", env.URL{HostName: "host.xz", Path: "a/../b"}, false},
+		{"resolved chained parents", env.URL{HostName: "host.xz", Path: "a/b/../.."}, false},
+		{"mixed dots and resolved parents", env.URL{HostName: "host.xz", Path: "a/./b/../c"}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if got := tt.url.IsRelative(); got != tt.want {
+				t.Errorf("URL.IsRelative() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestURL_PathSegments(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		url  env.URL
+		want []string
+	}{
+		{"empty path", env.URL{Path: ""}, []string{}},
+		{"single segment", env.URL{Path: "file"}, []string{"file"}},
+		{"relative path", env.URL{Path: "a/b/c"}, []string{"a", "b", "c"}},
+		{"keeps .git suffix", env.URL{Path: "hello/world.git"}, []string{"hello", "world.git"}},
+
+		{"leading slash", env.URL{Path: "/a/b/c"}, []string{"a", "b", "c"}},
+		{"trailing slash", env.URL{Path: "a/b/c/"}, []string{"a", "b", "c"}},
+		{"leading and trailing slash", env.URL{Path: "/a/b/c/"}, []string{"a", "b", "c"}},
+		{"only slashes", env.URL{Path: "/////"}, []string{}},
+		{"repeated slashes", env.URL{Path: "a//b///c"}, []string{"a", "b", "c"}},
+		{"repeated slashes at start and end", env.URL{Path: "//a/b/c//"}, []string{"a", "b", "c"}},
+
+		{"dot", env.URL{Path: "."}, []string{}},
+		{"dot slash", env.URL{Path: "./"}, []string{}},
+		{"slash dot", env.URL{Path: "/."}, []string{}},
+		{"dot segment", env.URL{Path: "a/./b"}, []string{"a", "b"}},
+		{"leading dot segment", env.URL{Path: "./a/b"}, []string{"a", "b"}},
+		{"trailing dot segment", env.URL{Path: "a/b/."}, []string{"a", "b"}},
+		{"only dots", env.URL{Path: "././."}, []string{}},
+		{"hidden file is kept", env.URL{Path: "a/.git/b"}, []string{"a", ".git", "b"}},
+		{"dotfile", env.URL{Path: ".gitignore"}, []string{".gitignore"}},
+
+		{"parent", env.URL{Path: ".."}, []string{".."}},
+		{"slash parent", env.URL{Path: "/.."}, []string{".."}},
+		{"parent of file", env.URL{Path: "a/b/.."}, []string{"a"}},
+		{"parent in the middle", env.URL{Path: "a/b/../c"}, []string{"a", "c"}},
+		{"leading parent is kept", env.URL{Path: "../a/b"}, []string{"..", "a", "b"}},
+		{"multiple leading parents are kept", env.URL{Path: "../../a"}, []string{"..", "..", "a"}},
+		{"parent beyond root of relative path", env.URL{Path: "a/../.."}, []string{".."}},
+		{"parent then file beyond root", env.URL{Path: "a/../../b"}, []string{"..", "b"}},
+		{"chained parents", env.URL{Path: "a/b/c/../../d"}, []string{"a", "d"}},
+		{"all parents of relative path", env.URL{Path: "a/b/../.."}, []string{}},
+		{"all parents of absolute path", env.URL{Path: "/a/b/../.."}, []string{}},
+		{"parent does not remove another parent", env.URL{Path: "../../../a"}, []string{"..", "..", "..", "a"}},
+
+		{"mixed dots and parents", env.URL{Path: "a/./b/../c"}, []string{"a", "c"}},
+		{"mixed slashes, dots and parents", env.URL{Path: "/a//./b/../c//"}, []string{"a", "c"}},
+		{"dot then parent", env.URL{Path: "a/./../b"}, []string{"b"}},
+		{"parent then dot", env.URL{Path: "a/.././b"}, []string{"b"}},
+		{"current dir then parent", env.URL{Path: "./.."}, []string{".."}},
+		{"parent then current dir", env.URL{Path: "../."}, []string{".."}},
+
+		{
+			"ignores other URL fields",
+			env.URL{Scheme: "ssh", User: "git", Password: "secret", HostName: "host.xz", Port: 22, Path: "hello/world"},
+			[]string{"hello", "world"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if got := tt.url.PathSegments(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("URL.PathSegments() = %#v, want %#v", got, tt.want)
 			}
 		})
 	}

@@ -533,6 +533,7 @@ Command `Long` descriptions follow these conventions:
 - add `--relative` flag to `ggman web`
 - `ggman web --tree` accepts an optional path suffix (e.g. `--tree=src/branch`, `--tree=-/tree`)
 - use `gitforge.example` and `githost.example` instead of real providers as examples
+- better handling of URLs with relative segments
 - update to `go1.27`
 - bugfix: avoid `ggshow` `cd`ing into directory
 

@@ -139,6 +139,18 @@ func (url URL) IsLocal() bool {
 	return url.Scheme == "file" || (url.Scheme == "" && (url.HostName == "." || url.HostName == ".." || url.HostName == ""))
 }
 
+// IsRelative checks if this URL contains a relative path.
+// This applies to both local and web URLs - they are considered relative if they resolve to a URL outside the domain.
+func (url URL) IsRelative() bool {
+	components := url.Components()
+	for _, component := range components {
+		if component == "." || component == ".." {
+			return true
+		}
+	}
+	return false
+}
+
 // IsForgeURL checks if this URL looks like a URL copied from a web browser.
 // A URL is considered a web URL if it has a scheme of "https" or "http", or the scheme is empty and the hostname is not one of ".", ".." or "".
 func (url URL) IsWebURL() bool {
@@ -179,9 +191,10 @@ func (url URL) IsWebURL() bool {
 //
 // Additional heuristics:
 //
-// - Non-web URLs, as reported by [URL.IsWebURL], are not considered forge URLs, and return their original path unmodified, along with empty suffixes, ref and relative.
-// - Trailing "_" or "-" segments immediately before the marker are removed (e.g. Gitea "/_/" and GitLab "/-/").
-// - A trailing query or fragment identifier of the URL is split off and returned in the suffix instead.
+//   - Non-web URLs, as reported by [URL.IsWebURL], are not considered forge URLs, and return their original path unmodified, along with empty suffixes, ref and relative.
+//   - Trailing "_" or "-" segments immediately before the marker are removed (e.g. Gitea "/_/" and GitLab "/-/").
+//   - A trailing query or fragment identifier of the URL is split off and returned in the suffix instead.
+//   - If the splitting procedure results in an empty path and no relative path, then it is far more likely that the user is trying to access a repository that lives at the top-level of a domain. This rule keeps 'tree/*' and 'src/branch/*' repositories and the alive.
 //
 // If no tree reference is found, path is the original path (without query or fragment), and ref and
 // relative are empty.
@@ -195,24 +208,28 @@ func (url URL) SplitForgeReference() (path, suffixes, ref, relative string) {
 		url.Path, suffixes = url.Path[:i], url.Path[i:]
 	}
 
-	components := parseurl.SplitNonEmpty(url.Path, '/', nil)
+	// Split into path segments and figure out where to split off the reference.
+	segments := url.PathSegments()
 	cut, refStart := -1, -1
-	for i := range components {
+	for i := range segments {
 		switch {
-		case (components[i] == "tree" || components[i] == "blob") && i+1 < len(components):
+		case (segments[i] == "tree" || segments[i] == "blob") && i+1 < len(segments):
 			cut, refStart = i, i+1
-		case components[i] == "src" && i+2 < len(components) && (components[i+1] == "branch" || components[i+1] == "tag"):
+		case segments[i] == "src" && i+2 < len(segments) && (segments[i+1] == "branch" || segments[i+1] == "tag"):
 			cut, refStart = i, i+2
 		default:
 			continue
 		}
 		break
 	}
+
+	// If we did not find any reference, then we don't have any cutting to do.
 	if cut < 0 {
 		return url.Path, suffixes, "", ""
 	}
 
-	prefix := components[:cut]
+	// Split off the reference, and any leading "_" or "-" segments.
+	prefix := segments[:cut]
 	for len(prefix) > 0 {
 		last := prefix[len(prefix)-1]
 		if last != "_" && last != "-" {
@@ -221,14 +238,52 @@ func (url URL) SplitForgeReference() (path, suffixes, ref, relative string) {
 		prefix = prefix[:len(prefix)-1]
 	}
 
-	ref = components[refStart]
-	relative = strings.Join(components[refStart+1:], "/")
-	return strings.Join(prefix, "/"), suffixes, ref, relative
+	// Assemble the relative path and reference.
+	ref = segments[refStart]
+	relative = strings.Join(segments[refStart+1:], "/")
+	path = strings.Join(prefix, "/")
+
+	// If we have an empty path and no relative path,
+	// then it's much more likely we're trying to get a top-level repository.
+	//
+	// For example:
+	// - a repository at "gitforge.example/tree/something"
+	// - a repository at "gitforge.example/src/branch/something"
+	//
+	// In such a case we better leave the path as is.
+	if path == "" && relative == "" {
+		return url.Path, suffixes, "", ""
+	}
+
+	return path, suffixes, ref, relative
+}
+
+// PathSegments returns the path segments of this URL.
+//
+// PathSegments are effectively '/'-seperated parts of the path of this URL.
+// Several syntactic normalizations apply to segments:
+//
+//   - Empty and segments containing only '.' are removed.
+//   - '..' segements are resolved, by removing the previous segments, unless it is also a '..' segment.
+//     This means that '..' segments (if any) must always occur at the start of path.
+func (url URL) PathSegments() []string {
+	segments := make([]string, 0, strings.Count(url.Path, "/"))
+	for segment := range strings.SplitSeq(url.Path, "/") {
+		if segment == "." || segment == "" {
+			continue
+		}
+		if segment == ".." && len(segments) > 0 && segments[len(segments)-1] != ".." {
+			segments = segments[:len(segments)-1]
+			continue
+		}
+		segments = append(segments, segment)
+	}
+	return segments
 }
 
 // Components gets the components of a URL
 //
-// Components of the URL are the hostname, the username and components of the path.
+// Components of the URL are the hostname, the username and path segments.
 // Empty components are ignored.
 // Furthermore a username 'git' as well as a trailing suffix of '.git' are ignored as well.
 func (url URL) Components() []string {
@@ -245,7 +300,7 @@ func (url URL) Components() []string {
 		components = append(components, url.User)
 	}
 
-	components = parseurl.SplitNonEmpty(url.Path, '/', components)
+	components = append(components, url.PathSegments()...)
 
 	// remove trailing '.git'
 	if last := len(components) - 1; last >= 0 {
