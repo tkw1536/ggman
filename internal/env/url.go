@@ -274,7 +274,6 @@ func (url URL) PathSegments() []string {
 //
 // The appended buffer is returned.
 func (url URL) pathSegments(buf []string) []string {
-
 	// Do a single pass through the string and determine:
 	var (
 		nonEmptySegments = 0     // the number of non-empty segments.
