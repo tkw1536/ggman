@@ -525,7 +525,9 @@ Command `Long` descriptions follow these conventions:
 
 ## Changelog
 
-### 1.29.0 (Upcoming)
+### 1.30.0 (Upcoming)
+
+### 1.29.0 (Released [Oct 12 2026](https://github.com/tkw1536/ggman/releases/tag/v1.29.0))
 
 - support for forge-like tree URLs (e.g. `.../tree/branch`) when cloning and parsing
 	- clone passes `--branch` automatically; add `--no-forge-split` and `--no-auto-branch` to adjust behavior
