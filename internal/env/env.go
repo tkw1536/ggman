@@ -445,8 +445,8 @@ func (env *Env) ScanReposScores(ctx context.Context, folder string, resolved boo
 
 			ExtraRoots: extraFS,
 
-			BufferSize:  reposBufferSize,
-			MaxParallel: reposMaxParallelScan,
+			BufferSize:    reposBufferSize,
+			MaxConcurrent: reposMaxParallelScan,
 		},
 	}
 

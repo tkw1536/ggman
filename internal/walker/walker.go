@@ -67,9 +67,9 @@ type Params struct {
 	// These may be nil.
 	ExtraRoots []FS
 
-	// MaxParallel is maximum number of nodes that will be scanned in parallel.
+	// MaxConcurrent is maximum number of nodes that will be scanned concurrently.
 	// Zero or negative values are treated as no limit.
-	MaxParallel int
+	MaxConcurrent int
 
 	// BufferSize is an integer that can be used to optimize internal behavior.
 	// It should be larger than the average number of expected results.
@@ -152,7 +152,7 @@ func (w *Walker[S]) Walk() error {
 	}
 
 	// configure concurrency
-	w.semaphore = sema.New(w.Params.MaxParallel)
+	w.semaphore = sema.New(w.Params.MaxConcurrent)
 
 	// create channels for result & error
 	w.resultChan = make(chan walkResult, w.Params.BufferSize)
