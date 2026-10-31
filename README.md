@@ -357,6 +357,9 @@ Instead of storing any urls, it will only print what is being done to STDOUT.
 ### 'ggman fetch' and 'ggman pull'
 
 To fetch data for all repositories, or to run git pull, use `ggman fetch` and `ggman pull` respectively. 
+Both commands accept a `--parallel` / `-p` flag to run operations concurrently (default `1`, use `0` for no limit).
+After finishing, they print a short summary of how many repositories succeeded and failed.
+
 
 ### 'ggman clone', 'ggman link' and `ggman relocate`
 
@@ -526,6 +529,9 @@ Command `Long` descriptions follow these conventions:
 ## Changelog
 
 ### 1.30.0 (Upcoming)
+
+- add `--parallel` / `-p` to `ggman fetch` and `ggman pull`
+- print an end-of-run success/failure summary for `fetch` and `pull`
 
 ### 1.29.0 (Released [Oct 12 2026](https://github.com/tkw1536/ggman/releases/tag/v1.29.0))
 
